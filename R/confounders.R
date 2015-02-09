@@ -116,5 +116,6 @@ confounders <- function(exposed, case, prev.cfder = NULL, cfder.dis.RR = NULL, a
             "\n  RR(Confounder-Outcome):", cfder.dis.RR, "\n")
     invisible(list(obs.data = tab, cfder.data = tab.cfder, nocfder.data = tab.nocfder,
                    obs.measures = rmat, SMR = SMR, MH = MH, cfder.rr = cfder.rr,
-                   nocfder.rr = nocfder.rr, RR0 = RR0, RRc = RRc))
+                   nocfder.rr = nocfder.rr, RR0 = RR0, RRc = RRc,
+                   bias.params = c(prev.cfder, cfder.dis.RR)))
 }
