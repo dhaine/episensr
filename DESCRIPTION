@@ -1,9 +1,11 @@
 Package: episensr
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
+Title: Basic sensitivity analysis of epidemiological results
+Version: 0.1
 Date: 2015-02-06
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Author: "Denis Haine <denis.haine@gmail.com> [aut, cre]"
+Maintainer: "Denis Haine <denis.haine@gmail.com> [aut, cre]"
+Description: episensr provides basic sensitivity analysis of the observed
+	     relative risks adjusting for unmeasured confounding and
+	     misclassification of the exposure.
+License: GPL-2
