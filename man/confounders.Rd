@@ -5,12 +5,15 @@
 \description{Simple sensitivity analysis to correct for unknown or unmeasured
   confounding (RR).}
 \usage{
-confounders(exposed, case, prev.cfder = NULL, cfder.dis.RR = NULL, alpha
-= 0.05, dec = 4, print = TRUE)
+confounders(exposed, case, method = c("noEM.RR", "noEM.OR", "noEM.RD"),
+prev.cfder = NULL, cfder.dis.RR = NULL, alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
   \item{case}{Outcome variable.}
+  \item{method}{Choice of implementation, with no effect measure
+    modification (noEM) for ratio measures (relative risk -- RR; odds
+    ratio -- OR) or differenmce measures (risk difference -- RD).}
   \item{prev.cfder}{Vector defining the prevalence of the confounder. This
     vector has 2 elements between 0 and 1, in the following order:
     \begin{enumerate}
@@ -31,9 +34,13 @@ confounders(exposed, case, prev.cfder = NULL, cfder.dis.RR = NULL, alpha
   \item{SMR}{Standardized Morbidity Ratio.}
   \item{MH}{Mantel-Haenszel.}
   \item{cfder.rr}{Relative risk, Confounder +.}
+  \item{cfder.or}{Odds ratio, Confounder +.}
   \item{nocfder.rr}{Relative risk, Confounder -.}
+  \item{nocfder.or}{Odds ratio, Confounder -.}
   \item{RR0}{Relative risk corrected by SMR.}
+  \item{OR0}{Odds ratio corrected by SMR.}
   \item{RRc}{Relative risk corrected by MH.}
+  \item{ORc}{Odds ratio corrected by MH.}
   \item{bias.params}{Input bias parameters.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
@@ -49,6 +56,7 @@ confounders(exposed, case, prev.cfder = NULL, cfder.dis.RR = NULL, alpha
 confounders(matrix(c(105,85,527,93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                    nrow=2, byrow=TRUE),
+            implement = "noEM.RR",
             prev.cfder = c(.8, .05),
             cfder.dis.RR = .63)
 }
