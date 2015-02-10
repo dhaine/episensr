@@ -3,7 +3,7 @@ confounders <- function(exposed, case, implement = c("RR", "OR", "RD"), prev.cfd
         prev.cfder <- c(0, 0)
     else prev.cfder <- prev.cfder
     if(length(prev.cfder) != 2)
-        stop('The argument prev.cfder should be made of the following components: (1) Prevalence of the confounder among the exposed levels, and (2) Prevalence of the confounder among the unexposed levels.')
+        stop('The argument prev.cfder should be made of the following components: (1) Prevalence of the confounder among the exposed, and (2) Prevalence of the confounder among the unexposed.')
     if(!all(prev.cfder >= 0 & prev.cfder <=1))
         stop('Prevalences should be between 0 and 1')
 
