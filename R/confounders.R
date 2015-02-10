@@ -1,7 +1,11 @@
-confounders <- function(exposed, case, implement = c("noEM.RR", "noEM.OR", "noEM.RD"), prev.cfder = NULL, cfder.dis.RR = NULL, cfder.dis.OR = NULL, cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE){
+confounders <- function(exposed, case, implement = c("RR", "OR", "RD"), prev.cfder = NULL, cfder.dis.RR = NULL, cfder.dis.OR = NULL, cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE){
     if(is.null(prev.cfder))
         prev.cfder <- c(0, 0)
     else prev.cfder <- prev.cfder
+    if(length(prev.cfder) != 2)
+        stop('The argument prev.cfder should be made of the following components: (1) Prevalence of the confounder among the exposed levels, and (2) Prevalence of the confounder among the unexposed levels.')
+    if(!all(prev.cfder >= 0 & prev.cfder <=1))
+        stop('Prevalences should be between 0 and 1')
 
     if(is.null(cfder.dis.RR))
         cfder.dis.RR <- 1
@@ -22,9 +26,7 @@ confounders <- function(exposed, case, implement = c("noEM.RR", "noEM.OR", "noEM
     else cfder.dis.RD <- cfder.dis.RD
     if(length(cfder.dis.RD) > 2)
         stop('Confounder-disease risk difference: more than 2 arguments')    
-    if(!all(prev.cfder >= 0 & prev.cfder <=1))
-        stop('Prevalences should be between 0 and 1')
-
+    
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
     else tab <- table(exposed, cased)
@@ -32,240 +34,112 @@ confounders <- function(exposed, case, implement = c("noEM.RR", "noEM.OR", "noEM
     b <- tab[1, 2]
     c <- tab[2, 1]
     d <- tab[2, 2]
+
     implement <- match.arg(implement)
-    if (implement == "noEM.RR") {
-        if(!is.vector(prev.cfder))
-            stop('The argument prev.cfder should be a vector.')
-        if(length(prev.cfder) < 2 | length(prev.cfder) == 3 | length(prev.cfder) > 4)
-            stop('The argument prev.cfder should be made of the following components: (1) Prevalence of the confounder among the exposed levels, and (2) Prevalence of the confounder among the unexposed levels (max. 3 levels).')
+    if (implement == "RR") {
         crude.rr <- (a/(a + c)) / (b/(b + d))
         se.log.crude.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
         lci.crude.rr <- exp(log(crude.rr) - qnorm(1 - alpha/2) * se.log.crude.rr)
         uci.crude.rr <- exp(log(crude.rr) + qnorm(1 - alpha/2) * se.log.crude.rr)
 
-        if(length(prev.cfder) == 2) {
-            M1 <- (a + c) * prev.cfder[1]
-            N1 <- (b + d) * prev.cfder[2]
-            A1 <- (cfder.dis.RR * M1 * a) / (cfder.dis.RR * M1 + (a + c) - M1)
-            B1 <- (cfder.dis.RR * N1 * b) / (cfder.dis.RR * N1 + (b + d) - N1)
-            C1 <- M1 - A1
-            D1 <- N1 - B1
-            M0 <- a + c - M1
-            N0 <- b + d - N1
-            A0 <- a - A1
-            B0 <- b - B1
-            C0 <- c - C1
-            D0 <- d - D1
-            tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
-            tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
+        M1 <- (a + c) * prev.cfder[1]
+        N1 <- (b + d) * prev.cfder[2]
+        A1 <- (cfder.dis.RR * M1 * a) / (cfder.dis.RR * M1 + (a + c) - M1)
+        B1 <- (cfder.dis.RR * N1 * b) / (cfder.dis.RR * N1 + (b + d) - N1)
+        C1 <- M1 - A1
+        D1 <- N1 - B1
+        M0 <- a + c - M1
+        N0 <- b + d - N1
+        A0 <- a - A1
+        B0 <- b - B1
+        C0 <- c - C1
+        D0 <- d - D1
+        tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
+        tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
 
-            SMR <- a / ((M1 * B1/N1) + (M0 * B0/N0))
-            MH <- (A1 * N1/(M1 + N1) + A0 * N0/(M0 + N0)) /
-                (B1 * M1/(M1 + N1) + B0 * M0/(M0 + N0)) 
-            cfder.rr <- (A1/(A1 + C1)) / (B1/(B1 + D1))
-            nocfder.rr <- (A0/(A0 + C0)) / (B0/(B0 + D0))
-            RR0 <- crude.rr / SMR
-            RRc <- crude.rr / MH
+        SMRrr <- a / ((M1 * B1/N1) + (M0 * B0/N0))
+        MHrr <- (A1 * N1/(M1 + N1) + A0 * N0/(M0 + N0)) /
+            (B1 * M1/(M1 + N1) + B0 * M0/(M0 + N0)) 
+        cfder.rr <- (A1/(A1 + C1)) / (B1/(B1 + D1))
+        nocfder.rr <- (A0/(A0 + C0)) / (B0/(B0 + D0))
+        RRadj.smr <- crude.rr / SMRrr
+        RRadj.mh <- crude.rr / MHrr
 
-            if (is.null(rownames(tab)))
-                rownames(tab) <- paste("Row", 1:2)
-            if (is.null(colnames(tab)))
-                colnames(tab) <- paste("Col", 1:2)
-            if (is.null(rownames(tab))){
-                rownames(tab.cfder) <- paste("Row", 1:2)
-            } else {
-                rownames(tab.cfder) <- row.names(tab)
-            }
-            if (is.null(colnames(tab))){ 
-                colnames(tab.cfder) <- paste("Col", 1:2)
-            } else {
-                colnames(tab.cfder) <- colnames(tab)
-            }
-            if (is.null(rownames(tab))){
-                rownames(tab.nocfder) <- paste("Row", 1:2)
-            } else {
-                rownames(tab.nocfder) <- row.names(tab)
-            }
-            if (is.null(colnames(tab))){ 
-                colnames(tab.nocfder) <- paste("Col", 1:2)
-            } else {
-                colnames(tab.nocfder) <- colnames(tab)
-            }
-            if (print) 
-                cat("Observed Data:",
-                    "\n--------------", 
-                    "\nOutcome   :", colnames(tab)[1],
-                    "\nComparing :", rownames(tab)[1], "vs.", rownames(tab)[2], "\n\n")
-            if (print) 
-                print(round(tab, dec))
-            if (print)
-                cat("\nData, Counfounder +:",
-                    "\n--------------------\n\n")
-            if (print)
-                print(round(tab.cfder, dec))
-            if (print)
-                cat("\nData, Counfounder -:",
-                    "\n--------------------\n\n")
-            if (print)
-                print(round(tab.nocfder, dec))
-            if (print) 
-                cat("\n")
-            rmat <- rbind(c(crude.rr, lci.crude.rr, uci.crude.rr))
-            rownames(rmat) <- c("        Crude Relative Risk:")
-            colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
-                                               sep = ""), "interval")
-            if (print)
-                cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
-                    "\n-----------------------------------------------------------------------------------\n\n")
-            if (print) 
-                print(round(rmat, dec))
-            if (print)
-                cat("Relative Risk, Confounder +:", round(cfder.rr, dec), "\nRelative Risk, Confounder -:", round(nocfder.rr, dec), "\n")
-            if (print)
-                cat("\nExposure-Outcome Relationship Adjusted for Confounder:",
-                    "\n------------------------------------------------------\n\n")
-            if (print)
-                cat("Standardized Morbidity Ratio", "    SMRrr:", round(SMR, dec), "   RR0:", round(RR0, dec),
-                    "\nMantel-Haenszel", "                 MHrr:", round(MH, dec), "   RRc:", round(RRc, dec), "\n")
-            if (print)
-                cat("\nBias Parameters:",
-                    "\n----------------\n\n")
-            if (print)
-                cat("p(Confounder+|Exposure+):", prev.cfder[1],
-                    "\np(Confounder+|Exposure-):", prev.cfder[2],
-                    "\n  RR(Confounder-Outcome):", cfder.dis.RR, "\n")
-            invisible(list(obs.data = tab, cfder.data = tab.cfder,
-                           nocfder.data = tab.nocfder,
-                           obs.measures = rmat, SMR = SMR, MH = MH, cfder.rr = cfder.rr,
-                           nocfder.rr = nocfder.rr, RR0 = RR0, RRc = RRc,
-                           bias.params = c(prev.cfder, cfder.dis.RR)))
-            }
-        if(length(prev.cfder) == 4){
-            M2 <- (a + c) * prev.cfder[1]
-            M1 <- (a + c) * prev.cfder[3]
-            N2 <- (b + d) * prev.cfder[2]
-            N1 <- (b + d) * prev.cfder[4]
-            M0 <- a + c - M2 - M1
-            N0 <- b + d - N2 - N1
-            A0 <- (M0 * a) / (cfder.dis.RR[1] * M1 + cfder.dis.RR[2] * M2 + M0)
-            B0 <- (N0 * b) / (cfder.dis.RR[1] * N1 + cfder.dis.RR[2] * N2 + N0)
-            A1 <- cfder.dis.RR[1] * A0 * M1 / M0
-            B1 <- cfder.dis.RR[1] * B0 * N1 / N0
-            A2 <- cfder.dis.RR[2] * A0 * M2 / M0
-            B2 <- cfder.dis.RR[2] * B0 * N2 / N0
-            C2 <- M2 - A2
-            D2 <- N2 - B2
-            C1 <- M1 - A1
-            D1 <- N1 - B1
-            C0 <- M0 - A0
-            D0 <- N0 - B0
-            tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
-            tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
-            tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
-
-            SMR <- a / ((M2 * B2/N2) + (M1 * B1/N1)) + (M0 * B0/N0)
-            MH <- (A2 * N2 / (M2 + N2) + A1 * N1 / (M1 + N1) + A0 * N0 / (M0 + N0)) /
-                (B2 * M2 / (M2 + N2) + B1 * M1 / (M1 + N1) + B0 * M0 / (M0 + N0))
-            cfder2.rr <- (A2/(A2 + C2)) / (B2/(B2 + D2))
-            cfder1.rr <- (A1/(A1 + C1)) / (B1/(B1 + D1))
-            nocfder.rr <- (A0/(A0 + C0)) / (B0/(B0 + D0))
-            RR0 <- crude.rr / SMR
-            RRc <- crude.rr / MH
-
-            if (is.null(rownames(tab)))
-                rownames(tab) <- paste("Row", 1:2)
-            if (is.null(colnames(tab)))
-                colnames(tab) <- paste("Col", 1:2)
-            if (is.null(rownames(tab))){
-                rownames(tab.cfder2) <- paste("Row", 1:2)
-            } else {
-                rownames(tab.cfder2) <- row.names(tab)
-            }
-            if (is.null(colnames(tab))){ 
-                colnames(tab.cfder2) <- paste("Col", 1:2)
-            } else {
-                colnames(tab.cfder2) <- colnames(tab)
-            }
-            if (is.null(rownames(tab))){
-                rownames(tab.cfder1) <- paste("Row", 1:2)
-            } else {
-                rownames(tab.cfder1) <- row.names(tab)
-            }
-            if (is.null(colnames(tab))){ 
-                colnames(tab.cfder1) <- paste("Col", 1:2)
-            } else {
-                colnames(tab.cfder1) <- colnames(tab)
-            }
-            if (is.null(rownames(tab))){
-                rownames(tab.nocfder) <- paste("Row", 1:2)
-            } else {
-                rownames(tab.nocfder) <- row.names(tab)
-            }
-            if (is.null(colnames(tab))){ 
-                colnames(tab.nocfder) <- paste("Col", 1:2)
-            } else {
-                colnames(tab.nocfder) <- colnames(tab)
-            }
-            if (print) 
-                cat("Observed Data:",
-                    "\n--------------", 
-                    "\nOutcome   :", colnames(tab)[1],
-                    "\nComparing :", rownames(tab)[1], "vs.", rownames(tab)[2], "\n\n")
-            if (print) 
-                print(round(tab, dec))
-            if (print)
-                cat("\nData, Counfounder +, Highest Level:",
-                    "\n--------------------\n\n")
-            if (print)
-                print(round(tab.cfder2, dec))
-            if (print)
-                cat("\nData, Counfounder +, Medium Level:",
-                    "\n--------------------\n\n")
-            if (print)
-                print(round(tab.cfder1, dec))
-            if (print)
-                cat("\nData, Counfounder -:",
-                    "\n--------------------\n\n")
-            if (print)
-                print(round(tab.nocfder, dec))
-            if (print) 
-                cat("\n")
-            rmat <- rbind(c(crude.rr, lci.crude.rr, uci.crude.rr))
-            rownames(rmat) <- c("        Crude Relative Risk:")
-            colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
-                                               sep = ""), "interval")
-            if (print)
-                cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
-                    "\n-----------------------------------------------------------------------------------\n\n")
-            if (print) 
-                print(round(rmat, dec))
-            if (print)
-                cat("Relative Risk, Confounder +, Higher Level:", round(cfder.rr2, dec), "\nRelative Risk, Confounder +, Medium Level", round(cfder.rr1, dec), "\nRelative Risk, Confounder -:", round(nocfder.rr, dec), "\n")
-            if (print)
-                cat("\nExposure-Outcome Relationship Adjusted for Confounder:",
-                    "\n------------------------------------------------------\n\n")
-            if (print)
-                cat("Standardized Morbidity Ratio", "    SMRrr:", round(SMR, dec), "   RR0:", round(RR0, dec),
-                    "\nMantel-Haenszel", "                 MHrr:", round(MH, dec), "   RRc:", round(RRc, dec), "\n")
-            if (print)
-                cat("\nBias Parameters:",
-                    "\n----------------\n\n")
-            if (print)
-                cat("p(Confounder+HighestLevel|Exposure+):", prev.cfder[1],
-                    "\np(Confounder+HighestLevel|Exposure-):", prev.cfder[2],
-                    "\np(Confounder+MediumLevel|Exposure+)", prev.cfder[3],
-                    "\np(Confounder+MediumLevel|Exposure-)", prev.cfder[4],
-                    "\n  RR(ConfounderHighestLevel-Outcome):", cfder2.dis.RR,
-                    "\n  RR(ConfounderMediumLevel-Outcome):", cfder1.dis.RR,
-                    "\n")
-            invisible(list(obs.data = tab, cfder.data = tab.cfder,
-                           nocfder.data = tab.nocfder,
-                           obs.measures = rmat, SMR = SMR, MH = MH, cfder.rr = cfder.rr,
-                           nocfder.rr = nocfder.rr, RR0 = RR0, RRc = RRc,
-                           bias.params = c(prev.cfder, cfder.dis.RR)))            
+        if (is.null(rownames(tab)))
+            rownames(tab) <- paste("Row", 1:2)
+        if (is.null(colnames(tab)))
+            colnames(tab) <- paste("Col", 1:2)
+        if (is.null(rownames(tab))){
+            rownames(tab.cfder) <- paste("Row", 1:2)
+        } else {
+            rownames(tab.cfder) <- row.names(tab)
         }
+        if (is.null(colnames(tab))){
+            colnames(tab.cfder) <- paste("Col", 1:2)
+        } else {
+            colnames(tab.cfder) <- colnames(tab)
         }
-    if (implement == "noEM.OR"){
+        if (is.null(rownames(tab))){
+            rownames(tab.nocfder) <- paste("Row", 1:2)
+        } else {
+            rownames(tab.nocfder) <- row.names(tab)
+        }
+        if (is.null(colnames(tab))){ 
+            colnames(tab.nocfder) <- paste("Col", 1:2)
+        } else {
+            colnames(tab.nocfder) <- colnames(tab)
+        }
+        if (print)
+            cat("Observed Data:",
+                "\n--------------", 
+                "\nOutcome   :", colnames(tab)[1],
+                "\nComparing :", rownames(tab)[1], "vs.", rownames(tab)[2], "\n\n")
+        if (print) 
+            print(round(tab, dec))
+        if (print)
+            cat("\nData, Counfounder +:",
+                "\n--------------------\n\n")
+        if (print)
+            print(round(tab.cfder, dec))
+        if (print)
+            cat("\nData, Counfounder -:",
+                "\n--------------------\n\n")
+        if (print)
+            print(round(tab.nocfder, dec))
+        if (print) 
+            cat("\n")
+        rmat <- rbind(c(crude.rr, lci.crude.rr, uci.crude.rr))
+        rownames(rmat) <- c("        Crude Relative Risk:")
+        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
+                                               sep = ""), "interval")
+        if (print)
+            cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
+                "\n-----------------------------------------------------------------------------------\n\n")
+        if (print) 
+            print(round(rmat, dec))
+        if (print)
+            cat("Relative Risk, Confounder +:", round(cfder.rr, dec), "\nRelative Risk, Confounder -:", round(nocfder.rr, dec), "\n")
+        if (print)
+            cat("\nExposure-Outcome Relationship Adjusted for Confounder:",
+                "\n------------------------------------------------------\n\n")
+        if (print)
+            cat("Standardized Morbidity Ratio", "    SMRrr:", round(SMRrr, dec), "   RR adjusted using SMR estimate:", round(RRadj.smr, dec),
+                "\nMantel-Haenszel", "                  MHrr:", round(MHrr, dec), "    RR adjusted using MH estimate:", round(RRadj.mh, dec), "\n")
+        if (print)
+            cat("\nBias Parameters:",
+                "\n----------------\n\n")
+        if (print)
+            cat("p(Confounder+|Exposure+):", prev.cfder[1],
+                "\np(Confounder+|Exposure-):", prev.cfder[2],
+                "\n  RR(Confounder-Outcome):", cfder.dis.RR, "\n")
+        invisible(list(obs.data = tab, cfder.data = tab.cfder,
+                       nocfder.data = tab.nocfder,
+                       obs.measures = rmat, SMR = SMRrr, MH = MHrr,
+                       cfder.rr = cfder.rr, nocfder.rr = nocfder.rr,
+                       RRadj.smr = RRadj.smr, RRadj.mh = RRadj.mh,
+                       bias.params = c(prev.cfder, cfder.dis.RR)))
+    }
+    if (implement == "OR"){
         crude.or <- (a/b) / (c/d)
         se.log.crude.or <- sqrt(1/a + 1/b + 1/c + 1/d)
         lci.crude.or <- exp(log(crude.or) - qnorm(1 - alpha/2) * se.log.crude.or)
@@ -286,13 +160,13 @@ confounders <- function(exposed, case, implement = c("noEM.RR", "noEM.OR", "noEM
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
 
-        SMR <- a / ((C1 * B1/D1) + (C0 * B0/D0))
-        MH <- (A1 * D1/(M1 + N1) + A0 * D0/(M0 + N0)) /
+        SMRor <- a / ((C1 * B1/D1) + (C0 * B0/D0))
+        MHor <- (A1 * D1/(M1 + N1) + A0 * D0/(M0 + N0)) /
             (B1 * C1/(M1 + N1) + B0 * C0/(M0 + N0)) 
         cfder.or <- (A1 / C1) / (B1 / D1)
         nocfder.or <- (A0 / C0) / (B0 / D0)
-        OR0 <- crude.or / SMR
-        ORc <- crude.or / MH
+        ORadj.smr <- crude.or / SMRor
+        ORadj.mh <- crude.or / MHor
 
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)
@@ -352,8 +226,8 @@ confounders <- function(exposed, case, implement = c("noEM.RR", "noEM.OR", "noEM
             cat("\nExposure-Outcome Relationship Adjusted for Confounder:",
                 "\n------------------------------------------------------\n\n")
         if (print)
-            cat("Standardized Morbidity Ratio", "    SMRor:", round(SMR, dec), "   OR0:", round(OR0, dec),
-                "\nMantel-Haenszel", "                  MHor:", round(MH, dec), "   ORc:", round(ORc, dec), "\n")
+            cat("Standardized Morbidity Ratio", "    SMRor:", round(SMRor, dec), "   OR adjusted using SMR estimate:", round(ORadj.smr, dec),
+                "\nMantel-Haenszel", "                  MHor:", round(MHor, dec), "    OR adjusted using MH estimate:", round(ORadj.mh, dec), "\n")
         if (print)
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
@@ -363,11 +237,12 @@ confounders <- function(exposed, case, implement = c("noEM.RR", "noEM.OR", "noEM
                 "\n  OR(Confounder-Outcome):", cfder.dis.OR, "\n")
         invisible(list(obs.data = tab, cfder.data = tab.cfder,
                        nocfder.data = tab.nocfder,
-                       obs.measures = rmat, SMR = SMR, MH = MH, cfder.or = cfder.or,
-                       nocfder.or = nocfder.or, OR0 = OR0, RRc = ORc,
+                       obs.measures = rmat, SMR = SMRor, MH = MHor,
+                       cfder.or = cfder.or, nocfder.or = nocfder.or,
+                       ORadj.smr = ORadj.smr, RRadj.mh = ORadj.mh,
                        bias.params = c(prev.cfder, cfder.dis.OR)))
     }
-    if (implement == "noEM.RD"){
+    if (implement == "RD"){
         crude.rd <- (a / (a + c)) - (b / (b + d))
         se.log.crude.rd <- sqrt((a * c) / (a + c)^3 + (b * d) / (b + d)^3)
         lci.crude.rd <- crude.rd - qnorm(1 - alpha/2) * se.log.crude.rd
@@ -388,11 +263,13 @@ confounders <- function(exposed, case, implement = c("noEM.RR", "noEM.OR", "noEM
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
 
-        MH <- (((A1 * N1 - B1 * M1) / (M1 + N1)) + ((A0 * N0 - B0 * M0) / (M0 + N0))) /
-            ((M1 * N1 / (M1 + N1)) + (M0 * N0 / (M0 + N0)))
+        MHrd <- (((A1 * N1 - B1 * M1) / (M1 + N1)) +
+                     ((A0 * N0 - B0 * M0) / (M0 + N0))) /
+                         ((M1 * N1 / (M1 + N1)) +
+                              (M0 * N0 / (M0 + N0)))
         cfder.rd <- (A1 / M1) - (B1 / N1)
         nocfder.rd <- (A0 / M0) - (B0 / N0)
-        RDc <- crude.rd - MH
+        RDadj.mh <- crude.rd - MHrd
 
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)
@@ -452,7 +329,7 @@ confounders <- function(exposed, case, implement = c("noEM.RR", "noEM.OR", "noEM
             cat("\nExposure-Outcome Relationship Adjusted for Confounder:",
                 "\n------------------------------------------------------\n\n")
         if (print)
-            cat("\nMantel-Haenszel", "                  MHrd:", round(MH, dec), "   RDc:", round(RDc, dec), "\n")
+            cat("\nMantel-Haenszel", "                  MHrd:", round(MHrd, dec), "   RD adjusted using MH estimate:", round(RDadj.mh, dec), "\n")
         if (print)
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
@@ -462,8 +339,9 @@ confounders <- function(exposed, case, implement = c("noEM.RR", "noEM.OR", "noEM
                 "\n  RD(Confounder-Outcome):", cfder.dis.RD, "\n")
         invisible(list(obs.data = tab, cfder.data = tab.cfder,
                        nocfder.data = tab.nocfder,
-                       obs.measures = rmat, MH = MH, cfder.rd = cfder.rd,
-                       nocfder.rd = nocfder.rd, RDc = RDc,
+                       obs.measures = rmat, MH = MHrd,
+                       cfder.rd = cfder.rd, nocfder.rd = nocfder.rd,
+                       RDadj.mh = RDadj.mh,
                        bias.params = c(prev.cfder, cfder.dis.RD)))
     }    
 }

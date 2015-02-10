@@ -1,11 +1,13 @@
 \name{confounders}
 \alias{confounders}
 \title{Simple sensitivity analysis to correct for unknown or unmeasured
-  confounding (RR)}
+  confounding without effect modification}
 \description{Simple sensitivity analysis to correct for unknown or unmeasured
-  confounding (RR).}
+  confounding without effect modification. Implementation for ratio
+  measures (relative risk -- RR, or odds ratio -- OR) and difference
+  measures (risk difference -- RD).}
 \usage{
-confounders(exposed, case, implement = c("noEM.RR", "noEM.OR", "noEM.RD"),
+confounders(exposed, case, implement = c("RR", "OR", "RD"),
 prev.cfder = NULL, cfder.dis.RR = NULL, cfder.dis.OR = NULL,
 cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
 }
@@ -13,8 +15,8 @@ cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
   \item{case}{Outcome variable.}
   \item{implement}{Choice of implementation, with no effect measure
-    modification (noEM) for ratio measures (relative risk -- RR; odds
-    ratio -- OR) or differenmce measures (risk difference -- RD).}
+    modification for ratio measures (relative risk -- RR; odds
+    ratio -- OR) or difference measures (risk difference -- RD).}
   \item{prev.cfder}{Vector defining the prevalence of the confounder. This
     vector has 2 elements between 0 and 1, in the following order:
     \begin{enumerate}
@@ -42,11 +44,16 @@ cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
   \item{nocfder.rr}{Relative risk, Confounder -.}
   \item{nocfder.or}{Odds ratio, Confounder -.}
   \item{nocfder.rd}{Risk difference, Confounder -.}
-  \item{RR0}{Relative risk corrected by SMR.}
-  \item{OR0}{Odds ratio corrected by SMR.}
-  \item{RRc}{Relative risk corrected by MH.}
-  \item{ORc}{Odds ratio corrected by MH.}
-  \item{RDc}{Risk difference corrected by MH.}
+  \item{RRadj.smr}{Relative risk adjusted for the effect of the
+    confounder using SMR estimate.}
+  \item{ORadj.smr}{Odds ratio adjusted for the effect of the confounder using
+    SMR estimate.}
+  \item{RRadj.mh}{Relative risk adjusted for the effect of the
+    confounder using MH estimate.}
+  \item{ORadj.mh}{Odds ratio adjusted for the effect of the confounder
+    using MH estimate.}
+  \item{RDadj.mh}{Risk difference adjusted for the effect of the
+    confounder using MH estimate.}
   \item{bias.params}{Input bias parameters.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
@@ -62,19 +69,19 @@ cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
 confounders(matrix(c(105,85,527,93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                    nrow=2, byrow=TRUE),
-            implement = "noEM.RR",
+            implement = "RR",
             prev.cfder = c(.8, .05),
             cfder.dis.RR = .63)
 confounders(matrix(c(105,85,527,93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                    nrow=2, byrow=TRUE),
-            implement = "noEM.OR",
+            implement = "OR",
             prev.cfder = c(.8, .05),
             cfder.dis.OR = .63)
 confounders(matrix(c(105,85,527,93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                    nrow=2, byrow=TRUE),
-            implement = "noEM.RD",
+            implement = "RD",
             prev.cfder = c(.8, .05),
-            cfder.dis.OR = -.37)
+            cfder.dis.RD = -.37)
 }
