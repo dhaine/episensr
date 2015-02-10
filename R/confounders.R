@@ -5,27 +5,27 @@ confounders <- function(exposed, case, implement = c("RR", "OR", "RD"), prev.cfd
     if(length(prev.cfder) != 2)
         stop('The argument prev.cfder should be made of the following components: (1) Prevalence of the confounder among the exposed, and (2) Prevalence of the confounder among the unexposed.')
     if(!all(prev.cfder >= 0 & prev.cfder <=1))
-        stop('Prevalences should be between 0 and 1')
+        stop('Prevalences should be between 0 and 1.')
 
     if(is.null(cfder.dis.RR))
         cfder.dis.RR <- 1
     else cfder.dis.RR <- cfder.dis.RR
-    if(length(cfder.dis.RR) > 2)
-        stop('Confounder-disease relative risk: more than 2 arguments')
+    if(length(cfder.dis.RR) > 1)
+        stop('Confounder-disease relative risk: more than 1 argument.')
     if(cfder.dis.RR <= 0)
         stop('Confounder-disease relative risk should be greater than 0.')
     if(is.null(cfder.dis.OR))
         cfder.dis.OR <- 1
     else cfder.dis.OR <- cfder.dis.OR
-    if(length(cfder.dis.OR) > 2)
-        stop('Confounder-disease odds ratio: more than 2 arguments')
+    if(length(cfder.dis.OR) > 1)
+        stop('Confounder-disease odds ratio: more than 1 argument.')
     if(cfder.dis.OR <= 0)
         stop('Confounder-disease odds ratio should be greater than 0.')
     if(is.null(cfder.dis.RD))
         cfder.dis.RD <- 1
     else cfder.dis.RD <- cfder.dis.RD
-    if(length(cfder.dis.RD) > 2)
-        stop('Confounder-disease risk difference: more than 2 arguments')    
+    if(length(cfder.dis.RD) > 1)
+        stop('Confounder-disease risk difference: more than 1 argument.')    
     
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
