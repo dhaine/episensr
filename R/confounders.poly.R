@@ -122,7 +122,7 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         if (print)
             print(round(tab.cfder2, dec))
         if (print)
-            cat("\nData, Counfounder +, Medium Level:",
+            cat("\nData, Counfounder +, Mid-Level Level:",
                 "\n--------------------\n\n")
         if (print)
             print(round(tab.cfder1, dec))
@@ -175,42 +175,60 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         lci.crude.or <- exp(log(crude.or) - qnorm(1 - alpha/2) * se.log.crude.or)
         uci.crude.or <- exp(log(crude.or) + qnorm(1 - alpha/2) * se.log.crude.or)
 
-        C1 <- c * prev.cfder[1] 
-        D1 <- d * prev.cfder[2]
-        A1 <- (cfder.dis.OR * C1 * a) / (cfder.dis.OR * C1 + c - C1)
-        B1 <- (cfder.dis.OR * D1 * b) / (cfder.dis.OR * D1 + d - D1)
+        C2 <- c * prev.cfder[1]
+        C1 <- c * prev.cfder[3]
+        D2 <- d * prev.cfder[2]
+        D1 <- d * prev.cfder[4]
+        C0 <- c - C2 - C1
+        D0 <- d - D2 - D1
+        A0 <- (C0 * a) / (cfder.dis.OR[2] * C1 + cfder.dis.OR[1] * C2 + C0)
+        B0 <- (D0 * b) / (cfder.dis.OR[2] * D1 + cfder.dis.OR[1] * D2 + D0)
+        A1 <- cfder.dis.OR[2] * A0 * C1 / C0
+        B1 <- cfder.dis.OR[2] * B0 * D1 / D0
+        A2 <- cfder.dis.OR[1] * A0 * C2 / C0
+        B2 <- cfder.dis.OR[1] * B0 * D2 / D0
+        M2 <- A2 + C2
+        N2 <- B2 + C2
         M1 <- A1 + C1
         N1 <- B1 + D1
-        A0 <- a - A1
-        B0 <- b - B1
-        C0 <- c - C1
-        D0 <- d - D1
         M0 <- A0 + C0
         N0 <- B0 + C0
-        tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
+        tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
+        tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
 
-        SMR <- a / ((C1 * B1/D1) + (C0 * B0/D0))
-        MH <- (A1 * D1/(M1 + N1) + A0 * D0/(M0 + N0)) /
-            (B1 * C1/(M1 + N1) + B0 * C0/(M0 + N0)) 
-        cfder.or <- (A1 / C1) / (B1 / D1)
+        SMRor <- a / ((C2 * B2/D2) + (C1 * B1/D1) + (C0 * B0/D0))
+        MHor <- (A2 * D2 / N2 + A1 * D1 / N1 + A0 * D0 / N0) /
+            (B2 * C2 / N2 + B1 * C1 / N1 + B0 * C0 / N0)
+        cfder2.or <- (A2 / C2) / (B2 / D2)
+        cfder1.or <- (A1 / C1) / (B1 / D1)
         nocfder.or <- (A0 / C0) / (B0 / D0)
-        OR0 <- crude.or / SMR
-        ORc <- crude.or / MH
+        ORadj.smr <- crude.or / SMRor
+        ORadj.mh <- crude.or / MHor
 
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
         if (is.null(rownames(tab))){
-            rownames(tab.cfder) <- paste("Row", 1:2)
+            rownames(tab.cfder2) <- paste("Row", 1:2)
         } else {
-            rownames(tab.cfder) <- row.names(tab)
+            rownames(tab.cfder2) <- row.names(tab)
         }
         if (is.null(colnames(tab))){ 
-            colnames(tab.cfder) <- paste("Col", 1:2)
+            colnames(tab.cfder2) <- paste("Col", 1:2)
         } else {
-            colnames(tab.cfder) <- colnames(tab)
+            colnames(tab.cfder2) <- colnames(tab)
+        }
+        if (is.null(rownames(tab))){
+            rownames(tab.cfder1) <- paste("Row", 1:2)
+        } else {
+            rownames(tab.cfder1) <- row.names(tab)
+        }
+        if (is.null(colnames(tab))){ 
+            colnames(tab.cfder1) <- paste("Col", 1:2)
+        } else {
+            colnames(tab.cfder1) <- colnames(tab)
         }
         if (is.null(rownames(tab))){
             rownames(tab.nocfder) <- paste("Row", 1:2)
@@ -230,10 +248,15 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         if (print) 
             print(round(tab, dec))
         if (print)
-            cat("\nData, Counfounder +:",
+            cat("\nData, Counfounder +, Highest Level:",
                 "\n--------------------\n\n")
         if (print)
-            print(round(tab.cfder, dec))
+            print(round(tab.cfder2, dec))
+        if (print)
+            cat("\nData, Counfounder +, Mid-Level Level:",
+                "\n--------------------\n\n")
+        if (print)
+            print(round(tab.cfder1, dec))
         if (print)
             cat("\nData, Counfounder -:",
                 "\n--------------------\n\n")
@@ -242,7 +265,7 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         if (print) 
             cat("\n")
         rmat <- rbind(c(crude.or, lci.crude.or, uci.crude.or))
-        rownames(rmat) <- c("        Crude Odds Ratio:")
+        rownames(rmat) <- c("                       Crude Odds Ratio:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                            sep = ""), "interval")
         if (print)
@@ -251,24 +274,30 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         if (print) 
             print(round(rmat, dec))
         if (print)
-            cat("Odds Ratio, Confounder +:", round(cfder.or, dec), "\nOdds Ratio, Confounder -:", round(nocfder.or, dec), "\n")
+            cat("Odds Ratio, Confounder +, Highest Level:", round(cfder2.or, dec), "\n    Odds Ratio, Confounder +, Mid-Level:", round(cfder1.or, dec), "\n               Odds Ratio, Confounder -:", round(nocfder.or, dec), "\n")
         if (print)
             cat("\nExposure-Outcome Relationship Adjusted for Confounder:",
                 "\n------------------------------------------------------\n\n")
         if (print)
-            cat("Standardized Morbidity Ratio", "    SMRor:", round(SMR, dec), "   OR0:", round(OR0, dec),
-                "\nMantel-Haenszel", "                  MHor:", round(MH, dec), "   ORc:", round(ORc, dec), "\n")
+            cat("Standardized Morbidity Ratio", "    SMRor:", round(SMRor, dec), "   OR adjusted using SMR estimate:", round(ORadj.smr, dec),
+                "\nMantel-Haenszel", "                  MHor:", round(MHor, dec), "    OR adjusted using MH estimate:", round(ORadj.mh, dec), "\n")
         if (print)
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("p(Confounder+|Exposure+):", prev.cfder[1],
-                "\np(Confounder+|Exposure-):", prev.cfder[2],
-                "\n  OR(Confounder-Outcome):", cfder.dis.OR, "\n")
-        invisible(list(obs.data = tab, cfder.data = tab.cfder,
-                       nocfder.data = tab.nocfder,
-                       obs.measures = rmat, SMR = SMR, MH = MH, cfder.or = cfder.or,
-                       nocfder.or = nocfder.or, OR0 = OR0, RRc = ORc,
+            cat("p(Confounder+HighestLevel|Exposure+):", prev.cfder[1],
+                "\np(Confounder+HighestLevel|Exposure-):", prev.cfder[2],
+                "\n    p(Confounder+MidLevel|Exposure+):", prev.cfder[3],
+                "\n    p(Confounder+MidLevel|Exposure-):", prev.cfder[4],
+                "\n  OR(ConfounderHighestLevel-Outcome):", cfder.dis.OR[1],
+                "\n      OR(ConfounderMidLevel-Outcome):", cfder.dis.OR[2],
+                "\n")
+        invisible(list(obs.data = tab, cfder1.data = tab.cfder1,
+                       cfder2.data = tab.cfder2, nocfder.data = tab.nocfder,
+                       obs.measures = rmat, SMR = SMRor, MH = MHor,
+                       cfder1.or = cfder1.or, cfder2.or = cfder2.or, 
+                       nocfder.or = nocfder.or,
+                       ORadj.smr = ORadj.smr, ORadj.mh = ORadj.mh,
                        bias.params = c(prev.cfder, cfder.dis.OR)))
     }
     if (implement == "RD"){

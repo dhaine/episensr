@@ -33,9 +33,15 @@ cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
     \begin{enumerate}
   \item Relative risk of having the highest-level confounder in
   diseased, and
-  \item Relative risk of having the mid-level confounder in disased.
+  \item Relative risk of having the mid-level confounder in diseased.
   \end{enumerate}}
-  \item{cfder.dis.OR}{Confounder-disease odds ratio.}
+  \item{cfder.dis.OR}{Vector defining the confounder-disease odds ratio.
+    This vector has two elements in the following order:
+    \begin{enumerate}
+  \item Odds ratio of having the highest-level confounder in diseased,
+  and
+  \item Odds ratio of having the mid-level confounder in diseased.
+  \end{enumerate}}
   \item{cfder.dis.RD}{Confounder-disease risk difference.}
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}
@@ -51,7 +57,8 @@ cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
   \item{MH}{Mantel-Haenszel.}
   \item{cfder1.rr}{Relative risk, Mid-level Confounder +.}
   \item{cfder2.rr}{Relative risk, Highest-level confounder +.}
-  \item{cfder.or}{Odds ratio, Confounder +.}
+  \item{cfder1.or}{Odds ratio, Mid-level Confounder +.}
+  \item{cfder2.or}{Odds ratio, Highest-level Confounder +.}
   \item{cfder.rd}{Risk difference, Confounder +.}
   \item{nocfder.rr}{Relative risk, Confounder -.}
   \item{nocfder.or}{Odds ratio, Confounder -.}
@@ -78,18 +85,18 @@ cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
 # Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O. et al.
 # Increased risk of infection with human immunodeficiency virus type 1 among uncircumcised men presenting with genital ulcer disease in Kenya.
 # Clin Infect Dis 1996;23:449-53.
-confounders(matrix(c(105,85,527,93),
+confounders.poly(matrix(c(105,85,527,93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                    nrow=2, byrow=TRUE),
             implement = "RR",
             prev.cfder = c(.6, .05, .2, .2),
             cfder.dis.RR = c(.4, .8))
-confounders(matrix(c(105,85,527,93),
+confounders.poly(matrix(c(105,85,527,93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                    nrow=2, byrow=TRUE),
             implement = "OR",
-            prev.cfder = c(.8, .05),
-            cfder.dis.OR = .63)
+            prev.cfder = c(.6, .05, .2, .2),
+            cfder.dis.OR = c(.4, .8))
 confounders(matrix(c(105,85,527,93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                    nrow=2, byrow=TRUE),
