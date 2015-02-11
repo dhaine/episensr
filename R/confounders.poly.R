@@ -306,40 +306,61 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         lci.crude.rd <- crude.rd - qnorm(1 - alpha/2) * se.log.crude.rd
         uci.crude.rd <- crude.rd + qnorm(1 - alpha/2) * se.log.crude.rd
 
-        M1 <- (a + c) * prev.cfder[1]
-        N1 <- (b + d) * prev.cfder[2]
-        M0 <- (a + c) - M1
-        N0 <- (b + d) - N1
-        A1 <- (cfder.dis.RD * M1 * M0 + M1 * a) / (a + c)
-        B1 <- (cfder.dis.RD * N1 * N0 + N1 * b) / (b + d)
+        M2 <- (a + c) * prev.cfder[1]
+        M1 <- (a + c) * prev.cfder[3]
+        N2 <- (b + d) * prev.cfder[2]
+        N1 <- (b + d) * prev.cfder[4]
+        M0 <- a + c - M2 - M1
+        N0 <- b + d - N2 - N1
+        A0 <- M0 * (a - M2 * cfder.dis.RD[1] - M1 * cfder.dis.RD[2]) / (a + c)
+        B0 <- N0 * (b - N2 * cfder.dis.RD[1] - N1 * cfder.dis.RD[2]) / (b + d)
+        A1 <- M1 * cfder.dis.RD[2] + A0 * M1 / M0
+        B1 <- N1 * cfder.dis.RD[2] + B0 * N1 / N0
+        A2 <- M2 * cfder.dis.RD[1] + A0 * M2 / M0
+        B2 <- N2 * cfder.dis.RD[1] + B0 * N2 / N0
+        C2 <- M2 - A2
+        D2 <- N2 - B2
         C1 <- M1 - A1
         D1 <- N1 - B1
-        A0 <- a - A1
-        B0 <- b - B1
-        C0 <- c - C1
-        D0 <- d - D1
-        tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
+        C0 <- M0 - A0
+        D0 <- N0 - B0
+        tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
+        tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
 
-        MH <- (((A1 * N1 - B1 * M1) / (M1 + N1)) + ((A0 * N0 - B0 * M0) / (M0 + N0))) /
-            ((M1 * N1 / (M1 + N1)) + (M0 * N0 / (M0 + N0)))
-        cfder.rd <- (A1 / M1) - (B1 / N1)
+        MHrd <- (((A2 * N2 - B2 * M2) / (M2 + N2)) +
+                     ((A1 * N1 - B1 * M1) / (M1 + N1)) +
+                         (((A0 * N0 - B0 * M0) / (M0 + N0)))) /
+                             ((M2 * N2 / (M2 + N2)) + (M1 * N1 / (M1 + N1)) +
+                                  (M0 * N0 / (M0 + N0)))
+        cfder2.rd <- (A2 / M2) - (B2 / N2)
+        cfder1.rd <- (A1 / M1) - (B1 / N1)
         nocfder.rd <- (A0 / M0) - (B0 / N0)
-        RDc <- crude.rd - MH
+        RDadj.mh <- crude.rd - MHrd
 
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
         if (is.null(rownames(tab))){
-            rownames(tab.cfder) <- paste("Row", 1:2)
+            rownames(tab.cfder2) <- paste("Row", 1:2)
         } else {
-            rownames(tab.cfder) <- row.names(tab)
+            rownames(tab.cfder2) <- row.names(tab)
         }
         if (is.null(colnames(tab))){ 
-            colnames(tab.cfder) <- paste("Col", 1:2)
+            colnames(tab.cfder2) <- paste("Col", 1:2)
         } else {
-            colnames(tab.cfder) <- colnames(tab)
+            colnames(tab.cfder2) <- colnames(tab)
+        }
+        if (is.null(rownames(tab))){
+            rownames(tab.cfder1) <- paste("Row", 1:2)
+        } else {
+            rownames(tab.cfder1) <- row.names(tab)
+        }
+        if (is.null(colnames(tab))){ 
+            colnames(tab.cfder1) <- paste("Col", 1:2)
+        } else {
+            colnames(tab.cfder1) <- colnames(tab)
         }
         if (is.null(rownames(tab))){
             rownames(tab.nocfder) <- paste("Row", 1:2)
@@ -359,10 +380,15 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         if (print) 
             print(round(tab, dec))
         if (print)
-            cat("\nData, Counfounder +:",
+            cat("\nData, Counfounder +, Highest Level:",
                 "\n--------------------\n\n")
         if (print)
-            print(round(tab.cfder, dec))
+            print(round(tab.cfder2, dec))
+        if (print)
+            cat("\nData, Counfounder +, Mid-Level:",
+                "\n--------------------\n\n")
+        if (print)
+            print(round(tab.cfder1, dec))
         if (print)
             cat("\nData, Counfounder -:",
                 "\n--------------------\n\n")
@@ -371,7 +397,7 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         if (print) 
             cat("\n")
         rmat <- rbind(c(crude.rd, lci.crude.rd, uci.crude.rd))
-        rownames(rmat) <- c("        Crude Risk Difference:")
+        rownames(rmat) <- c("                       Crude Risk Difference:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                            sep = ""), "interval")
         if (print)
@@ -380,23 +406,28 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         if (print) 
             print(round(rmat, dec))
         if (print)
-            cat("Risk Difference, Confounder +:", round(cfder.rd, dec), "\nRisk Difference, Confounder -:", round(nocfder.rd, dec), "\n")
+            cat("Risk Difference, Confounder +, Highest Level:", round(cfder2.rd, dec), "\n    Risk Difference, Confounder +, Mid-Level:", round(cfder1.rd, dec),  "\n               Risk Difference, Confounder -:", round(nocfder.rd, dec), "\n")
         if (print)
             cat("\nExposure-Outcome Relationship Adjusted for Confounder:",
                 "\n------------------------------------------------------\n\n")
         if (print)
-            cat("\nMantel-Haenszel", "                  MHrd:", round(MH, dec), "   RDc:", round(RDc, dec), "\n")
+            cat("\nMantel-Haenszel", "               MHrd:", round(MHrd, dec), "   RD adjusted using MH estimate:", round(RDadj.mh, dec), "\n")
         if (print)
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("p(Confounder+|Exposure+):", prev.cfder[1],
-                "\np(Confounder+|Exposure-):", prev.cfder[2],
-                "\n  RD(Confounder-Outcome):", cfder.dis.RD, "\n")
-        invisible(list(obs.data = tab, cfder.data = tab.cfder,
-                       nocfder.data = tab.nocfder,
-                       obs.measures = rmat, MH = MH, cfder.rd = cfder.rd,
-                       nocfder.rd = nocfder.rd, RDc = RDc,
+            cat("p(Confounder+HighestLevel|Exposure+):", prev.cfder[1],
+                "\np(Confounder+HighestLevel|Exposure-):", prev.cfder[2],
+                "\n    p(Confounder+MidLevel|Exposure+):", prev.cfder[3],
+                "\n    p(Confounder+MidLevel|Exposure-):", prev.cfder[4],
+                "\n  RD(ConfounderHighestLevel-Outcome):", cfder.dis.RD[1],
+                "\n      RD(ConfounderMidLevel-Outcome):", cfder.dis.RD[2],
+                "\n")
+        invisible(list(obs.data = tab, cfder1.data = tab.cfder1,
+                       cfder2.data = tab.cfder2, nocfder.data = tab.nocfder,
+                       obs.measures = rmat, MH = MHrd,
+                       cfder1.rd = cfder1.rd, cfder2.rd = cfder2.rd,
+                       nocfder.rd = nocfder.rd, RDadj.mh = RDadj.mh,
                        bias.params = c(prev.cfder, cfder.dis.RD)))
     }    
 }

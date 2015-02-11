@@ -42,7 +42,13 @@ cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
   and
   \item Odds ratio of having the mid-level confounder in diseased.
   \end{enumerate}}
-  \item{cfder.dis.RD}{Confounder-disease risk difference.}
+  \item{cfder.dis.RD}{Vector defining the confounder-disease risk
+    difference. This vector has two elements in the following order:
+    \begin{enumerate}
+  \item Risk difference of having the highest-level confounder in
+  diseased, and
+  \item Risk difference of having the mid-level confounder in diseased.
+  \end{enumerate}}
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}
   \item{print}{Should the results be printed?}
@@ -59,7 +65,8 @@ cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
   \item{cfder2.rr}{Relative risk, Highest-level confounder +.}
   \item{cfder1.or}{Odds ratio, Mid-level Confounder +.}
   \item{cfder2.or}{Odds ratio, Highest-level Confounder +.}
-  \item{cfder.rd}{Risk difference, Confounder +.}
+  \item{cfder1.rd}{Risk difference, Mid-level Confounder +.}
+  \item{cfder2.rd}{Risk difference, Mid-level Confounder +.}
   \item{nocfder.rr}{Relative risk, Confounder -.}
   \item{nocfder.or}{Odds ratio, Confounder -.}
   \item{nocfder.rd}{Risk difference, Confounder -.}
@@ -97,10 +104,10 @@ confounders.poly(matrix(c(105,85,527,93),
             implement = "OR",
             prev.cfder = c(.6, .05, .2, .2),
             cfder.dis.OR = c(.4, .8))
-confounders(matrix(c(105,85,527,93),
+confounders.poly(matrix(c(105,85,527,93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                    nrow=2, byrow=TRUE),
             implement = "RD",
-            prev.cfder = c(.8, .05),
-            cfder.dis.RD = -.37)
+            prev.cfder = c(.6, .05, .2, .2),
+            cfder.dis.RD = c(-.4, -.2))
 }
