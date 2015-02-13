@@ -21,7 +21,7 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
     else cfder.dis.OR <- cfder.dis.OR
     if(length(cfder.dis.OR) > 2)
         stop('Confounder-disease odds ratio: more than 2 arguments.')
-    if(!all(cfder.dis.OR >= 0))
+    if(!all(cfder.dis.OR > 0))
         stop('Confounder-disease odds ratios should be greater than 0.')
     if(is.null(cfder.dis.RD))
         cfder.dis.RD <- c(1, 1)
