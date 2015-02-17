@@ -89,108 +89,78 @@ misclassification <- function(exposed, case, implement = c("exposure", "outcome"
                        corr.rr = corr.rr, corr.or = corr.or,
                        bias.params = bias))
     }
-    if (implement == "OR"){
-        crude.or <- (a/b) / (c/d)
-        se.log.crude.or <- sqrt(1/a + 1/b + 1/c + 1/d)
-        lci.crude.or <- exp(log(crude.or) - qnorm(1 - alpha/2) * se.log.crude.or)
-        uci.crude.or <- exp(log(crude.or) + qnorm(1 - alpha/2) * se.log.crude.or)
+    if (implement == "outcome"){
+        obs.rr <- (a/(a + c)) / (b/(b + d))
+        se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
+        lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha/2) * se.log.obs.rr)
+        uci.obs.rr <- exp(log(obs.rr) + qnorm(1 - alpha/2) * se.log.obs.rr)
+        
+        obs.or <- (a/b) / (c/d)
+        se.log.obs.or <- sqrt(1/a + 1/b + 1/c + 1/d)
+        lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
+        uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
-        C1 <- c * prev.cfder[1] 
-        D1 <- d * prev.cfder[2]
-        A1 <- (cfder.dis.OR * C1 * a) / (cfder.dis.OR * C1 + c - C1)
-        B1 <- (cfder.dis.OR * D1 * b) / (cfder.dis.OR * D1 + d - D1)
-        M1 <- A1 + C1
-        N1 <- B1 + D1
-        A0 <- a - A1
-        B0 <- b - B1
-        C0 <- c - C1
-        D0 <- d - D1
-        M0 <- A0 + C0
-        N0 <- B0 + C0
-        tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
-        tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
+        corr.a <- (a - (1 - bias[3]) * (a + c)) / (bias[1] - (1 - bias[3]))
+        corr.b <- (b - (1 - bias[4]) * (b + d)) / (bias[2] - (1 - bias[4]))
+        corr.c <- (a + c) - corr.a
+        corr.d <- (b + d) - corr.b
+        corr.tab <- matrix(c(corr.a, corr.b, corr.c, corr.d), nrow = 2, byrow = TRUE)
 
-        SMRor <- a / ((C1 * B1/D1) + (C0 * B0/D0))
-        MHor <- (A1 * D1/(M1 + N1) + A0 * D0/(M0 + N0)) /
-            (B1 * C1/(M1 + N1) + B0 * C0/(M0 + N0)) 
-        cfder.or <- (A1 / C1) / (B1 / D1)
-        nocfder.or <- (A0 / C0) / (B0 / D0)
-        ORadj.smr <- crude.or / SMRor
-        ORadj.mh <- crude.or / MHor
+        corr.rr <- (corr.a/(corr.a + corr.c)) / (corr.b/(corr.b + corr.d))
+        corr.or <- (corr.a/corr.b) / (corr.c/corr.d)
 
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
         if (is.null(rownames(tab))){
-            rownames(tab.cfder) <- paste("Row", 1:2)
+            rownames(corr.tab) <- paste("Row", 1:2)
         } else {
-            rownames(tab.cfder) <- row.names(tab)
+            rownames(corr.tab) <- row.names(tab)
         }
         if (is.null(colnames(tab))){ 
-            colnames(tab.cfder) <- paste("Col", 1:2)
+            colnames(corr.tab) <- paste("Col", 1:2)
         } else {
-            colnames(tab.cfder) <- colnames(tab)
-        }
-        if (is.null(rownames(tab))){
-            rownames(tab.nocfder) <- paste("Row", 1:2)
-        } else {
-            rownames(tab.nocfder) <- row.names(tab)
-        }
-        if (is.null(colnames(tab))){ 
-            colnames(tab.nocfder) <- paste("Col", 1:2)
-        } else {
-            colnames(tab.nocfder) <- colnames(tab)
+            colnames(corr.tab) <- colnames(tab)
         }
         if (print) 
             cat("Observed Data:",
                 "\n--------------", 
-                "\nOutcome   :", colnames(tab)[1],
-                "\nComparing :", rownames(tab)[1], "vs.", rownames(tab)[2], "\n\n")
+                "\nOutcome   :", rownames(tab)[1],
+                "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
         if (print) 
             print(round(tab, dec))
         if (print)
-            cat("\nData, Counfounder +:",
+            cat("\nCorrected Data:",
                 "\n--------------------\n\n")
         if (print)
-            print(round(tab.cfder, dec))
-        if (print)
-            cat("\nData, Counfounder -:",
-                "\n--------------------\n\n")
-        if (print)
-            print(round(tab.nocfder, dec))
+            print(round(corr.tab, dec))
         if (print) 
             cat("\n")
-        rmat <- rbind(c(crude.or, lci.crude.or, uci.crude.or))
-        rownames(rmat) <- c("        Crude Odds Ratio:")
+        rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr), c(obs.or, lci.obs.or, uci.obs.or))
+        rownames(rmat) <- c(" Observed Relative Risk:", "    Observed Odds Ratio:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                            sep = ""), "interval")
         if (print)
-            cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
+            cat("Observed Measures of Exposure-Outcome Relationship:",
                 "\n-----------------------------------------------------------------------------------\n\n")
         if (print) 
             print(round(rmat, dec))
         if (print)
-            cat("Odds Ratio, Confounder +:", round(cfder.or, dec), "\nOdds Ratio, Confounder -:", round(nocfder.or, dec), "\n")
-        if (print)
-            cat("\nExposure-Outcome Relationship Adjusted for Confounder:",
-                "\n------------------------------------------------------\n\n")
-        if (print)
-            cat("Standardized Morbidity Ratio", "    SMRor:", round(SMRor, dec), "   OR adjusted using SMR estimate:", round(ORadj.smr, dec),
-                "\nMantel-Haenszel", "                  MHor:", round(MHor, dec), "    OR adjusted using MH estimate:", round(ORadj.mh, dec), "\n")
+            cat("Corrected Relative Risk:", round(corr.rr, dec), "\n   Corrected Odds Ratio:", round(corr.or, dec), "\n")
         if (print)
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("p(Confounder+|Exposure+):", prev.cfder[1],
-                "\np(Confounder+|Exposure-):", prev.cfder[2],
-                "\n  OR(Confounder-Outcome):", cfder.dis.OR, "\n")
-        invisible(list(obs.data = tab, cfder.data = tab.cfder,
-                       nocfder.data = tab.nocfder,
-                       obs.measures = rmat, SMR = SMRor, MH = MHor,
-                       cfder.or = cfder.or, nocfder.or = nocfder.or,
-                       ORadj.smr = ORadj.smr, RRadj.mh = ORadj.mh,
-                       bias.params = c(prev.cfder, cfder.dis.OR)))
+            cat("Se(Exposure+):", bias[1],
+                "\nSe(Exposure-):", bias[2],
+                "\nSp(Exposure+):", bias[3],
+                "\nSp(Exposure-):", bias[4],
+                "\n")
+        invisible(list(obs.data = tab, corr.data = corr.tab,
+                       obs.measures = rmat, 
+                       corr.rr = corr.rr, corr.or = corr.or,
+                       bias.params = bias))
     }
     if (implement == "RD"){
         crude.rd <- (a / (a + c)) - (b / (b + d))
