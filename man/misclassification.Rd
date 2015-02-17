@@ -58,16 +58,10 @@ misclassification(matrix(c(215,1449,668,4296),
                    nrow=2, byrow=TRUE),
             implement = "exposure",
             bias = c(.78, .78, .99, .99))
-misclassification(matrix(c(105,85,527,93),
-                   dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+misclassification(matrix(c(4558,3428,46305,46085),
+                   dimnames = list(c("AMI death+", "AMI death-"),
+                       c("Male+", "Male-")),
                    nrow=2, byrow=TRUE),
-            implement = "OR",
-            prev.cfder = c(.8, .05),
-            cfder.dis.OR = .63)
-misclassification(matrix(c(105,85,527,93),
-                   dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
-                   nrow=2, byrow=TRUE),
-            implement = "RD",
-            prev.cfder = c(.8, .05),
-            cfder.dis.RD = -.37)
+            implement = "outcome",
+            bias = c(.53,.53,.99,.99))
 }
