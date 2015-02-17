@@ -13,19 +13,20 @@ bias = NULL, alpha = 0.05, dec = 4, print = TRUE)
     \begin{enumerate}
     \item Exposure: bias analysis of exposure misclassification; corrections using
   sensitivity and specificity: nondifferential and independent errors,
-  \item  Outcome: bias analysis of outcome misclassification.
+    \item Outcome: bias analysis of outcome misclassification.
   \end{enumerate}
 }
   \item{bias}{Vector defining the bias parameters. This vector has 4
     elements between 0 and 1, in the following order:
     \begin{enumerate}
-    \item Sensitivity of exposure classification among those with the
+    \item Sensitivity of exposure (or outcome) classification among those with the
     outcome, 
-    \item Sensitivity of exposure classification among those without the
+    \item Sensitivity of exposure (or outcome) classification among those without the
     outcome, 
-    \item Specificity of exposure classification among those with the
+    \item Specificity of exposure (or outcome) classification among those with the
     outcome,and 
-    \item Specificity of exposure classification among those without the outcome.
+    \item Specificity of exposure (or outcome) classification among
+    those without the outcome.
     \end{enumerate}
   }
   \item{alpha}{Significance level.}
