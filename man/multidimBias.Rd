@@ -3,8 +3,8 @@
 \title{Multidimensional sensitivity analysis for different sources of
   bias}
 \description{Multidimensional sensitivity analysis for different sources of bias}
-\usage{multidimBias(exposed, case,
-se = NULL, sp = NULL, alpha = 0.05, dec = 4,
+\usage{multidimBias(exposed, case, misclassification = c("excposure",
+"outcome"), se = NULL, sp = NULL, alpha = 0.05, dec = 4,
 print = TRUE)
 }
 \arguments{
@@ -33,6 +33,13 @@ print = TRUE)
 multidimBias(matrix(c(45, 94, 257, 945),
                     dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                     nrow = 2, byrow = TRUE),
-          se = c(1, 1, 1, .9, .9, .9, .8, .8, .8),
-          sp = c(1, .9, .8, 1, .9, .8, 1, .9, .8))
+             misclassification = "exposure",
+             se = c(1, 1, 1, .9, .9, .9, .8, .8, .8),
+             sp = c(1, .9, .8, 1, .9, .8, 1, .9, .8))
+multidimBias(matrix(c(45, 94, 257, 945),
+                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+                    nrow = 2, byrow = TRUE),
+             misclassification = "outcome",
+             se = c(1, 1, 1, .9, .9, .9, .8, .8, .8),
+             sp = c(1, .9, .8, 1, .9, .8, 1, .9, .8))
 }
