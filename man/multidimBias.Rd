@@ -3,15 +3,22 @@
 \title{Multidimensional sensitivity analysis for different sources of
   bias}
 \description{Multidimensional sensitivity analysis for different sources of bias}
-\usage{multidimBias(exposed, case, misclassification = c("excposure",
-"outcome"), se = NULL, sp = NULL, alpha = 0.05, dec = 4,
+\usage{multidimBias(exposed, case, misclassification = c("exposure",
+"outcome", "confounder"), se = NULL, sp = NULL, bias = NULL, alpha = 0.05, dec = 4,
 print = TRUE)
 }
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
   \item{case}{Outcome variable.}
   \item{se}{Vector of sensitivities.}
-  \item{sp}{Vector of specificities.}  
+  \item{sp}{Vector of specificities.}
+  \item{bias}{List of bias parameters. The list is made of 3 vectors of
+    the same length:
+    \begin{enumerate}
+    \item Prevalence of Confounder in Exposure+ population,
+    \item Prevalence of Confounder in Exposure- population, and
+    \item Relative risk between Confounder and Outcome.
+  \end{enumerate}}
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}
   \item{print}{Should the results be printed?}
@@ -23,6 +30,7 @@ print = TRUE)
   \item{rr.mat}{Multidimensional corrected relative risk data.}
   \item{or.mat}{Multidimensional corrected odds ratio data.}  
   \item{sesp}{Sensitivities and specificities.}
+  \item{bias}{Bias parameters in case of unmeasured confounding.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
     Quantitative Bias Analysis to Epidemiologic Data}, pp.109--116, Springer. 
@@ -42,4 +50,10 @@ multidimBias(matrix(c(45, 94, 257, 945),
              misclassification = "outcome",
              se = c(1, 1, 1, .9, .9, .9, .8, .8, .8),
              sp = c(1, .9, .8, 1, .9, .8, 1, .9, .8))
+multidimBias(matrix(c(105, 85, 527, 93),
+                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+                    nrow = 2, byrow = TRUE),
+             misclassification = "confounder",
+             bias = list(seq(.72, .92, by = .02),
+                 seq(.01, .11, by = .01), seq(.13, 1.13, by = .1)))
 }

@@ -1,11 +1,14 @@
 multidimBias <- function(exposed, case,
-                         misclassification = c("exposure", "outcome"),
+                         misclassification = c("exposure", "outcome", "confounder"),
                          se = NULL, sp = NULL,
+                         bias = NULL, 
                          alpha = 0.05, dec = 4, print = TRUE) {
     if(is.null(se))
-        stop('Please provide argument for sensitivity.')
+        se <- c(1, 1)
+    else se <- se
     if(is.null(sp))
-        stop('Please provide argument for specificity.')
+        sp <- c(1, 1)
+    else sp <- sp
     if(!is.vector(se))
         stop('Sensitivity should be a vector.')
     if(!is.vector(sp))
@@ -15,7 +18,18 @@ multidimBias <- function(exposed, case,
     if(!all(sp >= 0 & sp <=1))
         stop('Specificity should be between 0 and 1.')
     if(length(se) != length(sp))
-        stop('Sensitivity and specificity should be of the same length.')
+        stop('Sensitivity and specificity should be vectors of the same length.')
+    if(is.null(bias))
+        bias <- list(1, 1, 1)
+    else bias <- bias
+    if(!is.list(bias))
+        stop('Bias parameters for the impact of unmeasured confounder should be provided as a list made of 3 elements.')
+    if(length(bias) != 3)
+        stop('The argument bias should be made of the following vectors: (1) Prevalence of Confounder in Exposure+ population, (2) Prevalence of Confounder in Exposure- population, and (3) Relative risk between Confounder and Outcome.')
+    if(!all((bias[[1]] >= 0 & bias[[1]] <= 1) | (bias[[2]] >= 0 & bias[[2]] <= 1)))
+        stop('Prevalences should be between 0 and 1.')
+    if(length(bias[[1]]) != length(bias[[2]]) | length(bias[[2]]) != length(bias[[3]]))
+        stop('Prevalences of Confounder in Exposure+ and Exposure- populations and Relative risk between Confounder and Outcome should be of the same length.')
     
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
@@ -38,7 +52,8 @@ multidimBias <- function(exposed, case,
 
     rr.mat <- matrix(NA, nrow = length(se), ncol = length(se))
     or.mat <- matrix(NA, nrow = length(se), ncol = length(se))
-
+    rrc.mat <- matrix(NA, nrow = length(bias[[1]]), ncol = length(bias[[1]]))
+    
     misclassification <- match.arg(misclassification)
     if (misclassification == "exposure") {
         for (i in 1:nrow(rr.mat)) {
@@ -194,5 +209,62 @@ multidimBias <- function(exposed, case,
                        rr.mat = rr.mat,
                        or.mat = or.mat,
                        sesp = sesp))
+    }
+
+    if (misclassification == "confounder") {
+        for (i in 1:nrow(rrc.mat)) {
+            for (j in 1:nrow(rrc.mat)) {
+                rrc.mat[i, j] <- rr / ((bias[[1]][i] * (bias[[3]][j] - 1) + 1) /
+                                          (bias[[2]][i] * (bias[[3]][j] - 1) + 1))
+            }
+        }
+
+        if (is.null(rownames(tab)))
+            rownames(tab) <- paste("Row", 1:2)
+        if (is.null(colnames(tab)))
+            colnames(tab) <- paste("Col", 1:2)
+        rownames(rrc.mat) <- paste("p(Conf+|Exp+):", bias[[1]],
+                                   "p(Conf+|Exp-):", bias[[2]])
+        colnames(rrc.mat) <- paste("RR(Conf-Outc):", bias[[3]])
+        if (print) 
+            cat("Multidimensional Unmeasured Confounding\n",
+                "Observed Data:", "\n---------------------------------------------------", 
+                "\nOutcome   :", rownames(tab)[1],
+                "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
+        if (print) 
+            print(round(tab, dec))
+        if (print) 
+            cat("\n")
+        rmat <- rbind(c(rr, lci.rr, uci.rr), c(or, lci.or, uci.or))
+        rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
+        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
+                                           sep = ""), "interval")
+        if (print) 
+            print(round(rmat, dec))
+        if (print)
+            cat("\nMultidimensional Relative Risk Exposure-Data Relationship Adjusted for Confounder:",
+                "\n----------------------------------------------",
+#                "\n           RR(Confounder-Outcome) -->",
+#                "\nOutcome - |",
+#                "\n          V
+                "\n")
+        if (print)
+            print(rrc.mat)
+        if (print)
+            cat("\n")
+        bias.param <- matrix(unlist(bias),
+                             dimnames = list(c("p(Confounder+|Exposure+):",
+                                  "p(Confounder+|Exposure-):",
+                                  "RR(Confounder-Outcome)")),
+                             nrow = 3, byrow = TRUE)
+        if (print)
+            print(bias.param)
+        bias <- setNames(bias, c("p(Confounder+|Exposure+):",
+                                  "p(Confounder+|Exposure-):",
+                                  "RR(Confounder-Outcome)"))
+        invisible(list(obs.data = tab, 
+                       obs.measures = rmat,
+                       rr.mat = rrc.mat,
+                       bias = bias))
     }
 }
