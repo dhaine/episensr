@@ -4,8 +4,8 @@
   bias}
 \description{Multidimensional sensitivity analysis for different sources of bias}
 \usage{multidimBias(exposed, case, misclassification = c("exposure",
-"outcome", "confounder"), se = NULL, sp = NULL, bias = NULL, alpha = 0.05, dec = 4,
-print = TRUE)
+"outcome", "confounder", "selection"), se = NULL, sp = NULL, bias =
+NULL, OR.sel alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
@@ -18,7 +18,8 @@ print = TRUE)
     \item Prevalence of Confounder in Exposure+ population,
     \item Prevalence of Confounder in Exposure- population, and
     \item Relative risk between Confounder and Outcome.
-  \end{enumerate}}
+    \end{enumerate}}
+  \item{OR.sel}{Selection odds ratios.}
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}
   \item{print}{Should the results be printed?}
@@ -28,7 +29,7 @@ print = TRUE)
   \item{obs.measures}{A table of odds ratios and relative risk with
     confidence intervals.}
   \item{rr.mat}{Multidimensional corrected relative risk data.}
-  \item{or.mat}{Multidimensional corrected odds ratio data.}  
+  \item{or.mat}{Multidimensional corrected odds ratio data.}
   \item{sesp}{Sensitivities and specificities.}
   \item{bias}{Bias parameters in case of unmeasured confounding.}
 }
@@ -56,4 +57,10 @@ multidimBias(matrix(c(105, 85, 527, 93),
              misclassification = "confounder",
              bias = list(seq(.72, .92, by = .02),
                  seq(.01, .11, by = .01), seq(.13, 1.13, by = .1)))
+multidimBias(matrix(c(136, 107, 297, 165),
+                    dimnames = list(c("Uveal Melanoma+", "Uveal Melanoma-"),
+                                    c("Mobile Use+", "Mobile Use -")),
+                    nrow = 2, byrow = TRUE),
+             misclassification = "selection",
+             OR.sel = seq(1.5, 6.5, by = .5))
 }
