@@ -3,17 +3,17 @@
 \title{Simple sensitivity analysis for misclassification}
 \description{Simple sensitivity analysis for misclassification.}
 \usage{
-misclassification(exposed, case, implement = c("exposure", "outcome", "confounder"),
-bias = NULL, alpha = 0.05, dec = 4, print = TRUE)
+misclassification(exposed, case, misclassification = c("exposure",
+"outcome", "confounder"), bias = NULL, alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
   \item{case}{Outcome variable.}
-  \item{implement}{Choice of implementation:
+  \item{misclassification}{Choice of misclassification:
     \begin{enumerate}
-    \item Exposure: bias analysis of exposure misclassification; corrections using
+    \item Exposure: bias analysis for exposure misclassification; corrections using
   sensitivity and specificity: nondifferential and independent errors,
-    \item Outcome: bias analysis of outcome misclassification.
+    \item Outcome: bias analysis for outcome misclassification.
   \end{enumerate}
 }
   \item{bias}{Vector defining the bias parameters. This vector has 4
