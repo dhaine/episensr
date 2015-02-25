@@ -2,6 +2,7 @@ Package: episensr
 Type: Package
 Title: Basic sensitivity analysis of epidemiological results
 Version: 0.1
+Imports: trapezoid
 Date: 2015-02-06
 Author: "Denis Haine <denis.haine@gmail.com> [aut, cre]"
 Maintainer: "Denis Haine <denis.haine@gmail.com> [aut, cre]"
