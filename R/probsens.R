@@ -15,25 +15,26 @@ probsens <- function(exposed, case,
                      dec = 4,
                      print = TRUE){
     if(is.null(seca.parms) | is.null(spca.parms))
-        stop('At least one Se and one Sp should be provided through outcome parameters')
+        stop('At least one Se and one Sp should be provided through outcome parameters.')
     if(!is.list(seca.parms))
-        stop('Sensitivity of exposure classification among those with the outcome should be a list')
+        stop('Sensitivity of exposure classification among those with the outcome should be a list.')
     else seca.parms <- seca.parms
     if(!is.null(seexp.parms) & !is.list(seexp.parms))
-        stop('Sensitivity of exposure classification among those without the outcome should be a list')
+        stop('Sensitivity of exposure classification among those without the outcome should be a list.')
     else seexp.parms <- seexp.parms
     if(!is.list(spca.parms))
-        stop('Specificity of exposure classification among those with the outcome should be a list')
+        stop('Specificity of exposure classification among those with the outcome should be a list.')
     else spca.parms <- spca.parms
     if(!is.null(spexp.parms) & !is.list(spexp.parms))
-        stop('Specificity of exposure classification among those without the outcome should be a list')
+        stop('Specificity of exposure classification among those without the outcome should be a list.')
     else spexp.parms <- spexp.parms
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
                                 is.null(corr.se) | is.null(corr.sp)))
-        stop('For non-differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations')
-    if(corr.se == 0 | corr.se == 1 | corr.sp == 0 | corr.sp == 1)
-        stop('Correlations should be >0 and <1')
-    
+        stop('For non-differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations.')
+    if(!is.null(corr.se) && (corr.se == 0 | corr.se == 1))
+        stop('Correlations should be > 0 and < 1.')
+    if(!is.null(corr.sp) && (corr.sp == 0 | corr.sp == 1))
+        stop('Correlations should be > 0 and < 1.')
     
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
