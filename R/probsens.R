@@ -13,7 +13,8 @@ probsens <- function(exposed, case,
                                            "logitnormal", "loglogistic"),
                                        parms = NULL),
                      spexp.parms = NULL,
-                     type = c("nondiff", "diff"),
+                     corr.se = NULL,
+                     corr.sp = NULL,
                      alpha = 0.05,
                      dec = 4,
                      print = TRUE){
@@ -52,7 +53,7 @@ probsens <- function(exposed, case,
     seexp <- c(reps, seexp.parms[[2]])
     spca <- c(reps, spca.parms[[2]])
     spexp <- c(reps, spexp.parms[[2]])
-    
+
     implement <- match.arg(implement)
     if (implement == "exposure") {
         obs.rr <- (a/(a + c)) / (b/(b + d))
@@ -65,126 +66,99 @@ probsens <- function(exposed, case,
         lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
         uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
-        if (seca.parms[[1]] == "uniform") {
-            draws[, 1] <- do.call(runif, as.list(seca))
+        if (is.null(seexp.parms) & !is.null(spca.parms) & is.null(spexp.parms) &
+            is.null(corr.se) & is.null(corr.sp)) {
+            if (seca.parms[[1]] == "uniform") {
+                draws[, 1] <- do.call(runif, as.list(seca))
             }
-        if (seca.parms[[1]] == "triangular") {
-            draws[, 1] <- do.call(triangle::rtriangle, as.list(seca))
+            if (seca.parms[[1]] == "triangular") {
+                draws[, 1] <- do.call(triangle::rtriangle, as.list(seca))
             }
-        if (seca.parms[[1]] == "trapezoidal") {
-            draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(seca))
+            if (seca.parms[[1]] == "trapezoidal") {
+                draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(seca))
             }
-        if (seca.parms[[1]] == "normal") {
-            draws[, 1] <- do.call(rnorm, as.list(seca))
-            }
-        if (seca.parms[[1]] == "beta") {
-            draws[, 1] <- do.call(rbeta, as.list(seca))
-            }
-        if (seca.parms[[1]] == "lognormal") {
-            draws[, 1] <- do.call(rlnorm, as.list(seca))
-            }
-        if (seca.parms[[1]] == "logistic") {
-            draws[, 1] <- do.call(rlogis, as.list(seca))
-            }
-        if (seca.parms[[1]] == "logitnormal") {
-            draws[, 1] <- do.call(logitnorm::rlogitnorm, as.list(seca))
-            }
-        if (seca.parms[[1]] == "loglogistic") {
-            draws[, 1] <- do.call(actuar::rllogis, as.list(seca))
-            }
-
-        if(is.null(seexp.parms)) {
             draws[, 2] <- draws[, 1]
-        } else {
-        if (seexp.parms[[1]] == "uniform") {
-            draws[, 2] <- do.call(runif, as.list(seexp))
+            if (spca.parms[[1]] == "uniform") {
+                draws[, 3] <- do.call(runif, as.list(spca))
             }
-        if (seexp.parms[[1]] == "triangular") {
-            draws[, 2] <- do.call(triangle::rtriangle, as.list(seexp))
+            if (spca.parms[[1]] == "triangular") {
+                draws[, 3] <- do.call(triangle::rtriangle, as.list(spca))
             }
-        if (seexp.parms[[1]] == "trapezoidal") {
-            draws[, 2] <- do.call(trapezoid::rtrapezoid, as.list(seexp))
+            if (spca.parms[[1]] == "trapezoidal") {
+                draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(spca))
             }
-        if (seexp.parms[[1]] == "normal") {
-            draws[, 2] <- do.call(rnorm, as.list(seexp))
-            }
-        if (seexp.parms[[1]] == "beta") {
-            draws[, 2] <- do.call(rbeta, as.list(seexp))
-            }
-        if (seexp.parms[[1]] == "lognormal") {
-            draws[, 2] <- do.call(rlnorm, as.list(seexp))
-            }
-        if (seexp.parms[[1]] == "logistic") {
-            draws[, 2] <- do.call(rlogis, as.list(seexp))
-            }
-        if (seexp.parms[[1]] == "logitnormal") {
-            draws[, 2] <- do.call(logitnorm::rlogitnorm, as.list(seexp))
-            }
-        if (seexp.parms[[1]] == "loglogistic") {
-            draws[, 2] <- do.call(actuar::rllogis, as.list(seexp))
-            }
-        }
-
-        if (spca.parms[[1]] == "uniform") {
-            draws[, 3] <- do.call(runif, as.list(spca))
-            }
-        if (spca.parms[[1]] == "triangular") {
-            draws[, 3] <- do.call(triangle::rtriangle, as.list(spca))
-            }
-        if (spca.parms[[1]] == "trapezoidal") {
-            draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(spca))
-            }
-        if (spca.parms[[1]] == "normal") {
-            draws[, 3] <- do.call(rnorm, as.list(spca))
-            }
-        if (spca.parms[[1]] == "beta") {
-            draws[, 3] <- do.call(rbeta, as.list(spca))
-            }
-        if (spca.parms[[1]] == "lognormal") {
-            draws[, 3] <- do.call(rlnorm, as.list(spca))
-            }
-        if (spca.parms[[1]] == "logistic") {
-            draws[, 3] <- do.call(rlogis, as.list(spca))
-            }
-        if (spca.parms[[1]] == "logitnormal") {
-            draws[, 3] <- do.call(logitnorm::rlogitnorm, as.list(spca))
-            }
-        if (spca.parms[[1]] == "loglogistic") {
-            draws[, 3] <- do.call(actuar::rllogis, as.list(spca))
-            }
-
-        if (is.null(spexp.parms)) {
             draws[, 4] <- draws[, 3]
         } else {
-        if (spexp.parms[[1]] == "uniform") {
-            draws[, 4] <- do.call(runif, as.list(spexp))
+            corr.draws <- matrix(NA, nrow = reps, ncol = 10)
+            corr.draws[, 1:6] <- apply(corr.draws[, 1:6],
+                                       2,
+                                       function(x) x = runif(reps))
+            corr.draws[, 1:6] <- apply(corr.draws[, 1:6],
+                                       2,
+                                       function(x) log(x / (1 - x)))
+            corr.draws[, 7] <- exp((sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 2]) / (1 + (sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 2])))
+            corr.draws[, 8] <- exp((sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 3]) / (1 + (sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 3])))
+            corr.draws[, 9] <- exp((sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 5]) / (1 + (sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 5])))
+            corr.draws[, 10] <- exp((sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 6]) / (1 + (sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 6])))
+
+            if (seca.parms[[1]] == "uniform") {
+                draws[, 1] <- seca.parms[[2]][2] -
+                    (seca.parms[[2]][2] - seca.parms[[2]][1]) * corr.draws[, 7]
             }
-        if (spexp.parms[[1]] == "triangular") {
-            draws[, 4] <- do.call(triangle::rtriangle, as.list(spexp))
+            if (seca.parms[[1]] == "triangular" | seca.parms[[1]] == "trapezoidal") {
+                draws[, 1] <- (corr.draws[, 1] *
+                                   (seca.parms[[2]][4] + seca.parms[[2]][3] - seca.parms[[2]][1] - seca.parms[[2]][2]) + (seca.parms[[2]][1] + seca.parms[[2]][2])) / 2
+                draws[, 1] <- ifelse(draws[, 1] < seca.parms[[2]][2],
+                                     seca.parms[[2]][1] + sqrt((seca.parms[[2]][2] - seca.parms[[2]][1]) * (2 * draws[, 1] - seca.parms[[2]][1] - seca.parms[[2]][2])),
+                                     draws[, 1])
+                draws[, 1] <- ifelse(draws[, 1] > seca.parms[[2]][3],
+                                     seca.parms[[2]][4] - sqrt(2 * (seca.parms[[2]][4] - seca.parms[[2]][3]) * (draws[, 1] - seca.parms[[2]][3])),
+                                     draws[, 1])
             }
-        if (spexp.parms[[1]] == "trapezoidal") {
-            draws[, 4] <- do.call(trapezoid::rtrapezoid, as.list(spexp))
+            if (seexp.parms[[1]] == "uniform") {
+                draws[, 2] <- seexp.parms[[2]][2] -
+                    (seexp.parms[[2]][2] - seexp.parms[[2]][1]) * corr.draws[, 7]
             }
-        if (spexp.parms[[1]] == "normal") {
-            draws[, 4] <- do.call(rnorm, as.list(spexp))
+            if (seexp.parms[[1]] == "triangular" | seexp.parms[[1]] == "trapezoidal") {
+                draws[, 2] <- (corr.draws[, 1] *
+                                   (seexp.parms[[2]][4] + seexp.parms[[2]][3] - seexp.parms[[2]][1] - seexp.parms[[2]][2]) + (seexp.parms[[2]][1] + seexp.parms[[2]][2])) / 2
+                draws[, 2] <- ifelse(draws[, 2] < seexp.parms[[2]][2],
+                                     seexp.parms[[2]][1] + sqrt((seexp.parms[[2]][2] - seexp.parms[[2]][1]) * (2 * draws[, 2] - seexp.parms[[2]][1] - seexp.parms[[2]][2])),
+                                     draws[, 2])
+                draws[, 2] <- ifelse(draws[, 2] > seexp.parms[[2]][3],
+                                     seexp.parms[[2]][4] - sqrt(2 * (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * (draws[, 2] - seexp.parms[[2]][3])),
+                                     draws[, 2])
             }
-        if (spexp.parms[[1]] == "beta") {
-            draws[, 4] <- do.call(rbeta, as.list(spexp))
+            if (spca.parms[[1]] == "uniform") {
+                draws[, 3] <- spca.parms[[2]][2] -
+                    (spca.parms[[2]][2] - spca.parms[[2]][1]) * corr.draws[, 7]
             }
-        if (spexp.parms[[1]] == "lognormal") {
-            draws[, 4] <- do.call(rlnorm, as.list(spexp))
+            if (spca.parms[[1]] == "triangular" | spca.parms[[1]] == "trapezoidal") {
+                draws[, 3] <- (corr.draws[, 1] *
+                                   (spca.parms[[2]][4] + spca.parms[[2]][3] - spca.parms[[2]][1] - spca.parms[[2]][2]) + (spca.parms[[2]][1] + spca.parms[[2]][2])) / 2
+                draws[, 3] <- ifelse(draws[, 3] < spca.parms[[2]][2],
+                                     spca.parms[[2]][1] + sqrt((spca.parms[[2]][2] - spca.parms[[2]][1]) * (2 * draws[, 3] - spca.parms[[2]][1] - spca.parms[[2]][2])),
+                                     draws[, 3])
+                draws[, 3] <- ifelse(draws[, 3] > spca.parms[[2]][3],
+                                     spca.parms[[2]][4] - sqrt(2 * (spca.parms[[2]][4] - spca.parms[[2]][3]) * (draws[, 3] - spca.parms[[2]][3])),
+                                     draws[, 3])
             }
-        if (spexp.parms[[1]] == "logistic") {
-            draws[, 4] <- do.call(rlogis, as.list(spexp))
+            if (spexp.parms[[1]] == "uniform") {
+                draws[, 4] <- spexp.parms[[2]][2] -
+                    (spexp.parms[[2]][2] - spexp.parms[[2]][1]) * corr.draws[, 7]
             }
-        if (spexp.parms[[1]] == "logitnormal") {
-            draws[, 4] <- do.call(logitnorm::rlogitnorm, as.list(spexp))
-            }
-        if (spexp.parms[[1]] == "loglogistic") {
-            draws[, 4] <- do.call(actuar::rllogis, as.list(spexp))
+            if (spexp.parms[[1]] == "triangular" | spexp.parms[[1]] == "trapezoidal") {
+                draws[, 4] <- (corr.draws[, 1] *
+                                   (spexp.parms[[2]][4] + spexp.parms[[2]][3] - spexp.parms[[2]][1] - spexp.parms[[2]][2]) + (spexp.parms[[2]][1] + spexp.parms[[2]][2])) / 2
+                draws[, 4] <- ifelse(draws[, 4] < spexp.parms[[2]][2],
+                                     spexp.parms[[2]][1] + sqrt((spexp.parms[[2]][2] - spexp.parms[[2]][1]) * (2 * draws[, 4] - spexp.parms[[2]][1] - spexp.parms[[2]][2])),
+                                     draws[, 4])
+                draws[, 4] <- ifelse(draws[, 4] > spexp.parms[[2]][3],
+                                     spexp.parms[[2]][4] - sqrt(2 * (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * (draws[, 4] - spexp.parms[[2]][3])),
+                                     draws[, 4])
             }
         }
-
+            
         draws[, 5] <- (a - (1 - draws[, 3]) * (a + b)) /
             (draws[, 1] - (1 - draws[, 3]))
         draws[, 7] <- (c - (1 - draws[, 4]) * (c + d)) /
@@ -221,7 +195,7 @@ probsens <- function(exposed, case,
         if (print)
             cat("Observed Data:",
                 "\n--------------", 
-                "\nOutcome   :", rownames(tab)[1],
+                "nOutcome   :", rownames(tab)[1],
                 "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
         if (print) 
             print(round(tab, dec))
