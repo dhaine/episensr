@@ -2,15 +2,11 @@ probsens <- function(exposed, case,
                      implement = c("exposure", "outcome"),
                      reps = 1000,
                      seca.parms = list(dist = c("uniform", "triangular",
-                                           "trapezoidal", "normal",
-                                           "beta", "lognormal", "logistic",
-                                           "logitnormal", "loglogistic"),
+                                           "trapezoidal"),
                                        parms = NULL),
                      seexp.parms = NULL,
                      spca.parms = list(dist = c("uniform", "triangular",
-                                           "trapezoidal", "normal",
-                                           "beta", "lognormal", "logistic",
-                                           "logitnormal", "loglogistic"),
+                                           "trapezoidal"),
                                        parms = NULL),
                      spexp.parms = NULL,
                      corr.se = NULL,
@@ -18,26 +14,26 @@ probsens <- function(exposed, case,
                      alpha = 0.05,
                      dec = 4,
                      print = TRUE){
-#    if(is.null(bias))
-#        bias <- c(1, 1, 1, 1)
-#    else bias <- bias
-#    if(length(bias) != 4)
-#        stop('The argument bias should be made of the following components: (1) Sensitivity of exposure classification among those with the outcome, (2) Sensitivity of exposure classification among those without the outcome, (3) Specificity of exposure classification among those with the outcome, and (4) Specificity of exposure classification among those without the outcome.')
-#    if(!all(bias >= 0 & bias <=1))
-#        stop('Bias parameters should be between 0 and 1.')
-
-#    if(!is.list(seca.parms))
-#        stop('Sensitivity of exposure classification among those with the outcome should be a list')
-#    else seca.parms <- seca.parms
-#    if(!is.list(seexp.parms))
-#        stop('Sensitivity of exposure classification among those without the outcome should be a list')
-#    else seexp.parms <- seexp.parms
-#    if(!is.list(spca.parms))
-#        stop('Specificity of exposure classification among those with the outcome should be a list')
-#    else spca.parms <- spca.parms
-#    if(!is.list(spexp.parms))
-#        stop('Specificity of exposure classification among those without the outcome should be a list')
-#    else spexp.parms <- spexp.parms
+    if(is.null(seca.parms) | is.null(spca.parms))
+        stop('At least one Se and one Sp should be provided through outcome parameters')
+    if(!is.list(seca.parms))
+        stop('Sensitivity of exposure classification among those with the outcome should be a list')
+    else seca.parms <- seca.parms
+    if(!is.null(seexp.parms) & !is.list(seexp.parms))
+        stop('Sensitivity of exposure classification among those without the outcome should be a list')
+    else seexp.parms <- seexp.parms
+    if(!is.list(spca.parms))
+        stop('Specificity of exposure classification among those with the outcome should be a list')
+    else spca.parms <- spca.parms
+    if(!is.null(spexp.parms) & !is.list(spexp.parms))
+        stop('Specificity of exposure classification among those without the outcome should be a list')
+    else spexp.parms <- spexp.parms
+    if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
+                                is.null(corr.se) | is.null(corr.sp)))
+        stop('For non-differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations')
+    if(corr.se == 0 | corr.se == 1 | corr.sp == 0 | corr.sp == 1)
+        stop('Correlations should be >0 and <1')
+    
     
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
