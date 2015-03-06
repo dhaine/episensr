@@ -44,7 +44,8 @@ probsens <- function(exposed, case,
     c <- tab[2, 1]
     d <- tab[2, 2]
 
-    draws <- matrix(NA, nrow = reps, ncol = 10)
+    draws <- matrix(NA, nrow = reps, ncol = 13)
+    corr.draws <- matrix(NA, nrow = reps, ncol = 10)
 
     seca <- c(reps, seca.parms[[2]])
     seexp <- c(reps, seexp.parms[[2]])
@@ -86,24 +87,27 @@ probsens <- function(exposed, case,
             }
             draws[, 4] <- draws[, 3]
         } else {
-            corr.draws <- matrix(NA, nrow = reps, ncol = 10)
             corr.draws[, 1:6] <- apply(corr.draws[, 1:6],
                                        2,
                                        function(x) x = runif(reps))
             corr.draws[, 1:6] <- apply(corr.draws[, 1:6],
                                        2,
                                        function(x) log(x / (1 - x)))
-            corr.draws[, 7] <- exp((sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 2]) / (1 + (sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 2])))
-            corr.draws[, 8] <- exp((sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 3]) / (1 + (sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 3])))
-            corr.draws[, 9] <- exp((sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 5]) / (1 + (sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 5])))
-            corr.draws[, 10] <- exp((sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 6]) / (1 + (sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 6])))
+            corr.draws[, 7] <- exp(sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 2]) /
+                (1 + (exp(sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 2])))
+            corr.draws[, 8] <- exp(sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 3]) /
+                (1 + (exp(sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 3])))
+            corr.draws[, 9] <- exp(sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 5]) /
+                (1 + (exp(sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 5])))
+            corr.draws[, 10] <- exp(sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 6]) /
+                (1 + (exp(sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 6])))
 
             if (seca.parms[[1]] == "uniform") {
                 draws[, 1] <- seca.parms[[2]][2] -
                     (seca.parms[[2]][2] - seca.parms[[2]][1]) * corr.draws[, 7]
             }
             if (seca.parms[[1]] == "triangular" | seca.parms[[1]] == "trapezoidal") {
-                draws[, 1] <- (corr.draws[, 1] *
+                draws[, 1] <- (corr.draws[, 7] *
                                    (seca.parms[[2]][4] + seca.parms[[2]][3] - seca.parms[[2]][1] - seca.parms[[2]][2]) + (seca.parms[[2]][1] + seca.parms[[2]][2])) / 2
                 draws[, 1] <- ifelse(draws[, 1] < seca.parms[[2]][2],
                                      seca.parms[[2]][1] + sqrt((seca.parms[[2]][2] - seca.parms[[2]][1]) * (2 * draws[, 1] - seca.parms[[2]][1] - seca.parms[[2]][2])),
@@ -114,10 +118,10 @@ probsens <- function(exposed, case,
             }
             if (seexp.parms[[1]] == "uniform") {
                 draws[, 2] <- seexp.parms[[2]][2] -
-                    (seexp.parms[[2]][2] - seexp.parms[[2]][1]) * corr.draws[, 7]
+                    (seexp.parms[[2]][2] - seexp.parms[[2]][1]) * corr.draws[, 8]
             }
             if (seexp.parms[[1]] == "triangular" | seexp.parms[[1]] == "trapezoidal") {
-                draws[, 2] <- (corr.draws[, 1] *
+                draws[, 2] <- (corr.draws[, 8] *
                                    (seexp.parms[[2]][4] + seexp.parms[[2]][3] - seexp.parms[[2]][1] - seexp.parms[[2]][2]) + (seexp.parms[[2]][1] + seexp.parms[[2]][2])) / 2
                 draws[, 2] <- ifelse(draws[, 2] < seexp.parms[[2]][2],
                                      seexp.parms[[2]][1] + sqrt((seexp.parms[[2]][2] - seexp.parms[[2]][1]) * (2 * draws[, 2] - seexp.parms[[2]][1] - seexp.parms[[2]][2])),
@@ -128,10 +132,10 @@ probsens <- function(exposed, case,
             }
             if (spca.parms[[1]] == "uniform") {
                 draws[, 3] <- spca.parms[[2]][2] -
-                    (spca.parms[[2]][2] - spca.parms[[2]][1]) * corr.draws[, 7]
+                    (spca.parms[[2]][2] - spca.parms[[2]][1]) * corr.draws[, 9]
             }
             if (spca.parms[[1]] == "triangular" | spca.parms[[1]] == "trapezoidal") {
-                draws[, 3] <- (corr.draws[, 1] *
+                draws[, 3] <- (corr.draws[, 9] *
                                    (spca.parms[[2]][4] + spca.parms[[2]][3] - spca.parms[[2]][1] - spca.parms[[2]][2]) + (spca.parms[[2]][1] + spca.parms[[2]][2])) / 2
                 draws[, 3] <- ifelse(draws[, 3] < spca.parms[[2]][2],
                                      spca.parms[[2]][1] + sqrt((spca.parms[[2]][2] - spca.parms[[2]][1]) * (2 * draws[, 3] - spca.parms[[2]][1] - spca.parms[[2]][2])),
@@ -142,10 +146,10 @@ probsens <- function(exposed, case,
             }
             if (spexp.parms[[1]] == "uniform") {
                 draws[, 4] <- spexp.parms[[2]][2] -
-                    (spexp.parms[[2]][2] - spexp.parms[[2]][1]) * corr.draws[, 7]
+                    (spexp.parms[[2]][2] - spexp.parms[[2]][1]) * corr.draws[, 10]
             }
             if (spexp.parms[[1]] == "triangular" | spexp.parms[[1]] == "trapezoidal") {
-                draws[, 4] <- (corr.draws[, 1] *
+                draws[, 4] <- (corr.draws[, 10] *
                                    (spexp.parms[[2]][4] + spexp.parms[[2]][3] - spexp.parms[[2]][1] - spexp.parms[[2]][2]) + (spexp.parms[[2]][1] + spexp.parms[[2]][2])) / 2
                 draws[, 4] <- ifelse(draws[, 4] < spexp.parms[[2]][2],
                                      spexp.parms[[2]][1] + sqrt((spexp.parms[[2]][2] - spexp.parms[[2]][1]) * (2 * draws[, 4] - spexp.parms[[2]][1] - spexp.parms[[2]][2])),
@@ -155,7 +159,7 @@ probsens <- function(exposed, case,
                                      draws[, 4])
             }
         }
-            
+
         draws[, 5] <- (a - (1 - draws[, 3]) * (a + b)) /
             (draws[, 1] - (1 - draws[, 3]))
         draws[, 7] <- (c - (1 - draws[, 4]) * (c + d)) /
@@ -167,16 +171,32 @@ probsens <- function(exposed, case,
             (draws[, 6]/(draws[, 6] + draws[, 8]))
         draws[, 10] <- (draws[, 5]/draws[, 6]) / (draws[, 7]/draws[, 8])
 
-        draws[, 9] <- ifelse(draws[, 5] < 0 |
-                               draws[, 6] < 0 |
-                                 draws[, 7] < 0 |
-                                   draws[, 8] < 0 |
-                                     draws[, 9] < 0, NA, draws[, 9])
-        draws[, 10] <- ifelse(draws[, 5] < 0 |
-                               draws[, 6] < 0 |
-                                 draws[, 7] < 0 |
-                                   draws[, 8] < 0 |
-                                       draws[, 10] < 0, NA, draws[, 10])
+        draws[, 9] <- ifelse(draws[, 5] < 1 |
+                               draws[, 6] < 1 |
+                                 draws[, 7] < 1 |
+                                   draws[, 8] < 1, NA, draws[, 9])
+        draws[, 10] <- ifelse(draws[, 5] < 1 |
+                               draws[, 6] < 1 |
+                                 draws[, 7] < 1 |
+                                   draws[, 8] < 1, NA, draws[, 10])
+        draws[, 9] <- ifelse(draws[, 2] < (c / (c + d)) |
+                             draws[, 4] < (d / (c + d)) |
+                             draws[, 1] < (a / (a + b)) |
+                             draws[, 3] < (b / (a + b)), NA, draws[, 9])
+        draws[, 10] <- ifelse(draws[, 2] < (c / (c + d)) |
+                              draws[, 4] < (d / (c + d)) |
+                              draws[, 1] < (a / (a + b)) |
+                              draws[, 3] < (b / (a + b)), NA, draws[, 10])
+
+        draws[, 11] <- runif(reps)
+        draws[, 12] <- exp(log(draws[, 9]) -
+                               qnorm(draws[, 11]) *
+                                         ((log(uci.obs.rr) - log(lci.obs.rr)) /
+                                              (qnorm(.975) * 2)))
+        draws[, 13] <- exp(log(draws[, 10]) -
+                               qnorm(draws[, 11]) *
+                                         ((log(uci.obs.or) - log(lci.obs.or)) /
+                                              (qnorm(.975) * 2)))
 
         corr.rr <- c(median(draws[, 9], na.rm = TRUE),
                      quantile(draws[, 9], probs = .025, na.rm = TRUE),
@@ -184,7 +204,13 @@ probsens <- function(exposed, case,
         corr.or <- c(median(draws[, 10], na.rm = TRUE),
                      quantile(draws[, 10], probs = .025, na.rm = TRUE),
                      quantile(draws[, 10], probs = .975, na.rm = TRUE))
-        
+        tot.rr <- c(median(draws[, 12], na.rm = TRUE),
+                     quantile(draws[, 12], probs = .025, na.rm = TRUE),
+                     quantile(draws[, 12], probs = .975, na.rm = TRUE))
+        tot.or <- c(median(draws[, 13], na.rm = TRUE),
+                     quantile(draws[, 13], probs = .025, na.rm = TRUE),
+                     quantile(draws[, 13], probs = .975, na.rm = TRUE))        
+
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
@@ -210,8 +236,8 @@ probsens <- function(exposed, case,
             print(round(rmat, dec))
         if (print)
             cat("\n")
-        rmatc <- rbind(corr.rr, corr.or)
-        rownames(rmatc) <- c(" Corrected Relative Risk:", "    Corrected Odds Ratio:")
+        rmatc <- rbind(corr.rr, corr.or, tot.rr, tot.or)
+        rownames(rmatc) <- c("Relative Risk -- systematic error:", "Odds Ratio -- systematic error:", "Relative Risk -- systematic and random error:", "Odds Ratio -- systematic and random error")
         colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
         if (print)
             print(round(rmatc, dec))
