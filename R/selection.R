@@ -10,7 +10,7 @@ selection <- function(exposed,
     if(!is.vector(selprob))
         stop('The argument selprob should be a vector of length 4')
     if(length(selprob) != 4)
-        stop('The argument selprob should be made of 4 components: (1) Selection probability among cases exposed, (2) Selection probability among cases unexposed, (3) Selection probability among noncases exposed, and (4) Selection probability among noncases unexposed')
+        stop('The argument selprob should be made of 4 components in the following order: (1) Selection probability among cases exposed, (2) Selection probability among cases unexposed, (3) Selection probability among noncases exposed, and (4) Selection probability among noncases unexposed')
     if(!all(selprob >= 0 & selprob <=1))
         stop('Selection probabilities should be between 0 and 1')
     if(inherits(exposed, c("table", "matrix")))
