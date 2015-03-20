@@ -1,5 +1,9 @@
-selectionBias <-
-function(exposed, case, selprob = NULL, alpha = 0.05, dec = 4, print = TRUE) {
+selection <- function(exposed,
+                      case,
+                      selprob = NULL,
+                      alpha = 0.05,
+                      dec = 4,
+                      print = TRUE) {
     if(is.null(selprob))
         selprob <- c(1, 1, 1, 1)
     else selprob <- selprob
