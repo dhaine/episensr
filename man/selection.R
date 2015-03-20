@@ -1,5 +1,5 @@
-\name{selectionBias}
-\alias{selectionBias}
+\name{selection}
+\alias{selection}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Simple sensitivity analysis to correct for selection bias using
   estimates of the selection proportions
@@ -10,7 +10,7 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-selectionBias(exposed, case, selprob = NULL, alpha = 0.05, dec = 4,
+selection(exposed, case, selprob = NULL, alpha = 0.05, dec = 4,
 print = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -68,7 +68,7 @@ print = TRUE)
 # Stang A., Schmidt-Pokrzywniak A., Lehnert M., Parkin D.M., Ferlay J., Bornfeld N. et al.
 # Population-based incidence estimates of uveal melanoma in Germany. Supplementing cancer registry data by case-control data.
 # Eur J Cancer Prev 2006;15:165-70.
-selectionBias(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE), selprob = c(.94, .85, .64, .25))
+selection(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE), selprob = c(.94, .85, .64, .25))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
