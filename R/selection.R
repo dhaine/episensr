@@ -47,25 +47,25 @@ selection <- function(exposed,
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
     if (is.null(rownames(tab))){
-        rownames(taB0) <- paste("Row", 1:2)
+        rownames(tab.corr) <- paste("Row", 1:2)
         } else {
-        rownames(taB0) <- row.names(tab)
+        rownames(tab.corr) <- row.names(tab)
     }
     if (is.null(colnames(tab))){ 
-        colnames(taB0) <- paste("Col", 1:2)
+        colnames(tab.corr) <- paste("Col", 1:2)
         } else {
-        colnames(taB0) <- colnames(tab)
+        colnames(tab.corr) <- colnames(tab)
     }
     if (print) 
         cat("Observed Data:", "\n---------------------------------------------------", 
-            "\nOutcome   :", colnames(tab)[1],
-            "\nComparing :", rownames(tab)[1], "vs.", rownames(tab)[2], "\n\n")
+            "\nOutcome   :", rownames(tab)[1],
+            "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
     if (print) 
         print(round(tab, dec))
     if (print)
         cat("\nData Corrected for Selected Proportions:", "\n---------------------------------------------------\n\n")
     if (print)
-        print(round(taB0, dec))
+        print(round(tab.corr, dec))
     if (print) 
         cat("\n")
     rmat <- rbind(c(rr, lci.rr, uci.rr), c(or, lci.or, uci.or))
