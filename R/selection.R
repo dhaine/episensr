@@ -22,36 +22,39 @@ selection <- function(exposed,
     b <- tab[1, 2]
     c <- tab[2, 1]
     d <- tab[2, 2]
+
     rr <- (a/(a + c)) / (b/(b + d))
     se.log.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
     lci.rr <- exp(log(rr) - qnorm(1 - alpha/2) * se.log.rr)
     uci.rr <- exp(log(rr) + qnorm(1 - alpha/2) * se.log.rr)
+
     or <- (a/b) / (c/d)
     se.log.or <- sqrt(1/a + 1/b + 1/c + 1/d)
     lci.or <- exp(log(or) - qnorm(1 - alpha/2) * se.log.or)
     uci.or <- exp(log(or) + qnorm(1 - alpha/2) * se.log.or)
 
-    a.corr <- tab[1, 1] / selprob[1]
-    b.corr <- tab[1, 2] / selprob[2]
-    c.corr <- tab[2, 1] / selprob[3]
-    d.corr <- tab[2, 2] / selprob[4]
-    tab.corr <- matrix(c(a.corr, b.corr, c.corr, d.corr), nrow = 2, byrow = TRUE)
-    rr.corr <- (a.corr/(a.corr + c.corr)) / (b.corr/(b.corr + d.corr))
-    or.corr <- (a.corr/b.corr) / (c.corr/d.corr)
+    A0 <- a / selprob[1]
+    B0 <- b / selprob[2]
+    C0 <- c / selprob[3]
+    D0 <- d / selprob[4]
+
+    tab.corr <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
+    rr.corr <- (A0/(A0 + C0)) / (B0/(B0 + D0))
+    or.corr <- (A0/B0) / (C0/D0)
    
     if (is.null(rownames(tab)))
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
     if (is.null(rownames(tab))){
-        rownames(tab.corr) <- paste("Row", 1:2)
+        rownames(taB0) <- paste("Row", 1:2)
         } else {
-        rownames(tab.corr) <- row.names(tab)
+        rownames(taB0) <- row.names(tab)
     }
     if (is.null(colnames(tab))){ 
-        colnames(tab.corr) <- paste("Col", 1:2)
+        colnames(taB0) <- paste("Col", 1:2)
         } else {
-        colnames(tab.corr) <- colnames(tab)
+        colnames(taB0) <- colnames(tab)
     }
     if (print) 
         cat("Observed Data:", "\n---------------------------------------------------", 
@@ -62,7 +65,7 @@ selection <- function(exposed,
     if (print)
         cat("\nData Corrected for Selected Proportions:", "\n---------------------------------------------------\n\n")
     if (print)
-        print(round(tab.corr, dec))
+        print(round(taB0, dec))
     if (print) 
         cat("\n")
     rmat <- rbind(c(rr, lci.rr, uci.rr), c(or, lci.or, uci.or))
