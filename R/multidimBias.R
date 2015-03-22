@@ -259,9 +259,6 @@ multidimBias <- function(exposed,
         if (print)
             cat("\nMultidimensional Relative Risk Exposure-Data Relationship Adjusted for Confounder:",
                 "\n----------------------------------------------",
-#                "\n           RR(Confounder-Outcome) -->",
-#                "\nOutcome - |",
-#                "\n          V
                 "\n")
         if (print)
             print(rrc.mat)
