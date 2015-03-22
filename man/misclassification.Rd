@@ -4,7 +4,7 @@
 \description{Simple sensitivity analysis for misclassification.}
 \usage{
 misclassification(exposed, case, misclassification = c("exposure",
-"outcome", "confounder"), bias = NULL, alpha = 0.05, dec = 4, print = TRUE)
+"outcome"), bias = NULL, alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
@@ -44,10 +44,8 @@ misclassification(exposed, case, misclassification = c("exposure",
   \item{bias.params}{Input bias parameters.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
-    Quantitative Bias Analysis to Epidemiologic Data}, pp.79--108, Springer. 
-}
-\author{Denis Haine \email{denis.haine@gmail.com}
-}
+    Quantitative Bias Analysis to Epidemiologic Data}, pp.79--108, Springer.}
+\author{Denis Haine \email{denis.haine@gmail.com}}
 \examples{
 # The data for this example come from:
 # Fink, A.K., Lash,  T.L. A null association between smoking during pregnancy and breast cancer using Massachusetts registry data (United States).
@@ -63,5 +61,5 @@ misclassification(matrix(c(4558, 3428, 46305, 46085),
                        c("Male+", "Male-")),
                    nrow = 2, byrow = TRUE),
             implement = "outcome",
-            bias = c(.53,.53,.99,.99))
+            bias = c(.53, .53, .99, .99))
 }

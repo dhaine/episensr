@@ -1,6 +1,6 @@
 misclassification <- function(exposed,
                               case,
-                              implement = c("exposure", "outcome", "confounder"),
+                              implement = c("exposure", "outcome"),
                               bias = NULL,
                               alpha = 0.05,
                               dec = 4,
