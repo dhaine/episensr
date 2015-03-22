@@ -37,6 +37,10 @@ misclassification <- function(exposed,
         C <- (c - (1 - bias[4]) * (c + d)) / (bias[2] - (1 - bias[4]))
         B <- (a + b) - A
         D <- (c + d) - C
+
+        if(A < 1 | B < 1 | C < 1 | D < 1)
+            stop('Negative cell.')
+        
         corr.tab <- matrix(c(A, B, C, D), nrow = 2, byrow = TRUE)
 
         corr.rr <- (A/(A + C)) / (B/(B + D))
@@ -111,6 +115,10 @@ misclassification <- function(exposed,
         B <- (b - (1 - bias[4]) * (b + d)) / (bias[2] - (1 - bias[4]))
         C <- (a + c) - A
         D <- (b + d) - B
+
+        if(A < 1 | B < 1 | C < 1 | D < 1)
+            stop('Negative cell.')
+        
         corr.tab <- matrix(c(A, B, C, D), nrow = 2, byrow = TRUE)
 
         corr.rr <- (A/(A + C)) / (B/(B + D))
