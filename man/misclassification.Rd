@@ -52,16 +52,16 @@ misclassification(exposed, case, misclassification = c("exposure",
 # The data for this example come from:
 # Fink, A.K., Lash,  T.L. A null association between smoking during pregnancy and breast cancer using Massachusetts registry data (United States).
 # Cancer Causes Control 2003;14:497-503.
-misclassification(matrix(c(215,1449,668,4296),
+misclassification(matrix(c(215, 1449, 668, 4296),
                    dimnames = list(c("Breast cancer+", "Breast cancer-"),
                        c("Smoker+", "Smoker-")),
-                   nrow=2, byrow=TRUE),
+                   nrow = 2, byrow = TRUE),
             implement = "exposure",
             bias = c(.78, .78, .99, .99))
-misclassification(matrix(c(4558,3428,46305,46085),
+misclassification(matrix(c(4558, 3428, 46305, 46085),
                    dimnames = list(c("AMI death+", "AMI death-"),
                        c("Male+", "Male-")),
-                   nrow=2, byrow=TRUE),
+                   nrow = 2, byrow = TRUE),
             implement = "outcome",
             bias = c(.53,.53,.99,.99))
 }
