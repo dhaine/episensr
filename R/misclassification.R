@@ -1,4 +1,10 @@
-misclassification <- function(exposed, case, implement = c("exposure", "outcome", "confounder"), bias = NULL, alpha = 0.05, dec = 4, print = TRUE){
+misclassification <- function(exposed,
+                              case,
+                              implement = c("exposure", "outcome", "confounder"),
+                              bias = NULL,
+                              alpha = 0.05,
+                              dec = 4,
+                              print = TRUE){
     if(is.null(bias))
         bias <- c(1, 1, 1, 1)
     else bias <- bias
@@ -89,6 +95,7 @@ misclassification <- function(exposed, case, implement = c("exposure", "outcome"
                        corr.rr = corr.rr, corr.or = corr.or,
                        bias.params = bias))
     }
+    
     if (implement == "outcome"){
         obs.rr <- (a/(a + c)) / (b/(b + d))
         se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
