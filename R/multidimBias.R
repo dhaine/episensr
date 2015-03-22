@@ -1,10 +1,13 @@
-multidimBias <- function(exposed, case,
-                         misclassification = c("exposure", "outcome",
-                             "confounder", "selection"),
-                         se = NULL, sp = NULL,
+multidimBias <- function(exposed,
+                         case,
+                         type = c("exposure", "outcome", "confounder", "selection"),
+                         se = NULL,
+                         sp = NULL,
                          bias = NULL,
                          OR.sel = NULL,
-                         alpha = 0.05, dec = 4, print = TRUE) {
+                         alpha = 0.05,
+                         dec = 4,
+                         print = TRUE) {
     if(is.null(se))
         se <- c(1, 1)
     else se <- se
@@ -21,6 +24,7 @@ multidimBias <- function(exposed, case,
         stop('Specificity should be between 0 and 1.')
     if(length(se) != length(sp))
         stop('Sensitivity and specificity should be vectors of the same length.')
+
     if(is.null(bias))
         bias <- list(1, 1, 1)
     else bias <- bias
@@ -32,6 +36,7 @@ multidimBias <- function(exposed, case,
         stop('Prevalences should be between 0 and 1.')
     if(length(bias[[1]]) != length(bias[[2]]) | length(bias[[2]]) != length(bias[[3]]))
         stop('Prevalences of Confounder in Exposure+ and Exposure- populations and Relative risk between Confounder and Outcome should be of the same length.')
+
     if(is.null(OR.sel))
         OR.sel <- 1
     else OR.sel <- OR.sel
@@ -64,8 +69,8 @@ multidimBias <- function(exposed, case,
     rrc.mat <- matrix(NA, nrow = length(bias[[1]]), ncol = length(bias[[1]]))
     ors.mat <- matrix(NA, nrow = length(OR.sel), ncol = 2)
     
-    misclassification <- match.arg(misclassification)
-    if (misclassification == "exposure") {
+    type <- match.arg(type)
+    if (type == "exposure") {
         for (i in 1:nrow(rr.mat)) {
             for (j in 1:nrow(rr.mat)) {
                 rr.mat[i, j] <- (((a - (1 - sp[j]) * (a + b)) / (se[j] - (1 - sp[j]))) /
@@ -147,7 +152,7 @@ multidimBias <- function(exposed, case,
                        sesp = sesp))
         }
 
-    if (misclassification == "outcome") {
+    if (type == "outcome") {
         for (i in 1:nrow(rr.mat)) {
             for (j in 1:nrow(rr.mat)) {
                 rr.mat[i, j] <- (((a - (1 - sp[j]) * (a + c)) / (se[j] - (1 - sp[j]))) /
@@ -221,7 +226,7 @@ multidimBias <- function(exposed, case,
                        sesp = sesp))
     }
 
-    if (misclassification == "confounder") {
+    if (type == "confounder") {
         for (i in 1:nrow(rrc.mat)) {
             for (j in 1:nrow(rrc.mat)) {
                 rrc.mat[i, j] <- rr / ((bias[[1]][i] * (bias[[3]][j] - 1) + 1) /
@@ -278,7 +283,7 @@ multidimBias <- function(exposed, case,
                        bias = bias))
     }
 
-    if (misclassification == "selection") {
+    if (type == "selection") {
         ors.mat[, 1] <- OR.sel
         for (i in 1:nrow(ors.mat)) {
                 ors.mat[i, 2] <- or / OR.sel[i]
