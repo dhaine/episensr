@@ -14,11 +14,65 @@ probsens.conf <- function(exposed,
                           alpha = 0.05,
                           dec = 4,
                           print = TRUE){
+    if(resp < 1)
+        stop(paste("Invalid argument: reps =", reps))
+
     if(is.null(prev.exp) | is.null(prev.nexp))
         stop('Please provide prevalences among the exposed and unexposed.')
-
     if(is.null(risk))
         stop('Please provide risk of acquiring outcome.')
+    
+    if(prev.exp[[1]] == "uniform" & length(prev.exp[[2]]) != 2)
+        stop('For uniform distribution, please provide vector of lower and upper limits.')
+    if(prev.exp[[1]] == "uniform" & prev.exp[[2]][1] >= prev.exp[[2]][2])
+        stop('Lower limit of your uniform distribution is greater than upper limit.')
+    if(prev.exp[[1]] == "triangular" & length(prev.exp[[2]]) != 3)
+        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
+    if(prev.exp[[1]] == "triangular" & ((prev.exp[[2]][1] > prev.exp[[2]][3]) |
+                                        (prev.exp[[2]][2] < prev.exp[[2]][3])))
+        stop('Wrong arguments for your triangular distribution.')
+    if(prev.exp[[1]] == "trapezoidal" & length(prev.exp[[2]] != 4))
+        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
+    if(prev.exp[[1]] == "trapezoidal" & ((prev.exp[[2]][1] > prev.exp[[2]][2]) |
+                                         (prev.exp[[2]][2] > prev.exp[[2]][3]) |
+                                         (prev.exp[[2]][3] > prev.exp[[2]][4])))
+        stop('Wrong arguments for your trapezoidal distribution.')    
+    if(!all(prev.exp[[2]] >= 0 & prev.exp[[2]] <= 1))
+        stop('Prevalence should be between 0 and 1.')
+
+        if(prev.nexp[[1]] == "uniform" & length(prev.nexp[[2]]) != 2)
+        stop('For uniform distribution, please provide vector of lower and upper limits.')
+    if(prev.nexp[[1]] == "uniform" & prev.nexp[[2]][1] >= prev.nexp[[2]][2])
+        stop('Lower limit of your uniform distribution is greater than upper limit.')
+    if(prev.nexp[[1]] == "triangular" & length(prev.nexp[[2]]) != 3)
+        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
+    if(prev.nexp[[1]] == "triangular" & ((prev.nexp[[2]][1] > prev.nexp[[2]][3]) |
+                                        (prev.nexp[[2]][2] < prev.nexp[[2]][3])))
+        stop('Wrong arguments for your triangular distribution.')
+    if(prev.nexp[[1]] == "trapezoidal" & length(prev.nexp[[2]] != 4))
+        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
+    if(prev.nexp[[1]] == "trapezoidal" & ((prev.nexp[[2]][1] > prev.nexp[[2]][2]) |
+                                         (prev.nexp[[2]][2] > prev.nexp[[2]][3]) |
+                                         (prev.nexp[[2]][3] > prev.nexp[[2]][4])))
+        stop('Wrong arguments for your trapezoidal distribution.')
+    if(!all(prev.nexp[[2]] >= 0 & prev.nexp[[2]] <= 1))
+        stop('Prevalence should be between 0 and 1.')
+
+    if(risk[[1]] == "uniform" & length(risk[[2]]) != 2)
+        stop('For uniform distribution, please provide vector of lower and upper limits.')
+    if(risk[[1]] == "uniform" & risk[[2]][1] >= risk[[2]][2])
+        stop('Lower limit of your uniform distribution is greater than upper limit.')
+    if(risk[[1]] == "triangular" & length(risk[[2]]) != 3)
+        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
+    if(risk[[1]] == "triangular" & ((risk[[2]][1] > risk[[2]][3]) |
+                                    (risk[[2]][2] < risk[[2]][3])))
+        stop('Wrong arguments for your triangular distribution.')
+    if(risk[[1]] == "trapezoidal" & length(risk[[2]] != 4))
+        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
+    if(risk[[1]] == "trapezoidal" & ((risk[[2]][1] > risk[[2]][2]) |
+                                     (risk[[2]][2] > risk[[2]][3]) |
+                                     (risk[[2]][3] > risk[[2]][4])))
+        stop('Wrong arguments for your trapezoidal distribution.')
 
     if(!is.null(corr.p) && (corr.p == 0 | corr.p == 1))
         stop('Correlations should be > 0 and < 1.')
