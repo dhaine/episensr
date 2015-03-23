@@ -31,13 +31,11 @@ probsens.conf <- function(exposed,
     c <- tab[2, 1]
     d <- tab[2, 2]
 
-    draws <- matrix(NA, nrow = reps, ncol = 32)
+    draws <- matrix(NA, nrow = reps, ncol = 20)
     colnames(draws) <- c("p1", "p0", "RR.cd",
-                         "RR.M1", "RR.N1", "RR.A1", "RR.B1", "RR.C1", "RR.D1",
-                         "RR.M0", "RR.N0", "RR.A0", "RR.B0", "RR.C0", "RR.D0",
+                         "M1", "N1", "A1", "B1", "C1", "D1",
+                         "M0", "N0", "A0", "B0", "C0", "D0",
                          "RR.SMR.rr", 
-                         "OR.C1", "OR.D1", "OR.A1", "OR.B1", "OR.M1", "OR.N1",
-                         "OR.A0", "OR.B0", "OR.C0", "OR.D0", "OR.M0", "OR.N0",
                          "OR.SMR.or", 
                          "reps",
                          "tot.RRadj.smr", 
@@ -128,7 +126,7 @@ probsens.conf <- function(exposed,
         draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(rr.cd))
     }
     
-    draws[, 30] <- runif(reps)
+    draws[, 18] <- runif(reps)
 
     draws[, 4] <- (a + c) * draws[, 1]
     draws[, 5] <- (b + d) * draws[, 2]
@@ -149,24 +147,9 @@ probsens.conf <- function(exposed,
         ((draws[, 4] * draws[, 7]/draws[, 5]) +
              (draws[, 10] * draws[, 13]/draws[, 11]))
 
-    draws[, 17] <- c * draws[, 1] 
-    draws[, 18] <- d * draws[, 2]
-    draws[, 19] <- (draws[, 3] * draws[, 17] * a) /
-        (draws[, 3] * draws[, 17] + c - draws[, 17])
-    draws[, 20] <- (draws[, 3] * draws[, 18] * b) /
-        (draws[, 3] * draws[, 18] + d - draws[, 18])
-    draws[, 21] <- draws[, 19] + draws[, 17]
-    draws[, 22] <- draws[, 20] + draws[, 18]
-    draws[, 23] <- a - draws[, 19]
-    draws[, 24] <- b - draws[, 20]
-    draws[, 25] <- c - draws[, 17]
-    draws[, 26] <- d - draws[, 18]
-    draws[, 27] <- draws[, 23] + draws[, 25]
-    draws[, 28] <- draws[, 24] + draws[, 25]
-
-    draws[, 29] <- a /
-        ((draws[, 17] * draws[, 20]/draws[, 18]) +
-             (draws[, 25] * draws[, 24]/draws[, 26]))
+    draws[, 17] <- a /
+        ((draws[, 8] * draws[, 7]/draws[, 9]) +
+             (draws[, 14] * draws[, 13]/draws[, 15]))
     
     draws[, 16] <- ifelse(draws[, 6] < 1 |
                                draws[, 7] < 1 |
@@ -176,36 +159,36 @@ probsens.conf <- function(exposed,
                             draws[, 13] < 1 |
                               draws[, 14] < 1 |
                                 draws[, 15] < 1, NA, draws[, 16])
-    draws[, 29] <- ifelse(draws[, 19] < 1 |
-                               draws[, 20] < 1 |
-                                 draws[, 17] < 1 |
-                                   draws[, 18] < 1 |
-                          draws[, 23] < 1 |
-                            draws[, 24] < 1 |
-                              draws[, 25] < 1 |
-                                draws[, 26] < 1, NA, draws[, 29])
+    draws[, 17] <- ifelse(draws[, 6] < 1 |
+                               draws[, 7] < 1 |
+                                 draws[, 8] < 1 |
+                                   draws[, 9] < 1 |
+                          draws[, 12] < 1 |
+                            draws[, 13] < 1 |
+                              draws[, 14] < 1 |
+                                draws[, 15] < 1, NA, draws[, 17])
 
-    draws[, 31] <- exp(log(draws[, 16]) -
-                               qnorm(draws[, 30]) *
+    draws[, 19] <- exp(log(draws[, 16]) -
+                               qnorm(draws[, 18]) *
                                          ((log(uci.obs.rr) - log(lci.obs.rr)) /
                                               (qnorm(.975) * 2)))
-    draws[, 32] <- exp(log(draws[, 29]) -
-                               qnorm(draws[, 30]) *
+    draws[, 20] <- exp(log(draws[, 17]) -
+                               qnorm(draws[, 18]) *
                                          ((log(uci.obs.or) - log(lci.obs.or)) /
                                               (qnorm(.975) * 2)))
 
     corr.rr.smr <- c(median(draws[, 16], na.rm = TRUE),
                      quantile(draws[, 16], probs = .025, na.rm = TRUE),
                      quantile(draws[, 16], probs = .975, na.rm = TRUE))
-    corr.or.smr <- c(median(draws[, 29], na.rm = TRUE),
-                     quantile(draws[, 29], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 29], probs = .975, na.rm = TRUE))
-    tot.rr.smr <- c(median(draws[, 31], na.rm = TRUE),
-                    quantile(draws[, 31], probs = .025, na.rm = TRUE),
-                    quantile(draws[, 31], probs = .975, na.rm = TRUE))
-    tot.or.smr <- c(median(draws[, 32], na.rm = TRUE),
-                    quantile(draws[, 32], probs = .025, na.rm = TRUE),
-                    quantile(draws[, 32], probs = .975, na.rm = TRUE))
+    corr.or.smr <- c(median(draws[, 17], na.rm = TRUE),
+                     quantile(draws[, 17], probs = .025, na.rm = TRUE),
+                     quantile(draws[, 17], probs = .975, na.rm = TRUE))
+    tot.rr.smr <- c(median(draws[, 19], na.rm = TRUE),
+                    quantile(draws[, 19], probs = .025, na.rm = TRUE),
+                    quantile(draws[, 19], probs = .975, na.rm = TRUE))
+    tot.or.smr <- c(median(draws[, 20], na.rm = TRUE),
+                    quantile(draws[, 20], probs = .025, na.rm = TRUE),
+                    quantile(draws[, 20], probs = .975, na.rm = TRUE))
 
     if (is.null(rownames(tab)))
         rownames(tab) <- paste("Row", 1:2)
@@ -252,6 +235,6 @@ probsens.conf <- function(exposed,
                    obs.measures = rmat, 
                    corr.rr.smr = corr.rr.smr, 
                    corr.or.smr = corr.or.smr, 
-                   sim.df = as.data.frame(draws[, -40])))
+                   sim.df = as.data.frame(draws[, -18])))
 }
 
