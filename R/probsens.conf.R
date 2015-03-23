@@ -23,11 +23,6 @@ probsens.conf <- function(exposed,
     if(!is.null(corr.p) && (corr.p == 0 | corr.p == 1))
         stop('Correlations should be > 0 and < 1.')
 
-    if(!all(prev.exp >= 0 & prev.exp <=1))
-        stop('Prevalences should be between 0 and 1.')
-    if(!all(prev.nexp >= 0 & prev.nexp <=1))
-        stop('Prevalences should be between 0 and 1.')
-    
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
     else tab <- table(exposed, cased)
@@ -65,7 +60,7 @@ probsens.conf <- function(exposed,
     lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
     uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
-    if (is.null(corr.sp)) {
+    if (is.null(corr.p)) {
         if (prev.exp[[1]] == "uniform") {
             draws[, 1] <- do.call(runif, as.list(p1))
             }
@@ -125,13 +120,13 @@ probsens.conf <- function(exposed,
                              draws[, 2])
     }
     }
-    if (rr.cd[[1]] == "uniform") {
+    if (risk[[1]] == "uniform") {
         draws[, 3] <- do.call(runif, as.list(rr.cd))
     }
-    if (rr.cd[[1]] == "triangular") {
+    if (risk[[1]] == "triangular") {
         draws[, 3] <- do.call(triangle::rtriangle, as.list(rr.cd))
     }
-    if (rr.cd[[1]] == "trapezoidal") {
+    if (risk[[1]] == "trapezoidal") {
         draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(rr.cd))
     }
     
@@ -275,7 +270,7 @@ probsens.conf <- function(exposed,
     if (print)
         cat("Observed Data:",
             "\n--------------", 
-            "nOutcome   :", rownames(tab)[1],
+            "\nOutcome   :", rownames(tab)[1],
             "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
     if (print) 
         print(round(tab, dec))
@@ -295,7 +290,14 @@ probsens.conf <- function(exposed,
         cat("\n")
     rmatc <- rbind(corr.rr.smr, corr.rr.mh, tot.rr.smr, tot.rr.mh, corr.or.smr,
                    corr.or.mh, tot.or.smr, tot.or.mh)
-    rownames(rmatc) <- c("RR adjusted using SMR estimate -- systematic error:", "RR adjusted using MH estimate -- systematic error", "RR adjusted using SMR estimate -- systematic error:", "RR adjusted using MH estimate -- systematic error", "RR adjusted using SMR estimate -- systematic and random error:", "RR adjusted using MH estimate -- systematic and random error", "OR adjusted using SMR estimate -- systematic error:", "OR adjusted using MH estimate -- systematic error", "OR adjusted using SMR estimate -- systematic error:", "OR adjusted using MH estimate -- systematic error", "OR adjusted using SMR estimate -- systematic and random error:", "OR adjusted using MH estimate -- systematic and random error")
+    rownames(rmatc) <- c("RR adjusted using SMR estimate -- systematic error:",
+                         "RR adjusted using MH estimate -- systematic error",
+                         "RR adjusted using SMR estimate -- systematic and random error:",
+                         "RR adjusted using MH estimate -- systematic and random error:",
+                         "OR adjusted using SMR estimate -- systematic error:",
+                         "OR adjusted using MH estimate -- systematic error",
+                         "OR adjusted using SMR estimate -- systematic and random error:",
+                         "OR adjusted using MH estimate -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
     if (print)
         print(round(rmatc, dec))
