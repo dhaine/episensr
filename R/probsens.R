@@ -47,6 +47,11 @@ probsens <- function(exposed,
     d <- tab[2, 2]
 
     draws <- matrix(NA, nrow = reps, ncol = 13)
+    colnames(draws) <- c("seca", "seexp", "spca", "spexp",
+                         "A1", "C1", "B1", "D1",
+                         "corr.RR", "corr.OR",
+                         "reps",
+                         "tot.RR", "tot.OR")
     corr.draws <- matrix(NA, nrow = reps, ncol = 10)
 
     seca <- c(reps, seca.parms[[2]])
@@ -256,7 +261,7 @@ probsens <- function(exposed,
         invisible(list(obs.data = tab,
                        obs.measures = rmat, 
                        corr.rr = corr.rr, corr.or = corr.or,
-                       sim.df = as.data.frame(draws)))
+                       sim.df = as.data.frame(draws[, -11])))
         }
 
     if (type == "outcome") {
@@ -352,6 +357,6 @@ probsens <- function(exposed,
         invisible(list(obs.data = tab,
                        obs.measures = rmat, 
                        corr.rr = corr.rr, corr.or = corr.or,
-                       sim.df = as.data.frame(draws)))
+                       sim.df = as.data.frame(draws[, -11])))
         }
 }
