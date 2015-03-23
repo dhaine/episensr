@@ -1,24 +1,28 @@
-probsens <- function(exposed, case,
-                     reps = 1000,
-                     prev.exp = list(dist = c("uniform", "triangular",
-                                         "trapezoidal"),
-                                     parms = NULL),
-                     prev.nexp = list(dist = c("uniform", "triangular",
+probsens.conf <- function(exposed,
+                          case,
+                          reps = 1000,
+                          prev.exp = list(dist = c("uniform", "triangular",
+                                              "trapezoidal"),
+                              parms = NULL),
+                          prev.nexp = list(dist = c("uniform", "triangular",
                                                "trapezoidal"),
-                                      parms = NULL),
-                     risk = list(dist = c("uniform", "triangular",
-                                        "trapezoidal"),
-                               parms = NULL),
-                     corr.p = NULL,
-                     alpha = 0.05,
-                     dec = 4,
-                     print = TRUE){
+                              parms = NULL),
+                          risk = list(dist = c("uniform", "triangular",
+                                          "trapezoidal"),
+                              parms = NULL),
+                          corr.p = NULL,
+                          alpha = 0.05,
+                          dec = 4,
+                          print = TRUE){
     if(is.null(prev.exp) | is.null(prev.nexp))
         stop('Please provide prevalences among the exposed and unexposed.')
+
     if(is.null(risk))
         stop('Please provide risk of acquiring outcome.')
+
     if(!is.null(corr.p) && (corr.p == 0 | corr.p == 1))
         stop('Correlations should be > 0 and < 1.')
+
     if(!all(prev.exp >= 0 & prev.exp <=1))
         stop('Prevalences should be between 0 and 1.')
     if(!all(prev.nexp >= 0 & prev.nexp <=1))
