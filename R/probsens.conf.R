@@ -91,28 +91,48 @@ probsens.conf <- function(exposed,
         draws[, 1] <- prev.exp[[2]][2] -
             (prev.exp[[2]][2] - prev.exp[[2]][1]) * corr.draws[, 4]
     }
-    if (prev.exp[[1]] == "triangular" | prev.exp[[1]] == "trapezoidal") {
+    if (prev.exp[[1]] == "triangular") {
+        draws[, 1] <- (corr.draws[, 4] *
+            (prev.exp[[2]][2] - prev.exp[[2]][1]) + (prev.exp[[2]][1] + prev.exp[[2]][3])) / 2
+        draws[, 1] <- ifelse(draws[, 1] < prev.exp[[2]][3],
+                             prev.exp[[2]][1] + sqrt(abs((prev.exp[[2]][3] - prev.exp[[2]][1]) * (2 * draws[, 1] - prev.exp[[2]][1] - prev.exp[[2]][3]))),
+                             draws[, 1])
+        draws[, 1] <- ifelse(draws[, 1] > prev.exp[[2]][3],
+                             prev.exp[[2]][2] - sqrt(abs(2 * (prev.exp[[2]][2] - prev.exp[[2]][3]) * (draws[, 1] - prev.exp[[2]][3]))),
+                             draws[, 1])
+    }
+    if (prev.exp[[1]] == "trapezoidal") {
         draws[, 1] <- (corr.draws[, 4] *
             (prev.exp[[2]][4] + prev.exp[[2]][3] - prev.exp[[2]][1] - prev.exp[[2]][2]) + (prev.exp[[2]][1] + prev.exp[[2]][2])) / 2
         draws[, 1] <- ifelse(draws[, 1] < prev.exp[[2]][2],
-                             prev.exp[[2]][1] + sqrt((prev.exp[[2]][2] - prev.exp[[2]][1]) * (2 * draws[, 1] - prev.exp[[2]][1] - prev.exp[[2]][2])),
+                             prev.exp[[2]][1] + sqrt(abs((prev.exp[[2]][2] - prev.exp[[2]][1]) * (2 * draws[, 1] - prev.exp[[2]][1] - prev.exp[[2]][2]))),
                              draws[, 1])
         draws[, 1] <- ifelse(draws[, 1] > prev.exp[[2]][3],
-                             prev.exp[[2]][4] - sqrt(2 * (prev.exp[[2]][4] - prev.exp[[2]][3]) * (draws[, 1] - prev.exp[[2]][3])),
+                             prev.exp[[2]][4] - sqrt(abs(2 * (prev.exp[[2]][4] - prev.exp[[2]][3]) * (draws[, 1] - prev.exp[[2]][3]))),
                              draws[, 1])
     }
     if (prev.nexp[[1]] == "uniform") {
         draws[, 2] <- prev.nexp[[2]][2] -
             (prev.nexp[[2]][2] - prev.nexp[[2]][1]) * corr.draws[, 5]
     }
-    if (prev.nexp[[1]] == "triangular" | prev.nexp[[1]] == "trapezoidal") {
+    if (prev.nexp[[1]] == "triangular") {
+        draws[, 2] <- (corr.draws[, 5] *
+                           (prev.nexp[[2]][2] - prev.nexp[[2]][1]) + (prev.nexp[[2]][1] + prev.nexp[[2]][3])) / 2
+        draws[, 2] <- ifelse(draws[, 2] < prev.nexp[[2]][3],
+                             prev.nexp[[2]][1] + sqrt(abs((prev.nexp[[2]][3] - prev.nexp[[2]][1]) * (2 * draws[, 2] - prev.nexp[[2]][1] - prev.nexp[[2]][3]))),
+                             draws[, 2])
+        draws[, 2] <- ifelse(draws[, 2] > prev.nexp[[2]][3],
+                             prev.nexp[[2]][2] - sqrt(2 * (prev.nexp[[2]][2] - prev.nexp[[2]][3]) * (draws[, 2] - prev.nexp[[2]][3])),
+                             draws[, 2])
+    }
+    if (prev.nexp[[1]] == "trapezoidal") {
         draws[, 2] <- (corr.draws[, 5] *
                            (prev.nexp[[2]][4] + prev.nexp[[2]][3] - prev.nexp[[2]][1] - prev.nexp[[2]][2]) + (prev.nexp[[2]][1] + prev.nexp[[2]][2])) / 2
         draws[, 2] <- ifelse(draws[, 2] < prev.nexp[[2]][2],
-                             prev.nexp[[2]][1] + sqrt((prev.nexp[[2]][2] - prev.nexp[[2]][1]) * (2 * draws[, 2] - prev.nexp[[2]][1] - prev.nexp[[2]][2])),
+                             prev.nexp[[2]][1] + sqrt(abs((prev.nexp[[2]][2] - prev.nexp[[2]][1]) * (2 * draws[, 2] - prev.nexp[[2]][1] - prev.nexp[[2]][2]))),
                              draws[, 2])
         draws[, 2] <- ifelse(draws[, 2] > prev.nexp[[2]][3],
-                             prev.nexp[[2]][4] - sqrt(2 * (prev.nexp[[2]][4] - prev.nexp[[2]][3]) * (draws[, 2] - prev.nexp[[2]][3])),
+                             prev.nexp[[2]][4] - sqrt(abs(2 * (prev.nexp[[2]][4] - prev.nexp[[2]][3]) * (draws[, 2] - prev.nexp[[2]][3]))),
                              draws[, 2])
     }
     }
