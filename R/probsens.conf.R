@@ -36,7 +36,19 @@ probsens.conf <- function(exposed,
     c <- tab[2, 1]
     d <- tab[2, 2]
 
-    draws <- matrix(NA, nrow = reps, ncol = 43)
+    draws <- matrix(NA, nrow = reps, ncol = 44)
+    colnames(draws) <- c("p1", "p0", "RR.cd",
+                         "RR.M1", "RR.N1", "RR.A1", "RR.B1", "RR.C1", "RR.D1",
+                         "RR.M0", "RR.N0", "RR.A0", "RR.B0", "RR.C0", "RR.D0",
+                         "RR.SMR.rr", "RR.MH.rr", "cfder.rr", "nocfder.rr",
+                         "RRadj.smr", "RRadj.mh",
+                         "OR.C1", "OR.D1", "OR.A1", "OR.B1", "OR.M1", "OR.N1",
+                         "OR.A0", "OR.B0", "OR.C0", "OR.D0", "OR.M0", "OR.N0",
+                         "OR.SMR.or", "OR.MH.or", "cfder.or", "nocfder.or",
+                         "ORadj.smr", "ORadj.mh",
+                         "reps",
+                         "tot.RRadj.smr", "tot.RRadj.mh",
+                         "tot.ORadj.smr", "tot.ORadj.mh")
     corr.draws <- matrix(NA, nrow = reps, ncol = 4)
 
     p1 <- c(reps, prev.exp[[2]])
@@ -299,6 +311,6 @@ probsens.conf <- function(exposed,
                    obs.measures = rmat, 
                    corr.rr.smr = corr.rr.smr, corr.rr.mh = corr.rr.mh,
                    corr.or.smr = corr.or.smr, corr.or.mh = corr.or.mh,
-                   sim.df = as.data.frame(draws)))
+                   sim.df = as.data.frame(draws[, -40])))
 }
 
