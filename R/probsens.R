@@ -1,5 +1,6 @@
-probsens <- function(exposed, case,
-                     implement = c("exposure", "outcome"),
+probsens <- function(exposed,
+                     case,
+                     type = c("exposure", "outcome"),
                      reps = 1000,
                      seca.parms = list(dist = c("uniform", "triangular",
                                            "trapezoidal"),
@@ -31,6 +32,7 @@ probsens <- function(exposed, case,
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
                                 is.null(corr.se) | is.null(corr.sp)))
         stop('For non-differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations.')
+
     if(!is.null(corr.se) && (corr.se == 0 | corr.se == 1))
         stop('Correlations should be > 0 and < 1.')
     if(!is.null(corr.sp) && (corr.sp == 0 | corr.sp == 1))
@@ -160,8 +162,8 @@ probsens <- function(exposed, case,
 
     draws[, 11] <- runif(reps)
 
-    implement <- match.arg(implement)
-    if (implement == "exposure") {
+    type <- match.arg(type)
+    if (type == "exposure") {
         draws[, 5] <- (a - (1 - draws[, 3]) * (a + b)) /
             (draws[, 1] - (1 - draws[, 3]))
         draws[, 7] <- (c - (1 - draws[, 4]) * (c + d)) /
@@ -257,7 +259,7 @@ probsens <- function(exposed, case,
                        sim.df = as.data.frame(draws)))
         }
 
-    if (implement == "outcome") {
+    if (type == "outcome") {
         draws[, 5] <- (a - (1 - draws[, 3]) * (a + c)) /
             (draws[, 1] - (1 - draws[, 3]))
         draws[, 7] <- (b - (1 - draws[, 4]) * (b + d)) /
