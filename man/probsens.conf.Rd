@@ -22,7 +22,7 @@ risk = list(dist = c("uniform", "triangular", "trapezoidal"), parms = NULL), cor
     parameters as a vector:
     \begin{enumerate}
     \item Uniform: min, max,
-    \item Triangular: lower limit, upper limit,
+    \item Triangular: lower limit, upper limit, mode,
     \item Trapezoidal: min, lower mode, upper mode, max.
     \end{enumerate}
   }
