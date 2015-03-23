@@ -44,7 +44,7 @@ probsens.conf <- function(exposed,
                          "reps",
                          "tot.RRadj.smr", "tot.RRadj.mh",
                          "tot.ORadj.smr", "tot.ORadj.mh")
-    corr.draws <- matrix(NA, nrow = reps, ncol = 4)
+    corr.draws <- matrix(NA, nrow = reps, ncol = 5)
 
     p1 <- c(reps, prev.exp[[2]])
     p0 <- c(reps, prev.nexp[[2]])
@@ -80,23 +80,23 @@ probsens.conf <- function(exposed,
             draws[, 2] <- do.call(trapezoid::rtrapezoid, as.list(p0))
             }
     } else {
-        corr.draws[, 1:2] <- apply(corr.draws[, 1:2],
+        corr.draws[, 1:3] <- apply(corr.draws[, 1:3],
                                    2,
                                    function(x) x = runif(reps))
-        corr.draws[, 1:2] <- apply(corr.draws[, 1:2],
+        corr.draws[, 1:3] <- apply(corr.draws[, 1:3],
                                    2,
                                    function(x) log(x / (1 - x)))
-        corr.draws[, 3] <- exp(sqrt(corr.p) * corr.draws[, 1] + sqrt(1 - corr.p) * corr.draws[, 2]) /
-            (1 + (exp(sqrt(corr.p) * corr.draws[, 1] + sqrt(1 - corr.p) * corr.draws[, 2])))
         corr.draws[, 4] <- exp(sqrt(corr.p) * corr.draws[, 1] + sqrt(1 - corr.p) * corr.draws[, 2]) /
             (1 + (exp(sqrt(corr.p) * corr.draws[, 1] + sqrt(1 - corr.p) * corr.draws[, 2])))
+        corr.draws[, 5] <- exp(sqrt(corr.p) * corr.draws[, 1] + sqrt(1 - corr.p) * corr.draws[, 3]) /
+            (1 + (exp(sqrt(corr.p) * corr.draws[, 1] + sqrt(1 - corr.p) * corr.draws[, 3])))
 
     if (prev.exp[[1]] == "uniform") {
         draws[, 1] <- prev.exp[[2]][2] -
-            (prev.exp[[2]][2] - prev.exp[[2]][1]) * corr.draws[, 3]
+            (prev.exp[[2]][2] - prev.exp[[2]][1]) * corr.draws[, 4]
     }
     if (prev.exp[[1]] == "triangular" | prev.exp[[1]] == "trapezoidal") {
-        draws[, 1] <- (corr.draws[, 3] *
+        draws[, 1] <- (corr.draws[, 4] *
             (prev.exp[[2]][4] + prev.exp[[2]][3] - prev.exp[[2]][1] - prev.exp[[2]][2]) + (prev.exp[[2]][1] + prev.exp[[2]][2])) / 2
         draws[, 1] <- ifelse(draws[, 1] < prev.exp[[2]][2],
                              prev.exp[[2]][1] + sqrt((prev.exp[[2]][2] - prev.exp[[2]][1]) * (2 * draws[, 1] - prev.exp[[2]][1] - prev.exp[[2]][2])),
@@ -107,10 +107,10 @@ probsens.conf <- function(exposed,
     }
     if (prev.nexp[[1]] == "uniform") {
         draws[, 2] <- prev.nexp[[2]][2] -
-            (prev.nexp[[2]][2] - prev.nexp[[2]][1]) * corr.draws[, 4]
+            (prev.nexp[[2]][2] - prev.nexp[[2]][1]) * corr.draws[, 5]
     }
     if (prev.nexp[[1]] == "triangular" | prev.nexp[[1]] == "trapezoidal") {
-        draws[, 2] <- (corr.draws[, 4] *
+        draws[, 2] <- (corr.draws[, 5] *
                            (prev.nexp[[2]][4] + prev.nexp[[2]][3] - prev.nexp[[2]][1] - prev.nexp[[2]][2]) + (prev.nexp[[2]][1] + prev.nexp[[2]][2])) / 2
         draws[, 2] <- ifelse(draws[, 2] < prev.nexp[[2]][2],
                              prev.nexp[[2]][1] + sqrt((prev.nexp[[2]][2] - prev.nexp[[2]][1]) * (2 * draws[, 2] - prev.nexp[[2]][1] - prev.nexp[[2]][2])),
