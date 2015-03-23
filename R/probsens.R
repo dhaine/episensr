@@ -226,7 +226,7 @@ probsens <- function(exposed,
         if (print)
             cat("Observed Data:",
                 "\n--------------", 
-                "nOutcome   :", rownames(tab)[1],
+                "\nOutcome   :", rownames(tab)[1],
                 "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
         if (print) 
             print(round(tab, dec))
@@ -245,7 +245,10 @@ probsens <- function(exposed,
         if (print)
             cat("\n")
         rmatc <- rbind(corr.rr, corr.or, tot.rr, tot.or)
-        rownames(rmatc) <- c("Relative Risk -- systematic error:", "Odds Ratio -- systematic error:", "Relative Risk -- systematic and random error:", "Odds Ratio -- systematic and random error")
+        rownames(rmatc) <- c("           Relative Risk -- systematic error:",
+                             "              Odds Ratio -- systematic error:",
+                             "Relative Risk -- systematic and random error:",
+                             "   Odds Ratio -- systematic and random error:")
         colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
         if (print)
             print(round(rmatc, dec))
@@ -253,8 +256,8 @@ probsens <- function(exposed,
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("Se|Cases:", seca.parms[[1]], "(", seca.parms[[2]], ")",
-                "\nSp|Cases:", spca.parms[[1]], "(", spca.parms[[2]], ")",
+            cat("   Se|Cases:", seca.parms[[1]], "(", seca.parms[[2]], ")",
+                "\n   Sp|Cases:", spca.parms[[1]], "(", spca.parms[[2]], ")",
                 "\nSe|No-cases:", seexp.parms[[1]], "(", seexp.parms[[2]], ")",
                 "\nSp|No-cases:", spexp.parms[[1]], "(", spexp.parms[[2]], ")",
                 "\n")
@@ -322,7 +325,7 @@ probsens <- function(exposed,
         if (print)
             cat("Observed Data:",
                 "\n--------------", 
-                "nOutcome   :", rownames(tab)[1],
+                "\nOutcome   :", rownames(tab)[1],
                 "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
         if (print) 
             print(round(tab, dec))
@@ -341,7 +344,10 @@ probsens <- function(exposed,
         if (print)
             cat("\n")
         rmatc <- rbind(corr.rr, corr.or, tot.rr, tot.or)
-        rownames(rmatc) <- c("Relative Risk -- systematic error:", "Odds Ratio -- systematic error:", "Relative Risk -- systematic and random error:", "Odds Ratio -- systematic and random error")
+        rownames(rmatc) <- c("           Relative Risk -- systematic error:",
+                             "              Odds Ratio -- systematic error:",
+                             "Relative Risk -- systematic and random error:",
+                             "   Odds Ratio -- systematic and random error:")
         colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
         if (print)
             print(round(rmatc, dec))
@@ -349,8 +355,8 @@ probsens <- function(exposed,
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("Se|Exposed:", seca.parms[[1]], "(", seca.parms[[2]], ")",
-                "\nSp|Exposed:", spca.parms[[1]], "(", spca.parms[[2]], ")",
+            cat("    Se|Exposed:", seca.parms[[1]], "(", seca.parms[[2]], ")",
+                "\n    Sp|Exposed:", spca.parms[[1]], "(", spca.parms[[2]], ")",
                 "\nSe|Non-exposed:", seexp.parms[[1]], "(", seexp.parms[[2]], ")",
                 "\nSp|Non-exposed:", spexp.parms[[1]], "(", spexp.parms[[2]], ")",
                 "\n")
