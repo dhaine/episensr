@@ -1,16 +1,35 @@
-probsens <- function(exposed, case,
-                     reps = 1000,
-                     or.parms = list(dist = c("uniform", "triangular",
-                                           "trapezoidal"),
-                                       parms = NULL),
-                     alpha = 0.05,
-                     dec = 4,
-                     print = TRUE){
+probsens.sel <- function(exposed,
+                         case,
+                         reps = 1000,
+                         or.parms = list(dist = c("uniform", "triangular",
+                                             "trapezoidal"),
+                             parms = NULL),
+                         alpha = 0.05,
+                         dec = 4,
+                         print = TRUE){
+    if(reps < 1)
+        stop(paste("Invalid argument: reps =", reps))
+    
     if(is.null(or.parms))
         stop('Please provide odds ratio for the probability of being selected.')
     if(!is.list(or.parms))
         stop('Odds ratio for the probability of being selected should be a list.')
     else or.parms <- or.parms
+    if(or.parms[[1]] == "uniform" & length(or.parms[[2]]) != 2)
+        stop('For uniform distribution, please provide vector of lower and upper limits.')
+    if(or.parms[[1]] == "uniform" & or.parms[[2]][1] >= or.parms[[2]][2])
+        stop('Lower limit of your uniform distribution is greater than upper limit.')
+    if(or.parms[[1]] == "triangular" & length(or.parms[[2]]) != 3)
+        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
+    if(or.parms[[1]] == "triangular" & ((or.parms[[2]][1] > or.parms[[2]][3]) |
+                                        (or.parms[[2]][2] < or.parms[[2]][3])))
+        stop('Wrong arguments for your triangular distribution.')
+    if(or.parms[[1]] == "trapezoidal" & length(or.parms[[2]]) != 4)
+        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
+    if(or.parms[[1]] == "trapezoidal" & ((or.parms[[2]][1] > or.parms[[2]][2]) |
+                                         (or.parms[[2]][2] > or.parms[[2]][3]) |
+                                         (or.parms[[2]][3] > or.parms[[2]][4])))
+        stop('Wrong arguments for your trapezoidal distribution.')    
     
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
@@ -21,6 +40,7 @@ probsens <- function(exposed, case,
     d <- tab[2, 2]
 
     draws <- matrix(NA, nrow = reps, ncol = 4)
+    colnames(draws) <- c("or.sel", "corr.or", "reps", "tot.or")
 
     or.sel <- c(reps, or.parms[[2]])
 
@@ -93,5 +113,5 @@ probsens <- function(exposed, case,
     invisible(list(obs.data = tab,
                    obs.measures = rmat, 
                    corr.or = corr.or, tot.or = tot.or,
-                   sim.df = as.data.frame(draws)))
+                   sim.df = as.data.frame(draws[, -3])))
 }
