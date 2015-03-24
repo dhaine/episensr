@@ -1,5 +1,6 @@
-probsens <- function(exposed, case,
-                     implement = c("exposure", "outcome"),
+probsens <- function(exposed,
+                     case,
+                     type = c("exposure", "outcome"),
                      reps = 1000,
                      seca.parms = list(dist = c("uniform", "triangular",
                                            "trapezoidal"),
@@ -14,23 +15,111 @@ probsens <- function(exposed, case,
                      alpha = 0.05,
                      dec = 4,
                      print = TRUE){
+    if(reps < 1)
+        stop(paste("Invalid argument: reps =", reps))
+    
     if(is.null(seca.parms) | is.null(spca.parms))
         stop('At least one Se and one Sp should be provided through outcome parameters.')
     if(!is.list(seca.parms))
         stop('Sensitivity of exposure classification among those with the outcome should be a list.')
     else seca.parms <- seca.parms
+    if(seca.parms[[1]] == "uniform" & length(seca.parms[[2]]) != 2)
+        stop('For uniform distribution, please provide vector of lower and upper limits.')
+    if(seca.parms[[1]] == "uniform" & seca.parms[[2]][1] >= seca.parms[[2]][2])
+        stop('Lower limit of your uniform distribution is greater than upper limit.')
+    if(seca.parms[[1]] == "triangular" & length(seca.parms[[2]]) != 3)
+        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
+    if(seca.parms[[1]] == "triangular" & ((seca.parms[[2]][1] > seca.parms[[2]][3]) |
+                                        (seca.parms[[2]][2] < seca.parms[[2]][3])))
+        stop('Wrong arguments for your triangular distribution.')
+    if(seca.parms[[1]] == "trapezoidal" & length(seca.parms[[2]]) != 4)
+        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
+    if(seca.parms[[1]] == "trapezoidal" & ((seca.parms[[2]][1] > seca.parms[[2]][2]) |
+                                         (seca.parms[[2]][2] > seca.parms[[2]][3]) |
+                                         (seca.parms[[2]][3] > seca.parms[[2]][4])))
+        stop('Wrong arguments for your trapezoidal distribution.')    
+    if(!all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
+        stop('Sensitivity of exposure classification among those with the outcome should be between 0 and 1.')
+    
     if(!is.null(seexp.parms) & !is.list(seexp.parms))
         stop('Sensitivity of exposure classification among those without the outcome should be a list.')
     else seexp.parms <- seexp.parms
+    if(!is.null(seexp.parms) && seexp.parms[[1]] == "uniform" &
+       length(seexp.parms[[2]]) != 2)
+        stop('For uniform distribution, please provide vector of lower and upper limits.')
+    if(!is.null(seexp.parms) && seexp.parms[[1]] == "uniform" &&
+       seexp.parms[[2]][1] >= seexp.parms[[2]][2])
+        stop('Lower limit of your uniform distribution is greater than upper limit.')
+    if(!is.null(seexp.parms) && seexp.parms[[1]] == "triangular" &
+       length(seexp.parms[[2]]) != 3)
+        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
+    if(!is.null(seexp.parms) && seexp.parms[[1]] == "triangular" &&
+       ((seexp.parms[[2]][1] > seexp.parms[[2]][3]) |
+            (seexp.parms[[2]][2] < seexp.parms[[2]][3])))
+        stop('Wrong arguments for your triangular distribution.')
+    if(!is.null(seexp.parms) && seexp.parms[[1]] == "trapezoidal" &
+       length(seexp.parms[[2]]) != 4)
+        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
+    if(!is.null(seexp.parms) && seexp.parms[[1]] == "trapezoidal" &&
+       ((seexp.parms[[2]][1] > seexp.parms[[2]][2]) |
+            (seexp.parms[[2]][2] > seexp.parms[[2]][3]) |
+                (seexp.parms[[2]][3] > seexp.parms[[2]][4])))
+        stop('Wrong arguments for your trapezoidal distribution.')    
+    if(!is.null(seexp.parms) && !all(seexp.parms[[2]] >= 0 & seexp.parms[[2]] <= 1))
+        stop('Sensitivity of exposure classification among those without the outcome should be between 0 and 1.')
+    
     if(!is.list(spca.parms))
         stop('Specificity of exposure classification among those with the outcome should be a list.')
     else spca.parms <- spca.parms
+    if(spca.parms[[1]] == "uniform" & length(spca.parms[[2]]) != 2)
+        stop('For uniform distribution, please provide vector of lower and upper limits.')
+    if(spca.parms[[1]] == "uniform" & spca.parms[[2]][1] >= spca.parms[[2]][2])
+        stop('Lower limit of your uniform distribution is greater than upper limit.')
+    if(spca.parms[[1]] == "triangular" & length(spca.parms[[2]]) != 3)
+        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
+    if(spca.parms[[1]] == "triangular" & ((spca.parms[[2]][1] > spca.parms[[2]][3]) |
+                                        (spca.parms[[2]][2] < spca.parms[[2]][3])))
+        stop('Wrong arguments for your triangular distribution.')
+    if(spca.parms[[1]] == "trapezoidal" & length(spca.parms[[2]]) != 4)
+        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
+    if(spca.parms[[1]] == "trapezoidal" & ((spca.parms[[2]][1] > spca.parms[[2]][2]) |
+                                         (spca.parms[[2]][2] > spca.parms[[2]][3]) |
+                                         (spca.parms[[2]][3] > spca.parms[[2]][4])))
+        stop('Wrong arguments for your trapezoidal distribution.')    
+    if(!all(spca.parms[[2]] >= 0 & spca.parms[[2]] <= 1))
+        stop('Specificity of exposure classification among those with the outcome should be between 0 and 1.')
+    
     if(!is.null(spexp.parms) & !is.list(spexp.parms))
         stop('Specificity of exposure classification among those without the outcome should be a list.')
     else spexp.parms <- spexp.parms
+    if(!is.null(spexp.parms) && spexp.parms[[1]] == "uniform" &
+       length(spexp.parms[[2]]) != 2)
+        stop('For uniform distribution, please provide vector of lower and upper limits.')
+    if(!is.null(spexp.parms) && spexp.parms[[1]] == "uniform" &&
+       spexp.parms[[2]][1] >= spexp.parms[[2]][2])
+        stop('Lower limit of your uniform distribution is greater than upper limit.')
+    if(!is.null(spexp.parms) && spexp.parms[[1]] == "triangular" &
+       length(spexp.parms[[2]]) != 3)
+        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
+    if(!is.null(spexp.parms) && spexp.parms[[1]] == "triangular" &&
+       ((spexp.parms[[2]][1] > spexp.parms[[2]][3]) |
+            (spexp.parms[[2]][2] < spexp.parms[[2]][3])))
+        stop('Wrong arguments for your triangular distribution.')
+    if(!is.null(spexp.parms) && spexp.parms[[1]] == "trapezoidal" &
+       length(spexp.parms[[2]]) != 4)
+        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
+    if(!is.null(spexp.parms) && spexp.parms[[1]] == "trapezoidal" &&
+       ((spexp.parms[[2]][1] > spexp.parms[[2]][2]) |
+            (spexp.parms[[2]][2] > spexp.parms[[2]][3]) |
+                (spexp.parms[[2]][3] > spexp.parms[[2]][4])))
+        stop('Wrong arguments for your trapezoidal distribution.')    
+    if(!is.null(spexp.parms) && !all(spexp.parms[[2]] >= 0 & spexp.parms[[2]] <= 1))
+        stop('Specificity of exposure classification among those without the outcome should be between 0 and 1.')
+    
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
                                 is.null(corr.se) | is.null(corr.sp)))
         stop('For non-differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations.')
+
     if(!is.null(corr.se) && (corr.se == 0 | corr.se == 1))
         stop('Correlations should be > 0 and < 1.')
     if(!is.null(corr.sp) && (corr.sp == 0 | corr.sp == 1))
@@ -45,6 +134,11 @@ probsens <- function(exposed, case,
     d <- tab[2, 2]
 
     draws <- matrix(NA, nrow = reps, ncol = 13)
+    colnames(draws) <- c("seca", "seexp", "spca", "spexp",
+                         "A1", "B1", "C1", "D1",
+                         "corr.RR", "corr.OR",
+                         "reps",
+                         "tot.RR", "tot.OR")
     corr.draws <- matrix(NA, nrow = reps, ncol = 10)
 
     seca <- c(reps, seca.parms[[2]])
@@ -104,74 +198,114 @@ probsens <- function(exposed, case,
         draws[, 1] <- seca.parms[[2]][2] -
             (seca.parms[[2]][2] - seca.parms[[2]][1]) * corr.draws[, 7]
     }
-    if (seca.parms[[1]] == "triangular" | seca.parms[[1]] == "trapezoidal") {
+    if (seca.parms[[1]] == "triangular") {
+        draws[, 1] <- (corr.draws[, 7] *
+            (seca.parms[[2]][2] - seca.parms[[2]][1]) + (seca.parms[[2]][1] + seca.parms[[2]][3])) / 2
+        draws[, 1] <- ifelse(draws[, 1] < seca.parms[[2]][3],
+                             seca.parms[[2]][1] + sqrt(abs((seca.parms[[2]][3] - seca.parms[[2]][1]) * (2 * draws[, 1] - seca.parms[[2]][1] - seca.parms[[2]][3]))),
+                             draws[, 1])
+        draws[, 1] <- ifelse(draws[, 1] > seca.parms[[2]][3],
+                             seca.parms[[2]][2] - sqrt(abs(2 * (seca.parms[[2]][2] - seca.parms[[2]][3]) * (draws[, 1] - seca.parms[[2]][3]))),
+                             draws[, 1])
+    }
+    if (seca.parms[[1]] == "trapezoidal") {
         draws[, 1] <- (corr.draws[, 7] *
             (seca.parms[[2]][4] + seca.parms[[2]][3] - seca.parms[[2]][1] - seca.parms[[2]][2]) + (seca.parms[[2]][1] + seca.parms[[2]][2])) / 2
         draws[, 1] <- ifelse(draws[, 1] < seca.parms[[2]][2],
-                             seca.parms[[2]][1] + sqrt((seca.parms[[2]][2] - seca.parms[[2]][1]) * (2 * draws[, 1] - seca.parms[[2]][1] - seca.parms[[2]][2])),
+                             seca.parms[[2]][1] + sqrt(abs((seca.parms[[2]][2] - seca.parms[[2]][1]) * (2 * draws[, 1] - seca.parms[[2]][1] - seca.parms[[2]][2]))),
                              draws[, 1])
         draws[, 1] <- ifelse(draws[, 1] > seca.parms[[2]][3],
-                             seca.parms[[2]][4] - sqrt(2 * (seca.parms[[2]][4] - seca.parms[[2]][3]) * (draws[, 1] - seca.parms[[2]][3])),
+                             seca.parms[[2]][4] - sqrt(abs(2 * (seca.parms[[2]][4] - seca.parms[[2]][3]) * (draws[, 1] - seca.parms[[2]][3]))),
                              draws[, 1])
     }
     if (seexp.parms[[1]] == "uniform") {
         draws[, 2] <- seexp.parms[[2]][2] -
             (seexp.parms[[2]][2] - seexp.parms[[2]][1]) * corr.draws[, 8]
     }
-    if (seexp.parms[[1]] == "triangular" | seexp.parms[[1]] == "trapezoidal") {
+    if (seexp.parms[[1]] == "triangular") {
+        draws[, 2] <- (corr.draws[, 8] *
+                           (seexp.parms[[2]][2] - seexp.parms[[2]][1]) + (seexp.parms[[2]][1] + seexp.parms[[2]][3])) / 2
+        draws[, 2] <- ifelse(draws[, 2] < seexp.parms[[2]][3],
+                             seexp.parms[[2]][1] + sqrt(abs((seexp.parms[[2]][3] - seexp.parms[[2]][1]) * (2 * draws[, 2] - seexp.parms[[2]][1] - seexp.parms[[2]][3]))),
+                             draws[, 2])
+        draws[, 2] <- ifelse(draws[, 2] > seexp.parms[[2]][3],
+                             seexp.parms[[2]][2] - sqrt(abs(2 * (seexp.parms[[2]][2] - seexp.parms[[2]][3]) * (draws[, 2] - seexp.parms[[2]][3]))),
+                             draws[, 2])
+    }
+    if (seexp.parms[[1]] == "trapezoidal") {
         draws[, 2] <- (corr.draws[, 8] *
                            (seexp.parms[[2]][4] + seexp.parms[[2]][3] - seexp.parms[[2]][1] - seexp.parms[[2]][2]) + (seexp.parms[[2]][1] + seexp.parms[[2]][2])) / 2
         draws[, 2] <- ifelse(draws[, 2] < seexp.parms[[2]][2],
-                             seexp.parms[[2]][1] + sqrt((seexp.parms[[2]][2] - seexp.parms[[2]][1]) * (2 * draws[, 2] - seexp.parms[[2]][1] - seexp.parms[[2]][2])),
+                             seexp.parms[[2]][1] + sqrt(abs((seexp.parms[[2]][2] - seexp.parms[[2]][1]) * (2 * draws[, 2] - seexp.parms[[2]][1] - seexp.parms[[2]][2]))),
                              draws[, 2])
         draws[, 2] <- ifelse(draws[, 2] > seexp.parms[[2]][3],
-                             seexp.parms[[2]][4] - sqrt(2 * (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * (draws[, 2] - seexp.parms[[2]][3])),
+                             seexp.parms[[2]][4] - sqrt(abs(2 * (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * (draws[, 2] - seexp.parms[[2]][3]))),
                              draws[, 2])
     }
     if (spca.parms[[1]] == "uniform") {
         draws[, 3] <- spca.parms[[2]][2] -
             (spca.parms[[2]][2] - spca.parms[[2]][1]) * corr.draws[, 9]
     }
-    if (spca.parms[[1]] == "triangular" | spca.parms[[1]] == "trapezoidal") {
+    if (spca.parms[[1]] == "triangular") {
+        draws[, 3] <- (corr.draws[, 9] *
+                           (spca.parms[[2]][2] - spca.parms[[2]][1]) + (spca.parms[[2]][1] + spca.parms[[2]][3])) / 2
+        draws[, 3] <- ifelse(draws[, 3] < spca.parms[[2]][3],
+                             spca.parms[[2]][1] + sqrt(abs((spca.parms[[2]][3] - spca.parms[[2]][1]) * (2 * draws[, 3] - spca.parms[[2]][1] - spca.parms[[2]][3]))),
+                             draws[, 3])
+        draws[, 3] <- ifelse(draws[, 3] > spca.parms[[2]][3],
+                             spca.parms[[2]][2] - sqrt(abs(2 * (spca.parms[[2]][2] - spca.parms[[2]][3]) * (draws[, 3] - spca.parms[[2]][3]))),
+                             draws[, 3])
+    }
+    if (spca.parms[[1]] == "trapezoidal") {
         draws[, 3] <- (corr.draws[, 9] *
                            (spca.parms[[2]][4] + spca.parms[[2]][3] - spca.parms[[2]][1] - spca.parms[[2]][2]) + (spca.parms[[2]][1] + spca.parms[[2]][2])) / 2
         draws[, 3] <- ifelse(draws[, 3] < spca.parms[[2]][2],
-                             spca.parms[[2]][1] + sqrt((spca.parms[[2]][2] - spca.parms[[2]][1]) * (2 * draws[, 3] - spca.parms[[2]][1] - spca.parms[[2]][2])),
+                             spca.parms[[2]][1] + sqrt(abs((spca.parms[[2]][2] - spca.parms[[2]][1]) * (2 * draws[, 3] - spca.parms[[2]][1] - spca.parms[[2]][2]))),
                              draws[, 3])
         draws[, 3] <- ifelse(draws[, 3] > spca.parms[[2]][3],
-                             spca.parms[[2]][4] - sqrt(2 * (spca.parms[[2]][4] - spca.parms[[2]][3]) * (draws[, 3] - spca.parms[[2]][3])),
+                             spca.parms[[2]][4] - sqrt(abs(2 * (spca.parms[[2]][4] - spca.parms[[2]][3]) * (draws[, 3] - spca.parms[[2]][3]))),
                              draws[, 3])
     }
     if (spexp.parms[[1]] == "uniform") {
         draws[, 4] <- spexp.parms[[2]][2] -
             (spexp.parms[[2]][2] - spexp.parms[[2]][1]) * corr.draws[, 10]
     }
-    if (spexp.parms[[1]] == "triangular" | spexp.parms[[1]] == "trapezoidal") {
+    if (spexp.parms[[1]] == "triangular") {
+        draws[, 4] <- (corr.draws[, 10] *
+                           (spexp.parms[[2]][2] - spexp.parms[[2]][1]) + (spexp.parms[[2]][1] + spexp.parms[[2]][3])) / 2
+        draws[, 4] <- ifelse(draws[, 4] < spexp.parms[[2]][3],
+                             spexp.parms[[2]][1] + sqrt(abs((spexp.parms[[2]][3] - spexp.parms[[2]][1]) * (2 * draws[, 4] - spexp.parms[[2]][1] - spexp.parms[[2]][3]))),
+                             draws[, 4])
+        draws[, 4] <- ifelse(draws[, 4] > spexp.parms[[2]][3],
+                             spexp.parms[[2]][2] - sqrt(abs(2 * (spexp.parms[[2]][2] - spexp.parms[[2]][3]) * (draws[, 4] - spexp.parms[[2]][3]))),
+                             draws[, 4])
+    }
+    if (spexp.parms[[1]] == "trapezoidal") {
         draws[, 4] <- (corr.draws[, 10] *
                            (spexp.parms[[2]][4] + spexp.parms[[2]][3] - spexp.parms[[2]][1] - spexp.parms[[2]][2]) + (spexp.parms[[2]][1] + spexp.parms[[2]][2])) / 2
         draws[, 4] <- ifelse(draws[, 4] < spexp.parms[[2]][2],
-                             spexp.parms[[2]][1] + sqrt((spexp.parms[[2]][2] - spexp.parms[[2]][1]) * (2 * draws[, 4] - spexp.parms[[2]][1] - spexp.parms[[2]][2])),
+                             spexp.parms[[2]][1] + sqrt(abs((spexp.parms[[2]][2] - spexp.parms[[2]][1]) * (2 * draws[, 4] - spexp.parms[[2]][1] - spexp.parms[[2]][2]))),
                              draws[, 4])
         draws[, 4] <- ifelse(draws[, 4] > spexp.parms[[2]][3],
-                             spexp.parms[[2]][4] - sqrt(2 * (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * (draws[, 4] - spexp.parms[[2]][3])),
+                             spexp.parms[[2]][4] - sqrt(abs(2 * (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * (draws[, 4] - spexp.parms[[2]][3]))),
                              draws[, 4])
     }
     }
 
     draws[, 11] <- runif(reps)
 
-    implement <- match.arg(implement)
-    if (implement == "exposure") {
+    type <- match.arg(type)
+    if (type == "exposure") {
         draws[, 5] <- (a - (1 - draws[, 3]) * (a + b)) /
             (draws[, 1] - (1 - draws[, 3]))
+        draws[, 6] <- (a + b) - draws[, 5]
         draws[, 7] <- (c - (1 - draws[, 4]) * (c + d)) /
             (draws[, 2] - (1 - draws[, 4]))
-        draws[, 6] <- (a + b) - draws[, 5]
         draws[, 8] <- (c + d) - draws[, 7]
 
         draws[, 9] <- (draws[, 5]/(draws[, 5] + draws[, 7])) /
             (draws[, 6]/(draws[, 6] + draws[, 8]))
-        draws[, 10] <- (draws[, 5]/draws[, 6]) / (draws[, 7]/draws[, 8])
+        draws[, 10] <- (draws[, 5]/draws[, 7]) / (draws[, 6]/draws[, 8])
 
         draws[, 9] <- ifelse(draws[, 5] < 1 |
                                draws[, 6] < 1 |
@@ -219,7 +353,7 @@ probsens <- function(exposed, case,
         if (print)
             cat("Observed Data:",
                 "\n--------------", 
-                "nOutcome   :", rownames(tab)[1],
+                "\nOutcome   :", rownames(tab)[1],
                 "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
         if (print) 
             print(round(tab, dec))
@@ -238,7 +372,10 @@ probsens <- function(exposed, case,
         if (print)
             cat("\n")
         rmatc <- rbind(corr.rr, corr.or, tot.rr, tot.or)
-        rownames(rmatc) <- c("Relative Risk -- systematic error:", "Odds Ratio -- systematic error:", "Relative Risk -- systematic and random error:", "Odds Ratio -- systematic and random error")
+        rownames(rmatc) <- c("           Relative Risk -- systematic error:",
+                             "              Odds Ratio -- systematic error:",
+                             "Relative Risk -- systematic and random error:",
+                             "   Odds Ratio -- systematic and random error:")
         colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
         if (print)
             print(round(rmatc, dec))
@@ -246,28 +383,28 @@ probsens <- function(exposed, case,
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("Se|Cases:", seca.parms[[1]], "(", seca.parms[[2]], ")",
-                "\nSp|Cases:", spca.parms[[1]], "(", spca.parms[[2]], ")",
+            cat("   Se|Cases:", seca.parms[[1]], "(", seca.parms[[2]], ")",
+                "\n   Sp|Cases:", spca.parms[[1]], "(", spca.parms[[2]], ")",
                 "\nSe|No-cases:", seexp.parms[[1]], "(", seexp.parms[[2]], ")",
                 "\nSp|No-cases:", spexp.parms[[1]], "(", spexp.parms[[2]], ")",
                 "\n")
         invisible(list(obs.data = tab,
                        obs.measures = rmat, 
                        corr.rr = corr.rr, corr.or = corr.or,
-                       sim.df = as.data.frame(draws)))
+                       sim.df = as.data.frame(draws[, -11])))
         }
 
-    if (implement == "outcome") {
+    if (type == "outcome") {
         draws[, 5] <- (a - (1 - draws[, 3]) * (a + c)) /
             (draws[, 1] - (1 - draws[, 3]))
-        draws[, 7] <- (b - (1 - draws[, 4]) * (b + d)) /
+        draws[, 6] <- (b - (1 - draws[, 4]) * (b + d)) /
             (draws[, 2] - (1 - draws[, 4]))
-        draws[, 6] <- (a + c) - draws[, 5]
-        draws[, 8] <- (b+ d) - draws[, 7]
+        draws[, 7] <- (a + c) - draws[, 5]
+        draws[, 8] <- (b + d) - draws[, 6]
 
         draws[, 9] <- (draws[, 5]/(draws[, 5] + draws[, 7])) /
             (draws[, 6]/(draws[, 6] + draws[, 8]))
-        draws[, 10] <- (draws[, 5]/draws[, 6]) / (draws[, 7]/draws[, 8])
+        draws[, 10] <- (draws[, 5]/draws[, 7]) / (draws[, 6]/draws[, 8])
 
         draws[, 9] <- ifelse(draws[, 5] < 1 |
                                draws[, 6] < 1 |
@@ -315,7 +452,7 @@ probsens <- function(exposed, case,
         if (print)
             cat("Observed Data:",
                 "\n--------------", 
-                "nOutcome   :", rownames(tab)[1],
+                "\nOutcome   :", rownames(tab)[1],
                 "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
         if (print) 
             print(round(tab, dec))
@@ -334,7 +471,10 @@ probsens <- function(exposed, case,
         if (print)
             cat("\n")
         rmatc <- rbind(corr.rr, corr.or, tot.rr, tot.or)
-        rownames(rmatc) <- c("Relative Risk -- systematic error:", "Odds Ratio -- systematic error:", "Relative Risk -- systematic and random error:", "Odds Ratio -- systematic and random error")
+        rownames(rmatc) <- c("           Relative Risk -- systematic error:",
+                             "              Odds Ratio -- systematic error:",
+                             "Relative Risk -- systematic and random error:",
+                             "   Odds Ratio -- systematic and random error:")
         colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
         if (print)
             print(round(rmatc, dec))
@@ -342,14 +482,14 @@ probsens <- function(exposed, case,
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("Se|Exposed:", seca.parms[[1]], "(", seca.parms[[2]], ")",
-                "\nSp|Exposed:", spca.parms[[1]], "(", spca.parms[[2]], ")",
+            cat("    Se|Exposed:", seca.parms[[1]], "(", seca.parms[[2]], ")",
+                "\n    Sp|Exposed:", spca.parms[[1]], "(", spca.parms[[2]], ")",
                 "\nSe|Non-exposed:", seexp.parms[[1]], "(", seexp.parms[[2]], ")",
                 "\nSp|Non-exposed:", spexp.parms[[1]], "(", spexp.parms[[2]], ")",
                 "\n")
         invisible(list(obs.data = tab,
                        obs.measures = rmat, 
                        corr.rr = corr.rr, corr.or = corr.or,
-                       sim.df = as.data.frame(draws)))
+                       sim.df = as.data.frame(draws[, -11])))
         }
 }

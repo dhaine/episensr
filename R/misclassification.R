@@ -1,4 +1,10 @@
-misclassification <- function(exposed, case, implement = c("exposure", "outcome", "confounder"), bias = NULL, alpha = 0.05, dec = 4, print = TRUE){
+misclassification <- function(exposed,
+                              case,
+                              implement = c("exposure", "outcome"),
+                              bias = NULL,
+                              alpha = 0.05,
+                              dec = 4,
+                              print = TRUE){
     if(is.null(bias))
         bias <- c(1, 1, 1, 1)
     else bias <- bias
@@ -27,14 +33,18 @@ misclassification <- function(exposed, case, implement = c("exposure", "outcome"
         lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
         uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
-        corr.a <- (a - (1 - bias[3]) * (a + b)) / (bias[1] - (1 - bias[3]))
-        corr.c <- (c - (1 - bias[4]) * (c + d)) / (bias[2] - (1 - bias[4]))
-        corr.b <- (a + b) - corr.a
-        corr.d <- (c + d) - corr.c
-        corr.tab <- matrix(c(corr.a, corr.b, corr.c, corr.d), nrow = 2, byrow = TRUE)
+        A <- (a - (1 - bias[3]) * (a + b)) / (bias[1] - (1 - bias[3]))
+        C <- (c - (1 - bias[4]) * (c + d)) / (bias[2] - (1 - bias[4]))
+        B <- (a + b) - A
+        D <- (c + d) - C
 
-        corr.rr <- (corr.a/(corr.a + corr.c)) / (corr.b/(corr.b + corr.d))
-        corr.or <- (corr.a/corr.b) / (corr.c/corr.d)
+        if(A < 1 | B < 1 | C < 1 | D < 1)
+            stop('Negative cell.')
+        
+        corr.tab <- matrix(c(A, B, C, D), nrow = 2, byrow = TRUE)
+
+        corr.rr <- (A/(A + C)) / (B/(B + D))
+        corr.or <- (A/B) / (C/D)
 
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)
@@ -84,11 +94,12 @@ misclassification <- function(exposed, case, implement = c("exposure", "outcome"
                 "\nSp(Outcome+):", bias[3],
                 "\nSp(Outcome-):", bias[4],
                 "\n")
-        invisible(list(obs.data = tab, corr.data = corr.tab,
+        invisible(list(obs.data = tab, Data = corr.tab,
                        obs.measures = rmat, 
                        corr.rr = corr.rr, corr.or = corr.or,
                        bias.params = bias))
     }
+    
     if (implement == "outcome"){
         obs.rr <- (a/(a + c)) / (b/(b + d))
         se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
@@ -100,14 +111,18 @@ misclassification <- function(exposed, case, implement = c("exposure", "outcome"
         lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
         uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
-        corr.a <- (a - (1 - bias[3]) * (a + c)) / (bias[1] - (1 - bias[3]))
-        corr.b <- (b - (1 - bias[4]) * (b + d)) / (bias[2] - (1 - bias[4]))
-        corr.c <- (a + c) - corr.a
-        corr.d <- (b + d) - corr.b
-        corr.tab <- matrix(c(corr.a, corr.b, corr.c, corr.d), nrow = 2, byrow = TRUE)
+        A <- (a - (1 - bias[3]) * (a + c)) / (bias[1] - (1 - bias[3]))
+        B <- (b - (1 - bias[4]) * (b + d)) / (bias[2] - (1 - bias[4]))
+        C <- (a + c) - A
+        D <- (b + d) - B
 
-        corr.rr <- (corr.a/(corr.a + corr.c)) / (corr.b/(corr.b + corr.d))
-        corr.or <- (corr.a/corr.b) / (corr.c/corr.d)
+        if(A < 1 | B < 1 | C < 1 | D < 1)
+            stop('Negative cell.')
+        
+        corr.tab <- matrix(c(A, B, C, D), nrow = 2, byrow = TRUE)
+
+        corr.rr <- (A/(A + C)) / (B/(B + D))
+        corr.or <- (A/B) / (C/D)
 
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)

@@ -1,16 +1,17 @@
 \name{confounders.poly}
 \alias{confounders.poly}
-\alis{confounders}
+\alias{confounders}
+\alias{confounders.emm}
 \title{Simple sensitivity analysis to correct for unknown or unmeasured
   polychotomous confounding without effect modification}
 \description{Simple sensitivity analysis to correct for unknown or unmeasured
-  polychotomous confounding without effect modification. Implementation for ratio
-  measures (relative risk -- RR, or odds ratio -- OR) and difference
-  measures (risk difference -- RD).}
+  polychotomous (3-level) confounding without effect modification.
+  Implementation for ratio measures (relative risk -- RR, or odds ratio
+  -- OR) and difference measures (risk difference -- RD).}
 \usage{
 confounders.poly(exposed, case, implement = c("RR", "OR", "RD"),
-prev.cfder = NULL, cfder.dis.RR = NULL, cfder.dis.OR = NULL,
-cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
+pr = NULL, RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05,
+dec = 4, print = TRUE)
 }
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
@@ -18,8 +19,8 @@ cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
   \item{implement}{Choice of implementation, with no effect measure
     modification for ratio measures (relative risk -- RR; odds
     ratio -- OR) or difference measures (risk difference -- RD).}
-  \item{prev.cfder}{Vector defining the prevalence of the confounder. This
-    vector has 4 elements between 0 and 1, in the following order:
+  \item{p}{Vector defining the prevalence of the confounder. This vector
+    has 4 elements between 0 and 1, in the following order:
     \begin{enumerate}
     \item Prevalence of the highest level confounder among the exposed,
     \item Prevalence of the highest level confounder among the
@@ -28,27 +29,27 @@ cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
     \item Prevalence of the mid-level confounder among the unexposed.
     \end{enumerate}
   }
-  \item{cfder.dis.RR}{Vector defining the confounder-disease relative
-    risk. This vector has two elements in the following order:
-    \begin{enumerate}
-  \item Relative risk of having the highest-level confounder in
-  diseased, and
-  \item Relative risk of having the mid-level confounder in diseased.
-  \end{enumerate}}
-  \item{cfder.dis.OR}{Vector defining the confounder-disease odds ratio.
+  \item{RR.cd}{Vector defining the confounder-disease relative risk.
     This vector has two elements in the following order:
     \begin{enumerate}
-  \item Odds ratio of having the highest-level confounder in diseased,
-  and
-  \item Odds ratio of having the mid-level confounder in diseased.
-  \end{enumerate}}
-  \item{cfder.dis.RD}{Vector defining the confounder-disease risk
+    \item Relative risk of having the highest-level confounder in
+    diseased, and
+    \item Relative risk of having the mid-level confounder in diseased.
+    \end{enumerate}}
+  \item{OR.cd}{Vector defining the confounder-disease odds ratio. This
+    vector has two elements in the following order:
+    \begin{enumerate}
+    \item Odds ratio of having the highest-level confounder in diseased,
+    and
+    \item Odds ratio of having the mid-level confounder in diseased.
+    \end{enumerate}}
+  \item{RD.cd}{Vector defining the confounder-disease risk
     difference. This vector has two elements in the following order:
     \begin{enumerate}
-  \item Risk difference of having the highest-level confounder in
-  diseased, and
-  \item Risk difference of having the mid-level confounder in diseased.
-  \end{enumerate}}
+    \item Risk difference of having the highest-level confounder in
+    diseased, and
+    \item Risk difference of having the mid-level confounder in diseased.
+    \end{enumerate}}
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}
   \item{print}{Should the results be printed?}
@@ -83,31 +84,29 @@ cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE)
   \item{bias.params}{Input bias parameters.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
-    Quantitative Bias Analysis to Epidemiologic Data}, pp.43--58, Springer. 
-}
-\author{Denis Haine \email{denis.haine@gmail.com}
-}
+    Quantitative Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.}
+\author{Denis Haine \email{denis.haine@gmail.com}}
 \examples{
 # The data for this example come from:
 # Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O. et al.
 # Increased risk of infection with human immunodeficiency virus type 1 among uncircumcised men presenting with genital ulcer disease in Kenya.
 # Clin Infect Dis 1996;23:449-53.
-confounders.poly(matrix(c(105,85,527,93),
+confounders.poly(matrix(c(105, 85, 527, 93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
-                   nrow=2, byrow=TRUE),
+                   nrow = 2, byrow = TRUE),
             implement = "RR",
-            prev.cfder = c(.6, .05, .2, .2),
-            cfder.dis.RR = c(.4, .8))
-confounders.poly(matrix(c(105,85,527,93),
+            p = c(.6, .05, .2, .2),
+            RR.cd = c(.4, .8))
+confounders.poly(matrix(c(105, 85, 527, 93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
-                   nrow=2, byrow=TRUE),
+                   nrow = 2, byrow = TRUE),
             implement = "OR",
-            prev.cfder = c(.6, .05, .2, .2),
-            cfder.dis.OR = c(.4, .8))
-confounders.poly(matrix(c(105,85,527,93),
+            p = c(.6, .05, .2, .2),
+            OR.cd = c(.4, .8))
+confounders.poly(matrix(c(105, 85, 527, 93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
-                   nrow=2, byrow=TRUE),
+                   nrow = 2, byrow = TRUE),
             implement = "RD",
-            prev.cfder = c(.6, .05, .2, .2),
-            cfder.dis.RD = c(-.4, -.2))
+            p = c(.6, .05, .2, .2),
+            RD.cd = c(-.4, -.2))
 }

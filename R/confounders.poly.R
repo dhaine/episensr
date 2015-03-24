@@ -1,32 +1,54 @@
-confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), prev.cfder = NULL, cfder.dis.RR = NULL, cfder.dis.OR = NULL, cfder.dis.RD = NULL, alpha = 0.05, dec = 4, print = TRUE){
-    if(is.null(prev.cfder))
-        prev.cfder <- c(0, 0)
-    else prev.cfder <- prev.cfder
-    if(length(prev.cfder) != 4)
-        stop('The argument prev.cfder should be made of the following components: (1) Prevalence of the confounder (highest level) among the exposed, (2) Prevalence of the confounder (highest level) among the unexposed, (3) Prevalence of the confounder (mid-level) among the exposed, and (4) Prevalence of the confounder (mid-level) among the unexposed.')
-    if(!all(prev.cfder >= 0 & prev.cfder <=1))
-        stop('Prevalences should be between 0 and 1.')
-    if(!all(prev.cfder >= 0 & prev.cfder <=1))
-        stop('Prevalences should be between 0 and 1')
+confounders.poly <- function(exposed,
+                             case,
+                             implement = c("RR", "OR", "RD"),
+                             p = NULL,
+                             RR.cd = NULL,
+                             OR.cd = NULL,
+                             RD.cd = NULL,
+                             alpha = 0.05,
+                             dec = 4,
+                             print = TRUE){
+    if(length(implement) > 1)
+        stop('Choose between RR, OR, or RD implementation.')
+    if(implement == "RR" & (!is.null(OR.cd) | !is.null(RD.cd)))
+        stop('Mismatch between implementation type and confounder risk.')
+    if(implement == "OR" & (!is.null(RR.cd) | !is.null(RD.cd)))
+        stop('Mismatch between implementation type and confounder risk.')
+    if(implement == "RD" & (!is.null(RR.cd) | !is.null(OR.cd)))
+        stop('Mismatch between implementation type and confounder risk.')
     
-    if(is.null(cfder.dis.RR))
-        cfder.dis.RR <- c(1, 1)
-    else cfder.dis.RR <- cfder.dis.RR
-    if(length(cfder.dis.RR) > 2)
+    if(is.null(p))
+        p <- c(0, 0)
+    else p <- p
+    if(length(p) != 4)
+        stop('The argument p should be made of the following components: (1) Prevalence of the confounder (highest level) among the exposed, (2) Prevalence of the confounder (highest level) among the unexposed, (3) Prevalence of the confounder (mid-level) among the exposed, and (4) Prevalence of the confounder (mid-level) among the unexposed.')
+    if(!all(p >= 0 & p <=1))
+        stop('Prevalences should be between 0 and 1.')
+    if(p[1] + p[3] >= 1)
+        stop('Sum of prevalences among the exposed >= 1.')
+    if(p[2] + p[4] >= 1)
+        stop('Sum of prevalences among the unexposed >= 1.')
+    
+    if(is.null(RR.cd))
+        RR.cd <- c(1, 1)
+    else RR.cd <- RR.cd
+    if(length(RR.cd) > 2)
         stop('Confounder-disease relative risk: more than 2 arguments.')
-    if(!all(cfder.dis.RR > 0))
+    if(!all(RR.cd > 0))
         stop('Confounder-disease relative risks should be greater than 0.')
-    if(is.null(cfder.dis.OR))
-        cfder.dis.OR <- c(1, 1)
-    else cfder.dis.OR <- cfder.dis.OR
-    if(length(cfder.dis.OR) > 2)
+
+    if(is.null(OR.cd))
+        OR.cd <- c(1, 1)
+    else OR.cd <- OR.cd
+    if(length(OR.cd) > 2)
         stop('Confounder-disease odds ratio: more than 2 arguments.')
-    if(!all(cfder.dis.OR > 0))
+    if(!all(OR.cd > 0))
         stop('Confounder-disease odds ratios should be greater than 0.')
-    if(is.null(cfder.dis.RD))
-        cfder.dis.RD <- c(1, 1)
-    else cfder.dis.RD <- cfder.dis.RD
-    if(length(cfder.dis.RD) > 2)
+
+    if(is.null(RD.cd))
+        RD.cd <- c(1, 1)
+    else RD.cd <- RD.cd
+    if(length(RD.cd) > 2)
         stop('Confounder-disease risk difference: more than 2 arguments.')    
 
     if(inherits(exposed, c("table", "matrix")))
@@ -44,24 +66,30 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         lci.crude.rr <- exp(log(crude.rr) - qnorm(1 - alpha/2) * se.log.crude.rr)
         uci.crude.rr <- exp(log(crude.rr) + qnorm(1 - alpha/2) * se.log.crude.rr)
 
-        M2 <- (a + c) * prev.cfder[1]
-        M1 <- (a + c) * prev.cfder[3]
-        N2 <- (b + d) * prev.cfder[2]
-        N1 <- (b + d) * prev.cfder[4]
+        M2 <- (a + c) * p[1]
+        M1 <- (a + c) * p[3]
+        N2 <- (b + d) * p[2]
+        N1 <- (b + d) * p[4]
         M0 <- a + c - M2 - M1
         N0 <- b + d - N2 - N1
-        A0 <- (M0 * a) / (cfder.dis.RR[2] * M1 + M0 + cfder.dis.RR[1] * M2)
-        B0 <- (N0 * b) / (cfder.dis.RR[2] * N1 + N0 + cfder.dis.RR[1] * N2)
-        A1 <- cfder.dis.RR[2] * A0 * M1 / M0
-        B1 <- cfder.dis.RR[2] * B0 * N1 / N0
-        A2 <- cfder.dis.RR[1] * A0 * M2 / M0
-        B2 <- cfder.dis.RR[1] * B0 * N2 / N0
+        A0 <- (M0 * a) / (RR.cd[2] * M1 + M0 + RR.cd[1] * M2)
+        B0 <- (N0 * b) / (RR.cd[2] * N1 + N0 + RR.cd[1] * N2)
+        A1 <- RR.cd[2] * A0 * M1 / M0
+        B1 <- RR.cd[2] * B0 * N1 / N0
+        A2 <- RR.cd[1] * A0 * M2 / M0
+        B2 <- RR.cd[1] * B0 * N2 / N0
         C2 <- M2 - A2
         D2 <- N2 - B2
         C1 <- M1 - A1
         D1 <- N1 - B1
         C0 <- M0 - A0
         D0 <- N0 - B0
+
+        if(A2 < 0 | B2 < 0 | C2 < 0 | D2 < 0 |
+           A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
+           A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
+            stop('Negative cell.')
+        
         tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
         tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
@@ -112,8 +140,8 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         if (print) 
             cat("Observed Data:",
                 "\n--------------", 
-                "\nOutcome   :", colnames(tab)[1],
-                "\nComparing :", rownames(tab)[1], "vs.", rownames(tab)[2], "\n\n")
+                "\nOutcome   :", rownames(tab)[1],
+                "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
         if (print) 
             print(round(tab, dec))
         if (print)
@@ -154,12 +182,12 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("p(Confounder+HighestLevel|Exposure+):", prev.cfder[1],
-                "\np(Confounder+HighestLevel|Exposure-):", prev.cfder[2],
-                "\n    p(Confounder+MidLevel|Exposure+):", prev.cfder[3],
-                "\n    p(Confounder+MidLevel|Exposure-):", prev.cfder[4],
-                "\n  RR(ConfounderHighestLevel-Outcome):", cfder.dis.RR[1],
-                "\n      RR(ConfounderMidLevel-Outcome):", cfder.dis.RR[2],
+            cat("p(Confounder+HighestLevel|Exposure+):", p[1],
+                "\np(Confounder+HighestLevel|Exposure-):", p[2],
+                "\n    p(Confounder+MidLevel|Exposure+):", p[3],
+                "\n    p(Confounder+MidLevel|Exposure-):", p[4],
+                "\n  RR(ConfounderHighestLevel-Outcome):", RR.cd[1],
+                "\n      RR(ConfounderMidLevel-Outcome):", RR.cd[2],
                 "\n")
         invisible(list(obs.data = tab, cfder1.data = tab.cfder1,
                        cfder2.data = tab.cfder2, nocfder.data = tab.nocfder,
@@ -167,32 +195,39 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
                        cfder1.rr = cfder1.rr, cfder2.rr = cfder2.rr,
                        nocfder.rr = nocfder.rr,
                        RRadj.smr = RRadj.smr, RRadj.mh = RRadj.mh,
-                       bias.params = c(prev.cfder, cfder.dis.RR)))
+                       bias.params = c(p, RR.cd)))
     }
+
     if (implement == "OR"){
         crude.or <- (a/b) / (c/d)
         se.log.crude.or <- sqrt(1/a + 1/b + 1/c + 1/d)
         lci.crude.or <- exp(log(crude.or) - qnorm(1 - alpha/2) * se.log.crude.or)
         uci.crude.or <- exp(log(crude.or) + qnorm(1 - alpha/2) * se.log.crude.or)
 
-        C2 <- c * prev.cfder[1]
-        C1 <- c * prev.cfder[3]
-        D2 <- d * prev.cfder[2]
-        D1 <- d * prev.cfder[4]
+        C2 <- c * p[1]
+        C1 <- c * p[3]
+        D2 <- d * p[2]
+        D1 <- d * p[4]
         C0 <- c - C2 - C1
         D0 <- d - D2 - D1
-        A0 <- (C0 * a) / (cfder.dis.OR[2] * C1 + cfder.dis.OR[1] * C2 + C0)
-        B0 <- (D0 * b) / (cfder.dis.OR[2] * D1 + cfder.dis.OR[1] * D2 + D0)
-        A1 <- cfder.dis.OR[2] * A0 * C1 / C0
-        B1 <- cfder.dis.OR[2] * B0 * D1 / D0
-        A2 <- cfder.dis.OR[1] * A0 * C2 / C0
-        B2 <- cfder.dis.OR[1] * B0 * D2 / D0
+        A0 <- (C0 * a) / (OR.cd[2] * C1 + OR.cd[1] * C2 + C0)
+        B0 <- (D0 * b) / (OR.cd[2] * D1 + OR.cd[1] * D2 + D0)
+        A1 <- OR.cd[2] * A0 * C1 / C0
+        B1 <- OR.cd[2] * B0 * D1 / D0
+        A2 <- OR.cd[1] * A0 * C2 / C0
+        B2 <- OR.cd[1] * B0 * D2 / D0
         M2 <- A2 + C2
         N2 <- B2 + C2
         M1 <- A1 + C1
         N1 <- B1 + D1
         M0 <- A0 + C0
         N0 <- B0 + C0
+
+        if(A2 < 0 | B2 < 0 | C2 < 0 | D2 < 0 |
+           A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
+           A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
+            stop('Negative cell.')
+        
         tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
         tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
@@ -243,8 +278,8 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         if (print) 
             cat("Observed Data:",
                 "\n--------------", 
-                "\nOutcome   :", colnames(tab)[1],
-                "\nComparing :", rownames(tab)[1], "vs.", rownames(tab)[2], "\n\n")
+                "\nOutcome   :", rownames(tab)[1],
+                "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
         if (print) 
             print(round(tab, dec))
         if (print)
@@ -285,12 +320,12 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("p(Confounder+HighestLevel|Exposure+):", prev.cfder[1],
-                "\np(Confounder+HighestLevel|Exposure-):", prev.cfder[2],
-                "\n    p(Confounder+MidLevel|Exposure+):", prev.cfder[3],
-                "\n    p(Confounder+MidLevel|Exposure-):", prev.cfder[4],
-                "\n  OR(ConfounderHighestLevel-Outcome):", cfder.dis.OR[1],
-                "\n      OR(ConfounderMidLevel-Outcome):", cfder.dis.OR[2],
+            cat("p(Confounder+HighestLevel|Exposure+):", p[1],
+                "\np(Confounder+HighestLevel|Exposure-):", p[2],
+                "\n    p(Confounder+MidLevel|Exposure+):", p[3],
+                "\n    p(Confounder+MidLevel|Exposure-):", p[4],
+                "\n  OR(ConfounderHighestLevel-Outcome):", OR.cd[1],
+                "\n      OR(ConfounderMidLevel-Outcome):", OR.cd[2],
                 "\n")
         invisible(list(obs.data = tab, cfder1.data = tab.cfder1,
                        cfder2.data = tab.cfder2, nocfder.data = tab.nocfder,
@@ -298,32 +333,39 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
                        cfder1.or = cfder1.or, cfder2.or = cfder2.or, 
                        nocfder.or = nocfder.or,
                        ORadj.smr = ORadj.smr, ORadj.mh = ORadj.mh,
-                       bias.params = c(prev.cfder, cfder.dis.OR)))
+                       bias.params = c(p, OR.cd)))
     }
+
     if (implement == "RD"){
         crude.rd <- (a / (a + c)) - (b / (b + d))
         se.log.crude.rd <- sqrt((a * c) / (a + c)^3 + (b * d) / (b + d)^3)
         lci.crude.rd <- crude.rd - qnorm(1 - alpha/2) * se.log.crude.rd
         uci.crude.rd <- crude.rd + qnorm(1 - alpha/2) * se.log.crude.rd
 
-        M2 <- (a + c) * prev.cfder[1]
-        M1 <- (a + c) * prev.cfder[3]
-        N2 <- (b + d) * prev.cfder[2]
-        N1 <- (b + d) * prev.cfder[4]
+        M2 <- (a + c) * p[1]
+        M1 <- (a + c) * p[3]
+        N2 <- (b + d) * p[2]
+        N1 <- (b + d) * p[4]
         M0 <- a + c - M2 - M1
         N0 <- b + d - N2 - N1
-        A0 <- M0 * (a - M2 * cfder.dis.RD[1] - M1 * cfder.dis.RD[2]) / (a + c)
-        B0 <- N0 * (b - N2 * cfder.dis.RD[1] - N1 * cfder.dis.RD[2]) / (b + d)
-        A1 <- M1 * cfder.dis.RD[2] + A0 * M1 / M0
-        B1 <- N1 * cfder.dis.RD[2] + B0 * N1 / N0
-        A2 <- M2 * cfder.dis.RD[1] + A0 * M2 / M0
-        B2 <- N2 * cfder.dis.RD[1] + B0 * N2 / N0
+        A0 <- M0 * (a - M2 * RD.cd[1] - M1 * RD.cd[2]) / (a + c)
+        B0 <- N0 * (b - N2 * RD.cd[1] - N1 * RD.cd[2]) / (b + d)
+        A1 <- M1 * RD.cd[2] + A0 * M1 / M0
+        B1 <- N1 * RD.cd[2] + B0 * N1 / N0
+        A2 <- M2 * RD.cd[1] + A0 * M2 / M0
+        B2 <- N2 * RD.cd[1] + B0 * N2 / N0
         C2 <- M2 - A2
         D2 <- N2 - B2
         C1 <- M1 - A1
         D1 <- N1 - B1
         C0 <- M0 - A0
         D0 <- N0 - B0
+
+        if(A2 < 0 | B2 < 0 | C2 < 0 | D2 < 0 |
+           A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
+           A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
+            stop('Negative cell.')
+        
         tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
         tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
@@ -375,8 +417,8 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
         if (print) 
             cat("Observed Data:",
                 "\n--------------", 
-                "\nOutcome   :", colnames(tab)[1],
-                "\nComparing :", rownames(tab)[1], "vs.", rownames(tab)[2], "\n\n")
+                "\nOutcome   :", rownames(tab)[1],
+                "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
         if (print) 
             print(round(tab, dec))
         if (print)
@@ -416,18 +458,18 @@ confounders.poly <- function(exposed, case, implement = c("RR", "OR", "RD"), pre
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("p(Confounder+HighestLevel|Exposure+):", prev.cfder[1],
-                "\np(Confounder+HighestLevel|Exposure-):", prev.cfder[2],
-                "\n    p(Confounder+MidLevel|Exposure+):", prev.cfder[3],
-                "\n    p(Confounder+MidLevel|Exposure-):", prev.cfder[4],
-                "\n  RD(ConfounderHighestLevel-Outcome):", cfder.dis.RD[1],
-                "\n      RD(ConfounderMidLevel-Outcome):", cfder.dis.RD[2],
+            cat("p(Confounder+HighestLevel|Exposure+):", p[1],
+                "\np(Confounder+HighestLevel|Exposure-):", p[2],
+                "\n    p(Confounder+MidLevel|Exposure+):", p[3],
+                "\n    p(Confounder+MidLevel|Exposure-):", p[4],
+                "\n  RD(ConfounderHighestLevel-Outcome):", RD.cd[1],
+                "\n      RD(ConfounderMidLevel-Outcome):", RD.cd[2],
                 "\n")
         invisible(list(obs.data = tab, cfder1.data = tab.cfder1,
                        cfder2.data = tab.cfder2, nocfder.data = tab.nocfder,
                        obs.measures = rmat, MH = MHrd,
                        cfder1.rd = cfder1.rd, cfder2.rd = cfder2.rd,
                        nocfder.rd = nocfder.rd, RDadj.mh = RDadj.mh,
-                       bias.params = c(prev.cfder, cfder.dis.RD)))
+                       bias.params = c(p, RD.cd)))
     }    
 }
