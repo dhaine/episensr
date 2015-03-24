@@ -198,56 +198,96 @@ probsens <- function(exposed,
         draws[, 1] <- seca.parms[[2]][2] -
             (seca.parms[[2]][2] - seca.parms[[2]][1]) * corr.draws[, 7]
     }
-    if (seca.parms[[1]] == "triangular" | seca.parms[[1]] == "trapezoidal") {
+    if (seca.parms[[1]] == "triangular") {
+        draws[, 1] <- (corr.draws[, 7] *
+            (seca.parms[[2]][2] - seca.parms[[2]][1]) + (seca.parms[[2]][1] + seca.parms[[2]][3])) / 2
+        draws[, 1] <- ifelse(draws[, 1] < seca.parms[[2]][3],
+                             seca.parms[[2]][1] + sqrt(abs((seca.parms[[2]][3] - seca.parms[[2]][1]) * (2 * draws[, 1] - seca.parms[[2]][1] - seca.parms[[2]][3]))),
+                             draws[, 1])
+        draws[, 1] <- ifelse(draws[, 1] > seca.parms[[2]][3],
+                             seca.parms[[2]][2] - sqrt(abs(2 * (seca.parms[[2]][2] - seca.parms[[2]][3]) * (draws[, 1] - seca.parms[[2]][3]))),
+                             draws[, 1])
+    }
+    if (seca.parms[[1]] == "trapezoidal") {
         draws[, 1] <- (corr.draws[, 7] *
             (seca.parms[[2]][4] + seca.parms[[2]][3] - seca.parms[[2]][1] - seca.parms[[2]][2]) + (seca.parms[[2]][1] + seca.parms[[2]][2])) / 2
         draws[, 1] <- ifelse(draws[, 1] < seca.parms[[2]][2],
-                             seca.parms[[2]][1] + sqrt((seca.parms[[2]][2] - seca.parms[[2]][1]) * (2 * draws[, 1] - seca.parms[[2]][1] - seca.parms[[2]][2])),
+                             seca.parms[[2]][1] + sqrt(abs((seca.parms[[2]][2] - seca.parms[[2]][1]) * (2 * draws[, 1] - seca.parms[[2]][1] - seca.parms[[2]][2]))),
                              draws[, 1])
         draws[, 1] <- ifelse(draws[, 1] > seca.parms[[2]][3],
-                             seca.parms[[2]][4] - sqrt(2 * (seca.parms[[2]][4] - seca.parms[[2]][3]) * (draws[, 1] - seca.parms[[2]][3])),
+                             seca.parms[[2]][4] - sqrt(abs(2 * (seca.parms[[2]][4] - seca.parms[[2]][3]) * (draws[, 1] - seca.parms[[2]][3]))),
                              draws[, 1])
     }
     if (seexp.parms[[1]] == "uniform") {
         draws[, 2] <- seexp.parms[[2]][2] -
             (seexp.parms[[2]][2] - seexp.parms[[2]][1]) * corr.draws[, 8]
     }
-    if (seexp.parms[[1]] == "triangular" | seexp.parms[[1]] == "trapezoidal") {
+    if (seexp.parms[[1]] == "triangular") {
+        draws[, 2] <- (corr.draws[, 8] *
+                           (seexp.parms[[2]][2] - seexp.parms[[2]][1]) + (seexp.parms[[2]][1] + seexp.parms[[2]][3])) / 2
+        draws[, 2] <- ifelse(draws[, 2] < seexp.parms[[2]][3],
+                             seexp.parms[[2]][1] + sqrt(abs((seexp.parms[[2]][3] - seexp.parms[[2]][1]) * (2 * draws[, 2] - seexp.parms[[2]][1] - seexp.parms[[2]][3]))),
+                             draws[, 2])
+        draws[, 2] <- ifelse(draws[, 2] > seexp.parms[[2]][3],
+                             seexp.parms[[2]][2] - sqrt(abs(2 * (seexp.parms[[2]][2] - seexp.parms[[2]][3]) * (draws[, 2] - seexp.parms[[2]][3]))),
+                             draws[, 2])
+    }
+    if (seexp.parms[[1]] == "trapezoidal") {
         draws[, 2] <- (corr.draws[, 8] *
                            (seexp.parms[[2]][4] + seexp.parms[[2]][3] - seexp.parms[[2]][1] - seexp.parms[[2]][2]) + (seexp.parms[[2]][1] + seexp.parms[[2]][2])) / 2
         draws[, 2] <- ifelse(draws[, 2] < seexp.parms[[2]][2],
-                             seexp.parms[[2]][1] + sqrt((seexp.parms[[2]][2] - seexp.parms[[2]][1]) * (2 * draws[, 2] - seexp.parms[[2]][1] - seexp.parms[[2]][2])),
+                             seexp.parms[[2]][1] + sqrt(abs((seexp.parms[[2]][2] - seexp.parms[[2]][1]) * (2 * draws[, 2] - seexp.parms[[2]][1] - seexp.parms[[2]][2]))),
                              draws[, 2])
         draws[, 2] <- ifelse(draws[, 2] > seexp.parms[[2]][3],
-                             seexp.parms[[2]][4] - sqrt(2 * (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * (draws[, 2] - seexp.parms[[2]][3])),
+                             seexp.parms[[2]][4] - sqrt(abs(2 * (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * (draws[, 2] - seexp.parms[[2]][3]))),
                              draws[, 2])
     }
     if (spca.parms[[1]] == "uniform") {
         draws[, 3] <- spca.parms[[2]][2] -
             (spca.parms[[2]][2] - spca.parms[[2]][1]) * corr.draws[, 9]
     }
-    if (spca.parms[[1]] == "triangular" | spca.parms[[1]] == "trapezoidal") {
+    if (spca.parms[[1]] == "triangular") {
+        draws[, 3] <- (corr.draws[, 9] *
+                           (spca.parms[[2]][2] - spca.parms[[2]][1]) + (spca.parms[[2]][1] + spca.parms[[2]][3])) / 2
+        draws[, 3] <- ifelse(draws[, 3] < spca.parms[[2]][3],
+                             spca.parms[[2]][1] + sqrt(abs((spca.parms[[2]][3] - spca.parms[[2]][1]) * (2 * draws[, 3] - spca.parms[[2]][1] - spca.parms[[2]][3]))),
+                             draws[, 3])
+        draws[, 3] <- ifelse(draws[, 3] > spca.parms[[2]][3],
+                             spca.parms[[2]][2] - sqrt(abs(2 * (spca.parms[[2]][2] - spca.parms[[2]][3]) * (draws[, 3] - spca.parms[[2]][3]))),
+                             draws[, 3])
+    }
+    if (spca.parms[[1]] == "trapezoidal") {
         draws[, 3] <- (corr.draws[, 9] *
                            (spca.parms[[2]][4] + spca.parms[[2]][3] - spca.parms[[2]][1] - spca.parms[[2]][2]) + (spca.parms[[2]][1] + spca.parms[[2]][2])) / 2
         draws[, 3] <- ifelse(draws[, 3] < spca.parms[[2]][2],
-                             spca.parms[[2]][1] + sqrt((spca.parms[[2]][2] - spca.parms[[2]][1]) * (2 * draws[, 3] - spca.parms[[2]][1] - spca.parms[[2]][2])),
+                             spca.parms[[2]][1] + sqrt(abs((spca.parms[[2]][2] - spca.parms[[2]][1]) * (2 * draws[, 3] - spca.parms[[2]][1] - spca.parms[[2]][2]))),
                              draws[, 3])
         draws[, 3] <- ifelse(draws[, 3] > spca.parms[[2]][3],
-                             spca.parms[[2]][4] - sqrt(2 * (spca.parms[[2]][4] - spca.parms[[2]][3]) * (draws[, 3] - spca.parms[[2]][3])),
+                             spca.parms[[2]][4] - sqrt(abs(2 * (spca.parms[[2]][4] - spca.parms[[2]][3]) * (draws[, 3] - spca.parms[[2]][3]))),
                              draws[, 3])
     }
     if (spexp.parms[[1]] == "uniform") {
         draws[, 4] <- spexp.parms[[2]][2] -
             (spexp.parms[[2]][2] - spexp.parms[[2]][1]) * corr.draws[, 10]
     }
-    if (spexp.parms[[1]] == "triangular" | spexp.parms[[1]] == "trapezoidal") {
+    if (spexp.parms[[1]] == "triangular") {
+        draws[, 4] <- (corr.draws[, 10] *
+                           (spexp.parms[[2]][2] - spexp.parms[[2]][1]) + (spexp.parms[[2]][1] + spexp.parms[[2]][3])) / 2
+        draws[, 4] <- ifelse(draws[, 4] < spexp.parms[[2]][3],
+                             spexp.parms[[2]][1] + sqrt(abs((spexp.parms[[2]][3] - spexp.parms[[2]][1]) * (2 * draws[, 4] - spexp.parms[[2]][1] - spexp.parms[[2]][3]))),
+                             draws[, 4])
+        draws[, 4] <- ifelse(draws[, 4] > spexp.parms[[2]][3],
+                             spexp.parms[[2]][2] - sqrt(abs(2 * (spexp.parms[[2]][2] - spexp.parms[[2]][3]) * (draws[, 4] - spexp.parms[[2]][3]))),
+                             draws[, 4])
+    }
+    if (spexp.parms[[1]] == "trapezoidal") {
         draws[, 4] <- (corr.draws[, 10] *
                            (spexp.parms[[2]][4] + spexp.parms[[2]][3] - spexp.parms[[2]][1] - spexp.parms[[2]][2]) + (spexp.parms[[2]][1] + spexp.parms[[2]][2])) / 2
         draws[, 4] <- ifelse(draws[, 4] < spexp.parms[[2]][2],
-                             spexp.parms[[2]][1] + sqrt((spexp.parms[[2]][2] - spexp.parms[[2]][1]) * (2 * draws[, 4] - spexp.parms[[2]][1] - spexp.parms[[2]][2])),
+                             spexp.parms[[2]][1] + sqrt(abs((spexp.parms[[2]][2] - spexp.parms[[2]][1]) * (2 * draws[, 4] - spexp.parms[[2]][1] - spexp.parms[[2]][2]))),
                              draws[, 4])
         draws[, 4] <- ifelse(draws[, 4] > spexp.parms[[2]][3],
-                             spexp.parms[[2]][4] - sqrt(2 * (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * (draws[, 4] - spexp.parms[[2]][3])),
+                             spexp.parms[[2]][4] - sqrt(abs(2 * (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * (draws[, 4] - spexp.parms[[2]][3]))),
                              draws[, 4])
     }
     }
