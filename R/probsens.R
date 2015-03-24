@@ -15,20 +15,107 @@ probsens <- function(exposed,
                      alpha = 0.05,
                      dec = 4,
                      print = TRUE){
+    if(reps < 1)
+        stop(paste("Invalid argument: reps =", reps))
+    
     if(is.null(seca.parms) | is.null(spca.parms))
         stop('At least one Se and one Sp should be provided through outcome parameters.')
     if(!is.list(seca.parms))
         stop('Sensitivity of exposure classification among those with the outcome should be a list.')
     else seca.parms <- seca.parms
+    if(seca.parms[[1]] == "uniform" & length(seca.parms[[2]]) != 2)
+        stop('For uniform distribution, please provide vector of lower and upper limits.')
+    if(seca.parms[[1]] == "uniform" & seca.parms[[2]][1] >= seca.parms[[2]][2])
+        stop('Lower limit of your uniform distribution is greater than upper limit.')
+    if(seca.parms[[1]] == "triangular" & length(seca.parms[[2]]) != 3)
+        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
+    if(seca.parms[[1]] == "triangular" & ((seca.parms[[2]][1] > seca.parms[[2]][3]) |
+                                        (seca.parms[[2]][2] < seca.parms[[2]][3])))
+        stop('Wrong arguments for your triangular distribution.')
+    if(seca.parms[[1]] == "trapezoidal" & length(seca.parms[[2]]) != 4)
+        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
+    if(seca.parms[[1]] == "trapezoidal" & ((seca.parms[[2]][1] > seca.parms[[2]][2]) |
+                                         (seca.parms[[2]][2] > seca.parms[[2]][3]) |
+                                         (seca.parms[[2]][3] > seca.parms[[2]][4])))
+        stop('Wrong arguments for your trapezoidal distribution.')    
+    if(!all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
+        stop('Sensitivity of exposure classification among those with the outcome should be between 0 and 1.')
+    
     if(!is.null(seexp.parms) & !is.list(seexp.parms))
         stop('Sensitivity of exposure classification among those without the outcome should be a list.')
     else seexp.parms <- seexp.parms
+    if(!is.null(seexp.parms) & seexp.parms[[1]] == "uniform" &
+       length(seexp.parms[[2]]) != 2)
+        stop('For uniform distribution, please provide vector of lower and upper limits.')
+    if(!is.null(seexp.parms) & seexp.parms[[1]] == "uniform" &
+       seexp.parms[[2]][1] >= seexp.parms[[2]][2])
+        stop('Lower limit of your uniform distribution is greater than upper limit.')
+    if(!is.null(seexp.parms) & seexp.parms[[1]] == "triangular" &
+       length(seexp.parms[[2]]) != 3)
+        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
+    if(!is.null(seexp.parms) & seexp.parms[[1]] == "triangular" &
+       ((seexp.parms[[2]][1] > seexp.parms[[2]][3]) |
+            (seexp.parms[[2]][2] < seexp.parms[[2]][3])))
+        stop('Wrong arguments for your triangular distribution.')
+    if(!is.null(seexp.parms) & seexp.parms[[1]] == "trapezoidal" &
+       length(seexp.parms[[2]]) != 4)
+        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
+    if(!is.null(seexp.parms) & seexp.parms[[1]] == "trapezoidal" &
+       ((seexp.parms[[2]][1] > seexp.parms[[2]][2]) |
+            (seexp.parms[[2]][2] > seexp.parms[[2]][3]) |
+                (seexp.parms[[2]][3] > seexp.parms[[2]][4])))
+        stop('Wrong arguments for your trapezoidal distribution.')    
+    if(!is.null(seexp.parms) & !all(seexp.parms[[2]] >= 0 & seexp.parms[[2]] <= 1))
+        stop('Sensitivity of exposure classification among those without the outcome should be between 0 and 1.')
+    
     if(!is.list(spca.parms))
         stop('Specificity of exposure classification among those with the outcome should be a list.')
     else spca.parms <- spca.parms
+    if(spca.parms[[1]] == "uniform" & length(spca.parms[[2]]) != 2)
+        stop('For uniform distribution, please provide vector of lower and upper limits.')
+    if(spca.parms[[1]] == "uniform" & spca.parms[[2]][1] >= spca.parms[[2]][2])
+        stop('Lower limit of your uniform distribution is greater than upper limit.')
+    if(spca.parms[[1]] == "triangular" & length(spca.parms[[2]]) != 3)
+        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
+    if(spca.parms[[1]] == "triangular" & ((spca.parms[[2]][1] > spca.parms[[2]][3]) |
+                                        (spca.parms[[2]][2] < spca.parms[[2]][3])))
+        stop('Wrong arguments for your triangular distribution.')
+    if(spca.parms[[1]] == "trapezoidal" & length(spca.parms[[2]]) != 4)
+        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
+    if(spca.parms[[1]] == "trapezoidal" & ((spca.parms[[2]][1] > spca.parms[[2]][2]) |
+                                         (spca.parms[[2]][2] > spca.parms[[2]][3]) |
+                                         (spca.parms[[2]][3] > spca.parms[[2]][4])))
+        stop('Wrong arguments for your trapezoidal distribution.')    
+    if(!all(spca.parms[[2]] >= 0 & spca.parms[[2]] <= 1))
+        stop('Specificity of exposure classification among those with the outcome should be between 0 and 1.')
+    
     if(!is.null(spexp.parms) & !is.list(spexp.parms))
         stop('Specificity of exposure classification among those without the outcome should be a list.')
     else spexp.parms <- spexp.parms
+    if(!is.null(spexp.parms) & spexp.parms[[1]] == "uniform" &
+       length(spexp.parms[[2]]) != 2)
+        stop('For uniform distribution, please provide vector of lower and upper limits.')
+    if(!is.null(spexp.parms) & spexp.parms[[1]] == "uniform" &
+       spexp.parms[[2]][1] >= spexp.parms[[2]][2])
+        stop('Lower limit of your uniform distribution is greater than upper limit.')
+    if(!is.null(spexp.parms) & spexp.parms[[1]] == "triangular" &
+       length(spexp.parms[[2]]) != 3)
+        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
+    if(!is.null(spexp.parms) & spexp.parms[[1]] == "triangular" &
+       ((spexp.parms[[2]][1] > spexp.parms[[2]][3]) |
+            (spexp.parms[[2]][2] < spexp.parms[[2]][3])))
+        stop('Wrong arguments for your triangular distribution.')
+    if(!is.null(spexp.parms) & spexp.parms[[1]] == "trapezoidal" &
+       length(spexp.parms[[2]]) != 4)
+        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
+    if(!is.null(spexp.parms) & spexp.parms[[1]] == "trapezoidal" &
+       ((spexp.parms[[2]][1] > spexp.parms[[2]][2]) |
+            (spexp.parms[[2]][2] > spexp.parms[[2]][3]) |
+                (spexp.parms[[2]][3] > spexp.parms[[2]][4])))
+        stop('Wrong arguments for your trapezoidal distribution.')    
+    if(!is.null(spexp.parms) & !all(spexp.parms[[2]] >= 0 & spexp.parms[[2]] <= 1))
+        stop('Specificity of exposure classification among those without the outcome should be between 0 and 1.')
+    
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
                                 is.null(corr.se) | is.null(corr.sp)))
         stop('For non-differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations.')
