@@ -1,4 +1,5 @@
-probsens <- function(exposed, case,
+probsens <- function(exposed,
+                     case,
                      reps = 1000,
                      or.parms = list(dist = c("uniform", "triangular",
                                            "trapezoidal"),
