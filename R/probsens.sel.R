@@ -40,6 +40,7 @@ probsens <- function(exposed,
     d <- tab[2, 2]
 
     draws <- matrix(NA, nrow = reps, ncol = 4)
+    colnames(draws) <- c("or.sel", "corr.or", "reps", "tot.or")
 
     or.sel <- c(reps, or.parms[[2]])
 
@@ -112,5 +113,5 @@ probsens <- function(exposed,
     invisible(list(obs.data = tab,
                    obs.measures = rmat, 
                    corr.or = corr.or, tot.or = tot.or,
-                   sim.df = as.data.frame(draws)))
+                   sim.df = as.data.frame(draws[, -3])))
 }
