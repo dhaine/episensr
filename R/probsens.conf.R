@@ -14,7 +14,7 @@ probsens.conf <- function(exposed,
                           alpha = 0.05,
                           dec = 4,
                           print = TRUE){
-    if(resp < 1)
+    if(reps < 1)
         stop(paste("Invalid argument: reps =", reps))
 
     if(is.null(prev.exp) | is.null(prev.nexp))
@@ -31,7 +31,7 @@ probsens.conf <- function(exposed,
     if(prev.exp[[1]] == "triangular" & ((prev.exp[[2]][1] > prev.exp[[2]][3]) |
                                         (prev.exp[[2]][2] < prev.exp[[2]][3])))
         stop('Wrong arguments for your triangular distribution.')
-    if(prev.exp[[1]] == "trapezoidal" & length(prev.exp[[2]] != 4))
+    if(prev.exp[[1]] == "trapezoidal" & length(prev.exp[[2]]) != 4)
         stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
     if(prev.exp[[1]] == "trapezoidal" & ((prev.exp[[2]][1] > prev.exp[[2]][2]) |
                                          (prev.exp[[2]][2] > prev.exp[[2]][3]) |
@@ -49,7 +49,7 @@ probsens.conf <- function(exposed,
     if(prev.nexp[[1]] == "triangular" & ((prev.nexp[[2]][1] > prev.nexp[[2]][3]) |
                                         (prev.nexp[[2]][2] < prev.nexp[[2]][3])))
         stop('Wrong arguments for your triangular distribution.')
-    if(prev.nexp[[1]] == "trapezoidal" & length(prev.nexp[[2]] != 4))
+    if(prev.nexp[[1]] == "trapezoidal" & length(prev.nexp[[2]]) != 4)
         stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
     if(prev.nexp[[1]] == "trapezoidal" & ((prev.nexp[[2]][1] > prev.nexp[[2]][2]) |
                                          (prev.nexp[[2]][2] > prev.nexp[[2]][3]) |
@@ -67,7 +67,7 @@ probsens.conf <- function(exposed,
     if(risk[[1]] == "triangular" & ((risk[[2]][1] > risk[[2]][3]) |
                                     (risk[[2]][2] < risk[[2]][3])))
         stop('Wrong arguments for your triangular distribution.')
-    if(risk[[1]] == "trapezoidal" & length(risk[[2]] != 4))
+    if(risk[[1]] == "trapezoidal" & length(risk[[2]]) != 4)
         stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
     if(risk[[1]] == "trapezoidal" & ((risk[[2]][1] > risk[[2]][2]) |
                                      (risk[[2]][2] > risk[[2]][3]) |
