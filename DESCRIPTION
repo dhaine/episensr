@@ -6,8 +6,8 @@ Imports:
 	 triangle,
 	 trapezoid
 Date: 2015-02-06
-Authors@R: person("Denis", "Haine", email = "denis.haine@gmail.com", role =
-c("aut", "cre"))
+Authors@R: person("Denis", "Haine", email = "denis.haine@gmail.com",
+                  role = c("aut", "cre"))
 BugReports: https://github.com/dhaine/episensr/issues
 Description: episensr provides basic sensitivity analysis of the observed
 	     relative risks adjusting for unmeasured confounding and
