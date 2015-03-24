@@ -1,12 +1,12 @@
-probsens <- function(exposed,
-                     case,
-                     reps = 1000,
-                     or.parms = list(dist = c("uniform", "triangular",
-                                           "trapezoidal"),
-                                       parms = NULL),
-                     alpha = 0.05,
-                     dec = 4,
-                     print = TRUE){
+probsens.sel <- function(exposed,
+                         case,
+                         reps = 1000,
+                         or.parms = list(dist = c("uniform", "triangular",
+                                             "trapezoidal"),
+                             parms = NULL),
+                         alpha = 0.05,
+                         dec = 4,
+                         print = TRUE){
     if(reps < 1)
         stop(paste("Invalid argument: reps =", reps))
     
