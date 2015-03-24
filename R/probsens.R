@@ -397,14 +397,14 @@ probsens <- function(exposed,
     if (type == "outcome") {
         draws[, 5] <- (a - (1 - draws[, 3]) * (a + c)) /
             (draws[, 1] - (1 - draws[, 3]))
-        draws[, 7] <- (b - (1 - draws[, 4]) * (b + d)) /
+        draws[, 6] <- (b - (1 - draws[, 4]) * (b + d)) /
             (draws[, 2] - (1 - draws[, 4]))
-        draws[, 6] <- (a + c) - draws[, 5]
-        draws[, 8] <- (b+ d) - draws[, 7]
+        draws[, 7] <- (a + c) - draws[, 5]
+        draws[, 8] <- (b + d) - draws[, 6]
 
         draws[, 9] <- (draws[, 5]/(draws[, 5] + draws[, 7])) /
             (draws[, 6]/(draws[, 6] + draws[, 8]))
-        draws[, 10] <- (draws[, 5]/draws[, 6]) / (draws[, 7]/draws[, 8])
+        draws[, 10] <- (draws[, 5]/draws[, 7]) / (draws[, 6]/draws[, 8])
 
         draws[, 9] <- ifelse(draws[, 5] < 1 |
                                draws[, 6] < 1 |
