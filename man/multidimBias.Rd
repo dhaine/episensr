@@ -29,10 +29,9 @@ alpha = 0.05, dec = 4, print = TRUE)}
   \item{obs.data}{The analysed 2 x 2 table from the observed data.}
   \item{obs.measures}{A table of odds ratios and relative risk with
     confidence intervals.}
-  \item{rr.mat}{Multidimensional corrected relative risk data.}
-  \item{or.mat}{Multidimensional corrected odds ratio data.}
-  \item{sesp}{Sensitivities and specificities.}
-  \item{bias}{Bias parameters in case of unmeasured confounding.}
+  \item{adj.measures}{Multidimensional corrected relative risk and/or
+    odds ratio data.}
+  \item{bias}{Bias parameters.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
     Quantitative Bias Analysis to Epidemiologic Data}, pp.109--116, Springer.}
