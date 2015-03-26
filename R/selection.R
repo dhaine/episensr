@@ -72,24 +72,25 @@ selection <- function(exposed,
     rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
     colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
         sep = ""), "interval")
+    rmatc <- rbind(rr.corr, or.corr)
+    rownames(rmatc) <- c("Selection Bias Corrected Relative Risk:",
+                         "   Selection Bias Corrected Odds Ratio:")
     if (print) 
         print(round(rmat, dec))
     if (print)
         cat("\n")
-    rmat.corr <- rbind(rr.corr, or.corr)
-    rownames(rmat.corr) <- c("Selection Bias Corrected Relative Risk:", "   Selection Bias Corrected Odds Ratio:")
     if (print)
-        print(round(rmat.corr, dec))
+        print(round(rmatc, dec))
     if (print)
         cat("\n")
-    probs <- rbind(selprob[1], selprob[2], selprob[3], selprob[4])
-    rownames(probs) <- c("     Selection probability among cases exposed:",
-                         "   Selection probability among cases unexposed:",
-                         "  Selection probability among noncases exposed:",
-                         "Selection probability among noncases unexposed:")
+    bias <- rbind(selprob[1], selprob[2], selprob[3], selprob[4])
+    rownames(bias) <- c("     Selection probability among cases exposed:",
+                        "   Selection probability among cases unexposed:",
+                        "  Selection probability among noncases exposed:",
+                        "Selection probability among noncases unexposed:")
     if (print)
-        print(probs)
+        print(bias)
     invisible(list(obs.data = tab, corr.data = tab.corr,
-                   obs.measures = rmat, corr.measures = rmat.corr,
-                   probs = probs))
+                   obs.measures = rmat, adj.measures = rmatc,
+                   bias.parms = bias))
 }
