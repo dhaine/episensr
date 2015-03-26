@@ -54,7 +54,7 @@ p = NULL, RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05, dec =
   \item{cfder.data}{The same table for Confounder +.}
   \item{nocfder.data}{The same table for Confounder -.}
   \item{obs.measures}{A table of relative risk with confidence
-    intervals, Total, for Confoudner +, and for Confounder -.}
+    intervals; Total, for Confoundner +, and for Confounder -.}
   \item{adj.measures}{A table of Standardized Morbidity Ratio and
     Mantel-Haenszel estimates.}
   \item{bias.params}{Input bias parameters.}
