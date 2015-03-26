@@ -31,7 +31,7 @@ alpha = 0.05, dec = 4, print = TRUE)}
     confidence intervals.}
   \item{adj.measures}{Multidimensional corrected relative risk and/or
     odds ratio data.}
-  \item{bias}{Bias parameters.}
+  \item{bias.parms}{Bias parameters.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
     Quantitative Bias Analysis to Epidemiologic Data}, pp.109--116, Springer.}

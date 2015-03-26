@@ -179,5 +179,5 @@ misclassification <- function(exposed,
                    corr.data = corr.tab,
                    obs.measures = rmat, 
                    adj.measures = rmatc,
-                   bias.params = bias))
+                   bias.parms = bias))
 }

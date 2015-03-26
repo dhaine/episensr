@@ -394,5 +394,5 @@ confounders.emm <- function(exposed,
                    cfder.data = tab.cfder, nocfder.data = tab.nocfder,
                    obs.measures = rmat,
                    adj.measures = rmatc,
-                   bias.params = c(p, RR.cd)))
+                   bias.parms = c(p, RR.cd)))
 }

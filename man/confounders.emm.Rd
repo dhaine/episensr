@@ -57,7 +57,7 @@ p = NULL, RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05, dec =
     intervals; Total, for Confoundner +, and for Confounder -.}
   \item{adj.measures}{A table of Standardized Morbidity Ratio and
     Mantel-Haenszel estimates.}
-  \item{bias.params}{Input bias parameters.}
+  \item{bias.parms}{Input bias parameters.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
     Quantitative Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.}

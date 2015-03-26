@@ -40,7 +40,7 @@ misclassification(exposed, case, misclassification = c("exposure",
   \item{obs.measures}{A table of observed relative risk and odds ratio
     with confidence intervals.}
   \item{adj.measures}{A table of adjusted relative risk and odds ratio.}
-  \item{bias.params}{Input bias parameters.}
+  \item{bias.parms}{Input bias parameters.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
     Quantitative Bias Analysis to Epidemiologic Data}, pp.79--108, Springer.}

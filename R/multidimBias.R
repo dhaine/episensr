@@ -310,5 +310,5 @@ multidimBias <- function(exposed,
     invisible(list(obs.data = tab,
                    obs.measures = rmat,
                    adj.measures = rmatc,
-                   bias.params = bias))
+                   bias.parms = bias))
 }
