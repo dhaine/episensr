@@ -137,6 +137,9 @@ confounders.emm <- function(exposed,
         rownames(rmat) <- c("        Crude Relative Risk:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                                sep = ""), "interval")
+        rmatc <- rbind(c(SMRrr, RRadj.smr), c(MHrr, RRadj.mh))
+        rownames(rmatc) <- c("Standardized Morbidity Ratio", "Mantel-Haenszel")
+        colnames(rmatc) <- c("SMR_RR/MH_RR", "RRc")
         if (print)
             cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
                 "\n-----------------------------------------------------------------------------------\n\n")
@@ -154,17 +157,15 @@ confounders.emm <- function(exposed,
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("            p(Confounder+|Exposure+):", p[1],
+            cat("           p(Confounder+|Exposure+):", p[1],
                 "\n           p(Confounder+|Exposure-):", p[2],
                 "\n  RR(Confounder-Outcome in Exposed):", RR.cd[1],
                 "\nRR(Confounder-Outcome in Unexposed):", RR.cd[2],
                 "\n")
-        invisible(list(obs.data = tab, cfder.data = tab.cfder,
-                       nocfder.data = tab.nocfder,
-                       obs.measures = rmat, SMR = SMRrr, MH = MHrr,
-                       cfder.rr = cfder.rr, nocfder.rr = nocfder.rr,
-                       RRadj.smr = RRadj.smr, RRadj.mh = RRadj.mh,
-                       bias.params = c(p, RR.cd)))
+        rmat <- rbind(rmat, c(cfder.rr, NA, NA), c(nocfder.rr, NA, NA))
+        rownames(rmat) <- c("        Crude Relative Risk:",
+                            "Relative Risk, Confounder +:",
+                            "Relative Risk, Confounder -:")
     }
     
     if (implement == "OR"){
@@ -248,6 +249,9 @@ confounders.emm <- function(exposed,
         rownames(rmat) <- c("        Crude Odds Ratio:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                            sep = ""), "interval")
+        rmatc <- rbind(c(SMRor, ORadj.smr), c(MHor, ORadj.mh))
+        rownames(rmatc) <- c("Standardized Morbidity Ratio", "Mantel-Haenszel")
+        colnames(rmatc) <- c("SMR_OR/MH_OR", "ORc")
         if (print)
             cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
                 "\n-----------------------------------------------------------------------------------\n\n")
@@ -270,12 +274,10 @@ confounders.emm <- function(exposed,
                 "\n  OR(Confounder-Outcome in Exposed):", OR.cd[1],
                 "\nOR(Confounder-Outcome in Unexposed):", OR.cd[2],
                 "\n")
-        invisible(list(obs.data = tab, cfder.data = tab.cfder,
-                       nocfder.data = tab.nocfder,
-                       obs.measures = rmat, SMR = SMRor, MH = MHor,
-                       cfder.or = cfder.or, nocfder.or = nocfder.or,
-                       ORadj.smr = ORadj.smr, RRadj.mh = ORadj.mh,
-                       bias.params = c(p, OR.cd)))
+        rmat <- rbind(rmat, c(cfder.or, NA, NA), c(nocfder.or, NA, NA))
+        rownames(rmat) <- c("        Crude Odds Ratio:",
+                            "Odds Ratio, Confounder +:",
+                            "Odds Ratio, Confounder -:")
     }
     
     if (implement == "RD"){
@@ -359,6 +361,9 @@ confounders.emm <- function(exposed,
         rownames(rmat) <- c("        Crude Risk Difference:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                            sep = ""), "interval")
+        rmatc <- rbind(c(MHrd, RDadj.mh))
+        rownames(rmatc) <- "Mantel-Haenszel"
+        colnames(rmatc) <- c("MH_RD", "RDc")
         if (print)
             cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
                 "\n-----------------------------------------------------------------------------------\n\n")
@@ -380,11 +385,14 @@ confounders.emm <- function(exposed,
                 "\n  RD(Confounder-Outcome in Exposed):", RD.cd[1],
                 "\nRD(Confounder-Outcome in Unexposed):", RD.cd[2],
                 "\n")
-        invisible(list(obs.data = tab, cfder.data = tab.cfder,
-                       nocfder.data = tab.nocfder,
-                       obs.measures = rmat, MH = MHrd,
-                       cfder.rd = cfder.rd, nocfder.rd = nocfder.rd,
-                       RDadj.mh = RDadj.mh,
-                       bias.params = c(p, RD.cd)))
-    }    
+    rmat <- rbind(rmat, c(cfder.rd, NA, NA), c(nocfder.rd, NA, NA))
+    rownames(rmat) <- c("        Crude Risk Difference:",
+                        "Risk Difference, Confounder +:",
+                        "Risk Difference, Confounder -:")
+    }
+    invisible(list(obs.data = tab,
+                   cfder.data = tab.cfder, nocfder.data = tab.nocfder,
+                   obs.measures = rmat,
+                   adj.measures = rmatc,
+                   bias.params = c(p, RR.cd)))
 }
