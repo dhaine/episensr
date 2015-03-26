@@ -78,6 +78,9 @@ misclassification <- function(exposed,
         rownames(rmat) <- c(" Observed Relative Risk:", "    Observed Odds Ratio:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                                sep = ""), "interval")
+        rmatc <- rbind(corr.rr, corr.or)
+        rownames(rmatc) <- c("Corrected Relative Risk:",
+                             "   Corrected Odds Ratio:")
         if (print)
             cat("Observed Measures of Exposure-Outcome Relationship:",
                 "\n-----------------------------------------------------------------------------------\n\n")
@@ -94,10 +97,6 @@ misclassification <- function(exposed,
                 "\nSp(Outcome+):", bias[3],
                 "\nSp(Outcome-):", bias[4],
                 "\n")
-        invisible(list(obs.data = tab, Data = corr.tab,
-                       obs.measures = rmat, 
-                       corr.rr = corr.rr, corr.or = corr.or,
-                       bias.params = bias))
     }
     
     if (implement == "outcome"){
@@ -156,6 +155,9 @@ misclassification <- function(exposed,
         rownames(rmat) <- c(" Observed Relative Risk:", "    Observed Odds Ratio:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                            sep = ""), "interval")
+        rmatc <- rbind(corr.rr, corr.or)
+        rownames(rmatc) <- c("Corrected Relative Risk:",
+                             "   Corrected Odds Ratio:")
         if (print)
             cat("Observed Measures of Exposure-Outcome Relationship:",
                 "\n-----------------------------------------------------------------------------------\n\n")
@@ -172,9 +174,10 @@ misclassification <- function(exposed,
                 "\nSp(Exposure+):", bias[3],
                 "\nSp(Exposure-):", bias[4],
                 "\n")
-        invisible(list(obs.data = tab, corr.data = corr.tab,
-                       obs.measures = rmat, 
-                       corr.rr = corr.rr, corr.or = corr.or,
-                       bias.params = bias))
     }
+    invisible(list(obs.data = tab,
+                   corr.data = corr.tab,
+                   obs.measures = rmat, 
+                   adj.measures = rmatc,
+                   bias.params = bias))
 }
