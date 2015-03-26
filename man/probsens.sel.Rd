@@ -29,8 +29,7 @@ c("uniform", "triangular", "trapezoidal"), parms = NULL), alpha = 0.05, dec = 4,
 \value{A list with elements:
   \item{obs.data}{The analysed 2 x 2 table from the observed data.}
   \item{obs.measures}{A table of observed odds ratio with confidence intervals.}
-  \item{corr.or}{Corrected odds ratio.}
-  \item{tot.or}{Systematic and random error.}
+  \item{adj.measures}{A table of corrected odds ratios.}
   \item{sim.df}{Data frame of random parameters and computed values.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying

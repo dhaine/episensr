@@ -112,6 +112,6 @@ probsens.sel <- function(exposed,
             "\n")
     invisible(list(obs.data = tab,
                    obs.measures = rmat, 
-                   corr.or = corr.or, tot.or = tot.or,
+                   adj.measures = rmatc, 
                    sim.df = as.data.frame(draws[, -3])))
 }

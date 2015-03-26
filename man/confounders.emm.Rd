@@ -53,26 +53,11 @@ p = NULL, RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05, dec =
   \item{obs.data}{The analysed 2 x 2 table from the observed data.}
   \item{cfder.data}{The same table for Confounder +.}
   \item{nocfder.data}{The same table for Confounder -.}
-  \item{obs.measures}{A table of relative risk with confidence intervals.}
-  \item{SMR}{Standardized Morbidity Ratio.}
-  \item{MH}{Mantel-Haenszel.}
-  \item{cfder.rr}{Relative risk, Confounder +.}
-  \item{cfder.or}{Odds ratio, Confounder +.}
-  \item{cfder.rd}{Risk difference, Confounder +.}
-  \item{nocfder.rr}{Relative risk, Confounder -.}
-  \item{nocfder.or}{Odds ratio, Confounder -.}
-  \item{nocfder.rd}{Risk difference, Confounder -.}
-  \item{RRadj.smr}{Relative risk adjusted for the effect of the
-    confounder using SMR estimate.}
-  \item{ORadj.smr}{Odds ratio adjusted for the effect of the confounder using
-    SMR estimate.}
-  \item{RRadj.mh}{Relative risk adjusted for the effect of the
-    confounder using MH estimate.}
-  \item{ORadj.mh}{Odds ratio adjusted for the effect of the confounder
-    using MH estimate.}
-  \item{RDadj.mh}{Risk difference adjusted for the effect of the
-    confounder using MH estimate.}
-  \item{bias.params}{Input bias parameters.}
+  \item{obs.measures}{A table of relative risk with confidence
+    intervals; Total, for Confoundner +, and for Confounder -.}
+  \item{adj.measures}{A table of Standardized Morbidity Ratio and
+    Mantel-Haenszel estimates.}
+  \item{bias.parms}{Input bias parameters.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
     Quantitative Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.}

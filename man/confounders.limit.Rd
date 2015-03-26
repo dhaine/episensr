@@ -19,7 +19,7 @@ confounders.limit(p = NA, RR = NA, OR = NA, crude.RR = NULL, dec = 4, print = TR
 }
 \value{A list with elements:
   \item{conf.limits}{Limits on confounding.}
-  \item{bias.params}{Input bias parameters.}
+  \item{bias.parms}{Input bias parameters p, RR, OR, and crude RR.}
 }
 \references{
   Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative

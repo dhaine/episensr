@@ -307,8 +307,7 @@ probsens.conf <- function(exposed,
             "\n")
     invisible(list(obs.data = tab,
                    obs.measures = rmat, 
-                   corr.rr.smr = corr.rr.smr, 
-                   corr.or.smr = corr.or.smr, 
+                   adj.measures = rmatc, 
                    sim.df = as.data.frame(draws[, -18])))
 }
 

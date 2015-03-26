@@ -26,5 +26,5 @@ confounders.limit <- function(p = NA,
             "\n   OR(Confounder-Exposure):", OR,
             "\nCrude RR(Exposure-Disease):", crude.RR, "\n")
     invisible(list(conf.limits = c(lower.bound, upper.bound),
-                   bias.params = c(p, RR, OR, crude.RR)))
+                   bias.parms = c(p, RR, OR, crude.RR)))
 }

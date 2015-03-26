@@ -165,6 +165,9 @@ confounders.poly <- function(exposed,
         rownames(rmat) <- c("                       Crude Relative Risk:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.",
                                            sep = ""), "interval")
+        rmatc <- rbind(c(SMRrr, RRadj.smr), c(MHrr, RRadj.mh))
+        rownames(rmatc) <- c("Standardized Morbidity Ratio", "Mantel-Haenszel")
+        colnames(rmatc) <- c("SMR_RR/MH_RR", "RRc")
         if (print)
             cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
                 "\n-----------------------------------------------------------------------------------\n\n")
@@ -189,13 +192,12 @@ confounders.poly <- function(exposed,
                 "\n  RR(ConfounderHighestLevel-Outcome):", RR.cd[1],
                 "\n      RR(ConfounderMidLevel-Outcome):", RR.cd[2],
                 "\n")
-        invisible(list(obs.data = tab, cfder1.data = tab.cfder1,
-                       cfder2.data = tab.cfder2, nocfder.data = tab.nocfder,
-                       obs.measures = rmat, SMR = SMRrr, MH = MHrr,
-                       cfder1.rr = cfder1.rr, cfder2.rr = cfder2.rr,
-                       nocfder.rr = nocfder.rr,
-                       RRadj.smr = RRadj.smr, RRadj.mh = RRadj.mh,
-                       bias.params = c(p, RR.cd)))
+        rmat <- rbind(rmat, c(cfder1.rr, NA, NA), c(cfder2.rr, NA, NA),
+                      c(nocfder.rr, NA, NA))
+        rownames(rmat) <- c("                       Crude Relative Risk:",
+                            "Relative Risk, Confounder +, Highest Level:",
+                            "    Relative Risk, Confounder +, Mid-Level:",
+                            "               Relative Risk, Confounder -:")
     }
 
     if (implement == "OR"){
@@ -303,6 +305,9 @@ confounders.poly <- function(exposed,
         rownames(rmat) <- c("                       Crude Odds Ratio:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                            sep = ""), "interval")
+        rmatc <- rbind(c(SMRor, ORadj.smr), c(MHor, ORadj.mh))
+        rownames(rmatc) <- c("Standardized Morbidity Ratio", "Mantel-Haenszel")
+        colnames(rmatc) <- c("SMR_OR/MH_OR", "ORc")
         if (print)
             cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
                 "\n-----------------------------------------------------------------------------------\n\n")
@@ -327,13 +332,12 @@ confounders.poly <- function(exposed,
                 "\n  OR(ConfounderHighestLevel-Outcome):", OR.cd[1],
                 "\n      OR(ConfounderMidLevel-Outcome):", OR.cd[2],
                 "\n")
-        invisible(list(obs.data = tab, cfder1.data = tab.cfder1,
-                       cfder2.data = tab.cfder2, nocfder.data = tab.nocfder,
-                       obs.measures = rmat, SMR = SMRor, MH = MHor,
-                       cfder1.or = cfder1.or, cfder2.or = cfder2.or, 
-                       nocfder.or = nocfder.or,
-                       ORadj.smr = ORadj.smr, ORadj.mh = ORadj.mh,
-                       bias.params = c(p, OR.cd)))
+        rmat <- rbind(rmat, c(cfder1.or, NA, NA), c(cfder2.or, NA, NA),
+                      c(nocfder.or, NA, NA))
+        rownames(rmat) <- c("                       Crude Odds Ratio:",
+                            "Odds Ratio, Confounder +, Highest Level:",
+                            "    Odds Ratio, Confounder +, Mid-Level:",
+                            "               Odds Ratio, Confounder -:")
     }
 
     if (implement == "RD"){
@@ -442,6 +446,9 @@ confounders.poly <- function(exposed,
         rownames(rmat) <- c("                       Crude Risk Difference:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                            sep = ""), "interval")
+        rmatc <- rbind(c(MHrd, RDadj.mh))
+        rownames(rmatc) <- "Mantel-Haenszel"
+        colnames(rmatc) <- c("MH_RD", "RDc")
         if (print)
             cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
                 "\n-----------------------------------------------------------------------------------\n\n")
@@ -465,11 +472,17 @@ confounders.poly <- function(exposed,
                 "\n  RD(ConfounderHighestLevel-Outcome):", RD.cd[1],
                 "\n      RD(ConfounderMidLevel-Outcome):", RD.cd[2],
                 "\n")
-        invisible(list(obs.data = tab, cfder1.data = tab.cfder1,
-                       cfder2.data = tab.cfder2, nocfder.data = tab.nocfder,
-                       obs.measures = rmat, MH = MHrd,
-                       cfder1.rd = cfder1.rd, cfder2.rd = cfder2.rd,
-                       nocfder.rd = nocfder.rd, RDadj.mh = RDadj.mh,
-                       bias.params = c(p, RD.cd)))
-    }    
+        rmat <- rbind(rmat, c(cfder1.rd, NA, NA), c(cfder2.rd, NA, NA),
+                      c(nocfder.rd, NA, NA))
+        rownames(rmat) <- c("                       Crude Risk Difference:",
+                            "Risk Difference, Confounder +, Highest Level:",
+                            "    Risk Difference, Confounder +, Mid-Level:",
+                            "               Risk Difference, Confounder -:")
+    }
+    invisible(list(obs.data = tab,
+                   cfder1.data = tab.cfder1, cfder2.data = tab.cfder2,
+                   nocfder.data = tab.nocfder,
+                   obs.measures = rmat,
+                   adj.measures = rmatc, 
+                   bias.parms = c(p, RR.cd)))
 }

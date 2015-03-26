@@ -59,29 +59,11 @@ dec = 4, print = TRUE)
   \item{cfder1.data}{The same table for Mid-level Confounder +.}
   \item{cfder2.data}{The same table for Highest-level Confounder +.}
   \item{nocfder.data}{The same table for Confounder -.}
-  \item{obs.measures}{A table of relative risk with confidence intervals.}
-  \item{SMR}{Standardized Morbidity Ratio.}
-  \item{MH}{Mantel-Haenszel.}
-  \item{cfder1.rr}{Relative risk, Mid-level Confounder +.}
-  \item{cfder2.rr}{Relative risk, Highest-level confounder +.}
-  \item{cfder1.or}{Odds ratio, Mid-level Confounder +.}
-  \item{cfder2.or}{Odds ratio, Highest-level Confounder +.}
-  \item{cfder1.rd}{Risk difference, Mid-level Confounder +.}
-  \item{cfder2.rd}{Risk difference, Mid-level Confounder +.}
-  \item{nocfder.rr}{Relative risk, Confounder -.}
-  \item{nocfder.or}{Odds ratio, Confounder -.}
-  \item{nocfder.rd}{Risk difference, Confounder -.}
-  \item{RRadj.smr}{Relative risk adjusted for the effect of the
-    confounder using SMR estimate.}
-  \item{ORadj.smr}{Odds ratio adjusted for the effect of the confounder using
-    SMR estimate.}
-  \item{RRadj.mh}{Relative risk adjusted for the effect of the
-    confounder using MH estimate.}
-  \item{ORadj.mh}{Odds ratio adjusted for the effect of the confounder
-    using MH estimate.}
-  \item{RDadj.mh}{Risk difference adjusted for the effect of the
-    confounder using MH estimate.}
-  \item{bias.params}{Input bias parameters.}
+  \item{obs.measures}{A table of relative risk with confidence
+    intervals; Total and by confounders.}
+  \item{adj.measures}{A table of Standardized Morbidity Ratio and
+    Mantel-Haenszel estimates.}
+  \item{bias.parms}{Input bias parameters.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
     Quantitative Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.}

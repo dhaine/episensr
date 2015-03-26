@@ -38,10 +38,7 @@ risk = list(dist = c("uniform", "triangular", "trapezoidal"), parms = NULL), cor
   \item{obs.data}{The analysed 2 x 2 table from the observed data.}
   \item{obs.measures}{A table of observed relative risk and odds ratio
     with confidence intervals.}
-  \item{corr.rr.smr}{Corrected relative risk, using SMR estimate.}
-  \item{corr.rr.mh}{Corrected relative risk, using MH estimate.}
-  \item{corr.or.smr}{Corrected odds ratio, using SMR estimate.}
-  \item{corr.or.mh}{Corrected odds ratio, using MH estimate}
+  \item{adj.measures}{A table of corrected relative risks and odds ratios.}
   \item{sim.df}{Data frame of random parameters and computed values.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying

@@ -27,9 +27,9 @@ print = TRUE)}
   \item{corr.data}{The same table corrected for  selection proportions.}
   \item{obs.measures}{A table of odds ratios and relative risk with
     confidence intervals.}
-  \item{corr.measures}{Selection bias corrected measures of
+  \item{adj.measures}{Selection bias corrected measures of
     outcome-exposure relationship.}
-  \item{probs}{Input bias parameters.}
+  \item{bias.parms}{Input bias parameters: selection probabilities.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
     Quantitative Bias Analysis to Epidemiologic Data}, pp.43--58, Springer.}
