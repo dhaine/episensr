@@ -16,11 +16,11 @@ c("uniform", "triangular", "trapezoidal"), parms = NULL), alpha = 0.05, dec = 4,
   \item{or.parms}{List defining the selection bias odds. The first
     argument provides the probability distribution function (uniform, triangular,
     or trapezoidal) and the second its parameters as a vector:
-    \begin{enumerate}
+    \enumerate{
     \item Uniform: min, max,
     \item Triangular: lower limit, upper limit, mode,
     \item Trapezoidal: min, lower mode, upper mode, max.
-    \end{enumerate}
+    }
   }
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}

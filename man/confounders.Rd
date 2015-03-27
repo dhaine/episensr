@@ -20,10 +20,9 @@ RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05, dec = 4, print = TRUE)
     ratio -- OR) or difference measures (risk difference -- RD).}
   \item{p}{Vector defining the prevalence of the confounder. This vector
     has 2 elements between 0 and 1, in the following order:
-    \begin{enumerate}
+    \enumerate{
     \item Prevalence of the confounder among the exposed, and
     \item Prevalence of the confounder among the unexposed.
-    \end{enumerate}
   }
   \item{RR.cd}{Confounder-disease relative risk.}
   \item{OR.cd}{Confounder-disease odds ratio.}

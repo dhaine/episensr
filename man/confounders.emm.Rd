@@ -21,30 +21,33 @@ p = NULL, RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05, dec =
     ratio -- OR) or difference measures (risk difference -- RD).}
   \item{p}{Vector defining the prevalence of the confounder. This vector
     has 2 elements between 0 and 1, in the following order:
-    \begin{enumerate}
+    \enumerate{
     \item Prevalence of the confounder among the exposed, and
     \item Prevalence of the confounder among the unexposed.
-    \end{enumerate}
+    }
   }
   \item{RR.cd}{Vector defining the confounder-disease relative risk.
     This vector has two elements between 0 and 1, in the following
     order:
-    \begin{enumerate}
+    \enumerate{
     \item Among the exposed, and
     \item among the unexposed.
-    \end{enumerate}}
+    }
+  }
   \item{OR.cd}{Vector defining the confounder-disease odds ratio. This
     vector has two elements between 0 and 1, in the folowing order:
-    \begin{enumerate}
+    \enumerate{
     \item Among the exposed, and
     \item among the unexposed.
-    \end{enumerate}}
+    }
+  }
   \item{RD.cd}{Vector dfining the confounder-disease risk difference. This
     vector has two elements between 0 and 1, in the following 
-    \begin{enumerate}
+    \enumerate{
     \item Among the exposed, and
     \item among the unexposed.
-    \end{enumerate}}
+    }
+  }
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}
   \item{print}{Should the results be printed?}

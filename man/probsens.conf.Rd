@@ -20,11 +20,11 @@ risk = list(dist = c("uniform", "triangular", "trapezoidal"), parms = NULL), cor
     exposed. The first argument provides the probability distribution
     function (uniform, triangular, or trapezoidal) and the second its
     parameters as a vector:
-    \begin{enumerate}
+    \enumerate{
     \item Uniform: min, max,
     \item Triangular: lower limit, upper limit, mode,
     \item Trapezoidal: min, lower mode, upper mode, max.
-    \end{enumerate}
+    }
   }
   \item{prev.nexp}{List defining the prevalence of exposure among the unexposed.}
   \item{risk}{List defining the confounder-disease relative risk or the

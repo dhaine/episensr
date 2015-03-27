@@ -11,12 +11,12 @@ print = TRUE)}
   \item{case}{Outcome variable.}
   \item{selprob}{Vector defining the selection probabilities. This
     vector has 4 elements between 0 and 1, in the following order:
-    \begin{enumerate}
+    \enumerate{
     \item Selection probability among cases exposed,
     \item Selection probability among cases unexposed,
     \item Selection probabillity among noncases exposed, and
     \item Selection probability among noncases unexposed.
-    \end{enumerate}
+    }
   }
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}

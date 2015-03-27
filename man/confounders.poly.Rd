@@ -21,35 +21,38 @@ dec = 4, print = TRUE)
     ratio -- OR) or difference measures (risk difference -- RD).}
   \item{p}{Vector defining the prevalence of the confounder. This vector
     has 4 elements between 0 and 1, in the following order:
-    \begin{enumerate}
+    \enumerate{
     \item Prevalence of the highest level confounder among the exposed,
     \item Prevalence of the highest level confounder among the
     unexposed,
     \item Prevalence of the mid-level confounder among the exposed, and
     \item Prevalence of the mid-level confounder among the unexposed.
-    \end{enumerate}
+    }
   }
   \item{RR.cd}{Vector defining the confounder-disease relative risk.
     This vector has two elements in the following order:
-    \begin{enumerate}
+    \enumerate{
     \item Relative risk of having the highest-level confounder in
     diseased, and
     \item Relative risk of having the mid-level confounder in diseased.
-    \end{enumerate}}
+    }
+  }
   \item{OR.cd}{Vector defining the confounder-disease odds ratio. This
     vector has two elements in the following order:
-    \begin{enumerate}
+    \enumerate{
     \item Odds ratio of having the highest-level confounder in diseased,
     and
     \item Odds ratio of having the mid-level confounder in diseased.
-    \end{enumerate}}
+    }
+  }
   \item{RD.cd}{Vector defining the confounder-disease risk
     difference. This vector has two elements in the following order:
-    \begin{enumerate}
+    \enumerate{
     \item Risk difference of having the highest-level confounder in
     diseased, and
     \item Risk difference of having the mid-level confounder in diseased.
-    \end{enumerate}}
+    }
+  }
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}
   \item{print}{Should the results be printed?}

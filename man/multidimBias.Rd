@@ -15,11 +15,12 @@ alpha = 0.05, dec = 4, print = TRUE)}
   \item{sp}{Vector of specificities.}
   \item{bias}{List of bias parameters. The list is made of 3 vectors of
     the same length:
-    \begin{enumerate}
+    \enumerate{
     \item Prevalence of Confounder in Exposure+ population,
     \item Prevalence of Confounder in Exposure- population, and
     \item Relative risk between Confounder and Outcome.
-    \end{enumerate}}
+    }
+  }
   \item{OR.sel}{Selection odds ratios, for selection bias implementation.}
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}

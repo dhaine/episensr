@@ -10,15 +10,15 @@ misclassification(exposed, case, misclassification = c("exposure",
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
   \item{case}{Outcome variable.}
   \item{misclassification}{Choice of misclassification:
-    \begin{enumerate}
+    \enumerate{
     \item Exposure: bias analysis for exposure misclassification; corrections using
   sensitivity and specificity: nondifferential and independent errors,
     \item Outcome: bias analysis for outcome misclassification.
-  \end{enumerate}
+  }
 }
   \item{bias}{Vector defining the bias parameters. This vector has 4
     elements between 0 and 1, in the following order:
-    \begin{enumerate}
+    \enumerate{
     \item Sensitivity of exposure (or outcome) classification among those with the
     outcome, 
     \item Sensitivity of exposure (or outcome) classification among those without the
@@ -27,7 +27,7 @@ misclassification(exposed, case, misclassification = c("exposure",
     outcome,and 
     \item Specificity of exposure (or outcome) classification among
     those without the outcome.
-    \end{enumerate}
+    }
   }
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}
