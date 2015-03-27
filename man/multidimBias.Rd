@@ -3,9 +3,12 @@
 \title{Multidimensional sensitivity analysis for different sources of
   bias}
 \description{Multidimensional sensitivity analysis for different sources of bias}
-\usage{multidimBias(exposed, case, type = c("exposure", "outcome",
-"confounder", "selection"), se = NULL, sp = NULL, bias = NULL, OR.sel
-alpha = 0.05, dec = 4, print = TRUE)}
+\usage{
+multidimBias(exposed, case,
+type = c("exposure", "outcome", "confounder", "selection"),
+se = NULL, sp = NULL, bias = NULL, OR.sel, alpha = 0.05, dec = 4,
+print = TRUE)
+}
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
   \item{case}{Outcome variable.}
