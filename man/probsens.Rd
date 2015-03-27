@@ -82,6 +82,6 @@ probsens(matrix(c(173, 602, 134, 663),
                    nrow = 2, byrow = TRUE),
          type = "outcome",
          reps = 20000,
-         seca.parms = list("trapezoidal", c(.8,.8,1,1)),
-         spca.parms = list("trapezoidal", c(.8,.8,1,1)))
+         seca.parms = list("uniform", c(.8, 1)),
+         spca.parms = list("uniform", c(.8, 1)))
 }
