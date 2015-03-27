@@ -1,7 +1,5 @@
 \name{probsens}
-\alias{probsens}
-\alias{probsens.conf}
-\alias{probsens.sel}
+\alias{probsens, probsens.conf, probsens.sel}
 \title{Probabilistic sensitivity analysis.}
 \description{Probabilistic sensitivity analysis to correct for exposure
   misclassification or outcome misclassification and random error.}

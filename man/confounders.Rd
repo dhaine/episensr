@@ -1,7 +1,5 @@
 \name{confounders}
-\alias{confounders}
-\alias{confounders.emm}
-\alias{confounders.poly}
+\alias{confounders, confounders.emm, confounders.poly}
 \title{Simple sensitivity analysis to correct for unknown or unmeasured
   confounding without effect modification}
 \description{Simple sensitivity analysis to correct for unknown or unmeasured

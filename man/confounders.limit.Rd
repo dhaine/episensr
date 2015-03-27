@@ -1,7 +1,5 @@
 \name{confounders.limit}
-\alias{confounders}
-\alias{confounders.emm}
-\alias{confounders.poly}
+\alias{confounders.limit, confounders, confounders.emm, confounders.poly}
 \title{Bounding the bias limits of unmeasured confounding.}
 \description{Function to elicit the limits on measures of effect
   corrected for an unmeasured confounder when only some of the bias
