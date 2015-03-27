@@ -23,6 +23,7 @@ RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05, dec = 4, print = TRUE)
     \enumerate{
     \item Prevalence of the confounder among the exposed, and
     \item Prevalence of the confounder among the unexposed.
+    }
   }
   \item{RR.cd}{Confounder-disease relative risk.}
   \item{OR.cd}{Confounder-disease odds ratio.}
