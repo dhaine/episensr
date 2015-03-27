@@ -3,8 +3,8 @@
 \title{Simple sensitivity analysis for misclassification}
 \description{Simple sensitivity analysis for misclassification.}
 \usage{
-misclassification(exposed, case, misclassification = c("exposure",
-"outcome"), bias = NULL, alpha = 0.05, dec = 4, print = TRUE)
+misclassification(exposed, case, implement = c("exposure", "outcome"),
+bias = NULL, alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
