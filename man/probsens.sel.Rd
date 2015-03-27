@@ -35,8 +35,10 @@ c("uniform", "triangular", "trapezoidal"), parms = NULL), alpha = 0.05, dec = 4,
 \author{Denis Haine \email{denis.haine@gmail.com}}
 \examples{
 # The data for this example come from:
-# Stang A., Schmidt-Pokrzywniak A., Lehnert M., Parkin D.M., Ferlay J., Bornfeld N. et al.
-# Population-based incidence estimates of uveal melanoma in Germany. Supplementing cancer registry data by case-control data.
+# Stang A., Schmidt-Pokrzywniak A., Lehnert M., Parkin D.M., Ferlay J., Bornfeld N.
+# et al.
+# Population-based incidence estimates of uveal melanoma in Germany. Supplementing
+# cancer registry data by case-control data.
 # Eur J Cancer Prev 2006;15:165-70.
 set.seed(123)
 probsens.sel(matrix(c(136, 107, 297, 165),

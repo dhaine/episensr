@@ -44,8 +44,10 @@ risk = list(dist = c("uniform", "triangular", "trapezoidal"), parms = NULL), cor
 \author{Denis Haine \email{denis.haine@gmail.com}}
 \examples{
 # The data for this example come from:
-# Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O. et al.
-# Increased risk of infection with human immunodeficiency virus type 1 among uncircumcised men presenting with genital ulcer disease in Kenya.
+# Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O.
+# et al.
+# Increased risk of infection with human immunodeficiency virus type 1 among
+# uncircumcised men presenting with genital ulcer disease in Kenya.
 # Clin Infect Dis 1996;23:449-53.
 set.seed(123)
 probsens.conf(matrix(c(105, 85, 527, 93),

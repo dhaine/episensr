@@ -47,7 +47,8 @@ misclassification(exposed, case, misclassification = c("exposure",
 \author{Denis Haine \email{denis.haine@gmail.com}}
 \examples{
 # The data for this example come from:
-# Fink, A.K., Lash,  T.L. A null association between smoking during pregnancy and breast cancer using Massachusetts registry data (United States).
+# Fink, A.K., Lash,  T.L. A null association between smoking during pregnancy and
+# breast cancer using Massachusetts registry data (United States).
 # Cancer Causes Control 2003;14:497-503.
 misclassification(matrix(c(215, 1449, 668, 4296),
                    dimnames = list(c("Breast cancer+", "Breast cancer-"),

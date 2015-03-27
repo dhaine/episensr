@@ -36,8 +36,10 @@ print = TRUE)}
 \author{Denis Haine \email{denis.haine@gmail.com}}
 \examples{
 # The data for this example come from:
-# Stang A., Schmidt-Pokrzywniak A., Lehnert M., Parkin D.M., Ferlay J., Bornfeld N. et al.
-# Population-based incidence estimates of uveal melanoma in Germany. Supplementing cancer registry data by case-control data.
+# Stang A., Schmidt-Pokrzywniak A., Lehnert M., Parkin D.M., Ferlay J., Bornfeld N.
+# et al.
+# Population-based incidence estimates of uveal melanoma in Germany. Supplementing
+# cancer registry data by case-control data.
 # Eur J Cancer Prev 2006;15:165-70.
 selection(matrix(c(136, 107, 297, 165),
                  dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
