@@ -54,8 +54,8 @@ probsens.conf(matrix(c(105, 85, 527, 93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                    nrow = 2, byrow = TRUE),
          reps = 20000,
-         prev.exp = list("trapezoidal", c(.7, .8, .8, .9)),
+         prev.exp = list("triangular", c(.7, .9, .8)),
          prev.nexp = list("trapezoidal", c(.03, .04, .05, .06)),
-         risk = list("trapezoidal", c(.6, .63, .63, .7)),
+         risk = list("triangular", c(.6, .7, .63)),
          corr.p = .8)
 }
