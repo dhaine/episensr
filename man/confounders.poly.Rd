@@ -8,7 +8,7 @@
   -- OR) and difference measures (risk difference -- RD).}
 \usage{
 confounders.poly(exposed, case, implement = c("RR", "OR", "RD"),
-pr = NULL, RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05,
+p = NULL, RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05,
 dec = 4, print = TRUE)
 }
 \arguments{
