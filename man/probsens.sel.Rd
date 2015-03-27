@@ -3,9 +3,10 @@
 \title{Probabilistic sensitivity analysis for selection bias.}
 \description{Probabilistic sensitivity analysis to correct for selection
   bias.}
-\usage{
-probsens.sel(exposed, case, reps = 1000, or.parms = list(dist =
-c("uniform", "triangular", "trapezoidal"), parms = NULL), alpha = 0.05, dec = 4, print = TRUE)
+\usage{probsens.sel(exposed, case, reps = 1000,
+or.parms = list(dist = c("uniform", "triangular", "trapezoidal"), parms
+= NULL),
+alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
