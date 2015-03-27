@@ -1,5 +1,6 @@
 \name{probsens.conf}
-\alias{probsens.conf, probsens, probsens.sel}
+\alias{probsens.conf}
+\alias{probsens, probsens.sel}
 \title{Probabilistic sensitivity analysis for unmeasured confounding.}
 \description{Probabilistic sensitivity analysis to correct for unknown
   or unmeasurred confounding and random error simultaneously.}

@@ -1,5 +1,6 @@
 \name{probsens.sel}
-\alias{probsens.sel, probsens, probsens.conf}
+\alias{probsens.sel}
+\alias{probsens, probsens.conf}
 \title{Probabilistic sensitivity analysis for selection bias.}
 \description{Probabilistic sensitivity analysis to correct for selection
   bias.}

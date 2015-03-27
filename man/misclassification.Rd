@@ -9,7 +9,7 @@ bias = NULL, alpha = 0.05, dec = 4, print = TRUE)
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
   \item{case}{Outcome variable.}
-  \item{misclassification}{Choice of misclassification:
+  \item{implement}{Choice of misclassification:
     \enumerate{
     \item Exposure: bias analysis for exposure misclassification; corrections using
   sensitivity and specificity: nondifferential and independent errors,

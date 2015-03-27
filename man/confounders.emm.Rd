@@ -1,5 +1,6 @@
 \name{confounders.emm}
-\alias{confounders.emm, confounders, confounders.poly}
+\alias{confounders.emm}
+\alias{confounders, confounders.poly, confounders.limit}
 \title{Simple sensitivity analysis to correct for unknown or unmeasured
   confounding with effect measure modification}
 \description{Simple sensitivity analysis to correct for unknown or unmeasured
@@ -7,7 +8,7 @@
   measures (relative risk -- RR, or odds ratio -- OR) and difference
   measures (risk difference -- RD).}
 \usage{
-confounders(exposed, case, implement = c("RR", "OR", "RD"),
+confounders.emm(exposed, case, implement = c("RR", "OR", "RD"),
 p = NULL, RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05, dec =
 4, print = TRUE)
 }
