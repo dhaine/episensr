@@ -17,3 +17,4 @@ Description: episensr provides basic sensitivity analysis of the observed
 	     Epidemiologic Data, Springer, 2009.
 Depends: R (>= 3.1.0)
 License: GPL-2
+Suggests: testthat
