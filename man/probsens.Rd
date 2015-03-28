@@ -1,7 +1,6 @@
 \name{probsens}
 \alias{probsens}
-\alias{probsens.conf}
-\alias{probsens.sel}
+\alias{probsens.conf, probsens.sel}
 \title{Probabilistic sensitivity analysis.}
 \description{Probabilistic sensitivity analysis to correct for exposure
   misclassification or outcome misclassification and random error.}
@@ -22,11 +21,11 @@ parms = NULL), seexp.parms = NULL, spca.parms = list(dist = c("uniform",
     classification among those with the outcome. The first argument
     provides the probability distribution function (uniform, triangular,
     or trapezoidal) and the second its parameters as a vector:
-    \begin{enumerate}
+    \enumerate{
     \item Uniform: min, max,
     \item Triangular: lower limit, upper limit, mode,
     \item Trapezoidal: min, lower mode, upper mode, max.
-    \end{enumerate}
+    }
   }
   \item{seexp.parms}{List defining the sensitivity of exposure
     classification among those without the outcome.}
@@ -44,8 +43,7 @@ parms = NULL), seexp.parms = NULL, spca.parms = list(dist = c("uniform",
   \item{obs.data}{The analysed 2 x 2 table from the observed data.}
   \item{obs.measures}{A table of observed relative risk and odds ratio
     with confidence intervals.}
-  \item{corr.rr}{Corrected relative risk.}
-  \item{corr.or}{Corrected odds ratio.}
+  \item{adj.measures}{A table of corrected relative risks and odds ratios.}
   \item{sim.df}{Data frame of random parameters and computed values.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
@@ -83,6 +81,6 @@ probsens(matrix(c(173, 602, 134, 663),
                    nrow = 2, byrow = TRUE),
          type = "outcome",
          reps = 20000,
-         seca.parms = list("trapezoidal", c(.8,.8,1,1)),
-         spca.parms = list("trapezoidal", c(.8,.8,1,1)))
+         seca.parms = list("uniform", c(.8, 1)),
+         spca.parms = list("uniform", c(.8, 1)))
 }

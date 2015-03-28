@@ -47,7 +47,7 @@ multidimBias <- function(exposed,
     
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
-    else tab <- table(exposed, cased)
+    else tab <- table(exposed, case)
 
     a <- tab[1, 1]
     b <- tab[1, 2]
@@ -120,6 +120,8 @@ multidimBias <- function(exposed,
         rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                            sep = ""), "interval")
+        rmatc <- list("Multidimensional Corrected Relative Risk Data" = rr.mat,
+                      "Multidimensional Corrected Odds Ratio Data" = or.mat)
         if (print) 
             print(round(rmat, dec))
         if (print)
@@ -140,16 +142,11 @@ multidimBias <- function(exposed,
             print(or.mat)
         if (print)
             cat("\n")
-        sesp <- rbind(se, sp)
-        rownames(sesp) <- c("Sensitivities:",
+        bias <- rbind(se, sp)
+        rownames(bias) <- c("Sensitivities:",
                             "Specificities:")
         if (print)
-            print(sesp)
-        invisible(list(obs.data = tab, 
-                       obs.measures = rmat,
-                       rr.mat = rr.mat,
-                       or.mat = or.mat,
-                       sesp = sesp))
+            print(bias)
         }
 
     if (type == "outcome") {
@@ -194,6 +191,8 @@ multidimBias <- function(exposed,
         rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                            sep = ""), "interval")
+        rmatc <- list("Multidimensional Corrected Relative Risk Data" = rr.mat,
+                      "Multidimensional Corrected Odds Ratio Data" = or.mat)
         if (print) 
             print(round(rmat, dec))
         if (print)
@@ -214,16 +213,11 @@ multidimBias <- function(exposed,
             print(or.mat)
         if (print)
             cat("\n")
-        sesp <- rbind(se, sp)
-        rownames(sesp) <- c("Sensitivities:",
+        bias <- rbind(se, sp)
+        rownames(bias) <- c("Sensitivities:",
                             "Specificities:")
         if (print)
-            print(sesp)
-        invisible(list(obs.data = tab, 
-                       obs.measures = rmat,
-                       rr.mat = rr.mat,
-                       or.mat = or.mat,
-                       sesp = sesp))
+            print(bias)
     }
 
     if (type == "confounder") {
@@ -254,6 +248,7 @@ multidimBias <- function(exposed,
         rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                            sep = ""), "interval")
+        rmatc <- rrc.mat
         if (print) 
             print(round(rmat, dec))
         if (print)
@@ -274,10 +269,6 @@ multidimBias <- function(exposed,
         bias <- setNames(bias, c("p(Confounder+|Exposure+):",
                                   "p(Confounder+|Exposure-):",
                                   "RR(Confounder-Outcome)"))
-        invisible(list(obs.data = tab, 
-                       obs.measures = rmat,
-                       rr.mat = rrc.mat,
-                       bias = bias))
     }
 
     if (type == "selection") {
@@ -304,6 +295,7 @@ multidimBias <- function(exposed,
         rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                            sep = ""), "interval")
+        rmatc <- ors.mat
         if (print) 
             print(round(rmat, dec))
         if (print)
@@ -313,8 +305,10 @@ multidimBias <- function(exposed,
             print(ors.mat)
         if (print)
             cat("\n")
-        invisible(list(obs.data = tab, 
-                       obs.measures = rmat,
-                       or.mat = ors.mat))
+        bias <- ors.mat[, 1]
         }
+    invisible(list(obs.data = tab,
+                   obs.measures = rmat,
+                   adj.measures = rmatc,
+                   bias.parms = bias))
 }

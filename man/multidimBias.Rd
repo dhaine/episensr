@@ -3,9 +3,12 @@
 \title{Multidimensional sensitivity analysis for different sources of
   bias}
 \description{Multidimensional sensitivity analysis for different sources of bias}
-\usage{multidimBias(exposed, case, type = c("exposure", "outcome",
-"confounder", "selection"), se = NULL, sp = NULL, bias = NULL, OR.sel
-alpha = 0.05, dec = 4, print = TRUE)}
+\usage{
+multidimBias(exposed, case,
+type = c("exposure", "outcome", "confounder", "selection"),
+se = NULL, sp = NULL, bias = NULL, OR.sel, alpha = 0.05, dec = 4,
+print = TRUE)
+}
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
   \item{case}{Outcome variable.}
@@ -15,11 +18,12 @@ alpha = 0.05, dec = 4, print = TRUE)}
   \item{sp}{Vector of specificities.}
   \item{bias}{List of bias parameters. The list is made of 3 vectors of
     the same length:
-    \begin{enumerate}
+    \enumerate{
     \item Prevalence of Confounder in Exposure+ population,
     \item Prevalence of Confounder in Exposure- population, and
     \item Relative risk between Confounder and Outcome.
-    \end{enumerate}}
+    }
+  }
   \item{OR.sel}{Selection odds ratios, for selection bias implementation.}
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}
@@ -29,10 +33,9 @@ alpha = 0.05, dec = 4, print = TRUE)}
   \item{obs.data}{The analysed 2 x 2 table from the observed data.}
   \item{obs.measures}{A table of odds ratios and relative risk with
     confidence intervals.}
-  \item{rr.mat}{Multidimensional corrected relative risk data.}
-  \item{or.mat}{Multidimensional corrected odds ratio data.}
-  \item{sesp}{Sensitivities and specificities.}
-  \item{bias}{Bias parameters in case of unmeasured confounding.}
+  \item{adj.measures}{Multidimensional corrected relative risk and/or
+    odds ratio data.}
+  \item{bias.parms}{Bias parameters.}
 }
 \references{Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying
     Quantitative Bias Analysis to Epidemiologic Data}, pp.109--116, Springer.}

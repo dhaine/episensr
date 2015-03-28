@@ -127,7 +127,7 @@ probsens <- function(exposed,
     
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
-    else tab <- table(exposed, cased)
+    else tab <- table(exposed, case)
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]
@@ -388,10 +388,6 @@ probsens <- function(exposed,
                 "\nSe|No-cases:", seexp.parms[[1]], "(", seexp.parms[[2]], ")",
                 "\nSp|No-cases:", spexp.parms[[1]], "(", spexp.parms[[2]], ")",
                 "\n")
-        invisible(list(obs.data = tab,
-                       obs.measures = rmat, 
-                       corr.rr = corr.rr, corr.or = corr.or,
-                       sim.df = as.data.frame(draws[, -11])))
         }
 
     if (type == "outcome") {
@@ -487,9 +483,9 @@ probsens <- function(exposed,
                 "\nSe|Non-exposed:", seexp.parms[[1]], "(", seexp.parms[[2]], ")",
                 "\nSp|Non-exposed:", spexp.parms[[1]], "(", spexp.parms[[2]], ")",
                 "\n")
-        invisible(list(obs.data = tab,
-                       obs.measures = rmat, 
-                       corr.rr = corr.rr, corr.or = corr.or,
-                       sim.df = as.data.frame(draws[, -11])))
         }
+    invisible(list(obs.data = tab,
+                   obs.measures = rmat, 
+                   adj.measures = rmatc,
+                   sim.df = as.data.frame(draws[, -11])))
 }

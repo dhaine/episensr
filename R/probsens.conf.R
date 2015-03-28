@@ -79,7 +79,7 @@ probsens.conf <- function(exposed,
 
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
-    else tab <- table(exposed, cased)
+    else tab <- table(exposed, case)
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]
@@ -307,8 +307,7 @@ probsens.conf <- function(exposed,
             "\n")
     invisible(list(obs.data = tab,
                    obs.measures = rmat, 
-                   corr.rr.smr = corr.rr.smr, 
-                   corr.or.smr = corr.or.smr, 
+                   adj.measures = rmatc, 
                    sim.df = as.data.frame(draws[, -18])))
 }
 
