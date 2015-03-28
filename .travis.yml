@@ -12,6 +12,8 @@ before_install:
 - ./travis-tool.sh bootstrap
 
 install:
+- ./travis-tool.sh r_binary_install triangle
+- ./travis-tool.sh r_binary_install trapezoid
 - ./travis-tool.sh install_deps
 
 script: ./travis-tool.sh run_tests
@@ -23,3 +25,8 @@ notifications:
 email:
 on_success: change
 on_failure: change
+
+env:
+- BOOTSTRAP_LATEX=1
+- _R_CHECK_FORCE_SUGGESTS_=0
+- WARNINGS_ARE_ERRORS=1
