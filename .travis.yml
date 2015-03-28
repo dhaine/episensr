@@ -29,6 +29,6 @@ on_success: change
 on_failure: change
 
 env:
-- BOOTSTRAP_LATEX=1
+#- BOOTSTRAP_LATEX=1
 - _R_CHECK_FORCE_SUGGESTS_=0
 - WARNINGS_ARE_ERRORS=1
