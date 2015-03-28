@@ -1,7 +1,6 @@
 \name{probsens.conf}
 \alias{probsens.conf}
-\alias{probsens}
-\alias{probsens.sel}
+\alias{probsens, probsens.sel}
 \title{Probabilistic sensitivity analysis for unmeasured confounding.}
 \description{Probabilistic sensitivity analysis to correct for unknown
   or unmeasurred confounding and random error simultaneously.}
@@ -20,11 +19,11 @@ risk = list(dist = c("uniform", "triangular", "trapezoidal"), parms = NULL), cor
     exposed. The first argument provides the probability distribution
     function (uniform, triangular, or trapezoidal) and the second its
     parameters as a vector:
-    \begin{enumerate}
+    \enumerate{
     \item Uniform: min, max,
     \item Triangular: lower limit, upper limit, mode,
     \item Trapezoidal: min, lower mode, upper mode, max.
-    \end{enumerate}
+    }
   }
   \item{prev.nexp}{List defining the prevalence of exposure among the unexposed.}
   \item{risk}{List defining the confounder-disease relative risk or the
@@ -46,8 +45,10 @@ risk = list(dist = c("uniform", "triangular", "trapezoidal"), parms = NULL), cor
 \author{Denis Haine \email{denis.haine@gmail.com}}
 \examples{
 # The data for this example come from:
-# Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O. et al.
-# Increased risk of infection with human immunodeficiency virus type 1 among uncircumcised men presenting with genital ulcer disease in Kenya.
+# Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O.
+# et al.
+# Increased risk of infection with human immunodeficiency virus type 1 among
+# uncircumcised men presenting with genital ulcer disease in Kenya.
 # Clin Infect Dis 1996;23:449-53.
 set.seed(123)
 probsens.conf(matrix(c(105, 85, 527, 93),

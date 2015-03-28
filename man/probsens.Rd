@@ -1,7 +1,6 @@
 \name{probsens}
 \alias{probsens}
-\alias{probsens.conf}
-\alias{probsens.sel}
+\alias{probsens.conf, probsens.sel}
 \title{Probabilistic sensitivity analysis.}
 \description{Probabilistic sensitivity analysis to correct for exposure
   misclassification or outcome misclassification and random error.}
@@ -22,11 +21,11 @@ parms = NULL), seexp.parms = NULL, spca.parms = list(dist = c("uniform",
     classification among those with the outcome. The first argument
     provides the probability distribution function (uniform, triangular,
     or trapezoidal) and the second its parameters as a vector:
-    \begin{enumerate}
+    \enumerate{
     \item Uniform: min, max,
     \item Triangular: lower limit, upper limit, mode,
     \item Trapezoidal: min, lower mode, upper mode, max.
-    \end{enumerate}
+    }
   }
   \item{seexp.parms}{List defining the sensitivity of exposure
     classification among those without the outcome.}

@@ -1,7 +1,6 @@
 \name{confounders.poly}
 \alias{confounders.poly}
-\alias{confounders}
-\alias{confounders.emm}
+\alias{confounders, confounders.emm, confounders.limit}
 \title{Simple sensitivity analysis to correct for unknown or unmeasured
   polychotomous confounding without effect modification}
 \description{Simple sensitivity analysis to correct for unknown or unmeasured
@@ -10,7 +9,7 @@
   -- OR) and difference measures (risk difference -- RD).}
 \usage{
 confounders.poly(exposed, case, implement = c("RR", "OR", "RD"),
-pr = NULL, RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05,
+p = NULL, RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05,
 dec = 4, print = TRUE)
 }
 \arguments{
@@ -21,35 +20,38 @@ dec = 4, print = TRUE)
     ratio -- OR) or difference measures (risk difference -- RD).}
   \item{p}{Vector defining the prevalence of the confounder. This vector
     has 4 elements between 0 and 1, in the following order:
-    \begin{enumerate}
+    \enumerate{
     \item Prevalence of the highest level confounder among the exposed,
     \item Prevalence of the highest level confounder among the
     unexposed,
     \item Prevalence of the mid-level confounder among the exposed, and
     \item Prevalence of the mid-level confounder among the unexposed.
-    \end{enumerate}
+    }
   }
   \item{RR.cd}{Vector defining the confounder-disease relative risk.
     This vector has two elements in the following order:
-    \begin{enumerate}
+    \enumerate{
     \item Relative risk of having the highest-level confounder in
     diseased, and
     \item Relative risk of having the mid-level confounder in diseased.
-    \end{enumerate}}
+    }
+  }
   \item{OR.cd}{Vector defining the confounder-disease odds ratio. This
     vector has two elements in the following order:
-    \begin{enumerate}
+    \enumerate{
     \item Odds ratio of having the highest-level confounder in diseased,
     and
     \item Odds ratio of having the mid-level confounder in diseased.
-    \end{enumerate}}
+    }
+  }
   \item{RD.cd}{Vector defining the confounder-disease risk
     difference. This vector has two elements in the following order:
-    \begin{enumerate}
+    \enumerate{
     \item Risk difference of having the highest-level confounder in
     diseased, and
     \item Risk difference of having the mid-level confounder in diseased.
-    \end{enumerate}}
+    }
+  }
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}
   \item{print}{Should the results be printed?}
@@ -70,8 +72,10 @@ dec = 4, print = TRUE)
 \author{Denis Haine \email{denis.haine@gmail.com}}
 \examples{
 # The data for this example come from:
-# Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O. et al.
-# Increased risk of infection with human immunodeficiency virus type 1 among uncircumcised men presenting with genital ulcer disease in Kenya.
+# Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O.
+# et al.
+# Increased risk of infection with human immunodeficiency virus type 1 among
+# uncircumcised men presenting with genital ulcer disease in Kenya.
 # Clin Infect Dis 1996;23:449-53.
 confounders.poly(matrix(c(105, 85, 527, 93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),

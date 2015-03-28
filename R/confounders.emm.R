@@ -49,7 +49,7 @@ confounders.emm <- function(exposed,
     
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
-    else tab <- table(exposed, cased)
+    else tab <- table(exposed, case)
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]

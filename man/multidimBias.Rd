@@ -3,9 +3,12 @@
 \title{Multidimensional sensitivity analysis for different sources of
   bias}
 \description{Multidimensional sensitivity analysis for different sources of bias}
-\usage{multidimBias(exposed, case, type = c("exposure", "outcome",
-"confounder", "selection"), se = NULL, sp = NULL, bias = NULL, OR.sel
-alpha = 0.05, dec = 4, print = TRUE)}
+\usage{
+multidimBias(exposed, case,
+type = c("exposure", "outcome", "confounder", "selection"),
+se = NULL, sp = NULL, bias = NULL, OR.sel, alpha = 0.05, dec = 4,
+print = TRUE)
+}
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
   \item{case}{Outcome variable.}
@@ -15,11 +18,12 @@ alpha = 0.05, dec = 4, print = TRUE)}
   \item{sp}{Vector of specificities.}
   \item{bias}{List of bias parameters. The list is made of 3 vectors of
     the same length:
-    \begin{enumerate}
+    \enumerate{
     \item Prevalence of Confounder in Exposure+ population,
     \item Prevalence of Confounder in Exposure- population, and
     \item Relative risk between Confounder and Outcome.
-    \end{enumerate}}
+    }
+  }
   \item{OR.sel}{Selection odds ratios, for selection bias implementation.}
   \item{alpha}{Significance level.}
   \item{dec}{Number of decimals in the printout.}
