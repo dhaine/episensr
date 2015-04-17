@@ -8,14 +8,14 @@
   Implementation for ratio measures (relative risk -- RR, or odds ratio
   -- OR) and difference measures (risk difference -- RD).}
 \usage{
-confounders.poly(exposed, case, implement = c("RR", "OR", "RD"),
+confounders.poly(exposed, case, type = c("RR", "OR", "RD"),
 p = NULL, RR.cd = NULL, OR.cd = NULL, RD.cd = NULL, alpha = 0.05,
 dec = 4, print = TRUE)
 }
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
   \item{case}{Outcome variable.}
-  \item{implement}{Choice of implementation, with no effect measure
+  \item{type}{Choice of implementation, with no effect measure
     modification for ratio measures (relative risk -- RR; odds
     ratio -- OR) or difference measures (risk difference -- RD).}
   \item{p}{Vector defining the prevalence of the confounder. This vector
@@ -80,19 +80,19 @@ dec = 4, print = TRUE)
 confounders.poly(matrix(c(105, 85, 527, 93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                    nrow = 2, byrow = TRUE),
-            implement = "RR",
+            type = "RR",
             p = c(.6, .05, .2, .2),
             RR.cd = c(.4, .8))
 confounders.poly(matrix(c(105, 85, 527, 93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                    nrow = 2, byrow = TRUE),
-            implement = "OR",
+            type = "OR",
             p = c(.6, .05, .2, .2),
             OR.cd = c(.4, .8))
 confounders.poly(matrix(c(105, 85, 527, 93),
                    dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
                    nrow = 2, byrow = TRUE),
-            implement = "RD",
+            type = "RD",
             p = c(.6, .05, .2, .2),
             RD.cd = c(-.4, -.2))
 }
