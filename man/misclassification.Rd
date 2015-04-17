@@ -3,13 +3,13 @@
 \title{Simple sensitivity analysis for misclassification}
 \description{Simple sensitivity analysis for misclassification.}
 \usage{
-misclassification(exposed, case, implement = c("exposure", "outcome"),
+misclassification(exposed, case, type = c("exposure", "outcome"),
 bias = NULL, alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
   \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
   \item{case}{Outcome variable.}
-  \item{implement}{Choice of misclassification:
+  \item{type}{Choice of misclassification:
     \enumerate{
     \item Exposure: bias analysis for exposure misclassification; corrections using
   sensitivity and specificity: nondifferential and independent errors,
@@ -54,12 +54,12 @@ misclassification(matrix(c(215, 1449, 668, 4296),
                    dimnames = list(c("Breast cancer+", "Breast cancer-"),
                        c("Smoker+", "Smoker-")),
                    nrow = 2, byrow = TRUE),
-            implement = "exposure",
+            type = "exposure",
             bias = c(.78, .78, .99, .99))
 misclassification(matrix(c(4558, 3428, 46305, 46085),
                    dimnames = list(c("AMI death+", "AMI death-"),
                        c("Male+", "Male-")),
                    nrow = 2, byrow = TRUE),
-            implement = "outcome",
+            type = "outcome",
             bias = c(.53, .53, .99, .99))
 }

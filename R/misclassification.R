@@ -1,10 +1,16 @@
 misclassification <- function(exposed,
                               case,
                               implement = c("exposure", "outcome"),
+                              type = c("exposure", "outcome"),
                               bias = NULL,
                               alpha = 0.05,
                               dec = 4,
                               print = TRUE){
+    if (!missing(implement)) {
+        warning("argument implement is deprecated; please use type instead.", 
+                call. = FALSE)
+        type <- implement
+    }
     if(is.null(bias))
         bias <- c(1, 1, 1, 1)
     else bias <- bias
@@ -21,8 +27,8 @@ misclassification <- function(exposed,
     c <- tab[2, 1]
     d <- tab[2, 2]
 
-    implement <- match.arg(implement)
-    if (implement == "exposure") {
+    type <- match.arg(type)
+    if (type == "exposure") {
         obs.rr <- (a/(a + c)) / (b/(b + d))
         se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
         lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha/2) * se.log.obs.rr)
@@ -99,7 +105,7 @@ misclassification <- function(exposed,
                 "\n")
     }
     
-    if (implement == "outcome"){
+    if (type == "outcome"){
         obs.rr <- (a/(a + c)) / (b/(b + d))
         se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
         lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha/2) * se.log.obs.rr)
