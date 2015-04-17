@@ -1,6 +1,7 @@
 confounders <- function(exposed,
                         case,
                         implement = c("RR", "OR", "RD"),
+                        type = c("RR", "OR", "RD"),
                         p = NULL,
                         RR.cd = NULL,
                         OR.cd = NULL,
@@ -8,13 +9,18 @@ confounders <- function(exposed,
                         alpha = 0.05,
                         dec = 4,
                         print = TRUE){
-    if(length(implement) > 1)
+    if (!missing(implement)) {
+        warning("argument implement is deprecated; please use type instead.",
+                call. = FALSE)
+        type <- implement
+    }
+    if(length(type) > 1)
         stop('Choose between RR, OR, or RD implementation.')
-    if(implement == "RR" & (!is.null(OR.cd) | !is.null(RD.cd)))
+    if(type == "RR" & (!is.null(OR.cd) | !is.null(RD.cd)))
         stop('Mismatch between implementation type and confounder risk.')
-    if(implement == "OR" & (!is.null(RR.cd) | !is.null(RD.cd)))
+    if(type == "OR" & (!is.null(RR.cd) | !is.null(RD.cd)))
         stop('Mismatch between implementation type and confounder risk.')
-    if(implement == "RD" & (!is.null(RR.cd) | !is.null(OR.cd)))
+    if(type == "RD" & (!is.null(RR.cd) | !is.null(OR.cd)))
         stop('Mismatch between implementation type and confounder risk.')
 
     if(is.null(p))
@@ -55,8 +61,8 @@ confounders <- function(exposed,
     c <- tab[2, 1]
     d <- tab[2, 2]
 
-    implement <- match.arg(implement)
-    if (implement == "RR") {
+    type <- match.arg(type)
+    if (type == "RR") {
         crude.rr <- (a/(a + c)) / (b/(b + d))
         se.log.crude.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
         lci.crude.rr <- exp(log(crude.rr) - qnorm(1 - alpha/2) * se.log.crude.rr)
@@ -166,7 +172,7 @@ confounders <- function(exposed,
                             "Relative Risk, Confounder -:")
     }
 
-    if (implement == "OR"){
+    if (type == "OR"){
         crude.or <- (a/b) / (c/d)
         se.log.crude.or <- sqrt(1/a + 1/b + 1/c + 1/d)
         lci.crude.or <- exp(log(crude.or) - qnorm(1 - alpha/2) * se.log.crude.or)
@@ -276,7 +282,7 @@ confounders <- function(exposed,
                             "Odds Ratio, Confounder -:")
     }
 
-    if (implement == "RD"){
+    if (type == "RD"){
         crude.rd <- (a / (a + c)) - (b / (b + d))
         se.log.crude.rd <- sqrt((a * c) / (a + c)^3 + (b * d) / (b + d)^3)
         lci.crude.rd <- crude.rd - qnorm(1 - alpha/2) * se.log.crude.rd
