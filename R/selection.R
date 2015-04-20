@@ -3,8 +3,8 @@
 #' Simple sensitivity analysis to correct for selection bias using estimates of
 #' the selection proportions.
 #'
-#' @param exposed Exposure variable. If a variable, this variable is tabulated against.
-#' @param case Outcome variable.
+#' @param case Outcome variable. If a variable, this variable is tabulated against.
+#' @param exposed Exposure variable.
 #' @param selprob Numeric vector defining the selection probabilities. This vector has 4 elements between 0 and 1, in the following order:
 #' \enumerate{
 #' \item Selection probability among cases exposed,
@@ -52,6 +52,7 @@ selection <- function(exposed,
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
     else tab <- table(exposed, case)
+    tab <- tab[1:2, 1:2]
 
     a <- tab[1, 1]
     b <- tab[1, 2]
