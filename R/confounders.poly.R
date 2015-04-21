@@ -95,18 +95,18 @@ confounders.poly <- function(exposed,
                              dec = 4,
                              print = TRUE){
     if (!missing(implement)) {
-        warning("argument implement is deprecated; please use type instead.", 
+        warning("Argument implement is deprecated; please use type instead.", 
                 call. = FALSE)
         type <- implement
   }
     if(length(type) > 1)
-        stop('Choose between RR, OR, or RD typeation.')
+        stop('Choose between RR, OR, or RD implementation.')
     if(type == "RR" & (!is.null(OR.cd) | !is.null(RD.cd)))
-        stop('Mismatch between typeation type and confounder risk.')
+        stop('Mismatch between implementation type and confounder risk.')
     if(type == "OR" & (!is.null(RR.cd) | !is.null(RD.cd)))
-        stop('Mismatch between typeation type and confounder risk.')
+        stop('Mismatch between implementation type and confounder risk.')
     if(type == "RD" & (!is.null(RR.cd) | !is.null(OR.cd)))
-        stop('Mismatch between typeation type and confounder risk.')
+        stop('Mismatch between implementation type and confounder risk.')
     
     if(is.null(p))
         p <- c(0, 0)
@@ -149,6 +149,7 @@ confounders.poly <- function(exposed,
     b <- tab[1, 2]
     c <- tab[2, 1]
     d <- tab[2, 2]
+    tab <- tab[1:2, 1:2]
 
     type <- match.arg(type)
     if (type == "RR") {
@@ -179,7 +180,7 @@ confounders.poly <- function(exposed,
         if(A2 < 0 | B2 < 0 | C2 < 0 | D2 < 0 |
            A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
         
         tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
         tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
@@ -319,7 +320,7 @@ confounders.poly <- function(exposed,
         if(A2 < 0 | B2 < 0 | C2 < 0 | D2 < 0 |
            A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
         
         tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
         tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
@@ -459,7 +460,7 @@ confounders.poly <- function(exposed,
         if(A2 < 0 | B2 < 0 | C2 < 0 | D2 < 0 |
            A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
         
         tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
         tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
