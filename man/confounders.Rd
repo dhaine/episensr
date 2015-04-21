@@ -2,6 +2,9 @@
 % Please edit documentation in R/confounders.R
 \name{confounders}
 \alias{confounders}
+\alias{confounders.emm}
+\alias{confounders.limit}
+\alias{confounders.poly}
 \title{Sensitivity analysis to correct for unknown or unmeasured confounding without
 effect modification}
 \usage{
