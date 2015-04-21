@@ -3,4 +3,5 @@
 export(confounders)
 export(confounders.emm)
 export(confounders.limit)
+export(confounders.poly)
 export(selection)
