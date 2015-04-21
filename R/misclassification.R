@@ -1,3 +1,62 @@
+#' Sensitivity analysis for misclassification.
+#'
+#' Simple sensitivity analysis for misclassification.
+#'
+#' @param exposed Exposure variable. If a variable, this variable is tabulated
+#' against.
+#' @param case Outcome variable.
+#' @param type Choice of misclassification:
+#' \enumerate{
+#' \item Exposure: bias analysis for exposure misclassification; corrections using
+#' sensitivity and specificity: nondifferential and independent errors,
+#' \item Outcome: bias analysis for outcome misclassification.
+#' }
+#' @param bias Vector defining the bias parameters. This vector has 4 elements
+#' between 0 and 1, in the following order:
+#' \enumerate{
+#' \item Sensitivity of exposure (or outcome) classification among those with the
+#' outcome,
+#' \item Sensitivity of exposure (or outcome) classification among those without
+#' the outcome,
+#' \item Specificity of exposure (or outcome) classification among those with the
+#' outcome,and
+#' \item Specificity of exposure (or outcome) classification among those without
+#' the outcome.
+#' }
+#' @param alpha Significance level.
+#' @param dec Number of decimals in the printout.
+#' @param print A logical scalar. Should the results be printed?
+#' 
+#' @return A list with elements:
+#' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
+#' \item{corr.data}{The expected observed data given the true data assuming
+#' misclassfication.}
+#' \item{obs.measures}{A table of observed relative risk and odds ratio with
+#' confidence intervals.}
+#' \item{adj.measures}{A table of adjusted relative risk and odds ratio.}
+#' \item{bias.parms}{Input bias parameters.}
+#'
+#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
+#' Bias Analysis to Epidemiologic Data}, pp.79--108, Springer.
+#' 
+#' @examples
+#' # The data for this example come from:
+#' # Fink, A.K., Lash,  T.L. A null association between smoking during pregnancy
+#' # and breast cancer using Massachusetts registry data (United States).
+#' # Cancer Causes Control 2003;14:497-503.
+#' misclassification(matrix(c(215, 1449, 668, 4296),
+#' dimnames = list(c("Breast cancer+", "Breast cancer-"),
+#' c("Smoker+", "Smoker-")),
+#' nrow = 2, byrow = TRUE),
+#' type = "exposure",
+#' bias = c(.78, .78, .99, .99))
+#' misclassification(matrix(c(4558, 3428, 46305, 46085),
+#' dimnames = list(c("AMI death+", "AMI death-"),
+#' c("Male+", "Male-")),
+#' nrow = 2, byrow = TRUE),
+#' type = "outcome",
+#' bias = c(.53, .53, .99, .99))
+#' @export
 misclassification <- function(exposed,
                               case,
                               implement = c("exposure", "outcome"),
@@ -7,7 +66,7 @@ misclassification <- function(exposed,
                               dec = 4,
                               print = TRUE){
     if (!missing(implement)) {
-        warning("argument implement is deprecated; please use type instead.", 
+        warning("Argument implement is deprecated; please use type instead.", 
                 call. = FALSE)
         type <- implement
     }
@@ -22,6 +81,8 @@ misclassification <- function(exposed,
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
     else tab <- table(exposed, case)
+    tab <- tab[1:2, 1:2]
+    
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]
@@ -45,7 +106,7 @@ misclassification <- function(exposed,
         D <- (c + d) - C
 
         if(A < 1 | B < 1 | C < 1 | D < 1)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table.')
         
         corr.tab <- matrix(c(A, B, C, D), nrow = 2, byrow = TRUE)
 
@@ -122,7 +183,7 @@ misclassification <- function(exposed,
         D <- (b + d) - B
 
         if(A < 1 | B < 1 | C < 1 | D < 1)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table.')
         
         corr.tab <- matrix(c(A, B, C, D), nrow = 2, byrow = TRUE)
 
