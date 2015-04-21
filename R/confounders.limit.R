@@ -3,8 +3,6 @@
 #' Function to elicit the limits on measures of effect corrected for an unmeasured
 #' confounder when only some of the bias parameters are known.
 #'
-#' @aliases confounders confounders.emm confounders.poly
-#' 
 #' @param p Proportion with the confounder among the unexposed group.
 #' @param RR Relative risk between the confounder and the outcome.
 #' @param OR Odds ratio between the confounder and the outcome.
@@ -17,9 +15,10 @@
 #' \item{bias.parms}{Input bias parameters p, RR, OR, and crude RR.}
 #'
 #' @references
-#' \item Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
+#' Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 #' Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.
-#' \item Flanders, W. Dana, Khoury, Muin J., 1990. Indirect Assessment of
+#'
+#' Flanders, W. Dana, Khoury, Muin J., 1990. Indirect Assessment of
 #' Confounding: Graphic Description and Limits on Effect of Adjusting for
 #' Covariates. \emph{Epidemiology} 1(3): 239--246.
 #' 
