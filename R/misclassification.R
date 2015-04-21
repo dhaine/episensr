@@ -66,7 +66,7 @@ misclassification <- function(exposed,
                               dec = 4,
                               print = TRUE){
     if (!missing(implement)) {
-        warning("argument implement is deprecated; please use type instead.", 
+        warning("Argument implement is deprecated; please use type instead.", 
                 call. = FALSE)
         type <- implement
     }
@@ -81,6 +81,8 @@ misclassification <- function(exposed,
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
     else tab <- table(exposed, case)
+    tab <- tab[1:2, 1:2]
+    
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]
@@ -104,7 +106,7 @@ misclassification <- function(exposed,
         D <- (c + d) - C
 
         if(A < 1 | B < 1 | C < 1 | D < 1)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table.')
         
         corr.tab <- matrix(c(A, B, C, D), nrow = 2, byrow = TRUE)
 
@@ -181,7 +183,7 @@ misclassification <- function(exposed,
         D <- (b + d) - B
 
         if(A < 1 | B < 1 | C < 1 | D < 1)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table.')
         
         corr.tab <- matrix(c(A, B, C, D), nrow = 2, byrow = TRUE)
 
