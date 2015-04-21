@@ -90,7 +90,7 @@ confounders.emm <- function(exposed,
                             dec = 4,
                             print = TRUE){
     if (!missing(implement)) {
-        warning("argument implement is deprecated; please use type instead.", 
+        warning("Argument implement is deprecated; please use type instead.", 
                 call. = FALSE)
         type <- implement
   }
@@ -140,6 +140,7 @@ confounders.emm <- function(exposed,
     b <- tab[1, 2]
     c <- tab[2, 1]
     d <- tab[2, 2]
+    tab <- tab[1:2, 1:2]
 
     type <- match.arg(type)
     if (type == "RR") {
@@ -163,7 +164,7 @@ confounders.emm <- function(exposed,
 
         if(A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
         
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
@@ -275,7 +276,7 @@ confounders.emm <- function(exposed,
 
         if(A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
         
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
@@ -387,7 +388,7 @@ confounders.emm <- function(exposed,
 
         if(A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
         
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
