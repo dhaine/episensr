@@ -5,6 +5,8 @@
 #' without effect modification. Implementation for ratio measures (relative risk
 #' -- RR, or odds ratio -- OR) and difference measures (risk difference -- RD).
 #'
+#' @aliases confounders.emm confounders.limit confounders.poly
+#' 
 #' @param exposed Exposure variable. If a variable, this variable is tabulated against.
 #' @param case Outcome variable.
 #' @param implement Deprecated. Please use type instead.
