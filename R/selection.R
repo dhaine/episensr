@@ -3,8 +3,9 @@
 #' Simple sensitivity analysis to correct for selection bias using estimates of
 #' the selection proportions.
 #'
-#' @param case Outcome variable. If a variable, this variable is tabulated against.
-#' @param exposed Exposure variable.
+#' @param exposed Exposure variable. If a variable, this variable is tabulated
+#' against.
+#' @param case Outcome variable.
 #' @param selprob Numeric vector defining the selection probabilities. This vector has 4 elements between 0 and 1, in the following order:
 #' \enumerate{
 #' \item Selection probability among cases exposed,
@@ -15,12 +16,14 @@
 #' @param alpha Significance level.
 #' @param dec Number of decimals in the printout.
 #' @param print A logical scalar. Should the results be printed?
+#' 
 #' @return A list with elements:
 #' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
 #' \item{corr.data}{The same table corrected for  selection proportions.}
 #' \item{obs.measures}{A table of odds ratios and relative risk with confidence intervals.}
 #' \item{adj.measures}{Selection bias corrected measures of outcome-exposure relationship.}
 #' \item{bias.parms}{Input bias parameters: selection probabilities.}
+#'
 #' @examples
 #' # The data for this example come from:
 #' # Stang A., Schmidt-Pokrzywniak A., Lehnert M., Parkin D.M., Ferlay J., Bornfeld N.

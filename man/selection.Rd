@@ -8,9 +8,10 @@ selection(exposed, case, selprob = NULL, alpha = 0.05, dec = 4,
   print = TRUE)
 }
 \arguments{
-\item{exposed}{Exposure variable.}
+\item{exposed}{Exposure variable. If a variable, this variable is tabulated
+against.}
 
-\item{case}{Outcome variable. If a variable, this variable is tabulated against.}
+\item{case}{Outcome variable.}
 
 \item{selprob}{Numeric vector defining the selection probabilities. This vector has 4 elements between 0 and 1, in the following order:
 \enumerate{
