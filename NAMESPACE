@@ -2,4 +2,5 @@
 
 export(confounders)
 export(confounders.emm)
+export(confounders.limit)
 export(selection)
