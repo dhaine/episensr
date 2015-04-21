@@ -3,7 +3,7 @@
 #' Simple sensitivity analysis to correct for unknown or unmeasured polychotomous
 #' (3-level) confounding without effect modification. Implementation for ratio
 #' measures (relative risk -- RR, or odds ratio -- OR) and difference measures
-#' (risk difference -- RD).}
+#' (risk difference -- RD).
 #'
 #' @aliases confounders confounders.emm confounders.limit
 #' 
