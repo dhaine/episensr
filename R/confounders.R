@@ -1,3 +1,70 @@
+#' Sensitivity analysis to correct for unknown or unmeasured confounding without
+#' effect modification
+#'
+#' Simple sensitivity analysis to correct for unknown or unmeasured confounding
+#' without effect modification. Implementation for ratio measures (relative risk
+#' -- RR, or odds ratio -- OR) and difference measures (risk difference -- RD).
+#'
+#' @aliases confounders.emm confounders.limit confounders.poly
+#' 
+#' @param exposed Exposure variable. If a variable, this variable is tabulated against.
+#' @param case Outcome variable.
+#' @param implement Deprecated. Please use type instead.
+#' @param type Choice of implementation, with no effect measure modification for
+#' ratio measures (relative risk -- RR; odds ratio -- OR) or difference measures
+#' (risk difference -- RD).
+#' @param p Numeric vector defining the prevalence of the confounder. This vector
+#' has 2 elements between 0 and 1, in the following order:
+#' \enumerate{
+#' \item Prevalence of the confounder among the exposed, and
+#' \item Prevalence of the confounder among the unexposed.
+#' }
+#' @param RR.cd Confounder-disease relative risk.
+#' @param OR.cd Confounder-disease odds ratio.
+#' @param RD.cd Confounder-disease risk difference.
+#' @param alpha Significance level.
+#' @param dec Number of decimals in the printout.
+#' @param print A logical scalar. Should the results be printed?
+#' 
+#' @return A list with elements:
+#' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
+#' \item{cfder.data}{The same table for Confounder +.}
+#' \item{nocfder.data}{The same table for Confounder -.}
+#' \item{obs.measures}{A table of relative risk with confidence intervals; for
+#' Total, Confounder +, and Confounder -.}
+#' \item{adj.measures}{A table of Standardized Morbidity Ratio and Mantel-Haenszel
+#' estimates.}
+#' \item{bias.parms}{Input bias parameters.}
+#'
+#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
+#' Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.
+#' 
+#' @examples
+#' # The data for this example come from:
+#' # Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O.
+#' # et al.
+#' # Increased risk of infection with human immunodeficiency virus type 1 among
+#' # uncircumcised men presenting with genital ulcer disease in Kenya.
+#' # Clin Infect Dis 1996;23:449-53.
+#' confounders(matrix(c(105, 85, 527, 93),
+#' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+#' nrow = 2, byrow = TRUE),
+#' type = "RR",
+#' p = c(.8, .05),
+#' RR.cd = .63)
+#' confounders(matrix(c(105, 85, 527, 93),
+#' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+#' nrow = 2, byrow = TRUE),
+#' type = "OR",
+#' p = c(.8, .05),
+#' OR.cd = .63)
+#' confounders(matrix(c(105, 85, 527, 93),
+#' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+#' nrow = 2, byrow = TRUE),
+#' type = "RD",
+#' p = c(.8, .05),
+#' RD.cd = -.37)
+#' @export
 confounders <- function(exposed,
                         case,
                         implement = c("RR", "OR", "RD"),
@@ -56,6 +123,8 @@ confounders <- function(exposed,
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
     else tab <- table(exposed, case)
+    tab <- tab[1:2, 1:2]
+    
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]
@@ -83,7 +152,7 @@ confounders <- function(exposed,
 
         if(A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
 
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
@@ -193,7 +262,7 @@ confounders <- function(exposed,
 
         if(A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
 
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
@@ -303,7 +372,7 @@ confounders <- function(exposed,
 
         if(A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
         
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)

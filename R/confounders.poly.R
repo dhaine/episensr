@@ -1,3 +1,88 @@
+#' Sensitivity analysis to correct for unknown or unmeasured polychotomous confounding without effect modification
+#'
+#' Simple sensitivity analysis to correct for unknown or unmeasured polychotomous
+#' (3-level) confounding without effect modification. Implementation for ratio
+#' measures (relative risk -- RR, or odds ratio -- OR) and difference measures
+#' (risk difference -- RD).
+#'
+#' @aliases confounders confounders.emm confounders.limit
+#' 
+#' @param exposed Exposure variable. If a variable, this variable is tabulated against.
+#' @param case Outcome variable.
+#' @param implement Deprecated. Please use type instead.
+#' @param type Choice of implementation, with no effect measure modification for
+#' ratio measures (relative risk -- RR; odds ratio -- OR) or difference measures
+#' (risk difference -- RD).
+#' @param p Numeric vector defining the prevalence of the confounder. This vector
+#' has 4 elements between 0 and 1, in the following order:
+#' \enumerate{
+#' \item Prevalence of the highest level confounder among the exposed,
+#' \item Prevalence of the highest level confounder among the unexposed,
+#' \item Prevalence of the mid-level confounder among the exposed, and
+#' \item Prevalence of the mid-level confounder among the unexposed.
+#' }
+#' @param RR.cd Vector defining the confounder-disease relative risk. This vector
+#' has two elements in the following order:
+#' \enumerate{
+#' \item Relative risk of having the highest-level confounder in diseased, and
+#' \item Relative risk of having the mid-level confounder in diseased.
+#' }
+#' @param OR.cd Vector defining the confounder-disease odds ratio. This vector has
+#' two elements in the following order:
+#' \enumerate{
+#' \item Odds ratio of having the highest-level confounder in diseased, and
+#' \item Odds ratio of having the mid-level confounder in diseased.
+#' }
+#' @param RD.cd Vector defining the confounder-disease risk difference. This
+#' vector has two elements in the following order:
+#' \enumerate{
+#' \item Risk difference of having the highest-level confounder in diseased, and
+#' \item Risk difference of having the mid-level confounder in diseased.
+#' }
+#' @param alpha Significance level.
+#' @param dec Number of decimals in the printout.
+#' @param print A logical scalar. Should the results be printed?
+#' 
+#' @return A list with elements:
+#' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
+#' \item{cfder1.data}{The same table for Mid-level Confounder +.}
+#' \item{cfder2.data}{The same table for Highest-level Confounder +.}
+#' \item{nocfder.data}{The same table for Confounder -.}
+#' \item{obs.measures}{A table of relative risk with confidence intervals; Total
+#' and by confounders.}
+#' \item{adj.measures}{A table of Standardized Morbidity Ratio and Mantel-Haenszel
+#' estimates.}
+#' \item{bias.parms}{Input bias parameters.}
+#'
+#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
+#' Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.
+#' 
+#' @examples
+#' # The data for this example come from:
+#' # Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O.
+#' # et al.
+#' # Increased risk of infection with human immunodeficiency virus type 1 among
+#' # uncircumcised men presenting with genital ulcer disease in Kenya.
+#' # Clin Infect Dis 1996;23:449-53.
+#' confounders.poly(matrix(c(105, 85, 527, 93),
+#' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+#' nrow = 2, byrow = TRUE),
+#' type = "RR",
+#' p = c(.6, .05, .2, .2),
+#' RR.cd = c(.4, .8))
+#' confounders.poly(matrix(c(105, 85, 527, 93),
+#' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+#' nrow = 2, byrow = TRUE),
+#' type = "OR",
+#' p = c(.6, .05, .2, .2),
+#' OR.cd = c(.4, .8))
+#' confounders.poly(matrix(c(105, 85, 527, 93),
+#' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+#' nrow = 2, byrow = TRUE),
+#' type = "RD",
+#' p = c(.6, .05, .2, .2),
+#' RD.cd = c(-.4, -.2))
+#' @export
 confounders.poly <- function(exposed,
                              case,
                              implement = c("RR", "OR", "RD"),
@@ -10,18 +95,18 @@ confounders.poly <- function(exposed,
                              dec = 4,
                              print = TRUE){
     if (!missing(implement)) {
-        warning("argument implement is deprecated; please use type instead.", 
+        warning("Argument implement is deprecated; please use type instead.", 
                 call. = FALSE)
         type <- implement
   }
     if(length(type) > 1)
-        stop('Choose between RR, OR, or RD typeation.')
+        stop('Choose between RR, OR, or RD implementation.')
     if(type == "RR" & (!is.null(OR.cd) | !is.null(RD.cd)))
-        stop('Mismatch between typeation type and confounder risk.')
+        stop('Mismatch between implementation type and confounder risk.')
     if(type == "OR" & (!is.null(RR.cd) | !is.null(RD.cd)))
-        stop('Mismatch between typeation type and confounder risk.')
+        stop('Mismatch between implementation type and confounder risk.')
     if(type == "RD" & (!is.null(RR.cd) | !is.null(OR.cd)))
-        stop('Mismatch between typeation type and confounder risk.')
+        stop('Mismatch between implementation type and confounder risk.')
     
     if(is.null(p))
         p <- c(0, 0)
@@ -60,6 +145,8 @@ confounders.poly <- function(exposed,
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
     else tab <- table(exposed, case)
+    tab <- tab[1:2, 1:2]
+
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]
@@ -94,7 +181,7 @@ confounders.poly <- function(exposed,
         if(A2 < 0 | B2 < 0 | C2 < 0 | D2 < 0 |
            A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
         
         tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
         tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
@@ -234,7 +321,7 @@ confounders.poly <- function(exposed,
         if(A2 < 0 | B2 < 0 | C2 < 0 | D2 < 0 |
            A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
         
         tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
         tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
@@ -374,7 +461,7 @@ confounders.poly <- function(exposed,
         if(A2 < 0 | B2 < 0 | C2 < 0 | D2 < 0 |
            A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Negative cell.')
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
         
         tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
         tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
