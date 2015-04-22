@@ -14,6 +14,8 @@ against.}
 
 \item{case}{Outcome variable.}
 
+\item{implement}{Deprecated; please use type instead.}
+
 \item{type}{Choice of misclassification:
 \enumerate{
 \item Exposure: bias analysis for exposure misclassification; corrections using

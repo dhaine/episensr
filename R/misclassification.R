@@ -5,6 +5,7 @@
 #' @param exposed Exposure variable. If a variable, this variable is tabulated
 #' against.
 #' @param case Outcome variable.
+#' @param implement Deprecated; please use type instead.
 #' @param type Choice of misclassification:
 #' \enumerate{
 #' \item Exposure: bias analysis for exposure misclassification; corrections using
