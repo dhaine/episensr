@@ -108,6 +108,7 @@ multidimBias <- function(exposed,
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
     else tab <- table(exposed, case)
+    tab <- tab[1:2, 1:2]
 
     a <- tab[1, 1]
     b <- tab[1, 2]
