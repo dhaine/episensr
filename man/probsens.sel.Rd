@@ -41,7 +41,8 @@ Probabilistic sensitivity analysis to correct for selection bias.
 \examples{
 # The data for this example come from:
 # Stang A., Schmidt-Pokrzywniak A., Lehnert M., Parkin D.M., Ferlay J., Bornfeld N. et al.
-# Population-based incidence estimates of uveal melanoma in Germany. Supplementing cancer registry data by case-control data.
+# Population-based incidence estimates of uveal melanoma in Germany.
+# Supplementing cancer registry data by case-control data.
 # Eur J Cancer Prev 2006;15:165-70.
 set.seed(123)
 probsens.sel(matrix(c(136, 107, 297, 165),
