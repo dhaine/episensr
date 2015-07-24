@@ -1,3 +1,67 @@
+#' Probabilistic sensitivity analysis.
+#'
+#' Probabilistic sensitivity analysis to correct for exposure misclassification or
+#' outcome misclassification and random error.
+#'
+#' @param exposed Exposure variable. If a variable, this variable is tabulated against.
+#' @param case Outcome variable.
+#' @param type Choice of correction for exposure or outcome misclassification.
+#' @param reps Number of replications to run.
+#' @param seca.parms List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, or trapezoidal) and the second its parameters as a vector:
+#' \enumerate{
+#' \item Uniform: min, max,
+#' \item Triangular: lower limit, upper limit, mode,
+#' \item Trapezoidal: min, lower mode, upper mode, max.
+#' }
+#' @param seexp.parms List defining the sensitivity of exposure classification among those without the outcome.
+#' @param spca.parms List defining the specificity of exposure classification among those with the outcome.
+#' @param spexp.parms List defining the specifity of exposure classification among those without the outcome.
+#' @param corr.se Correlation between case and non-case sensitivities.
+#' @param corr.sp Correlation between case and non-case specificities.
+#' @param alpha Significance level.
+#' @param dec Number of decimals in the printout.
+#' @param print A logical scalar. Should the results be printed?
+#'
+#' @return A list with elements:
+#' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
+#' \item{obs.measures}{A table of observed relative risk and odds ratio with confidence intervals.}
+#' \item{adj.measures}{A table of corrected relative risks and odds ratios.}
+#' \item{sim.df}{Data frame of random parameters and computed values.}
+#'
+#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
+#' Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
+#' @examples
+#' # The data for this example come from:
+#' # Greenland S., Salvan A., Wegman D.H., Hallock M.F., Smith T.J.
+#' # A case-control study of cancer mortality at a transformer-assembly facility.
+#' # Int Arch Occup Environ Health 1994; 66(1):49-54.
+#' set.seed(123)
+#' # Exposure misclassification, non-differential
+#' probsens(matrix(c(45, 94, 257, 945),
+#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+#' type = "exposure",
+#' reps = 20000,
+#' seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
+#' spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
+#' # Exposure misclassification, differential
+#' probsens(matrix(c(45, 94, 257, 945),
+#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+#' type = "exposure",
+#' reps = 20000,
+#' seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
+#' seexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
+#' spca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
+#' spexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
+#' corr.se = .8,
+#' corr.sp = .8)
+#' # Disease misclassification
+#' probsens(matrix(c(173, 602, 134, 663),
+#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+#' type = "outcome",
+#' reps = 20000,
+#' seca.parms = list("uniform", c(.8, 1)),
+#' spca.parms = list("uniform", c(.8, 1)))
+#' @export
 probsens <- function(exposed,
                      case,
                      type = c("exposure", "outcome"),
