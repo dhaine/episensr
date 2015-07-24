@@ -1,3 +1,39 @@
+#' Probabilistic sensitivity analysis for selection bias.
+#'
+#' Probabilistic sensitivity analysis to correct for selection bias.
+#'
+#' @param exposed Exposure variable. If a variable, this variable is tabulated against.
+#' @param case Outcome variable.
+#' @param reps Number of replications to run.
+#' @param or.parms List defining the selection bias odds. The first argument provides the probability distribution function (uniform, triangular, or trapezoidal) and the second its parameters as a vector:
+#' \enumerate{
+#' \item Uniform: min, max,
+#' \item Triangular: lower limit, upper limit, mode,
+#' \item Trapezoidal: min, lower mode, upper mode, max.
+#' }
+#' @param alpha Significance level.
+#' @param dec Number of decimals in the printout.
+#' @param print A logical scalar. Should the results be printed?
+#'
+#' @return A list with elements:
+#' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
+#' \item{obs.measures}{A table of observed odds ratio with confidence intervals.}
+#' \item{adj.measures}{A table of corrected odds ratios.}
+#' \item{sim.df}{Data frame of random parameters and computed values.}
+#'
+#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
+#'
+#' @examples
+#' # The data for this example come from:
+#' # Stang A., Schmidt-Pokrzywniak A., Lehnert M., Parkin D.M., Ferlay J., Bornfeld N. et al.
+#' # Population-based incidence estimates of uveal melanoma in Germany. Supplementing cancer registry data by case-control data.
+#' # Eur J Cancer Prev 2006;15:165-70.
+#' set.seed(123)
+#' probsens.sel(matrix(c(136, 107, 297, 165),
+#' dimnames = list(c("Melanoma+", "Melanoma-"), c("Mobile+", "Mobile-")), nrow = 2, byrow = TRUE),
+#' reps = 20000,
+#' or.parms = list("triangular", c(.35, 1.1, .43)))
+#' @export
 probsens.sel <- function(exposed,
                          case,
                          reps = 1000,
