@@ -7,11 +7,12 @@
 #' @param case Outcome variable.
 #' @param type Choice of correction for exposure or outcome misclassification.
 #' @param reps Number of replications to run.
-#' @param seca.parms List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, or trapezoidal) and the second its parameters as a vector:
+#' @param seca.parms List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, or logit-logistic) and the second its parameters as a vector:
 #' \enumerate{
 #' \item Uniform: min, max,
 #' \item Triangular: lower limit, upper limit, mode,
-#' \item Trapezoidal: min, lower mode, upper mode, max.
+#' \item Trapezoidal: min, lower mode, upper mode, max,
+#' \item Logit-logistic: mean, scale, lower bound shift, upper bound shift.
 #' }
 #' @param seexp.parms List defining the sensitivity of exposure classification among those without the outcome.
 #' @param spca.parms List defining the specificity of exposure classification among those with the outcome.
@@ -67,11 +68,11 @@ probsens <- function(exposed,
                      type = c("exposure", "outcome"),
                      reps = 1000,
                      seca.parms = list(dist = c("uniform", "triangular",
-                                           "trapezoidal"),
+                                           "trapezoidal", "logit-logistic"),
                                        parms = NULL),
                      seexp.parms = NULL,
                      spca.parms = list(dist = c("uniform", "triangular",
-                                           "trapezoidal"),
+                                           "trapezoidal", "logit-logistic"),
                                        parms = NULL),
                      spexp.parms = NULL,
                      corr.se = NULL,
@@ -101,8 +102,15 @@ probsens <- function(exposed,
     if(seca.parms[[1]] == "trapezoidal" & ((seca.parms[[2]][1] > seca.parms[[2]][2]) |
                                          (seca.parms[[2]][2] > seca.parms[[2]][3]) |
                                          (seca.parms[[2]][3] > seca.parms[[2]][4])))
-        stop('Wrong arguments for your trapezoidal distribution.')    
-    if(!all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
+        stop('Wrong arguments for your trapezoidal distribution.')
+    if(seca.parms[[1]] == "logit-logistic" & (length(seca.parms[[2]]) < 2 | length(seca.parms[[2]]) == 3 | length(seca.parms[[2]]) > 4))
+        stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(seca.parms[[1]] == "logit-logistic" & length(seca.parms[[2]]) == 4 &
+       ((seca.parms[[2]][3] >= seca.parms[[2]][4]) | (!all(seca.parms[[2]][3:4] >= 0 & seca.parms[[2]][3:4] <= 1))))
+        stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(seca.parms[[1]] == "logit-logistic" & length(seca.parms[[2]]) == 2)
+        seca.parms <- list(seca.parms[[1]], c(seca.parms[[2]], c(0, 1)))
+    if(seca.parms[[1]] != "logit-logistic" & !all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
         stop('Sensitivity of exposure classification among those with the outcome should be between 0 and 1.')
     
     if(!is.null(seexp.parms) & !is.list(seexp.parms))
@@ -128,8 +136,15 @@ probsens <- function(exposed,
        ((seexp.parms[[2]][1] > seexp.parms[[2]][2]) |
             (seexp.parms[[2]][2] > seexp.parms[[2]][3]) |
                 (seexp.parms[[2]][3] > seexp.parms[[2]][4])))
-        stop('Wrong arguments for your trapezoidal distribution.')    
-    if(!is.null(seexp.parms) && !all(seexp.parms[[2]] >= 0 & seexp.parms[[2]] <= 1))
+        stop('Wrong arguments for your trapezoidal distribution.')
+    if(seexp.parms[[1]] == "logit-logistic" & (length(seexp.parms[[2]]) < 2 | length(seexp.parms[[2]]) == 3 | length(seexp.parms[[2]]) > 4))
+        stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(seexp.parms[[1]] == "logit-logistic" & length(seexp.parms[[2]]) == 4 &
+       ((seexp.parms[[2]][3] >= seexp.parms[[2]][4]) | (!all(seexp.parms[[2]][3:4] >= 0 & seexp.parms[[2]][3:4] <= 1))))
+        stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(seexp.parms[[1]] == "logit-logistic" & length(seexp.parms[[2]]) == 2)
+        seexp.parms <- list(seexp.parms[[1]], c(seexp.parms[[2]], c(0, 1)))
+    if(seexp.parms != "logit-logistic" & !is.null(seexp.parms) && !all(seexp.parms[[2]] >= 0 & seexp.parms[[2]] <= 1))
         stop('Sensitivity of exposure classification among those without the outcome should be between 0 and 1.')
     
     if(!is.list(spca.parms))
@@ -150,7 +165,14 @@ probsens <- function(exposed,
                                          (spca.parms[[2]][2] > spca.parms[[2]][3]) |
                                          (spca.parms[[2]][3] > spca.parms[[2]][4])))
         stop('Wrong arguments for your trapezoidal distribution.')    
-    if(!all(spca.parms[[2]] >= 0 & spca.parms[[2]] <= 1))
+    if(spca.parms[[1]] == "logit-logistic" & (length(spca.parms[[2]]) < 2 | length(spca.parms[[2]]) == 3 | length(spca.parms[[2]]) > 4))
+        stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(spca.parms[[1]] == "logit-logistic" & length(spca.parms[[2]]) == 4 &
+       ((spca.parms[[2]][3] >= spca.parms[[2]][4]) | (!all(spca.parms[[2]][3:4] >= 0 & spca.parms[[2]][3:4] <= 1))))
+        stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(spca.parms[[1]] == "logit-logistic" & length(spca.parms[[2]]) == 2)
+        spca.parms <- list(spca.parms[[1]], c(spca.parms[[2]], c(0, 1)))
+    if(spca.parms[[1]] != "logit-logistic" & !all(spca.parms[[2]] >= 0 & spca.parms[[2]] <= 1))
         stop('Specificity of exposure classification among those with the outcome should be between 0 and 1.')
     
     if(!is.null(spexp.parms) & !is.list(spexp.parms))
@@ -177,7 +199,14 @@ probsens <- function(exposed,
             (spexp.parms[[2]][2] > spexp.parms[[2]][3]) |
                 (spexp.parms[[2]][3] > spexp.parms[[2]][4])))
         stop('Wrong arguments for your trapezoidal distribution.')    
-    if(!is.null(spexp.parms) && !all(spexp.parms[[2]] >= 0 & spexp.parms[[2]] <= 1))
+    if(spexp.parms[[1]] == "logit-logistic" & (length(spexp.parms[[2]]) < 2 | length(spexp.parms[[2]]) == 3 | length(spexp.parms[[2]]) > 4))
+        stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(spexp.parms[[1]] == "logit-logistic" & length(spexp.parms[[2]]) == 4 &
+       ((spexp.parms[[2]][3] >= spexp.parms[[2]][4]) | (!all(spexp.parms[[2]][3:4] >= 0 & spexp.parms[[2]][3:4] <= 1))))
+        stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(spexp.parms[[1]] == "logit-logistic" & length(spexp.parms[[2]]) == 2)
+        spexp.parms <- list(spexp.parms[[1]], c(spexp.parms[[2]], c(0, 1)))
+    if(spexp.parms[[1]] != "logit-logistic" & !is.null(spexp.parms) && !all(spexp.parms[[2]] >= 0 & spexp.parms[[2]] <= 1))
         stop('Specificity of exposure classification among those without the outcome should be between 0 and 1.')
     
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
@@ -220,6 +249,13 @@ probsens <- function(exposed,
     lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
     uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
+    logitlog.dstr <- function(sesp) {
+        u <- runif(sesp[[1]])
+        w <- sesp[[2]] + sesp[[3]] * (log(u / (1 - u)))
+        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
+        return(p)
+    }
+    
     if (is.null(seexp.parms) & !is.null(spca.parms) & is.null(spexp.parms) &
         is.null(corr.se) & is.null(corr.sp)) {
         if (seca.parms[[1]] == "uniform") {
@@ -231,6 +267,9 @@ probsens <- function(exposed,
         if (seca.parms[[1]] == "trapezoidal") {
             draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(seca))
             }
+        if (seca.parms[[1]] == "logit-logistic") {
+            draws[, 1] <- logitlog.dstr(seca)
+        }
         draws[, 2] <- draws[, 1]
         if (spca.parms[[1]] == "uniform") {
             draws[, 3] <- do.call(runif, as.list(spca))
@@ -241,6 +280,9 @@ probsens <- function(exposed,
         if (spca.parms[[1]] == "trapezoidal") {
             draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(spca))
             }
+        if (spca.parms[[1]] == "logit-logistic") {
+            draws[, 3] <- logitlog.dstr(spca)
+        }
         draws[, 4] <- draws[, 3]
     } else {
         corr.draws[, 1:6] <- apply(corr.draws[, 1:6],
@@ -282,6 +324,10 @@ probsens <- function(exposed,
                              seca.parms[[2]][4] - sqrt(abs(2 * (seca.parms[[2]][4] - seca.parms[[2]][3]) * (draws[, 1] - seca.parms[[2]][3]))),
                              draws[, 1])
     }
+    if (seca.parms[[1]] == "logit-logistic") {
+        seca.w <- seca.parms[[2]][1] + (seca.parms[[2]][2] * log(corr.draws[, 7] / (1 - corr.draws[, 7])))
+        draws[, 1] <- seca.parms[[2]][3] + (seca.parms[[2]][4] - seca.parms[[2]][3]) * exp(seca.w) / (1 + exp(seca.w))
+    }
     if (seexp.parms[[1]] == "uniform") {
         draws[, 2] <- seexp.parms[[2]][2] -
             (seexp.parms[[2]][2] - seexp.parms[[2]][1]) * corr.draws[, 8]
@@ -305,6 +351,10 @@ probsens <- function(exposed,
         draws[, 2] <- ifelse(draws[, 2] > seexp.parms[[2]][3],
                              seexp.parms[[2]][4] - sqrt(abs(2 * (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * (draws[, 2] - seexp.parms[[2]][3]))),
                              draws[, 2])
+    }
+    if (seexp.parms[[1]] == "logit-logistic") {
+        seexp.w <- seexp.parms[[2]][1] + (seexp.parms[[2]][2] * log(corr.draws[, 8] / (1 - corr.draws[, 8])))
+        draws[, 2] <- seexp.parms[[2]][3] + (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * exp(seexp.w) / (1 + exp(seexp.w))
     }
     if (spca.parms[[1]] == "uniform") {
         draws[, 3] <- spca.parms[[2]][2] -
@@ -330,6 +380,10 @@ probsens <- function(exposed,
                              spca.parms[[2]][4] - sqrt(abs(2 * (spca.parms[[2]][4] - spca.parms[[2]][3]) * (draws[, 3] - spca.parms[[2]][3]))),
                              draws[, 3])
     }
+    if (spca.parms[[1]] == "logit-logistic") {
+        spca.w <- spca.parms[[2]][1] + (spca.parms[[2]][2] * log(corr.draws[, 9] / (1 - corr.draws[, 9])))
+        draws[, 3] <- spca.parms[[2]][3] + (spca.parms[[2]][4] - spca.parms[[2]][3]) * exp(spca.w) / (1 + exp(spca.w))
+    }
     if (spexp.parms[[1]] == "uniform") {
         draws[, 4] <- spexp.parms[[2]][2] -
             (spexp.parms[[2]][2] - spexp.parms[[2]][1]) * corr.draws[, 10]
@@ -353,6 +407,10 @@ probsens <- function(exposed,
         draws[, 4] <- ifelse(draws[, 4] > spexp.parms[[2]][3],
                              spexp.parms[[2]][4] - sqrt(abs(2 * (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * (draws[, 4] - spexp.parms[[2]][3]))),
                              draws[, 4])
+    }
+    if (spexp.parms[[1]] == "logit-logistic") {
+        spexp.w <- spexp.parms[[2]][1] + (spexp.parms[[2]][2] * log(corr.draws[, 10] / (1 - corr.draws[, 10])))
+        draws[, 4] <- spexp.parms[[2]][3] + (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * exp(spexp.w) / (1 + exp(spexp.w))
     }
     }
 
@@ -387,6 +445,8 @@ probsens <- function(exposed,
                               draws[, 4] < (d / (c + d)) |
                               draws[, 1] < (a / (a + b)) |
                               draws[, 3] < (b / (a + b)), NA, draws[, 10])
+        if(all(is.na(draws[, 9])) | all(is.na(draws[, 10])))
+            warning('Please choose sensible values for Se/Sp distributions.')
 
         draws[, 12] <- exp(log(draws[, 9]) -
                                qnorm(draws[, 11]) *
