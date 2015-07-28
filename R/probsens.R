@@ -69,11 +69,13 @@ probsens <- function(exposed,
                      type = c("exposure", "outcome"),
                      reps = 1000,
                      seca.parms = list(dist = c("uniform", "triangular",
-                                           "trapezoidal", "logit-logistic"),
+                                           "trapezoidal", "logit-logistic",
+                                                "logit-normal"),
                                        parms = NULL),
                      seexp.parms = NULL,
                      spca.parms = list(dist = c("uniform", "triangular",
-                                           "trapezoidal", "logit-logistic"),
+                                           "trapezoidal", "logit-logistic",
+                                                "logit-normal"),
                                        parms = NULL),
                      spexp.parms = NULL,
                      corr.se = NULL,
@@ -111,7 +113,14 @@ probsens <- function(exposed,
         stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
     if(seca.parms[[1]] == "logit-logistic" & length(seca.parms[[2]]) == 2)
         seca.parms <- list(seca.parms[[1]], c(seca.parms[[2]], c(0, 1)))
-    if(seca.parms[[1]] != "logit-logistic" & !all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
+    if(seca.parms[[1]] == "logit-normal" & (length(seca.parms[[2]]) < 2 | length(seca.parms[[2]]) == 3 | length(seca.parms[[2]]) > 4))
+        stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(seca.parms[[1]] == "logit-normal" & length(seca.parms[[2]]) == 4 &
+       ((seca.parms[[2]][3] >= seca.parms[[2]][4]) | (!all(seca.parms[[2]][3:4] >= 0 & seca.parms[[2]][3:4] <= 1))))
+        stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(seca.parms[[1]] == "logit-normal" & length(seca.parms[[2]]) == 2)
+        seca.parms <- list(seca.parms[[1]], c(seca.parms[[2]], c(0, 1)))
+    if((seca.parms[[1]] == "uniform" | seca.parms[[1]] == "triangular" | seca.parms[[1]] == "trapezoidal") & !all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
         stop('Sensitivity of exposure classification among those with the outcome should be between 0 and 1.')
     
     if(!is.null(seexp.parms) & !is.list(seexp.parms))
@@ -145,7 +154,14 @@ probsens <- function(exposed,
         stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
     if(seexp.parms[[1]] == "logit-logistic" & length(seexp.parms[[2]]) == 2)
         seexp.parms <- list(seexp.parms[[1]], c(seexp.parms[[2]], c(0, 1)))
-    if(seexp.parms != "logit-logistic" & !is.null(seexp.parms) && !all(seexp.parms[[2]] >= 0 & seexp.parms[[2]] <= 1))
+    if(seexp.parms[[1]] == "logit-normal" & (length(seexp.parms[[2]]) < 2 | length(seexp.parms[[2]]) == 3 | length(seexp.parms[[2]]) > 4))
+        stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(seexp.parms[[1]] == "logit-normal" & length(seexp.parms[[2]]) == 4 &
+       ((seexp.parms[[2]][3] >= seexp.parms[[2]][4]) | (!all(seexp.parms[[2]][3:4] >= 0 & seexp.parms[[2]][3:4] <= 1))))
+        stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(seexp.parms[[1]] == "logit-normal" & length(seexp.parms[[2]]) == 2)
+        seexp.parms <- list(seexp.parms[[1]], c(seexp.parms[[2]], c(0, 1)))
+    if((!is.null(seexp.parms) && seexp.parms[[1]] == "uniform" | seexp.parms[[1]] == "triangular" | seexp.parms[[1]] == "trapezoidal") & !all(seexp.parms[[2]] >= 0 & seexp.parms[[2]] <= 1))
         stop('Sensitivity of exposure classification among those without the outcome should be between 0 and 1.')
     
     if(!is.list(spca.parms))
@@ -173,7 +189,14 @@ probsens <- function(exposed,
         stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
     if(spca.parms[[1]] == "logit-logistic" & length(spca.parms[[2]]) == 2)
         spca.parms <- list(spca.parms[[1]], c(spca.parms[[2]], c(0, 1)))
-    if(spca.parms[[1]] != "logit-logistic" & !all(spca.parms[[2]] >= 0 & spca.parms[[2]] <= 1))
+    if(spca.parms[[1]] == "logit-normal" & (length(spca.parms[[2]]) < 2 | length(spca.parms[[2]]) == 3 | length(spca.parms[[2]]) > 4))
+        stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(spca.parms[[1]] == "logit-normal" & length(spca.parms[[2]]) == 4 &
+       ((spca.parms[[2]][3] >= spca.parms[[2]][4]) | (!all(spca.parms[[2]][3:4] >= 0 & spca.parms[[2]][3:4] <= 1))))
+        stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(spca.parms[[1]] == "logit-normal" & length(spca.parms[[2]]) == 2)
+        spca.parms <- list(spca.parms[[1]], c(spca.parms[[2]], c(0, 1)))
+    if((spca.parms[[1]] == "uniform" | spca.parms[[1]] == "triangular" | spca.parms[[1]] == "trapezoidal") & !all(spca.parms[[2]] >= 0 & spca.parms[[2]] <= 1))
         stop('Specificity of exposure classification among those with the outcome should be between 0 and 1.')
     
     if(!is.null(spexp.parms) & !is.list(spexp.parms))
@@ -207,7 +230,14 @@ probsens <- function(exposed,
         stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
     if(spexp.parms[[1]] == "logit-logistic" & length(spexp.parms[[2]]) == 2)
         spexp.parms <- list(spexp.parms[[1]], c(spexp.parms[[2]], c(0, 1)))
-    if(spexp.parms[[1]] != "logit-logistic" & !is.null(spexp.parms) && !all(spexp.parms[[2]] >= 0 & spexp.parms[[2]] <= 1))
+    if(spexp.parms[[1]] == "logit-normal" & (length(spexp.parms[[2]]) < 2 | length(spexp.parms[[2]]) == 3 | length(spexp.parms[[2]]) > 4))
+        stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(spexp.parms[[1]] == "logit-normal" & length(spexp.parms[[2]]) == 4 &
+       ((spexp.parms[[2]][3] >= spexp.parms[[2]][4]) | (!all(spexp.parms[[2]][3:4] >= 0 & spexp.parms[[2]][3:4] <= 1))))
+        stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(spexp.parms[[1]] == "logit-normal" & length(spexp.parms[[2]]) == 2)
+        spexp.parms <- list(spexp.parms[[1]], c(spexp.parms[[2]], c(0, 1)))
+    if(!is.null(spexp.parms) && (spexp.parms[[1]] == "uniform" | spexp.parms[[1]] == "triangular" | spexp.parms[[1]] == "trapezoidal") & !all(spexp.parms[[2]] >= 0 & spexp.parms[[2]] <= 1))
         stop('Specificity of exposure classification among those without the outcome should be between 0 and 1.')
     
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
