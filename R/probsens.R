@@ -306,7 +306,10 @@ probsens <- function(exposed,
             }
         if (seca.parms[[1]] == "logit-logistic") {
             draws[, 1] <- logitlog.dstr(seca)
-        }
+            }
+        if (seca.parms[[1]] == "logit-normal") {
+            draws[, 1] <- logitnorm.dstr(seca)
+            }
         draws[, 2] <- draws[, 1]
         if (spca.parms[[1]] == "uniform") {
             draws[, 3] <- do.call(runif, as.list(spca))
@@ -319,7 +322,10 @@ probsens <- function(exposed,
             }
         if (spca.parms[[1]] == "logit-logistic") {
             draws[, 3] <- logitlog.dstr(spca)
-        }
+            }
+        if (spca.parms[[1]] == "logit-normal") {
+            draws[, 3] <- logitnorm.dstr(spca)
+            }
         draws[, 4] <- draws[, 3]
     } else {
         corr.draws[, 1:6] <- apply(corr.draws[, 1:6],
@@ -365,6 +371,10 @@ probsens <- function(exposed,
         seca.w <- seca.parms[[2]][1] + (seca.parms[[2]][2] * log(corr.draws[, 7] / (1 - corr.draws[, 7])))
         draws[, 1] <- seca.parms[[2]][3] + (seca.parms[[2]][4] - seca.parms[[2]][3]) * exp(seca.w) / (1 + exp(seca.w))
     }
+    if (seca.parms[[1]] == "logit-normal") {
+        seca.w <- seca.parms[[2]][1] + (seca.parms[[2]][2] * qnorm(corr.draws[, 7]))
+        draws[, 1] <- seca.parms[[2]][3] + (seca.parms[[2]][4] - seca.parms[[2]][3]) * exp(seca.w) / (1 + exp(seca.w))
+    }
     if (seexp.parms[[1]] == "uniform") {
         draws[, 2] <- seexp.parms[[2]][2] -
             (seexp.parms[[2]][2] - seexp.parms[[2]][1]) * corr.draws[, 8]
@@ -391,6 +401,10 @@ probsens <- function(exposed,
     }
     if (seexp.parms[[1]] == "logit-logistic") {
         seexp.w <- seexp.parms[[2]][1] + (seexp.parms[[2]][2] * log(corr.draws[, 8] / (1 - corr.draws[, 8])))
+        draws[, 2] <- seexp.parms[[2]][3] + (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * exp(seexp.w) / (1 + exp(seexp.w))
+    }
+    if (seexp.parms[[1]] == "logit-normal") {
+        seexp.w <- seexp.parms[[2]][1] + (seexp.parms[[2]][2] * qnorm(corr.draws[, 8]))
         draws[, 2] <- seexp.parms[[2]][3] + (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * exp(seexp.w) / (1 + exp(seexp.w))
     }
     if (spca.parms[[1]] == "uniform") {
@@ -421,6 +435,10 @@ probsens <- function(exposed,
         spca.w <- spca.parms[[2]][1] + (spca.parms[[2]][2] * log(corr.draws[, 9] / (1 - corr.draws[, 9])))
         draws[, 3] <- spca.parms[[2]][3] + (spca.parms[[2]][4] - spca.parms[[2]][3]) * exp(spca.w) / (1 + exp(spca.w))
     }
+    if (spca.parms[[1]] == "logit-normal") {
+        spca.w <- spca.parms[[2]][1] + (spca.parms[[2]][2] * qnorm(corr.draws[, 9]))
+        draws[, 3] <- spca.parms[[2]][3] + (spca.parms[[2]][4] - spca.parms[[2]][3]) * exp(spca.w) / (1 + exp(spca.w))
+    }
     if (spexp.parms[[1]] == "uniform") {
         draws[, 4] <- spexp.parms[[2]][2] -
             (spexp.parms[[2]][2] - spexp.parms[[2]][1]) * corr.draws[, 10]
@@ -447,6 +465,10 @@ probsens <- function(exposed,
     }
     if (spexp.parms[[1]] == "logit-logistic") {
         spexp.w <- spexp.parms[[2]][1] + (spexp.parms[[2]][2] * log(corr.draws[, 10] / (1 - corr.draws[, 10])))
+        draws[, 4] <- spexp.parms[[2]][3] + (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * exp(spexp.w) / (1 + exp(spexp.w))
+    }
+    if (spexp.parms[[1]] == "logit-normal") {
+        spexp.w <- spexp.parms[[2]][1] + (spexp.parms[[2]][2] * qnorm(corr.draws[, 10]))
         draws[, 4] <- spexp.parms[[2]][3] + (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * exp(spexp.w) / (1 + exp(spexp.w))
     }
     }
