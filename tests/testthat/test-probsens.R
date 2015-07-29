@@ -305,6 +305,20 @@ test_that("Selection bias: adjusted measures are correct", {
     expect_equal(model$adj.measures[2, 3], 2.0608, tolerance = 1e-4, scale = 1)
 })
 
+test_that("Selection bias: adjusted measures are correct (logit)", {
+    set.seed(123)
+    model <- probsens.sel(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
+                      reps = 50000,
+                      or.parms = list("logit-logistic", c(0, 0.8)),
+                      print = FALSE)
+    expect_equal(model$adj.measures[1, 1], 1.4253, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.7448, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 13.8028, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 1.4390, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.6698, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 13.9583, tolerance = 1e-4, scale = 1)
+})
+
 test_that("Confounding bias: observed measures are correct", {
     set.seed(123)
     model <- probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
