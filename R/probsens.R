@@ -20,6 +20,7 @@
 #' @param spexp.parms List defining the specifity of exposure classification among those without the outcome.
 #' @param corr.se Correlation between case and non-case sensitivities.
 #' @param corr.sp Correlation between case and non-case specificities.
+#' @param discard A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.
 #' @param alpha Significance level.
 #' @param dec Number of decimals in the printout.
 #' @param print A logical scalar. Should the results be printed?
@@ -80,6 +81,7 @@ probsens <- function(exposed,
                      spexp.parms = NULL,
                      corr.se = NULL,
                      corr.sp = NULL,
+                     discard = TRUE,
                      alpha = 0.05,
                      dec = 4,
                      print = TRUE){
@@ -485,23 +487,38 @@ probsens <- function(exposed,
         draws[, 10] <- (draws[, 5]/draws[, 7]) / (draws[, 6]/draws[, 8])
 
         draws[, 9] <- ifelse(draws[, 5] < 1 |
-                               draws[, 6] < 1 |
-                                 draws[, 7] < 1 |
-                                   draws[, 8] < 1, NA, draws[, 9])
+                                 draws[, 6] < 1 |
+                                     draws[, 7] < 1 |
+                                         draws[, 8] < 1, NA, draws[, 9])
         draws[, 10] <- ifelse(draws[, 5] < 1 |
-                               draws[, 6] < 1 |
-                                 draws[, 7] < 1 |
-                                   draws[, 8] < 1, NA, draws[, 10])
+                                 draws[, 6] < 1 |
+                                     draws[, 7] < 1 |
+                                         draws[, 8] < 1, NA, draws[, 10])
         draws[, 9] <- ifelse(draws[, 2] < (c / (c + d)) |
-                             draws[, 4] < (d / (c + d)) |
-                             draws[, 1] < (a / (a + b)) |
-                             draws[, 3] < (b / (a + b)), NA, draws[, 9])
+                                 draws[, 4] < (d / (c + d)) |
+                                     draws[, 1] < (a / (a + b)) |
+                                         draws[, 3] < (b / (a + b)), NA, draws[, 9])
         draws[, 10] <- ifelse(draws[, 2] < (c / (c + d)) |
-                              draws[, 4] < (d / (c + d)) |
-                              draws[, 1] < (a / (a + b)) |
-                              draws[, 3] < (b / (a + b)), NA, draws[, 10])
+                                  draws[, 4] < (d / (c + d)) |
+                                      draws[, 1] < (a / (a + b)) |
+                                          draws[, 3] < (b / (a + b)), NA, draws[, 10])
         if(all(is.na(draws[, 9])) | all(is.na(draws[, 10])))
-            warning('Please choose sensible values for Se/Sp distributions.')
+            warning('Prior Se/Sp distributions lead to all negative adjusted counts.')
+        if (discard) {
+            if(sum(is.na(draws[, 9])) > 0)
+                message('Chosen prior Se/Sp distributions lead to ',
+                        sum(is.na(draws[, 9])),
+                        ' negative adjusted counts which were discarded.')
+        }
+        else {
+            if(sum(is.na(draws[, 9])) > 0) {
+                message('Chosen prior Se/Sp distributions lead to ',
+                        sum(is.na(draws[, 9])),
+                        ' negative adjusted counts which were set to zero.')
+            }
+            draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
+            draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])
+        }
 
         draws[, 12] <- exp(log(draws[, 9]) -
                                qnorm(draws[, 11]) *
@@ -529,44 +546,42 @@ probsens <- function(exposed,
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
-        if (print)
+        if (print) {
             cat("Observed Data:",
                 "\n--------------", 
                 "\nOutcome   :", rownames(tab)[1],
                 "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        if (print) 
             print(round(tab, dec))
-        if (print) 
             cat("\n")
+            }
         rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr),
                       c(obs.or, lci.obs.or, uci.obs.or))
         rownames(rmat) <- c(" Observed Relative Risk:", "    Observed Odds Ratio:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                                sep = ""), "interval")
-        if (print)
+        if (print) {
             cat("Observed Measures of Exposure-Outcome Relationship:",
                 "\n-----------------------------------------------------------------------------------\n\n")
-        if (print) 
             print(round(rmat, dec))
-        if (print)
             cat("\n")
+            }
         rmatc <- rbind(corr.rr, corr.or, tot.rr, tot.or)
         rownames(rmatc) <- c("           Relative Risk -- systematic error:",
                              "              Odds Ratio -- systematic error:",
                              "Relative Risk -- systematic and random error:",
                              "   Odds Ratio -- systematic and random error:")
         colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
-        if (print)
+        if (print) {
             print(round(rmatc, dec))
-        if (print)
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
-        if (print)
             cat("   Se|Cases:", seca.parms[[1]], "(", seca.parms[[2]], ")",
                 "\n   Sp|Cases:", spca.parms[[1]], "(", spca.parms[[2]], ")",
                 "\nSe|No-cases:", seexp.parms[[1]], "(", seexp.parms[[2]], ")",
                 "\nSp|No-cases:", spexp.parms[[1]], "(", spexp.parms[[2]], ")",
+                "\nDiscard negative adjusted counts:", discard,
                 "\n")
+            }
         }
 
     if (type == "outcome") {
@@ -597,6 +612,23 @@ probsens <- function(exposed,
                               draws[, 4] < (d / (c + d)) |
                               draws[, 1] < (a / (a + b)) |
                               draws[, 3] < (b / (a + b)), NA, draws[, 10])
+        if(all(is.na(draws[, 9])) | all(is.na(draws[, 10])))
+            warning('Prior Se/Sp distributions lead to all negative adjusted counts.')
+        if (discard) {
+            if(sum(is.na(draws[, 9])) > 0)
+                message('Chosen prior Se/Sp distributions lead to ',
+                        sum(is.na(draws[, 9])),
+                        ' negative adjusted counts which were discarded.')
+        }
+        else {
+            if(sum(is.na(draws[, 9])) > 0) {
+                message('Chosen prior Se/Sp distributions lead to ',
+                        sum(is.na(draws[, 9])),
+                        ' negative adjusted counts which were set to zero.')
+            }
+            draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
+            draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])
+        }
 
         draws[, 12] <- exp(log(draws[, 9]) -
                                qnorm(draws[, 11]) *
@@ -624,44 +656,42 @@ probsens <- function(exposed,
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
-        if (print)
+        if (print) {
             cat("Observed Data:",
                 "\n--------------", 
                 "\nOutcome   :", rownames(tab)[1],
                 "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        if (print) 
             print(round(tab, dec))
-        if (print) 
             cat("\n")
+            }
         rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr),
                       c(obs.or, lci.obs.or, uci.obs.or))
         rownames(rmat) <- c(" Observed Relative Risk:", "    Observed Odds Ratio:")
         colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                                sep = ""), "interval")
-        if (print)
+        if (print) {
             cat("Observed Measures of Exposure-Outcome Relationship:",
                 "\n-----------------------------------------------------------------------------------\n\n")
-        if (print) 
             print(round(rmat, dec))
-        if (print)
             cat("\n")
+            }
         rmatc <- rbind(corr.rr, corr.or, tot.rr, tot.or)
         rownames(rmatc) <- c("           Relative Risk -- systematic error:",
                              "              Odds Ratio -- systematic error:",
                              "Relative Risk -- systematic and random error:",
                              "   Odds Ratio -- systematic and random error:")
         colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
-        if (print)
+        if (print) {
             print(round(rmatc, dec))
-        if (print)
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
-        if (print)
             cat("    Se|Exposed:", seca.parms[[1]], "(", seca.parms[[2]], ")",
                 "\n    Sp|Exposed:", spca.parms[[1]], "(", spca.parms[[2]], ")",
                 "\nSe|Non-exposed:", seexp.parms[[1]], "(", seexp.parms[[2]], ")",
                 "\nSp|Non-exposed:", spexp.parms[[1]], "(", spexp.parms[[2]], ")",
+                "\nDiscard negative adjusted counts:", discard,
                 "\n")
+            }
         }
     invisible(list(obs.data = tab,
                    obs.measures = rmat, 
