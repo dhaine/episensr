@@ -10,6 +10,8 @@
 #' \item Uniform: min, max,
 #' \item Triangular: lower limit, upper limit, mode,
 #' \item Trapezoidal: min, lower mode, upper mode, max.
+#' \item Logit-logistic: location, scale, lower bound shift, upper bound shift,
+#' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
 #' }
 #' @param alpha Significance level.
 #' @param dec Number of decimals in the printout.
@@ -39,7 +41,8 @@ probsens.sel <- function(exposed,
                          case,
                          reps = 1000,
                          or.parms = list(dist = c("uniform", "triangular",
-                                             "trapezoidal"),
+                                             "trapezoidal", "logit-logistic",
+                                                  "logit-normal"),
                              parms = NULL),
                          alpha = 0.05,
                          dec = 4,
@@ -67,7 +70,21 @@ probsens.sel <- function(exposed,
                                          (or.parms[[2]][2] > or.parms[[2]][3]) |
                                          (or.parms[[2]][3] > or.parms[[2]][4])))
         stop('Wrong arguments for your trapezoidal distribution.')    
-    
+        if(or.parms[[1]] == "logit-logistic" & (length(or.parms[[2]]) < 2 | length(or.parms[[2]]) == 3 | length(or.parms[[2]]) > 4))
+        stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(or.parms[[1]] == "logit-logistic" & length(or.parms[[2]]) == 4 &
+       ((or.parms[[2]][3] >= or.parms[[2]][4]) | (!all(or.parms[[2]][3:4] >= 0 & or.parms[[2]][3:4] <= 1))))
+        stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(or.parms[[1]] == "logit-logistic" & length(or.parms[[2]]) == 2)
+        or.parms <- list(or.parms[[1]], c(or.parms[[2]], c(0, 1)))
+    if(or.parms[[1]] == "logit-normal" & (length(or.parms[[2]]) < 2 | length(or.parms[[2]]) == 3 | length(or.parms[[2]]) > 4))
+        stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(or.parms[[1]] == "logit-normal" & length(or.parms[[2]]) == 4 &
+       ((or.parms[[2]][3] >= or.parms[[2]][4]) | (!all(or.parms[[2]][3:4] >= 0 & or.parms[[2]][3:4] <= 1))))
+        stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(or.parms[[1]] == "logit-normal" & length(or.parms[[2]]) == 2)
+        or.parms <- list(or.parms[[1]], c(or.parms[[2]], c(0, 1)))
+
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
     else tab <- table(exposed, case)
@@ -86,6 +103,19 @@ probsens.sel <- function(exposed,
     lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
     uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
+    logitlog.dstr <- function(sesp) {
+        u <- runif(sesp[[1]])
+        w <- sesp[[2]] + sesp[[3]] * (log(u / (1 - u)))
+        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
+        return(p)
+    }
+    logitnorm.dstr <- function(sesp) {
+        u <- runif(sesp[[1]])
+        w <- sesp[[2]] + sesp[[3]] * qnorm(u)
+        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
+        return(p)
+    }
+
     if (or.parms[[1]] == "uniform") {
         draws[, 1] <- do.call(runif, as.list(or.sel))
     }
@@ -94,6 +124,12 @@ probsens.sel <- function(exposed,
     }
     if (or.parms[[1]] == "trapezoidal") {
         draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(or.sel))
+    }
+    if (or.parms[[1]] == "logit-logistic") {
+        draws[, 1] <- logitlog.dstr(or.sel)
+    }
+    if (or.parms[[1]] == "logit-normal") {
+        draws[, 1] <- logitnorm.dstr(or.sel)
     }
 
     draws[, 3] <- runif(reps)
@@ -116,37 +152,34 @@ probsens.sel <- function(exposed,
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    if (print)
+    if (print) {
         cat("Observed Data:",
             "\n--------------", 
             "nOutcome   :", rownames(tab)[1],
             "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-    if (print) 
         print(round(tab, dec))
-    if (print) 
         cat("\n")
+        }
     rmat <- data.frame(obs.or, lci.obs.or, uci.obs.or)
     rownames(rmat) <- "Observed Odds Ratio:"
     colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.",
                                        sep = ""), "interval")
-    if (print)
+    if (print) {
         cat("Observed Measures of Exposure-Outcome Relationship:",
             "\n-----------------------------------------------------------------------------------\n\n")
-    if (print) 
         print(round(rmat, dec))
-    if (print)
         cat("\n")
+        }
     rmatc <- rbind(corr.or, tot.or)
     rownames(rmatc) <- c("Odds Ratio -- systematic error:", "Odds Ratio -- systematic and random error")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
-    if (print)
+    if (print) {
         print(round(rmatc, dec))
-    if (print)
         cat("\nBias Parameters:",
             "\n----------------\n\n")
-    if (print)
         cat("OR selection:", or.parms[[1]], "(", or.parms[[2]], ")",
             "\n")
+        }
     invisible(list(obs.data = tab,
                    obs.measures = rmat, 
                    adj.measures = rmatc, 

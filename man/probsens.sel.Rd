@@ -5,8 +5,8 @@
 \title{Probabilistic sensitivity analysis for selection bias.}
 \usage{
 probsens.sel(exposed, case, reps = 1000, or.parms = list(dist = c("uniform",
-  "triangular", "trapezoidal"), parms = NULL), alpha = 0.05, dec = 4,
-  print = TRUE)
+  "triangular", "trapezoidal", "logit-logistic", "logit-normal"), parms = NULL),
+  alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
 \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
@@ -20,6 +20,8 @@ probsens.sel(exposed, case, reps = 1000, or.parms = list(dist = c("uniform",
 \item Uniform: min, max,
 \item Triangular: lower limit, upper limit, mode,
 \item Trapezoidal: min, lower mode, upper mode, max.
+\item Logit-logistic: location, scale, lower bound shift, upper bound shift,
+\item Logit-normal: location, scale, lower bound shift, upper bound shift.
 }}
 
 \item{alpha}{Significance level.}
