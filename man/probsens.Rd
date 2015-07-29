@@ -5,9 +5,10 @@
 \title{Probabilistic sensitivity analysis.}
 \usage{
 probsens(exposed, case, type = c("exposure", "outcome"), reps = 1000,
-  seca.parms = list(dist = c("uniform", "triangular", "trapezoidal"), parms =
-  NULL), seexp.parms = NULL, spca.parms = list(dist = c("uniform",
-  "triangular", "trapezoidal"), parms = NULL), spexp.parms = NULL,
+  seca.parms = list(dist = c("uniform", "triangular", "trapezoidal",
+  "logit-logistic", "logit-normal"), parms = NULL), seexp.parms = NULL,
+  spca.parms = list(dist = c("uniform", "triangular", "trapezoidal",
+  "logit-logistic", "logit-normal"), parms = NULL), spexp.parms = NULL,
   corr.se = NULL, corr.sp = NULL, alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
@@ -19,11 +20,13 @@ probsens(exposed, case, type = c("exposure", "outcome"), reps = 1000,
 
 \item{reps}{Number of replications to run.}
 
-\item{seca.parms}{List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, or trapezoidal) and the second its parameters as a vector:
+\item{seca.parms}{List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
 \enumerate{
 \item Uniform: min, max,
 \item Triangular: lower limit, upper limit, mode,
-\item Trapezoidal: min, lower mode, upper mode, max.
+\item Trapezoidal: min, lower mode, upper mode, max,
+\item Logit-logistic: location, scale, lower bound shift, upper bound shift,
+\item Logit-normal: location, scale, lower bound shift, upper bound shift.
 }}
 
 \item{seexp.parms}{List defining the sensitivity of exposure classification among those without the outcome.}
