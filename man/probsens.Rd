@@ -9,7 +9,8 @@ probsens(exposed, case, type = c("exposure", "outcome"), reps = 1000,
   "logit-logistic", "logit-normal"), parms = NULL), seexp.parms = NULL,
   spca.parms = list(dist = c("uniform", "triangular", "trapezoidal",
   "logit-logistic", "logit-normal"), parms = NULL), spexp.parms = NULL,
-  corr.se = NULL, corr.sp = NULL, alpha = 0.05, dec = 4, print = TRUE)
+  corr.se = NULL, corr.sp = NULL, discard = TRUE, alpha = 0.05,
+  dec = 4, print = TRUE)
 }
 \arguments{
 \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
@@ -38,6 +39,8 @@ probsens(exposed, case, type = c("exposure", "outcome"), reps = 1000,
 \item{corr.se}{Correlation between case and non-case sensitivities.}
 
 \item{corr.sp}{Correlation between case and non-case specificities.}
+
+\item{discard}{A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.}
 
 \item{alpha}{Significance level.}
 
