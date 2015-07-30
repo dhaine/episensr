@@ -5,15 +5,25 @@
 #' @param exposed Exposure variable. If a variable, this variable is tabulated against.
 #' @param case Outcome variable.
 #' @param reps Number of replications to run.
-#' @param prev.exp List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (uniform, triangular, or trapezoidal) and the second its parameters as a vector:
+#' @param prev.exp List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
 #' \enumerate{
 #' \item Uniform: min, max,
 #' \item Triangular: lower limit, upper limit, mode,
 #' \item Trapezoidal: min, lower mode, upper mode, max.
+#' \item Logit-logistic: location, scale, lower bound shift, upper bound shift,
+#' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
 #' }
 #' @param prev.nexp List defining the prevalence of exposure among the unexposed.
-#' @param risk List defining the confounder-disease relative risk or the confounder-exposure odds ratio.
+#' @param risk List defining the confounder-disease relative risk or the confounder-exposure odds ratio. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, log-logistic, or log-normal) and the second its parameters as a vector:
+#' \enumerate{
+#' \item Uniform: min, max,
+#' \item Triangular: lower limit, upper limit, mode,
+#' \item Trapezoidal: min, lower mode, upper mode, max.
+#' \item Log-logistic: location, scale,
+#' \item Log-normal: location, scale.
+#' }
 #' @param corr.p Correlation between the exposure-specific confounder prevalences.
+#' @param discard A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.
 #' @param alpha Significance level.
 #' @param dec Number of decimals in the printout.
 #' @param print A logical scalar. Should the results be printed?
@@ -44,15 +54,19 @@ probsens.conf <- function(exposed,
                           case,
                           reps = 1000,
                           prev.exp = list(dist = c("uniform", "triangular",
-                                              "trapezoidal"),
+                                              "trapezoidal", "logit-logistic",
+                                                   "logit-normal"),
                               parms = NULL),
                           prev.nexp = list(dist = c("uniform", "triangular",
-                                               "trapezoidal"),
+                                               "trapezoidal", "logit-logistic",
+                                                    "logit-normal"),
                               parms = NULL),
                           risk = list(dist = c("uniform", "triangular",
-                                          "trapezoidal"),
+                                          "trapezoidal", "log-logistic",
+                                               "log-normal"),
                               parms = NULL),
                           corr.p = NULL,
+                          discard = TRUE,
                           alpha = 0.05,
                           dec = 4,
                           print = TRUE){
@@ -78,8 +92,22 @@ probsens.conf <- function(exposed,
     if(prev.exp[[1]] == "trapezoidal" & ((prev.exp[[2]][1] > prev.exp[[2]][2]) |
                                          (prev.exp[[2]][2] > prev.exp[[2]][3]) |
                                          (prev.exp[[2]][3] > prev.exp[[2]][4])))
-        stop('Wrong arguments for your trapezoidal distribution.')    
-    if(!all(prev.exp[[2]] >= 0 & prev.exp[[2]] <= 1))
+        stop('Wrong arguments for your trapezoidal distribution.')
+    if(prev.exp[[1]] == "logit-logistic" & (length(prev.exp[[2]]) < 2 | length(prev.exp[[2]]) == 3 | length(prev.exp[[2]]) > 4))
+        stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(prev.exp[[1]] == "logit-logistic" & length(prev.exp[[2]]) == 4 &
+       ((prev.exp[[2]][3] >= prev.exp[[2]][4]) | (!all(prev.exp[[2]][3:4] >= 0 & prev.exp[[2]][3:4] <= 1))))
+        stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(prev.exp[[1]] == "logit-logistic" & length(prev.exp[[2]]) == 2)
+        prev.exp <- list(prev.exp[[1]], c(prev.exp[[2]], c(0, 1)))
+    if(prev.exp[[1]] == "logit-normal" & (length(prev.exp[[2]]) < 2 | length(prev.exp[[2]]) == 3 | length(prev.exp[[2]]) > 4))
+        stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(prev.exp[[1]] == "logit-normal" & length(prev.exp[[2]]) == 4 &
+       ((prev.exp[[2]][3] >= prev.exp[[2]][4]) | (!all(prev.exp[[2]][3:4] >= 0 & prev.exp[[2]][3:4] <= 1))))
+        stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(prev.exp[[1]] == "logit-normal" & length(prev.exp[[2]]) == 2)
+        prev.exp <- list(prev.exp[[1]], c(prev.exp[[2]], c(0, 1)))
+    if((prev.exp[[1]] == "uniform" | prev.exp[[1]] == "triangular" | prev.exp[[1]] == "trapezoidal") & !all(prev.exp[[2]] >= 0 & prev.exp[[2]] <= 1))
         stop('Prevalence should be between 0 and 1.')
 
         if(prev.nexp[[1]] == "uniform" & length(prev.nexp[[2]]) != 2)
@@ -97,7 +125,21 @@ probsens.conf <- function(exposed,
                                          (prev.nexp[[2]][2] > prev.nexp[[2]][3]) |
                                          (prev.nexp[[2]][3] > prev.nexp[[2]][4])))
         stop('Wrong arguments for your trapezoidal distribution.')
-    if(!all(prev.nexp[[2]] >= 0 & prev.nexp[[2]] <= 1))
+    if(prev.nexp[[1]] == "logit-logistic" & (length(prev.nexp[[2]]) < 2 | length(prev.nexp[[2]]) == 3 | length(prev.nexp[[2]]) > 4))
+        stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(prev.nexp[[1]] == "logit-logistic" & length(prev.nexp[[2]]) == 4 &
+       ((prev.nexp[[2]][3] >= prev.nexp[[2]][4]) | (!all(prev.nexp[[2]][3:4] >= 0 & prev.nexp[[2]][3:4] <= 1))))
+        stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(prev.nexp[[1]] == "logit-logistic" & length(prev.nexp[[2]]) == 2)
+        prev.nexp <- list(prev.nexp[[1]], c(prev.nexp[[2]], c(0, 1)))
+    if(prev.nexp[[1]] == "logit-normal" & (length(prev.nexp[[2]]) < 2 | length(prev.nexp[[2]]) == 3 | length(prev.nexp[[2]]) > 4))
+        stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
+    if(prev.nexp[[1]] == "logit-normal" & length(prev.nexp[[2]]) == 4 &
+       ((prev.nexp[[2]][3] >= prev.nexp[[2]][4]) | (!all(prev.nexp[[2]][3:4] >= 0 & prev.nexp[[2]][3:4] <= 1))))
+        stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
+    if(prev.nexp[[1]] == "logit-normal" & length(prev.nexp[[2]]) == 2)
+        prev.nexp <- list(prev.nexp[[1]], c(prev.nexp[[2]], c(0, 1)))
+    if((prev.nexp[[1]] == "uniform" | prev.nexp[[1]] == "triangular" | prev.nexp[[1]] == "trapezoidal") & !all(prev.nexp[[2]] >= 0 & prev.nexp[[2]] <= 1))
         stop('Prevalence should be between 0 and 1.')
 
     if(risk[[1]] == "uniform" & length(risk[[2]]) != 2)
@@ -115,6 +157,10 @@ probsens.conf <- function(exposed,
                                      (risk[[2]][2] > risk[[2]][3]) |
                                      (risk[[2]][3] > risk[[2]][4])))
         stop('Wrong arguments for your trapezoidal distribution.')
+    if(risk[[1]] == "log-logistic" & length(risk[[2]]) != 2)
+        stop('For log-logistic distribution, please provide vector of location and scale.')
+    if(risk[[1]] == "log-normal" & length(risk[[2]]) != 2)
+        stop('For log-logistic distribution, please provide vector of location and scale.')
 
     if(!is.null(corr.p) && (corr.p == 0 | corr.p == 1))
         stop('Correlations should be > 0 and < 1.')
@@ -152,25 +198,62 @@ probsens.conf <- function(exposed,
     lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
     uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
+    logitlog.dstr <- function(sesp) {
+        u <- runif(sesp[[1]])
+        w <- sesp[[2]] + sesp[[3]] * (log(u / (1 - u)))
+        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
+        return(p)
+    }
+    logitnorm.dstr <- function(sesp) {
+        u <- runif(sesp[[1]])
+        w <- sesp[[2]] + sesp[[3]] * qnorm(u)
+        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
+        return(p)
+    }
+    loglog.dstr <- function(sesp) {
+        u <- runif(sesp[[1]])
+        w <- exp(sesp[[2]] + sesp[[3]] * (log(u / (1 - u))))
+        p <- log(w)
+        return(p)
+    }
+    lognorm.dstr <- function(sesp) {
+        u <- runif(sesp[[1]])
+        w <- exp(sesp[[2]] + sesp[[3]] * qnorm(u))
+        p <- log(w)
+        return(p)
+    }
+    
     if (is.null(corr.p)) {
         if (prev.exp[[1]] == "uniform") {
             draws[, 1] <- do.call(runif, as.list(p1))
-            }
+        }
         if (prev.exp[[1]] == "triangular") {
             draws[, 1] <- do.call(triangle::rtriangle, as.list(p1))
-            }
+        }
         if (prev.exp[[1]] == "trapezoidal") {
             draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(p1))
-            }
+        }
+        if (prev.exp[[1]] == "logit-logistic") {
+            draws[, 1] <- logitlog.dstr(p1)
+        }
+        if (prev.exp[[1]] == "logit-normal") {
+            draws[, 1] <- logitnorm.dstr(p1)
+        }
         if (prev.nexp[[1]] == "uniform") {
             draws[, 2] <- do.call(runif, as.list(p0))
-            }
+        }
         if (prev.nexp[[1]] == "triangular") {
             draws[, 2] <- do.call(triangle::rtriangle, as.list(p0))
-            }
+        }
         if (prev.nexp[[1]] == "trapezoidal") {
             draws[, 2] <- do.call(trapezoid::rtrapezoid, as.list(p0))
-            }
+        }
+        if (prev.nexp[[1]] == "logit-logistic") {
+            draws[, 2] <- logitlog.dstr(p0)
+        }
+        if (prev.nexp[[1]] == "logit-normal") {
+            draws[, 2] <- logitnorm.dstr(p0)
+        }
     } else {
         corr.draws[, 1:3] <- apply(corr.draws[, 1:3],
                                    2,
@@ -207,6 +290,14 @@ probsens.conf <- function(exposed,
                              prev.exp[[2]][4] - sqrt(abs(2 * (prev.exp[[2]][4] - prev.exp[[2]][3]) * (draws[, 1] - prev.exp[[2]][3]))),
                              draws[, 1])
     }
+    if (prev.exp[[1]] == "logit-logistic") {
+        pexp.w <- prev.exp[[2]][1] + (prev.exp[[2]][2] * log(corr.draws[, 4] / (1 - corr.draws[, 4])))
+        draws[, 1] <- prev.exp[[2]][3] + (prev.exp[[2]][4] - prev.exp[[2]][3]) * exp(pexp.w) / (1 + exp(pexp.w))
+    }
+    if (prev.exp[[1]] == "logit-normal") {
+        pexp.w <- prev.exp[[2]][1] + (prev.exp[[2]][2] * qnorm(corr.draws[, 4]))
+        draws[, 1] <- prev.exp[[2]][3] + (prev.exp[[2]][4] - prev.exp[[2]][3]) * exp(pexp.w) / (1 + exp(pexp.w))
+    }
     if (prev.nexp[[1]] == "uniform") {
         draws[, 2] <- prev.nexp[[2]][2] -
             (prev.nexp[[2]][2] - prev.nexp[[2]][1]) * corr.draws[, 5]
@@ -231,6 +322,14 @@ probsens.conf <- function(exposed,
                              prev.nexp[[2]][4] - sqrt(abs(2 * (prev.nexp[[2]][4] - prev.nexp[[2]][3]) * (draws[, 2] - prev.nexp[[2]][3]))),
                              draws[, 2])
     }
+    if (prev.nexp[[1]] == "logit-logistic") {
+        punexp.w <- prev.nexp[[2]][1] + (prev.nexp[[2]][2] * log(corr.draws[, 5] / (1 - corr.draws[, 5])))
+        draws[, 2] <- prev.nexp[[2]][3] + (prev.nexp[[2]][4] - prev.nexp[[2]][3]) * exp(punexp.w) / (1 + exp(punexp.w))
+    }
+    if (prev.nexp[[1]] == "logit-normal") {
+        punexp.w <- prev.nexp[[2]][1] + (prev.nexp[[2]][2] * qnorm(corr.draws[, 5]))
+        draws[, 2] <- prev.nexp[[2]][3] + (prev.nexp[[2]][4] - prev.nexp[[2]][3]) * exp(punexp.w) / (1 + exp(punexp.w))
+    }
     }
     if (risk[[1]] == "uniform") {
         draws[, 3] <- do.call(runif, as.list(rr.cd))
@@ -240,6 +339,12 @@ probsens.conf <- function(exposed,
     }
     if (risk[[1]] == "trapezoidal") {
         draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(rr.cd))
+    }
+    if (risk[[1]] == "log-logistic") {
+        draws[, 3] <- loglog.dstr(rr.cd)
+    }
+    if (risk[[1]] == "log-normal") {
+        draws[, 3] <- lognorm.dstr(rr.cd)
     }
     
     draws[, 18] <- runif(reps)
@@ -282,7 +387,24 @@ probsens.conf <- function(exposed,
                           draws[, 12] < 1 |
                             draws[, 13] < 1 |
                               draws[, 14] < 1 |
-                                draws[, 15] < 1, NA, draws[, 17])
+                                  draws[, 15] < 1, NA, draws[, 17])
+    if(all(is.na(draws[, 16])) | all(is.na(draws[, 17])))
+        warning('Prior Prevalence distributions lead to all negative adjusted counts.')
+    if (discard) {
+        if(sum(is.na(draws[, 16])) > 0)
+            message('Chosen prior Prevalence distributions lead to ',
+                    sum(is.na(draws[, 16])),
+                    ' negative adjusted counts which were discarded.')
+    }
+    else {
+        if(sum(is.na(draws[, 16])) > 0) {
+            message('Chosen prior Prevalence distributions lead to ',
+                    sum(is.na(draws[, 16])),
+                    ' negative adjusted counts which were set to zero.')
+        }
+        draws[, 16] <- ifelse(is.na(draws[, 16]), 0, draws[, 16])
+        draws[, 17] <- ifelse(is.na(draws[, 17]), 0, draws[, 17])
+        }
 
     draws[, 19] <- exp(log(draws[, 16]) -
                                qnorm(draws[, 18]) *
@@ -310,43 +432,41 @@ probsens.conf <- function(exposed,
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    if (print)
+    if (print) {
         cat("Observed Data:",
             "\n--------------", 
             "\nOutcome   :", rownames(tab)[1],
             "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-    if (print) 
         print(round(tab, dec))
-    if (print) 
         cat("\n")
+        }
     rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr),
                   c(obs.or, lci.obs.or, uci.obs.or))
     rownames(rmat) <- c(" Observed Relative Risk:", "    Observed Odds Ratio:")
     colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
                                                sep = ""), "interval")
-    if (print)
+    if (print) {
         cat("Observed Measures of Exposure-Outcome Relationship:",
             "\n-----------------------------------------------------------------------------------\n\n")
-    if (print) 
         print(round(rmat, dec))
-    if (print)
         cat("\n")
+        }
     rmatc <- rbind(corr.rr.smr, tot.rr.smr, corr.or.smr, tot.or.smr)
     rownames(rmatc) <- c("RR (SMR) -- systematic error:",
                          "RR (SMR) -- systematic and random error:",
                          "OR (SMR) -- systematic error:",
                          "OR (SMR) -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
-    if (print)
+    if (print) {
         print(round(rmatc, dec))
-    if (print)
         cat("\nBias Parameters:",
             "\n----------------\n\n")
-    if (print)
         cat("p(Confounder+|Exposure+):", prev.exp[[1]], "(", prev.exp[[2]], ")",
             "\np(Confounder+|Exposure-):", prev.nexp[[1]], "(", prev.nexp[[2]], ")",
             "\nRisk(Confounder-Outcome):", risk[[1]], "(", risk[[2]], ")",
+            "\nDiscard negative adjusted counts:", discard,
             "\n")
+        }
     invisible(list(obs.data = tab,
                    obs.measures = rmat, 
                    adj.measures = rmatc, 
