@@ -32,7 +32,7 @@
 #' @return A list with elements:
 #' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
 #' \item{obs.measures}{A table of observed incidence rate ratio with exact confidence interval.}
-#' \item{adj.measures}{A table of corrected incidence rate ratio.}
+#' \item{adj.measures}{A table of corrected incidence rate ratios.}
 #' \item{sim.df}{Data frame of random parameters and computed values.}
 #'
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
