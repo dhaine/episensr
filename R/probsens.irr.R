@@ -31,7 +31,7 @@
 #'
 #' @return A list with elements:
 #' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
-#' \item{obs.measures}{A table of observed incidence rate ratio with confidence interval.}
+#' \item{obs.measures}{A table of observed incidence rate ratio with exact confidence interval.}
 #' \item{adj.measures}{A table of corrected incidence rate ratio.}
 #' \item{sim.df}{Data frame of random parameters and computed values.}
 #'
