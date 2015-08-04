@@ -5,12 +5,12 @@
 \title{Probabilistic sensitivity analysis.}
 \usage{
 probsens(exposed, case, type = c("exposure", "outcome"), reps = 1000,
-  seca.parms = list(dist = c("uniform", "triangular", "trapezoidal",
-  "logit-logistic", "logit-normal"), parms = NULL), seexp.parms = NULL,
-  spca.parms = list(dist = c("uniform", "triangular", "trapezoidal",
-  "logit-logistic", "logit-normal"), parms = NULL), spexp.parms = NULL,
-  corr.se = NULL, corr.sp = NULL, discard = TRUE, alpha = 0.05,
-  dec = 4, print = TRUE)
+  seca.parms = list(dist = c("constant", "uniform", "triangular",
+  "trapezoidal", "logit-logistic", "logit-normal"), parms = NULL),
+  seexp.parms = NULL, spca.parms = list(dist = c("constant", "uniform",
+  "triangular", "trapezoidal", "logit-logistic", "logit-normal"), parms = NULL),
+  spexp.parms = NULL, corr.se = NULL, corr.sp = NULL, discard = TRUE,
+  alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
 \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
@@ -21,8 +21,9 @@ probsens(exposed, case, type = c("exposure", "outcome"), reps = 1000,
 
 \item{reps}{Number of replications to run.}
 
-\item{seca.parms}{List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
+\item{seca.parms}{List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
 \enumerate{
+\item Constant: constant value,
 \item Uniform: min, max,
 \item Triangular: lower limit, upper limit, mode,
 \item Trapezoidal: min, lower mode, upper mode, max,
