@@ -7,7 +7,7 @@
 #' @param case Outcome variable.
 #' @param type Choice of correction for exposure or outcome misclassification.
 #' @param reps Number of replications to run.
-#' @param seca.parms List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
+#' @param seca.parms List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
 #' \enumerate{
 #' \item Constant: constant value,
 #' \item Uniform: min, max,

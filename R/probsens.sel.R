@@ -5,7 +5,7 @@
 #' @param exposed Exposure variable. If a variable, this variable is tabulated against.
 #' @param case Outcome variable.
 #' @param reps Number of replications to run.
-#' @param or.parms List defining the selection bias odds. The first argument provides the probability distribution function (uniform, triangular, or trapezoidal) and the second its parameters as a vector:
+#' @param or.parms List defining the selection bias odds. The first argument provides the probability distribution function (constant, uniform, triangular, or trapezoidal) and the second its parameters as a vector:
 #' \enumerate{
 #' \item Constant: constant value,
 #' \item Uniform: min, max,
