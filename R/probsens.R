@@ -7,8 +7,9 @@
 #' @param case Outcome variable.
 #' @param type Choice of correction for exposure or outcome misclassification.
 #' @param reps Number of replications to run.
-#' @param seca.parms List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
+#' @param seca.parms List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
 #' \enumerate{
+#' \item Constant: constant value,
 #' \item Uniform: min, max,
 #' \item Triangular: lower limit, upper limit, mode,
 #' \item Trapezoidal: min, lower mode, upper mode, max,
@@ -69,12 +70,12 @@ probsens <- function(exposed,
                      case,
                      type = c("exposure", "outcome"),
                      reps = 1000,
-                     seca.parms = list(dist = c("uniform", "triangular",
+                     seca.parms = list(dist = c("constant", "uniform", "triangular",
                                            "trapezoidal", "logit-logistic",
                                                 "logit-normal"),
                                        parms = NULL),
                      seexp.parms = NULL,
-                     spca.parms = list(dist = c("uniform", "triangular",
+                     spca.parms = list(dist = c("constant", "uniform", "triangular",
                                            "trapezoidal", "logit-logistic",
                                                 "logit-normal"),
                                        parms = NULL),
@@ -93,6 +94,12 @@ probsens <- function(exposed,
     if(!is.list(seca.parms))
         stop('Sensitivity of exposure classification among those with the outcome should be a list.')
     else seca.parms <- seca.parms
+    if(!is.null(corr.se) && (seca.parms[[1]] == "constant" | seexp.parms[[1]] == "constant"))
+        stop('No correlated distributions with constant values.')
+    if(!is.null(corr.sp) && (spca.parms[[1]] == "constant" | spexp.parms[[1]] == "constant"))
+        stop('No correlated distributions with constant values.')
+    if(seca.parms[[1]] == "constant" & length(seca.parms[[2]]) != 1)
+        stop('For constant value, please provide a single value.')
     if(seca.parms[[1]] == "uniform" & length(seca.parms[[2]]) != 2)
         stop('For uniform distribution, please provide vector of lower and upper limits.')
     if(seca.parms[[1]] == "uniform" & seca.parms[[2]][1] >= seca.parms[[2]][2])
@@ -122,12 +129,15 @@ probsens <- function(exposed,
         stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
     if(seca.parms[[1]] == "logit-normal" & length(seca.parms[[2]]) == 2)
         seca.parms <- list(seca.parms[[1]], c(seca.parms[[2]], c(0, 1)))
-    if((seca.parms[[1]] == "uniform" | seca.parms[[1]] == "triangular" | seca.parms[[1]] == "trapezoidal") & !all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
+    if((seca.parms[[1]] == "constant" | seca.parms[[1]] == "uniform" | seca.parms[[1]] == "triangular" | seca.parms[[1]] == "trapezoidal") & !all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
         stop('Sensitivity of exposure classification among those with the outcome should be between 0 and 1.')
     
     if(!is.null(seexp.parms) & !is.list(seexp.parms))
         stop('Sensitivity of exposure classification among those without the outcome should be a list.')
     else seexp.parms <- seexp.parms
+    if(!is.null(seexp.parms) && seexp.parms[[1]] == "constant" &
+       length(seexp.parms[[2]]) != 1)
+        stop('For constant value, please provide a single value.')
     if(!is.null(seexp.parms) && seexp.parms[[1]] == "uniform" &
        length(seexp.parms[[2]]) != 2)
         stop('For uniform distribution, please provide vector of lower and upper limits.')
@@ -161,12 +171,14 @@ probsens <- function(exposed,
         stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
     if(!is.null(seexp.parms) && seexp.parms[[1]] == "logit-normal" & length(seexp.parms[[2]]) == 2)
         seexp.parms <- list(seexp.parms[[1]], c(seexp.parms[[2]], c(0, 1)))
-    if(!is.null(seexp.parms) && (seexp.parms[[1]] == "uniform" | seexp.parms[[1]] == "triangular" | seexp.parms[[1]] == "trapezoidal") & !all(seexp.parms[[2]] >= 0 & seexp.parms[[2]] <= 1))
+    if(!is.null(seexp.parms) && (seexp.parms[[1]] == "constant" | seexp.parms[[1]] == "uniform" | seexp.parms[[1]] == "triangular" | seexp.parms[[1]] == "trapezoidal") & !all(seexp.parms[[2]] >= 0 & seexp.parms[[2]] <= 1))
         stop('Sensitivity of exposure classification among those without the outcome should be between 0 and 1.')
     
     if(!is.list(spca.parms))
         stop('Specificity of exposure classification among those with the outcome should be a list.')
     else spca.parms <- spca.parms
+    if(spca.parms[[1]] == "constant" & length(spca.parms[[2]]) != 1)
+        stop('For constant value, please provide a single value.')
     if(spca.parms[[1]] == "uniform" & length(spca.parms[[2]]) != 2)
         stop('For uniform distribution, please provide vector of lower and upper limits.')
     if(spca.parms[[1]] == "uniform" & spca.parms[[2]][1] >= spca.parms[[2]][2])
@@ -196,12 +208,15 @@ probsens <- function(exposed,
         stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
     if(spca.parms[[1]] == "logit-normal" & length(spca.parms[[2]]) == 2)
         spca.parms <- list(spca.parms[[1]], c(spca.parms[[2]], c(0, 1)))
-    if((spca.parms[[1]] == "uniform" | spca.parms[[1]] == "triangular" | spca.parms[[1]] == "trapezoidal") & !all(spca.parms[[2]] >= 0 & spca.parms[[2]] <= 1))
+    if((spca.parms[[1]] == "constant" | spca.parms[[1]] == "uniform" | spca.parms[[1]] == "triangular" | spca.parms[[1]] == "trapezoidal") & !all(spca.parms[[2]] >= 0 & spca.parms[[2]] <= 1))
         stop('Specificity of exposure classification among those with the outcome should be between 0 and 1.')
     
     if(!is.null(spexp.parms) & !is.list(spexp.parms))
         stop('Specificity of exposure classification among those without the outcome should be a list.')
     else spexp.parms <- spexp.parms
+    if(!is.null(spexp.parms) && spexp.parms[[1]] == "constant" &
+       length(spexp.parms[[2]]) != 1)
+        stop('For constant value, please provide a single value.')
     if(!is.null(spexp.parms) && spexp.parms[[1]] == "uniform" &
        length(spexp.parms[[2]]) != 2)
         stop('For uniform distribution, please provide vector of lower and upper limits.')
@@ -235,7 +250,7 @@ probsens <- function(exposed,
         stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
     if(!is.null(spexp.parms) && spexp.parms[[1]] == "logit-normal" & length(spexp.parms[[2]]) == 2)
         spexp.parms <- list(spexp.parms[[1]], c(spexp.parms[[2]], c(0, 1)))
-    if(!is.null(spexp.parms) && (spexp.parms[[1]] == "uniform" | spexp.parms[[1]] == "triangular" | spexp.parms[[1]] == "trapezoidal") & !all(spexp.parms[[2]] >= 0 & spexp.parms[[2]] <= 1))
+    if(!is.null(spexp.parms) && (spexp.parms[[1]] == "constant" | spexp.parms[[1]] == "uniform" | spexp.parms[[1]] == "triangular" | spexp.parms[[1]] == "trapezoidal") & !all(spexp.parms[[2]] >= 0 & spexp.parms[[2]] <= 1))
         stop('Specificity of exposure classification among those without the outcome should be between 0 and 1.')
     
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
@@ -293,6 +308,9 @@ probsens <- function(exposed,
     
     if (is.null(seexp.parms) & !is.null(spca.parms) & is.null(spexp.parms) &
         is.null(corr.se) & is.null(corr.sp)) {
+        if (seca.parms[[1]] == "constant") {
+            draws[, 1] <- seca.parms[[2]]
+        }
         if (seca.parms[[1]] == "uniform") {
             draws[, 1] <- do.call(runif, as.list(seca))
             }
@@ -309,6 +327,9 @@ probsens <- function(exposed,
             draws[, 1] <- logitnorm.dstr(seca)
             }
         draws[, 2] <- draws[, 1]
+        if (spca.parms[[1]] == "constant") {
+            draws[, 2] <- spca.parms[[2]]
+        }
         if (spca.parms[[1]] == "uniform") {
             draws[, 3] <- do.call(runif, as.list(spca))
             }

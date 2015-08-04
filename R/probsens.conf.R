@@ -5,8 +5,9 @@
 #' @param exposed Exposure variable. If a variable, this variable is tabulated against.
 #' @param case Outcome variable.
 #' @param reps Number of replications to run.
-#' @param prev.exp List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
+#' @param prev.exp List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
 #' \enumerate{
+#' \item Constant: constant value,
 #' \item Uniform: min, max,
 #' \item Triangular: lower limit, upper limit, mode,
 #' \item Trapezoidal: min, lower mode, upper mode, max.
@@ -14,8 +15,9 @@
 #' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
 #' }
 #' @param prev.nexp List defining the prevalence of exposure among the unexposed.
-#' @param risk List defining the confounder-disease relative risk or the confounder-exposure odds ratio. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, log-logistic, or log-normal) and the second its parameters as a vector:
+#' @param risk List defining the confounder-disease relative risk or the confounder-exposure odds ratio. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, log-logistic, or log-normal) and the second its parameters as a vector:
 #' \enumerate{
+#' \item Constant: constant value,
 #' \item Uniform: min, max,
 #' \item Triangular: lower limit, upper limit, mode,
 #' \item Trapezoidal: min, lower mode, upper mode, max.
@@ -53,15 +55,15 @@
 probsens.conf <- function(exposed,
                           case,
                           reps = 1000,
-                          prev.exp = list(dist = c("uniform", "triangular",
-                                              "trapezoidal", "logit-logistic",
-                                                   "logit-normal"),
+                          prev.exp = list(dist = c("constant", "uniform",
+                                              "triangular", "trapezoidal",
+                                              "logit-logistic", "logit-normal"),
                               parms = NULL),
-                          prev.nexp = list(dist = c("uniform", "triangular",
-                                               "trapezoidal", "logit-logistic",
-                                                    "logit-normal"),
+                          prev.nexp = list(dist = c("constant", "uniform",
+                                               "triangular", "trapezoidal",
+                                               "logit-logistic", "logit-normal"),
                               parms = NULL),
-                          risk = list(dist = c("uniform", "triangular",
+                          risk = list(dist = c("constant", "uniform", "triangular",
                                           "trapezoidal", "log-logistic",
                                                "log-normal"),
                               parms = NULL),
@@ -77,7 +79,14 @@ probsens.conf <- function(exposed,
         stop('Please provide prevalences among the exposed and unexposed.')
     if(is.null(risk))
         stop('Please provide risk of acquiring outcome.')
-    
+
+    if(!is.list(prev.exp))
+        stop('Prevalence of exposure among the exposed should be a list.')
+    else prev.exp <- prev.exp
+    if(!is.null(corr.p) && (prev.exp[[1]] == "constant" | prev.nexp[[1]] == "constant"))
+        stop('No correlated distributions with constant values.')
+    if(prev.exp[[1]] == "constant" & length(prev.exp[[2]]) != 1)
+        stop('For constant value, please provide a single value.')
     if(prev.exp[[1]] == "uniform" & length(prev.exp[[2]]) != 2)
         stop('For uniform distribution, please provide vector of lower and upper limits.')
     if(prev.exp[[1]] == "uniform" & prev.exp[[2]][1] >= prev.exp[[2]][2])
@@ -107,9 +116,15 @@ probsens.conf <- function(exposed,
         stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
     if(prev.exp[[1]] == "logit-normal" & length(prev.exp[[2]]) == 2)
         prev.exp <- list(prev.exp[[1]], c(prev.exp[[2]], c(0, 1)))
-    if((prev.exp[[1]] == "uniform" | prev.exp[[1]] == "triangular" | prev.exp[[1]] == "trapezoidal") & !all(prev.exp[[2]] >= 0 & prev.exp[[2]] <= 1))
+    if((prev.exp[[1]] == "constant" | prev.exp[[1]] == "uniform" | prev.exp[[1]] == "triangular" | prev.exp[[1]] == "trapezoidal") & !all(prev.exp[[2]] >= 0 & prev.exp[[2]] <= 1))
         stop('Prevalence should be between 0 and 1.')
 
+        if(!is.list(prev.nexp))
+        stop('Prevalence of exposure among the non-exposed should be a list.')
+    else prev.nexp <- prev.nexp
+    if(prev.nexp[[1]] == "constant" & length(prev.nexp[[2]]) != 1)
+        stop('For constant value, please provide a single value.')
+    if(prev.nexp[[1]] == "uniform" & length(prev.nexp[[2]]) != 2)
         if(prev.nexp[[1]] == "uniform" & length(prev.nexp[[2]]) != 2)
         stop('For uniform distribution, please provide vector of lower and upper limits.')
     if(prev.nexp[[1]] == "uniform" & prev.nexp[[2]][1] >= prev.nexp[[2]][2])
@@ -139,9 +154,14 @@ probsens.conf <- function(exposed,
         stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
     if(prev.nexp[[1]] == "logit-normal" & length(prev.nexp[[2]]) == 2)
         prev.nexp <- list(prev.nexp[[1]], c(prev.nexp[[2]], c(0, 1)))
-    if((prev.nexp[[1]] == "uniform" | prev.nexp[[1]] == "triangular" | prev.nexp[[1]] == "trapezoidal") & !all(prev.nexp[[2]] >= 0 & prev.nexp[[2]] <= 1))
+    if((prev.nexp[[1]] == "constant" | prev.nexp[[1]] == "uniform" | prev.nexp[[1]] == "triangular" | prev.nexp[[1]] == "trapezoidal") & !all(prev.nexp[[2]] >= 0 & prev.nexp[[2]] <= 1))
         stop('Prevalence should be between 0 and 1.')
 
+    if(!is.list(risk))
+        stop('Risk should be a list.')
+    else risk <- risk
+    if(risk[[1]] == "constant" & length(risk[[2]]) != 1)
+        stop('For constant value, please provide a single value.')
     if(risk[[1]] == "uniform" & length(risk[[2]]) != 2)
         stop('For uniform distribution, please provide vector of lower and upper limits.')
     if(risk[[1]] == "uniform" & risk[[2]][1] >= risk[[2]][2])
@@ -224,6 +244,9 @@ probsens.conf <- function(exposed,
     }
     
     if (is.null(corr.p)) {
+        if (prev.exp[[1]] == "constant") {
+            draws[, 1] <- prev.exp[[2]]
+        }
         if (prev.exp[[1]] == "uniform") {
             draws[, 1] <- do.call(runif, as.list(p1))
         }
@@ -238,6 +261,9 @@ probsens.conf <- function(exposed,
         }
         if (prev.exp[[1]] == "logit-normal") {
             draws[, 1] <- logitnorm.dstr(p1)
+        }
+        if (prev.nexp[[1]] == "constant") {
+            draws[, 2] <- prev.nexp[[2]]
         }
         if (prev.nexp[[1]] == "uniform") {
             draws[, 2] <- do.call(runif, as.list(p0))
@@ -330,6 +356,10 @@ probsens.conf <- function(exposed,
         punexp.w <- prev.nexp[[2]][1] + (prev.nexp[[2]][2] * qnorm(corr.draws[, 5]))
         draws[, 2] <- prev.nexp[[2]][3] + (prev.nexp[[2]][4] - prev.nexp[[2]][3]) * exp(punexp.w) / (1 + exp(punexp.w))
     }
+    }
+
+    if(risk[[1]] == "constant") {
+        draws[, 3] <- risk[[2]]
     }
     if (risk[[1]] == "uniform") {
         draws[, 3] <- do.call(runif, as.list(rr.cd))

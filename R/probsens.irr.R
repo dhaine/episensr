@@ -286,7 +286,7 @@ probsens.irr <- function(counts,
     if (is.null(seexp.parms) & !is.null(spca.parms) & is.null(spexp.parms) &
         is.null(corr.se) & is.null(corr.sp)) {
         if (seca.parms[[1]] == "constant") {
-            draws[, 1] <- spca.parms[[2]]
+            draws[, 1] <- seca.parms[[2]]
         }
         if (seca.parms[[1]] == "uniform") {
             draws[, 1] <- do.call(runif, as.list(seca))

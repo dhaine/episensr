@@ -5,8 +5,9 @@
 #' @param exposed Exposure variable. If a variable, this variable is tabulated against.
 #' @param case Outcome variable.
 #' @param reps Number of replications to run.
-#' @param or.parms List defining the selection bias odds. The first argument provides the probability distribution function (uniform, triangular, or trapezoidal) and the second its parameters as a vector:
+#' @param or.parms List defining the selection bias odds. The first argument provides the probability distribution function (constant, uniform, triangular, or trapezoidal) and the second its parameters as a vector:
 #' \enumerate{
+#' \item Constant: constant value,
 #' \item Uniform: min, max,
 #' \item Triangular: lower limit, upper limit, mode,
 #' \item Trapezoidal: min, lower mode, upper mode, max.
@@ -40,7 +41,7 @@
 probsens.sel <- function(exposed,
                          case,
                          reps = 1000,
-                         or.parms = list(dist = c("uniform", "triangular",
+                         or.parms = list(dist = c("constant", "uniform", "triangular",
                                              "trapezoidal", "logit-logistic",
                                                   "logit-normal"),
                              parms = NULL),
@@ -55,6 +56,8 @@ probsens.sel <- function(exposed,
     if(!is.list(or.parms))
         stop('Odds ratio for the probability of being selected should be a list.')
     else or.parms <- or.parms
+    if(or.parms[[1]] == "constant" & length(or.parms[[2]]) != 1)
+        stop('For constant value, please provide a single value.')
     if(or.parms[[1]] == "uniform" & length(or.parms[[2]]) != 2)
         stop('For uniform distribution, please provide vector of lower and upper limits.')
     if(or.parms[[1]] == "uniform" & or.parms[[2]][1] >= or.parms[[2]][2])
@@ -116,6 +119,9 @@ probsens.sel <- function(exposed,
         return(p)
     }
 
+    if (or.parms[[1]] == "constant") {
+        draws[, 1] <- or.parms[[2]]
+    }
     if (or.parms[[1]] == "uniform") {
         draws[, 1] <- do.call(runif, as.list(or.sel))
     }

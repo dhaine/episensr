@@ -4,9 +4,9 @@
 \alias{probsens.sel}
 \title{Probabilistic sensitivity analysis for selection bias.}
 \usage{
-probsens.sel(exposed, case, reps = 1000, or.parms = list(dist = c("uniform",
-  "triangular", "trapezoidal", "logit-logistic", "logit-normal"), parms = NULL),
-  alpha = 0.05, dec = 4, print = TRUE)
+probsens.sel(exposed, case, reps = 1000, or.parms = list(dist =
+  c("constant", "uniform", "triangular", "trapezoidal", "logit-logistic",
+  "logit-normal"), parms = NULL), alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
 \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
@@ -15,8 +15,9 @@ probsens.sel(exposed, case, reps = 1000, or.parms = list(dist = c("uniform",
 
 \item{reps}{Number of replications to run.}
 
-\item{or.parms}{List defining the selection bias odds. The first argument provides the probability distribution function (uniform, triangular, or trapezoidal) and the second its parameters as a vector:
+\item{or.parms}{List defining the selection bias odds. The first argument provides the probability distribution function (constant, uniform, triangular, or trapezoidal) and the second its parameters as a vector:
 \enumerate{
+\item Constant: constant value,
 \item Uniform: min, max,
 \item Triangular: lower limit, upper limit, mode,
 \item Trapezoidal: min, lower mode, upper mode, max.

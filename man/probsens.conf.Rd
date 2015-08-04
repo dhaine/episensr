@@ -5,12 +5,12 @@
 \title{Probabilistic sensitivity analysis for unmeasured confounding.}
 \usage{
 probsens.conf(exposed, case, reps = 1000, prev.exp = list(dist =
-  c("uniform", "triangular", "trapezoidal", "logit-logistic", "logit-normal"),
-  parms = NULL), prev.nexp = list(dist = c("uniform", "triangular",
-  "trapezoidal", "logit-logistic", "logit-normal"), parms = NULL),
-  risk = list(dist = c("uniform", "triangular", "trapezoidal", "log-logistic",
-  "log-normal"), parms = NULL), corr.p = NULL, discard = TRUE,
-  alpha = 0.05, dec = 4, print = TRUE)
+  c("constant", "uniform", "triangular", "trapezoidal", "logit-logistic",
+  "logit-normal"), parms = NULL), prev.nexp = list(dist = c("constant",
+  "uniform", "triangular", "trapezoidal", "logit-logistic", "logit-normal"),
+  parms = NULL), risk = list(dist = c("constant", "uniform", "triangular",
+  "trapezoidal", "log-logistic", "log-normal"), parms = NULL), corr.p = NULL,
+  discard = TRUE, alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
 \item{exposed}{Exposure variable. If a variable, this variable is tabulated against.}
@@ -19,8 +19,9 @@ probsens.conf(exposed, case, reps = 1000, prev.exp = list(dist =
 
 \item{reps}{Number of replications to run.}
 
-\item{prev.exp}{List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
+\item{prev.exp}{List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
 \enumerate{
+\item Constant: constant value,
 \item Uniform: min, max,
 \item Triangular: lower limit, upper limit, mode,
 \item Trapezoidal: min, lower mode, upper mode, max.
@@ -30,8 +31,9 @@ probsens.conf(exposed, case, reps = 1000, prev.exp = list(dist =
 
 \item{prev.nexp}{List defining the prevalence of exposure among the unexposed.}
 
-\item{risk}{List defining the confounder-disease relative risk or the confounder-exposure odds ratio. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, log-logistic, or log-normal) and the second its parameters as a vector:
+\item{risk}{List defining the confounder-disease relative risk or the confounder-exposure odds ratio. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, log-logistic, or log-normal) and the second its parameters as a vector:
 \enumerate{
+\item Constant: constant value,
 \item Uniform: min, max,
 \item Triangular: lower limit, upper limit, mode,
 \item Trapezoidal: min, lower mode, upper mode, max.
