@@ -57,9 +57,9 @@ mbias <- function(or,
              (or.ap * (1 / (1 + sqrt(or.ae * or.ap))) +
                   1 - (1 / (1 + sqrt(or.ae * or.ap)))))
     mbias.pd <- (or.bp * or.bd * (1 / (1 + sqrt(or.bp * or.bd))) +
-                     1 - (1 / (1 + sqrt(or.bp * or.bd)))) /
+                     1 - (1/(1 + sqrt(or.bp * or.bd)))) /
         ((or.bp * (1 / (1 + sqrt(or.bp * or.bd))) +
-              1 - (1 / (1 + sqrt(or.bp * or.bd)))) *
+              1 -(1 / (1 + sqrt(or.bp * or.bd)))) *
              (or.bd * (1 / (1 + sqrt(or.bp * or.bd))) +
                   1 - (1 / (1 + sqrt(or.bp * or.bd)))))
     mbias.ed <- (mbias.pe * mbias.pd * (1 / (1 + sqrt(mbias.pe * mbias.pd))) +
