@@ -22,7 +22,7 @@
 #' 
 #' @export
 #' @importFrom ggplot2 ggplot
-#' @importFrom grid annotate
+#' @importFrom grid arrow
 #' @importFrom gridExtra grid.arrange
 plot.mbias <- function(x,
                        title1 = "DAG before conditioning on C",
