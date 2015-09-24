@@ -4,7 +4,11 @@ Title: Basic Sensitivity Analysis of Epidemiological Results
 Version: 0.6.0
 Imports: 
 	 triangle,
-	 trapezoid
+	 trapezoid,
+	 plyr,
+	 ggplot2,
+	 grid,
+	 gridExtra
 Date: 2015-03-30
 Authors@R: person("Denis", "Haine", email = "denis.haine@gmail.com",
                   role = c("aut", "cre"))
