@@ -73,7 +73,8 @@ mbias <- function(or,
    
     res <- list(mbias.parms = c(mbias.pe, mbias.pd, mbias.ed),
                 adj.measures = or.corr,
-                bias.parms = or)
+                bias.parms = or,
+                labels = var)
     class(res) <- c("mbias", "list")
     res
 }
