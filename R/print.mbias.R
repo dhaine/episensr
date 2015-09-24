@@ -7,9 +7,6 @@
 #'
 #' @return Print the observed and adjusted measures of association.
 #'
-#' @examples
-#' # S3 method for class 'mbias':
-#' print((x, ...))
 #' @export
 print.mbias <- function(x, ...) {
     cat("Correction for selection bias:",
