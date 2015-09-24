@@ -1,6 +1,7 @@
 #' Sensitivity analysis to correct for selection bias caused by M bias.
 #'
-#' Simple sensitivity analysis to correct for selection bias caused by M bias using estimates of the odds ratios relating the variables.
+#' Simple sensitivity analysis to correct for selection bias caused by M bias using
+#' estimates of the odds ratios relating the variables.
 #'
 #' @param or Vector defining the input bias parameters, in the following order:
 #' \enumerate{
