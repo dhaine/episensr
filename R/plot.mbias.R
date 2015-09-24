@@ -1,9 +1,32 @@
-#' Plot M bias
+#' Plot DAGs before and after conditioning on collider (M bias)
 #'
+#' Create two DAGs, before and after conditioning on the collider C, for selection
+#' bias caused by M bias, using ggplot2.
+#'
+#' @param x 'mbias' object to plot.
+#' @param title1 Title of DAG graph before conditioning on C.
+#' @param title2 Title of DAG graph after conditioning on C.
+#' @param title.size Title size.
+#' @param size Text size.
+#' @param dec Number of digits displayed.
+#' @param layout Side-by-side graphs in landscape or portrait layout.
+#' @param ... Other unused arguments.
+#'
+#' @return Two DAGs for selection bias caused by M bias.
+#'
+#' @seealso \code{\link{mbias}}
+#'
+#' @examples
+#' plot(mbias(or = c(2, 5.4, 2.5, 1.5, 1),
+#' var = c("HIV", "Circumcision", "Muslim", "Low CD4", "Participation")))
+#' 
 #' @export
+#' @importFrom ggplot2 ggplot
+#' @importFrom grid annotate
+#' @importFrom gridExtra grid.arrange
 plot.mbias <- function(x,
-                       title1 = "DAG before conditioning on P",
-                       title2 = "DAG after conditioning on P",
+                       title1 = "DAG before conditioning on C",
+                       title2 = "DAG after conditioning on C",
                        title.size = 6,
                        size = 6,
                        dec = 2, 
@@ -14,10 +37,7 @@ plot.mbias <- function(x,
     res.df <- plyr::ldply(x[1:3], data.frame)
     labs <- x[[4]]
 
-    library(grid)
-    library(gridExtra)
-    
-    dag.before <- ggplot2::ggplot() +
+    dag.before <- ggplot() +
         annotate("text", x = 3, y = Inf,
                  label = title1, vjust = 1.5, size = title.size) + 
         annotate("text", x = 5, y = 1, size = size, label = labs[1]) +
@@ -53,7 +73,7 @@ plot.mbias <- function(x,
               line = element_blank(),
               text = element_blank())
 
-    dag.after <- ggplot2::ggplot() +
+    dag.after <- ggplot() +
         annotate("text", x = 3, y = Inf,
                  label = title2, vjust = 1.5, size = title.size) + 
         annotate("text", x = 5, y = 1, size = size, label = labs[1]) +
