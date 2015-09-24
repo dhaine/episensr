@@ -18,11 +18,9 @@
 #' \item B,
 #' \item P.
 #' }
-#' @param dec Number of decimals in the printout.
-#' @param print A logical scalar. Should the results be printed?
 #' 
 #' @return A list with elements:
-#' \item{max.bias}{Maximum bias parameters.}
+#' \item{mbias.parms}{Maximum bias parameters.}
 #' \item{adj.measures}{Selection bias corrected measures.}
 #' \item{bias.parms}{Input bias parameters.}
 #'
@@ -35,9 +33,7 @@
 #' var = c("HIV", "Circumcision", "Muslim", "Low CD4", "Participation"))
 #' @export
 mbias <- function(or,
-                  var,
-                  dec = 4,
-                  print = TRUE) {
+                  var) {
     if(is.null(or))
         stop('Missing input bias parameters.')
     else or <- or
@@ -75,26 +71,9 @@ mbias <- function(or,
 
     or.corr <- or.ed / mbias.ed
    
-    bias <- rbind(or[1], or[2], or[3], or[4], or[5])
-    rownames(bias) <- c("                   OR between A and the exposure:",
-                        "                              OR between A and P:",
-                        "                              OR between B and P:",
-                        "                    OR between B and the outcome:",
-                        "OR observed between the exposure and the outcome:")
-    if (print) 
-        cat("Input bias parameters:",
-            "\n----------------------------------------\n")
-    if (print) 
-        print(bias)
-    if (print)
-        cat("\nCorrection for selection bias:",
-            "\n----------------------------------------",
-            "\nMaximum bias from conditioning on P:",
-            round(mbias.ed, dec),
-            "\n    OR corrected for selection bias:",
-            round(or.corr, dec),
-            "\n")
-#    invisible(list(obs.data = tab, corr.data = tab.corr,
-#                   obs.measures = rmat, adj.measures = rmatc,
-#                   bias.parms = bias))
+    res <- list(mbias.parms = c(mbias.pe, mbias.pd, mbias.ed),
+                adj.measures = or.corr,
+                bias.parms = or)
+    class(res) <- c("mbias", "list")
+    res
 }
