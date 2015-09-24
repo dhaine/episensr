@@ -21,8 +21,9 @@
 #' var = c("HIV", "Circumcision", "Muslim", "Low CD4", "Participation")))
 #' 
 #' @export
-#' @importFrom ggplot2 ggplot
-#' @importFrom grid arrow
+#' @importFrom plyr ldply
+#' @importFrom ggplot2 ggplot annotate geom_segment aes xlim ylim theme_bw theme element_blank
+#' @importFrom grid arrow unit
 #' @importFrom gridExtra grid.arrange
 plot.mbias <- function(x,
                        title1 = "DAG before conditioning on C",
@@ -34,7 +35,7 @@ plot.mbias <- function(x,
                        ...) {
     layout <- match.arg(layout)
     
-    res.df <- plyr::ldply(x[1:3], data.frame)
+    res.df <- ldply(x[1:3], data.frame)
     labs <- x[[4]]
 
     dag.before <- ggplot() +
