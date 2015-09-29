@@ -6,4 +6,9 @@
 logit-logistic, logit-normal, log-logistic, and log-normal.
 
 - Probabilistic analysis of person-time data added with `probsens.irr` for
-  exposure misclassification, and `probsens.irr.conf` for unmeasured confounder.
+exposure misclassification, and `probsens.irr.conf` for unmeasured confounder.
+
+- Sensitivity analysis to correct for selection bias caused by M bias with
+`mbias` function, including DAG plot and print function.
+
+- Fix CI formating.
