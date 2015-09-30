@@ -1,4 +1,4 @@
-.travis.yml      # Used for continuous integration testing with travis
+^\.travis\.yml$  # Used for continuous integration testing with travis
 cran-comments.md # Comments from CRAN submission
 NEWS.md          # A news file
 ^README\.Rmd$
