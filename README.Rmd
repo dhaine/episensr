@@ -1,0 +1,91 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# episensr
+
+[![Build Status](https://travis-ci.org/dhaine/episensr.svg?branch=master)](https://travis-ci.org/dhaine/episensr)
+
+The R package **episensr** allows to do basic sensitivity analysis of
+epidemiological results as described in **Applying Quantitative Bias Analysis to
+Epidemiological Data** by Timothy L. Lash, Matthew P. Fox, and Aliza K. Fink
+(ISBN: 978-0-387-87960-4,
+[bias.analysis](https://sites.google.com/site/biasanalysis/)). A similar
+function is available in Stata
+([episens](http://ideas.repec.org/c/boc/bocode/s456792.html)).
+
+## License
+
+This package is free and open source software, licensed under GPL2.
+
+## Example
+
+We will use a case-control study by
+[Stang et al.](http://www.ncbi.nlm.nih.gov/pubmed/16523014) on the relation
+between mobile phone use and uveal melanoma.
+The observed odds ratio for the association between regular mobile phone use vs.
+no mobile phone use with uveal melanoma incidence is 0.71 [95% CI 0.51-0.97].
+But there was a substantial difference in participation rates between cases and
+controls (94% vs 55%, respectively) and so selection bias could have an impact
+on the association estimate.
+The 2X2 table for this study is the following:
+
+|          | regular use | no use |
+|----------|-------------|--------|
+| cases    | 136         | 107    |
+| controls | 297         | 165    |
+
+We use the function selection as shown below.
+
+```{r}
+library(episensr)
+
+selection(matrix(c(136, 107, 297, 165),
+                 dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
+                 nrow = 2, byrow = TRUE),
+          selprob = c(.94, .85, .64, .25))
+```
+
+The 2X2 table is provided as a matrix and selection probabilities given with the
+argument selprob, a vector with the 4 probabilities (guided by the participation
+rates in cases and controls) in the following order: among cases exposed, among
+cases unexposed, among noncases exposed, and among noncases unexposed.
+The output shows the observed 2X2 table, the same table corrected for the
+selection proportions, the observed odds ratio (and relative risk) followed by
+the corrected ones, and the input parameters.
+
+Here's an other example to correct for selection bias caused by M bias.
+
+```{r}
+mbias.sens <- mbias(or = c(2, 5.4, 2.5, 1.5, 1),
+      var = c("HIV", "Circumcision", "Muslim", "Low CD4", "Participation"))
+mbias.sens
+
+plot(mbias.sens)
+```
+
+## Installation
+
+You can get the latest release from **CRAN**:
+
+```{r}
+install.packages('episensr')
+```
+
+Or install the development version from **GitHub** with **devtools** package:
+
+```{r}
+devtools::install_github('dhaine/episensr', ref = "develop")
+```
