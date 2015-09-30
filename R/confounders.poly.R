@@ -81,6 +81,7 @@
 #' p = c(.6, .05, .2, .2),
 #' RD.cd = c(-.4, -.2))
 #' @export
+#' @importFrom stats qnorm
 confounders.poly <- function(exposed,
                              case,
                              implement = c("RR", "OR", "RD"),

@@ -46,6 +46,7 @@
 #' seca.parms = list("trapezoidal", c(.4, .45, .55, .6)),
 #' spca.parms = list("constant", 1))
 #' @export
+#' @importFrom stats binom.test median quantile qnorm runif
 probsens.irr <- function(counts,
                          pt = NULL,
                          reps = 1000,

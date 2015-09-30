@@ -53,6 +53,7 @@
 #' risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
 #' corr.p = .8)
 #' @export
+#' @importFrom stats binom.test median quantile runif
 probsens.irr.conf <- function(counts,
                          pt = NULL,
                          reps = 1000,

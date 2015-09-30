@@ -78,6 +78,7 @@
 #' p = c(.8, .05),
 #' RD.cd = c(-.6, -.3))
 #' @export
+#' @importFrom stats qnorm
 confounders.emm <- function(exposed,
                             case,
                             implement = c("RR", "OR", "RD"),

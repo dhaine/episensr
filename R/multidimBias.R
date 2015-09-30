@@ -58,6 +58,7 @@
 #' type = "selection",
 #' OR.sel = seq(1.5, 6.5, by = .5))
 #' @export
+#' @importFrom stats qnorm setNames
 multidimBias <- function(exposed,
                          case,
                          type = c("exposure", "outcome", "confounder", "selection"),

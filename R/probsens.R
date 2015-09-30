@@ -66,6 +66,7 @@
 #' seca.parms = list("uniform", c(.8, 1)),
 #' spca.parms = list("uniform", c(.8, 1)))
 #' @export
+#' @importFrom stats median qnorm quantile runif
 probsens <- function(exposed,
                      case,
                      type = c("exposure", "outcome"),

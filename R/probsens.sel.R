@@ -38,6 +38,7 @@
 #' reps = 20000,
 #' or.parms = list("triangular", c(.35, 1.1, .43)))
 #' @export
+#' @importFrom stats median qnorm quantile runif
 probsens.sel <- function(exposed,
                          case,
                          reps = 1000,

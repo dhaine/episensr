@@ -58,6 +58,7 @@
 #' type = "outcome",
 #' bias = c(.53, .53, .99, .99))
 #' @export
+#' @importFrom stats qnorm
 misclassification <- function(exposed,
                               case,
                               implement = c("exposure", "outcome"),

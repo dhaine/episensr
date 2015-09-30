@@ -52,6 +52,7 @@
 #' risk = list("triangular", c(.6, .7, .63)),
 #' corr.p = .8)
 #' @export
+#' @importFrom stats median qnorm quantile runif
 probsens.conf <- function(exposed,
                           case,
                           reps = 1000,

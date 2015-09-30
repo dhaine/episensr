@@ -36,6 +36,7 @@
 #' nrow = 2, byrow = TRUE),
 #' selprob = c(.94, .85, .64, .25))
 #' @export
+#' @importFrom stats qnorm
 selection <- function(exposed,
                       case,
                       selprob = NULL,
