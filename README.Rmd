@@ -47,7 +47,7 @@ The 2X2 table for this study is the following:
 | cases    | 136         | 107    |
 | controls | 297         | 165    |
 
-We use the function selection as shown below.
+We use the function `selection` as shown below.
 
 ```{r}
 library(episensr)
@@ -69,23 +69,20 @@ the corrected ones, and the input parameters.
 Here's an other example to correct for selection bias caused by M bias.
 
 ```{r}
-mbias.sens <- mbias(or = c(2, 5.4, 2.5, 1.5, 1),
+mbias(or = c(2, 5.4, 2.5, 1.5, 1),
       var = c("HIV", "Circumcision", "Muslim", "Low CD4", "Participation"))
-mbias.sens
-
-plot(mbias.sens)
 ```
 
 ## Installation
 
 You can get the latest release from **CRAN**:
 
-```{r}
+```{r, eval=FALSE}
 install.packages('episensr')
 ```
 
 Or install the development version from **GitHub** with **devtools** package:
 
-```{r}
+```{r, eval=FALSE}
 devtools::install_github('dhaine/episensr', ref = "develop")
 ```
