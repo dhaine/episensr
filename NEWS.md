@@ -11,6 +11,6 @@ exposure misclassification, and `probsens.irr.conf` for unmeasured confounder.
 - Sensitivity analysis to correct for selection bias caused by M bias with
 `mbias` function, including DAG plot and print function.
 
-- Fix CI formating.
+- Fix CI formatting.
 
 - NAMESPACE: add imports to `stats` functions to avoid new R CMD CHECK warnings
