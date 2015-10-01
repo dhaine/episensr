@@ -12,3 +12,5 @@ exposure misclassification, and `probsens.irr.conf` for unmeasured confounder.
 `mbias` function, including DAG plot and print function.
 
 - Fix CI formating.
+
+- NAMESPACE: add imports to `stats` functions to avoid new R CMD CHECK warnings
