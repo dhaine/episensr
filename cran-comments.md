@@ -6,17 +6,5 @@
 ## R CMD check results
 There were no ERRORs or WARNINGs. 
 
-There was 1 NOTE with win-builder (devel and release):
-
-* checking CRAN incoming feasibility ... NOTE
-Maintainer: 'Denis Haine <denis.haine@gmail.com>'
-New submission
-Possibly mis-spelled words in DESCRIPTION:
-  Epidemiologic (14:37)
-  Springer (14:57)
-  misclassification (11:38)
-
-I confirm there is no mis-spelled words, all are correct.
-
 ## Downstream dependencies
 There are no downstream dependencies.
