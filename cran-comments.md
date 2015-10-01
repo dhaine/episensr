@@ -1,3 +1,6 @@
+## Update
+This is an update to episensr 0.6.0.
+
 ## Test environments
 * x86_64-pc-linux-gnu (64-bit), R 3.2.2
 * x86_64-pc-linux-gnu (64-bit) (on travis-ci), R 3.2.2
