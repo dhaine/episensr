@@ -6,7 +6,13 @@ output:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
 
 # episensr
 
@@ -43,43 +49,13 @@ The 2X2 table for this study is the following:
 
 We use the function `selection` as shown below.
 
-
-```r
+```{r}
 library(episensr)
 
 selection(matrix(c(136, 107, 297, 165),
                  dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
                  nrow = 2, byrow = TRUE),
           selprob = c(.94, .85, .64, .25))
-#> Observed Data: 
-#> --------------------------------------------------- 
-#> Outcome   : UM+ 
-#> Comparing : Mobile+ vs. Mobile- 
-#> 
-#>     Mobile+ Mobile-
-#> UM+     136     107
-#> UM-     297     165
-#> 
-#> Data Corrected for Selected Proportions: 
-#> ---------------------------------------------------
-#> 
-#>      Mobile+  Mobile-
-#> UM+ 144.6809 125.8824
-#> UM- 464.0625 660.0000
-#> 
-#>                                95% conf. interval
-#> Observed Relative Risk: 0.7984    0.6518   0.9780
-#>    Observed Odds Ratio: 0.7061    0.5144   0.9693
-#> 
-#>                                           [,1]
-#> Selection Bias Corrected Relative Risk: 1.4838
-#>    Selection Bias Corrected Odds Ratio: 1.6346
-#> 
-#>                                                 [,1]
-#>      Selection probability among cases exposed: 0.94
-#>    Selection probability among cases unexposed: 0.85
-#>   Selection probability among noncases exposed: 0.64
-#> Selection probability among noncases unexposed: 0.25
 ```
 
 The 2X2 table is provided as a matrix and selection probabilities given with the
@@ -92,29 +68,21 @@ the corrected ones, and the input parameters.
 
 Here's an other example to correct for selection bias caused by M bias.
 
-
-```r
+```{r}
 mbias(or = c(2, 5.4, 2.5, 1.5, 1),
       var = c("HIV", "Circumcision", "Muslim", "Low CD4", "Participation"))
-#> Correction for selection bias: 
-#> ---------------------------------------- 
-#> OR observed between the exposure and the outcome: 1 
-#>              Maximum bias from conditioning on P: 1.006236 
-#>                  OR corrected for selection bias: 0.9938024
 ```
 
 ## Installation
 
 You can get the latest release from **CRAN**:
 
-
-```r
+```{r, eval=FALSE}
 install.packages('episensr')
 ```
 
 Or install the development version from **GitHub** with **devtools** package:
 
-
-```r
+```{r, eval=FALSE}
 devtools::install_github('dhaine/episensr', ref = "develop")
 ```

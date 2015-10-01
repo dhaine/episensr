@@ -1,3 +1,64 @@
+#' Multidimensional sensitivity analysis for different sources of bias
+#'
+#' Multidimensional sensitivity analysis for different sources of bias
+#'
+#' @param exposed Exposure variable. If a variable, this variable is tabulated
+#' against.
+#' @param case Outcome variable.
+#' @param type Implement analysis for exposure misclassification, outcome
+#' misclassification, unmeasured confounder, or selection bias.
+#' @param se Numeric vector of sensitivities.
+#' @param sp Numerci vector of specificities.
+#' @param bias List of bias parameters. The list is made of 3 vectors of the same
+#' length:
+#' \enumerate{
+#' \item Prevalence of Confounder in Exposure+ population,
+#' \item Prevalence of Confounder in Exposure- population, and
+#' \item Relative risk between Confounder and Outcome.
+#' }
+#' @param OR.sel Selection odds ratios, for selection bias implementation.
+#' @param alpha Significance level.
+#' @param dec Number of decimals in the printout.
+#' @param print A logical scalar. Should the results be printed?
+#' 
+#' @return A list with elements:
+#' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
+#' \item{obs.measures}{A table of odds ratios and relative risk with confidence
+#' intervals.}
+#' \item{adj.measures}{Multidimensional corrected relative risk and/or odds ratio
+#' data.}
+#' \item{bias.parms}{Bias parameters.}
+#'
+#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
+#' Bias Analysis to Epidemiologic Data}, pp.109--116, Springer.
+#'
+#' @examples
+#' multidimBias(matrix(c(45, 94, 257, 945),
+#' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+#' nrow = 2, byrow = TRUE),
+#' type = "exposure",
+#' se = c(1, 1, 1, .9, .9, .9, .8, .8, .8),
+#' sp = c(1, .9, .8, 1, .9, .8, 1, .9, .8))
+#' multidimBias(matrix(c(45, 94, 257, 945),
+#' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+#' nrow = 2, byrow = TRUE),
+#' type = "outcome",
+#' se = c(1, 1, 1, .9, .9, .9, .8, .8, .8),
+#' sp = c(1, .9, .8, 1, .9, .8, 1, .9, .8))
+#' multidimBias(matrix(c(105, 85, 527, 93),
+#' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+#' nrow = 2, byrow = TRUE),
+#' type = "confounder",
+#' bias = list(seq(.72, .92, by = .02),
+#' seq(.01, .11, by = .01), seq(.13, 1.13, by = .1)))
+#' multidimBias(matrix(c(136, 107, 297, 165),
+#' dimnames = list(c("Uveal Melanoma+", "Uveal Melanoma-"),
+#' c("Mobile Use+", "Mobile Use -")),
+#' nrow = 2, byrow = TRUE),
+#' type = "selection",
+#' OR.sel = seq(1.5, 6.5, by = .5))
+#' @export
+#' @importFrom stats qnorm setNames
 multidimBias <- function(exposed,
                          case,
                          type = c("exposure", "outcome", "confounder", "selection"),
@@ -48,6 +109,7 @@ multidimBias <- function(exposed,
     if(inherits(exposed, c("table", "matrix")))
         tab <- exposed
     else tab <- table(exposed, case)
+    tab <- tab[1:2, 1:2]
 
     a <- tab[1, 1]
     b <- tab[1, 2]
