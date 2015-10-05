@@ -1,5 +1,7 @@
-## Update
-This is an update to episensr 0.6.0.
+## Resubmission
+This is a resubmission. In this version I have:
+
+* declare a proper R version dependency (R (>= 3.2.0)) in DESCRIPTION file.
 
 ## Test environments
 * x86_64-pc-linux-gnu (64-bit), R 3.2.2
