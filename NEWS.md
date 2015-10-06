@@ -1,3 +1,7 @@
+# episensr 0.7.1
+
+- Fix R version dependency (R >= 3.2.0)
+
 # episensr 0.7.0
 
 - Harmonization of arguments across functions.
