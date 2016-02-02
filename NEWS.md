@@ -1,3 +1,7 @@
+# episensr 0.7.2
+
+- Fix 2-by-2 tables when variables are provided instead of a matrix.
+
 # episensr 0.7.1
 
 - Fix R version dependency (R >= 3.2.0)
