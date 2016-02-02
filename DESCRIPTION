@@ -9,7 +9,7 @@ Imports:
     ggplot2,
     grid,
     gridExtra
-Date: 2015-10-05
+Date: 2016-01-02
 Authors@R: person("Denis", "Haine", email = "denis.haine@gmail.com",
                   role = c("aut", "cre"))
 BugReports: https://github.com/dhaine/episensr/issues
