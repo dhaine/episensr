@@ -5,8 +5,8 @@
 #' without effect modification. Implementation for ratio measures (relative risk
 #' -- RR, or odds ratio -- OR) and difference measures (risk difference -- RD).
 #'
-#' @param exposed Exposure variable. If a variable, this variable is tabulated against.
-#' @param case Outcome variable.
+#' @param case Outcome variable. If a variable, this variable is tabulated against.
+#' @param exposed Exposure variable.
 #' @param implement Deprecated. Please use type instead.
 #' @param type Choice of implementation, with no effect measure modification for
 #' ratio measures (relative risk -- RR; odds ratio -- OR) or difference measures
@@ -64,8 +64,8 @@
 #' RD.cd = -.37)
 #' @export
 #' @importFrom stats qnorm
-confounders <- function(exposed,
-                        case,
+confounders <- function(case,
+                        exposed,
                         implement = c("RR", "OR", "RD"),
                         type = c("RR", "OR", "RD"),
                         p = NULL,
@@ -119,9 +119,9 @@ confounders <- function(exposed,
     if(length(RD.cd) > 1)
         stop('Confounder-disease risk difference: more than 1 argument.')    
     
-    if(inherits(exposed, c("table", "matrix")))
-        tab <- exposed
-    else tab <- table(exposed, case)
+    if(inherits(case, c("table", "matrix")))
+        tab <- case
+    else tab <- table(case, exposed)
     tab <- tab[1:2, 1:2]
     
     a <- tab[1, 1]
