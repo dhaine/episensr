@@ -3,8 +3,8 @@
 #' Probabilistic sensitivity analysis to correct for exposure misclassification or
 #' outcome misclassification and random error.
 #'
-#' @param exposed Exposure variable. If a variable, this variable is tabulated against.
-#' @param case Outcome variable.
+#' @param case Outcome variable. If a variable, this variable is tabulated against.
+#' @param exposed Exposure variable.
 #' @param type Choice of correction for exposure or outcome misclassification.
 #' @param reps Number of replications to run.
 #' @param seca.parms List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
@@ -67,8 +67,8 @@
 #' spca.parms = list("uniform", c(.8, 1)))
 #' @export
 #' @importFrom stats median qnorm quantile runif
-probsens <- function(exposed,
-                     case,
+probsens <- function(case,
+                     exposed,
                      type = c("exposure", "outcome"),
                      reps = 1000,
                      seca.parms = list(dist = c("constant", "uniform", "triangular",
@@ -263,9 +263,9 @@ probsens <- function(exposed,
     if(!is.null(corr.sp) && (corr.sp == 0 | corr.sp == 1))
         stop('Correlations should be > 0 and < 1.')
     
-    if(inherits(exposed, c("table", "matrix")))
-        tab <- exposed
-    else tab <- table(exposed, case)
+    if(inherits(case, c("table", "matrix")))
+        tab <- case
+    else tab <- table(case, exposed)
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]
