@@ -2,8 +2,8 @@
 #'
 #' Probabilistic sensitivity analysis to correct for unknown or unmeasurred confounding and random error simultaneously.
 #'
-#' @param exposed Exposure variable. If a variable, this variable is tabulated against.
-#' @param case Outcome variable.
+#' @param case Outcome variable. If a variable, this variable is tabulated against.
+#' @param exposed Exposure variable.
 #' @param reps Number of replications to run.
 #' @param prev.exp List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
 #' \enumerate{
@@ -53,8 +53,8 @@
 #' corr.p = .8)
 #' @export
 #' @importFrom stats median qnorm quantile runif
-probsens.conf <- function(exposed,
-                          case,
+probsens.conf <- function(case,
+                          exposed,
                           reps = 1000,
                           prev.exp = list(dist = c("constant", "uniform",
                                               "triangular", "trapezoidal",
@@ -186,9 +186,9 @@ probsens.conf <- function(exposed,
     if(!is.null(corr.p) && (corr.p == 0 | corr.p == 1))
         stop('Correlations should be > 0 and < 1.')
 
-    if(inherits(exposed, c("table", "matrix")))
-        tab <- exposed
-    else tab <- table(exposed, case)
+    if(inherits(case, c("table", "matrix")))
+        tab <- case
+    else tab <- table(case, exposed)
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]

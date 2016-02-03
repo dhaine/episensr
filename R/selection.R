@@ -3,9 +3,9 @@
 #' Simple sensitivity analysis to correct for selection bias using estimates of
 #' the selection proportions.
 #'
-#' @param exposed Exposure variable. If a variable, this variable is tabulated
+#' @param case Outcome variable. If a variable, this variable is tabulated
 #' against.
-#' @param case Outcome variable.
+#' @param exposed Exposure variable.
 #' @param selprob Numeric vector defining the selection probabilities. This vector has 4 elements between 0 and 1, in the following order:
 #' \enumerate{
 #' \item Selection probability among cases exposed,
@@ -37,8 +37,8 @@
 #' selprob = c(.94, .85, .64, .25))
 #' @export
 #' @importFrom stats qnorm
-selection <- function(exposed,
-                      case,
+selection <- function(case,
+                      exposed,
                       selprob = NULL,
                       alpha = 0.05,
                       dec = 4,
@@ -53,9 +53,9 @@ selection <- function(exposed,
     if(!all(selprob >= 0 & selprob <=1))
         stop('Selection probabilities should be between 0 and 1')
 
-    if(inherits(exposed, c("table", "matrix")))
-        tab <- exposed
-    else tab <- table(exposed, case)
+    if(inherits(case, c("table", "matrix")))
+        tab <- case
+    else tab <- table(case, exposed)
     tab <- tab[1:2, 1:2]
 
     a <- tab[1, 1]

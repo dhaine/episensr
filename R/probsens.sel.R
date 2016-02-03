@@ -2,8 +2,8 @@
 #'
 #' Probabilistic sensitivity analysis to correct for selection bias.
 #'
-#' @param exposed Exposure variable. If a variable, this variable is tabulated against.
-#' @param case Outcome variable.
+#' @param case Outcome variable. If a variable, this variable is tabulated against.
+#' @param exposed Exposure variable.
 #' @param reps Number of replications to run.
 #' @param or.parms List defining the selection bias odds. The first argument provides the probability distribution function (constant, uniform, triangular, or trapezoidal) and the second its parameters as a vector:
 #' \enumerate{
@@ -39,8 +39,8 @@
 #' or.parms = list("triangular", c(.35, 1.1, .43)))
 #' @export
 #' @importFrom stats median qnorm quantile runif
-probsens.sel <- function(exposed,
-                         case,
+probsens.sel <- function(case,
+                         exposed,
                          reps = 1000,
                          or.parms = list(dist = c("constant", "uniform", "triangular",
                                              "trapezoidal", "logit-logistic",
@@ -89,9 +89,9 @@ probsens.sel <- function(exposed,
     if(or.parms[[1]] == "logit-normal" & length(or.parms[[2]]) == 2)
         or.parms <- list(or.parms[[1]], c(or.parms[[2]], c(0, 1)))
 
-    if(inherits(exposed, c("table", "matrix")))
-        tab <- exposed
-    else tab <- table(exposed, case)
+    if(inherits(case, c("table", "matrix")))
+        tab <- case
+    else tab <- table(case, exposed)
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]

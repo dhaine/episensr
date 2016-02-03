@@ -2,9 +2,9 @@
 #'
 #' Multidimensional sensitivity analysis for different sources of bias
 #'
-#' @param exposed Exposure variable. If a variable, this variable is tabulated
+#' @param case Outcome variable. If a variable, this variable is tabulated
 #' against.
-#' @param case Outcome variable.
+#' @param exposed Exposure variable.
 #' @param type Implement analysis for exposure misclassification, outcome
 #' misclassification, unmeasured confounder, or selection bias.
 #' @param se Numeric vector of sensitivities.
@@ -59,8 +59,8 @@
 #' OR.sel = seq(1.5, 6.5, by = .5))
 #' @export
 #' @importFrom stats qnorm setNames
-multidimBias <- function(exposed,
-                         case,
+multidimBias <- function(case,
+                         exposed,
                          type = c("exposure", "outcome", "confounder", "selection"),
                          se = NULL,
                          sp = NULL,
@@ -106,9 +106,9 @@ multidimBias <- function(exposed,
     if(!all(OR.sel > 0))
         stop('Selection odds ratios should be positive.')
     
-    if(inherits(exposed, c("table", "matrix")))
-        tab <- exposed
-    else tab <- table(exposed, case)
+    if(inherits(case, c("table", "matrix")))
+        tab <- case
+    else tab <- table(case, exposed)
     tab <- tab[1:2, 1:2]
 
     a <- tab[1, 1]

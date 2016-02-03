@@ -2,9 +2,8 @@
 #'
 #' Simple sensitivity analysis for misclassification.
 #'
-#' @param exposed Exposure variable. If a variable, this variable is tabulated
-#' against.
-#' @param case Outcome variable.
+#' @param case Outcome variable. If a variable, this variable is tabulated against.
+#' @param exposed Exposure variable.
 #' @param implement Deprecated; please use type instead.
 #' @param type Choice of misclassification:
 #' \enumerate{
@@ -59,8 +58,8 @@
 #' bias = c(.53, .53, .99, .99))
 #' @export
 #' @importFrom stats qnorm
-misclassification <- function(exposed,
-                              case,
+misclassification <- function(case,
+                              exposed,
                               implement = c("exposure", "outcome"),
                               type = c("exposure", "outcome"),
                               bias = NULL,
@@ -80,9 +79,9 @@ misclassification <- function(exposed,
     if(!all(bias >= 0 & bias <=1))
         stop('Bias parameters should be between 0 and 1.')
 
-    if(inherits(exposed, c("table", "matrix")))
-        tab <- exposed
-    else tab <- table(exposed, case)
+    if(inherits(case, c("table", "matrix")))
+        tab <- case
+    else tab <- table(case, exposed)
     tab <- tab[1:2, 1:2]
     
     a <- tab[1, 1]
