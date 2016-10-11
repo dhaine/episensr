@@ -7,7 +7,6 @@
 #'
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
-#' @param implement Deprecated. Please use type instead.
 #' @param type Choice of implementation, with no effect measure modification for
 #' ratio measures (relative risk -- RR; odds ratio -- OR) or difference measures
 #' (risk difference -- RD).
@@ -66,7 +65,6 @@
 #' @importFrom stats qnorm
 confounders <- function(case,
                         exposed,
-                        implement = c("RR", "OR", "RD"),
                         type = c("RR", "OR", "RD"),
                         p = NULL,
                         RR.cd = NULL,
@@ -75,11 +73,6 @@ confounders <- function(case,
                         alpha = 0.05,
                         dec = 4,
                         print = TRUE){
-    if (!missing(implement)) {
-        warning("argument implement is deprecated; please use type instead.",
-                call. = FALSE)
-        type <- implement
-    }
     if(length(type) > 1)
         stop('Choose between RR, OR, or RD implementation.')
     if(type == "RR" & (!is.null(OR.cd) | !is.null(RD.cd)))
