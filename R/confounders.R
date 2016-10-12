@@ -61,7 +61,7 @@
 confounders <- function(case,
                         exposed,
                         type = c("RR", "OR", "RD"),
-                        bias_parms = c(1, 0, 0),
+                        bias_parms = NULL,
                         alpha = 0.05,
                         dec = 4,
                         print = TRUE){
