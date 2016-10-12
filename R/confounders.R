@@ -11,7 +11,7 @@
 #' ratio measures (relative risk -- RR; odds ratio -- OR) or difference measures
 #' (risk difference -- RD).
 #' @param bias_parms Numeric vector defining the 3 necessary bias parameters. This
-#' vector has 3 elements between 0 and 1, in the following order:
+#' vector has 3 elements, in the following order:
 #' \enumerate{
 #' \item the association between the confounder and the outcome among those who were not exposed,
 #' \item the prevalence of the confounder among the exposed, and
