@@ -10,15 +10,13 @@
 #' @param type Choice of implementation, with no effect measure modification for
 #' ratio measures (relative risk -- RR; odds ratio -- OR) or difference measures
 #' (risk difference -- RD).
-#' @param p Numeric vector defining the prevalence of the confounder. This vector
-#' has 2 elements between 0 and 1, in the following order:
+#' @param bias_parms Numeric vector defining the 3 necessary bias parameters. This
+#' vector has 3 elements between 0 and 1, in the following order:
 #' \enumerate{
-#' \item Prevalence of the confounder among the exposed, and
-#' \item Prevalence of the confounder among the unexposed.
+#' \item the association between the confounder and the outcome among those who were not exposed,
+#' \item the prevalence of the confounder among the exposed, and
+#' \item the prevalence of the confounder among the unexposed.
 #' }
-#' @param RR.cd Confounder-disease relative risk.
-#' @param OR.cd Confounder-disease odds ratio.
-#' @param RD.cd Confounder-disease risk difference.
 #' @param alpha Significance level.
 #' @param dec Number of decimals in the printout.
 #' @param print A logical scalar. Should the results be printed?
@@ -47,76 +45,46 @@
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "RR",
-#' p = c(.8, .05),
-#' RR.cd = .63)
+#' bias_parms = c(.63, .8, .05))
 #' confounders(matrix(c(105, 85, 527, 93),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "OR",
-#' p = c(.8, .05),
-#' OR.cd = .63)
+#' bias_parms = c(.63, .8, .05))
 #' confounders(matrix(c(105, 85, 527, 93),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "RD",
-#' p = c(.8, .05),
-#' RD.cd = -.37)
+#' bias_parms = c(-.37, .8, .05))
 #' @export
 #' @importFrom stats qnorm
 confounders <- function(case,
                         exposed,
                         type = c("RR", "OR", "RD"),
-                        p = NULL,
-                        RR.cd = NULL,
-                        OR.cd = NULL,
-                        RD.cd = NULL,
+                        bias_parms = c(1, 0, 0),
                         alpha = 0.05,
                         dec = 4,
                         print = TRUE){
     if(length(type) > 1)
         stop('Choose between RR, OR, or RD implementation.')
-    if(type == "RR" & (!is.null(OR.cd) | !is.null(RD.cd)))
-        stop('Mismatch between implementation type and confounder risk.')
-    if(type == "OR" & (!is.null(RR.cd) | !is.null(RD.cd)))
-        stop('Mismatch between implementation type and confounder risk.')
-    if(type == "RD" & (!is.null(RR.cd) | !is.null(OR.cd)))
-        stop('Mismatch between implementation type and confounder risk.')
 
-    if(is.null(p))
-        p <- c(0, 0)
-    else p <- p
-    if(length(p) != 2)
-        stop('The argument p should be made of the following components: (1) Prevalence of the confounder among the exposed, and (2) Prevalence of the confounder among the unexposed.')
-    if(!all(p >= 0 & p <=1))
+    if(is.null(bias_parms))
+        bias_parms <- c(1, 0, 0)
+    else bias_parms <- bias_parms
+    if(length(bias_parms) != 3)
+        stop('The argument bias_parms should be made of the following components: (1) Association between the confounder and the outcome among those who were not exposed, (2) Prevalence of the confounder among the exposed, and (3) Prevalence of the confounder among the unexposed.')
+    if(!all(bias_parms[-1] >= 0 & bias_parms[-1] <= 1))
         stop('Prevalences should be between 0 and 1.')
-
-    if(is.null(RR.cd))
-        RR.cd <- 1
-    else RR.cd <- RR.cd
-    if(length(RR.cd) > 1)
-        stop('Confounder-disease relative risk: more than 1 argument.')
-    if(RR.cd <= 0)
-        stop('Confounder-disease relative risk should be greater than 0.')
-
-    if(is.null(OR.cd))
-        OR.cd <- 1
-    else OR.cd <- OR.cd
-    if(length(OR.cd) > 1)
-        stop('Confounder-disease odds ratio: more than 1 argument.')
-    if(OR.cd <= 0)
-        stop('Confounder-disease odds ratio should be greater than 0.')
-
-    if(is.null(RD.cd))
-        RD.cd <- 1
-    else RD.cd <- RD.cd
-    if(length(RD.cd) > 1)
-        stop('Confounder-disease risk difference: more than 1 argument.')    
+    if(bias_parms[1] <= 0)
+        stop('Association between the confounder and the outcome among those who were not exposed should be greater than 0.')
     
     if(inherits(case, c("table", "matrix")))
         tab <- case
-    else tab <- table(case, exposed)
-    tab <- tab[1:2, 1:2]
-    
+    else {
+        tab.df <- table(case, exposed)
+        tab <- tab.df[2:1, 2:1]
+    }
+
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]
