@@ -7,33 +7,18 @@
 #'
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
-#' @param implement Deprecated. Please use type instead.
 #' @param type Choice of implementation, with no effect measure modification for
 #' ratio measures (relative risk -- RR; odds ratio -- OR) or difference measures
 #' (risk difference -- RD).
-#' @param p Numeric vector defining the prevalence of the confounder. This vector
-#' has 2 elements between 0 and 1, in the following order:
+#' @param bias_parms Numeric vector defining the 4 necessary bias parameters. This
+#' vector has 4 elements, in the following order:
 #' \enumerate{
-#' \item Prevalence of the confounder among the exposed, and
-#' \item Prevalence of the confounder among the unexposed.
-#' }
-#' @param RR.cd Vector defining the confounder-disease relative risk. This vector
-#' has two elements between 0 and 1, in the following order:
-#' \enumerate{
-#' \item Among the exposed, and
-#' \item among the unexposed.
-#' }
-#' @param OR.cd Vector defining the confounder-disease odds ratio. This vector
-#' has two elements between 0 and 1, in the folowing order:
-#' \enumerate{
-#' \item Among the exposed, and
-#' \item among the unexposed.
-#' }
-#' @param RD.cd Vector dfining the confounder-disease risk difference. This vector
-#' has two elements between 0 and 1, in the following order:
-#' \enumerate{
-#' \item Among the exposed, and
-#' \item among the unexposed.
+#' \item the association between the confounder and the outcome among those who
+#' were exposed,
+#' \item the association between the confounder and the outcome among those who
+#' were not exposed,
+#' \item the prevalence of the confounder among the exposed, and
+#' \item the prevalence of the confounder among the unexposed.
 #' }
 #' @param alpha Significance level.
 #' @param dec Number of decimals in the printout.
@@ -63,81 +48,45 @@
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "RR",
-#' p = c(.8, .05),
-#' RR.cd = c(.4, .7))
+#' bias_parms = c(.4, .7, .8, .05))
 #' confounders.emm(matrix(c(105, 85, 527, 93),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "OR",
-#' p = c(.8, .05),
-#' OR.cd = c(.4, .7))
+#' bias_parms = c(.4, .7, .8, .05))
 #' confounders.emm(matrix(c(105, 85, 527, 93),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "RD",
-#' p = c(.8, .05),
-#' RD.cd = c(-.6, -.3))
+#' bias_parms = c(-.6, -.3, .8, .05))
 #' @export
 #' @importFrom stats qnorm
 confounders.emm <- function(case,
                             exposed,
-                            implement = c("RR", "OR", "RD"),
                             type = c("RR", "OR", "RD"),
-                            p = NULL,
-                            RR.cd = NULL,
-                            OR.cd = NULL,
-                            RD.cd = NULL,
+                            bias_parms = NULL,
                             alpha = 0.05,
                             dec = 4,
                             print = TRUE){
-    if (!missing(implement)) {
-        warning("Argument implement is deprecated; please use type instead.", 
-                call. = FALSE)
-        type <- implement
-  }
     if(length(type) > 1)
-        stop('Choose between RR, OR, or RD typeation.')
-    if(type == "RR" & (!is.null(OR.cd) | !is.null(RD.cd)))
-        stop('Mismatch between typeation type and confounder risk.')
-    if(type == "OR" & (!is.null(RR.cd) | !is.null(RD.cd)))
-        stop('Mismatch between typeation type and confounder risk.')
-    if(type == "RD" & (!is.null(RR.cd) | !is.null(OR.cd)))
-        stop('Mismatch between typeation type and confounder risk.')
+        stop('Choose between RR, OR, or RD implementation.')
     
-    if(is.null(p))
-        p <- c(0, 0)
-    else p <- p
-    if(length(p) != 2)
-        stop('The argument p should be made of the following components: (1) Prevalence of the confounder among the exposed, and (2) Prevalence of the confounder among the unexposed.')
-    if(!all(p >= 0 & p <=1))
+    if(is.null(bias_parms))
+        bias_parms <- c(1, 1, 0, 0)
+    else bias_parms <- bias_parms
+    if(length(bias_parms) != 4)
+        stop('The argument bias_parms should be made of the following components: (1) Association between the confounder and the outcome among those who were exposed, (2) Association between the confounder and the outcome among those who were not exposed, (3) Prevalence of the confounder among the exposed, and (4) Prevalence of the confounder among the unexposed.')
+    if(!all(bias_parms[3:4] >= 0 & bias_parms[3:4] <=1))
         stop('Prevalences should be between 0 and 1.')
-
-    if(is.null(RR.cd))
-        RR.cd <- c(1, 1)
-    else RR.cd <- RR.cd
-    if(length(RR.cd) != 2)
-        stop('Confounder-disease relative risk needs two arguments.')
-    if(!all(RR.cd > 0))
-        stop('Confounder-disease relative risk should be greater than 0.')
-
-    if(is.null(OR.cd))
-        OR.cd <- c(1, 1)
-    else OR.cd <- OR.cd
-    if(length(OR.cd) != 2)
-        stop('Confounder-disease odds ratio needs two arguments.')
-    if(!all(OR.cd > 0))
-        stop('Confounder-disease odds ratio should be greater than 0.')
-
-    if(is.null(RD.cd))
-        RD.cd <- c(1, 1)
-    else RD.cd <- RD.cd
-    if(length(RD.cd) != 2)
-        stop('Confounder-disease risk difference needs two arguments.')    
+    if(!all(bias_parms[1:2] > 0) & type != "RD")
+        stop('Association between the confounder and the outcome should be greater than 0.')
     
     if(inherits(case, c("table", "matrix")))
         tab <- case
-    else tab <- table(case, exposed)
-    tab <- tab[1:2, 1:2]
+    else {
+        tab.df <- table(case, exposed)
+        tab <- tab.df[2:1, 2:1]
+    }
 
     a <- tab[1, 1]
     b <- tab[1, 2]
@@ -151,10 +100,10 @@ confounders.emm <- function(case,
         lci.crude.rr <- exp(log(crude.rr) - qnorm(1 - alpha/2) * se.log.crude.rr)
         uci.crude.rr <- exp(log(crude.rr) + qnorm(1 - alpha/2) * se.log.crude.rr)
 
-        M1 <- (a + c) * p[1]
-        N1 <- (b + d) * p[2]
-        A1 <- (RR.cd[1] * M1 * a) / (RR.cd[1] * M1 + (a + c) - M1)
-        B1 <- (RR.cd[2] * N1 * b) / (RR.cd[2] * N1 + (b + d) - N1)
+        M1 <- (a + c) * bias_parms[3]
+        N1 <- (b + d) * bias_parms[4]
+        A1 <- (bias_parms[1] * M1 * a) / (bias_parms[1] * M1 + (a + c) - M1)
+        B1 <- (bias_parms[2] * N1 * b) / (bias_parms[2] * N1 + (b + d) - N1)
         C1 <- M1 - A1
         D1 <- N1 - B1
         M0 <- a + c - M1
@@ -246,10 +195,10 @@ confounders.emm <- function(case,
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("           p(Confounder+|Exposure+):", p[1],
-                "\n           p(Confounder+|Exposure-):", p[2],
-                "\n  RR(Confounder-Outcome in Exposed):", RR.cd[1],
-                "\nRR(Confounder-Outcome in Unexposed):", RR.cd[2],
+            cat("           p(Confounder+|Exposure+):", bias_parms[3],
+                "\n           p(Confounder+|Exposure-):", bias_parms[4],
+                "\n  RR(Confounder-Outcome in Exposed):", bias_parms[1],
+                "\nRR(Confounder-Outcome in Unexposed):", bias_parms[2],
                 "\n")
         rmat <- rbind(rmat, c(cfder.rr, NA, NA), c(nocfder.rr, NA, NA))
         rownames(rmat) <- c("        Crude Relative Risk:",
@@ -263,10 +212,10 @@ confounders.emm <- function(case,
         lci.crude.or <- exp(log(crude.or) - qnorm(1 - alpha/2) * se.log.crude.or)
         uci.crude.or <- exp(log(crude.or) + qnorm(1 - alpha/2) * se.log.crude.or)
 
-        C1 <- c * p[1] 
-        D1 <- d * p[2]
-        A1 <- (OR.cd[1] * C1 * a) / (OR.cd[1] * C1 + c - C1)
-        B1 <- (OR.cd[2] * D1 * b) / (OR.cd[2] * D1 + d - D1)
+        C1 <- c * bias_parms[3]
+        D1 <- d * bias_parms[4]
+        A1 <- (bias_parms[1] * C1 * a) / (bias_parms[1] * C1 + c - C1)
+        B1 <- (bias_parms[2] * D1 * b) / (bias_parms[2] * D1 + d - D1)
         M1 <- A1 + C1
         N1 <- B1 + D1
         A0 <- a - A1
@@ -358,10 +307,10 @@ confounders.emm <- function(case,
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("           p(Confounder+|Exposure+):", p[1],
-                "\n           p(Confounder+|Exposure-):", p[2],
-                "\n  OR(Confounder-Outcome in Exposed):", OR.cd[1],
-                "\nOR(Confounder-Outcome in Unexposed):", OR.cd[2],
+            cat("           p(Confounder+|Exposure+):", bias_parms[3],
+                "\n           p(Confounder+|Exposure-):", bias_parms[4],
+                "\n  OR(Confounder-Outcome in Exposed):", bias_parms[1],
+                "\nOR(Confounder-Outcome in Unexposed):", bias_parms[2],
                 "\n")
         rmat <- rbind(rmat, c(cfder.or, NA, NA), c(nocfder.or, NA, NA))
         rownames(rmat) <- c("        Crude Odds Ratio:",
@@ -375,12 +324,12 @@ confounders.emm <- function(case,
         lci.crude.rd <- crude.rd - qnorm(1 - alpha/2) * se.log.crude.rd
         uci.crude.rd <- crude.rd + qnorm(1 - alpha/2) * se.log.crude.rd
 
-        M1 <- (a + c) * p[1]
-        N1 <- (b + d) * p[2]
+        M1 <- (a + c) * bias_parms[3]
+        N1 <- (b + d) * bias_parms[4]
         M0 <- (a + c) - M1
         N0 <- (b + d) - N1
-        A1 <- (RD.cd[1] * M1 * M0 + M1 * a) / (a + c)
-        B1 <- (RD.cd[2] * N1 * N0 + N1 * b) / (b + d)
+        A1 <- (bias_parms[1] * M1 * M0 + M1 * a) / (a + c)
+        B1 <- (bias_parms[2] * N1 * N0 + N1 * b) / (b + d)
         C1 <- M1 - A1
         D1 <- N1 - B1
         A0 <- a - A1
@@ -469,10 +418,10 @@ confounders.emm <- function(case,
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("           p(Confounder+|Exposure+):", p[1],
-                "\n           p(Confounder+|Exposure-):", p[2],
-                "\n  RD(Confounder-Outcome in Exposed):", RD.cd[1],
-                "\nRD(Confounder-Outcome in Unexposed):", RD.cd[2],
+            cat("           p(Confounder+|Exposure+):", bias_parms[3],
+                "\n           p(Confounder+|Exposure-):", bias_parms[4],
+                "\n  RD(Confounder-Outcome in Exposed):", bias_parms[1],
+                "\nRD(Confounder-Outcome in Unexposed):", bias_parms[2],
                 "\n")
     rmat <- rbind(rmat, c(cfder.rd, NA, NA), c(nocfder.rd, NA, NA))
     rownames(rmat) <- c("        Crude Risk Difference:",
@@ -483,5 +432,5 @@ confounders.emm <- function(case,
                    cfder.data = tab.cfder, nocfder.data = tab.nocfder,
                    obs.measures = rmat,
                    adj.measures = rmatc,
-                   bias.parms = c(p, RR.cd)))
+                   bias.parms = bias_parms))
 }
