@@ -4,49 +4,27 @@
 \alias{confounders.poly}
 \title{Sensitivity analysis to correct for unknown or unmeasured polychotomous confounding without effect modification}
 \usage{
-confounders.poly(case, exposed, implement = c("RR", "OR", "RD"),
-  type = c("RR", "OR", "RD"), p = NULL, RR.cd = NULL, OR.cd = NULL,
-  RD.cd = NULL, alpha = 0.05, dec = 4, print = TRUE)
+confounders.poly(case, exposed, type = c("RR", "OR", "RD"),
+  bias_parms = NULL, alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
 
 \item{exposed}{Exposure variable.}
 
-\item{implement}{Deprecated. Please use type instead.}
-
 \item{type}{Choice of implementation, with no effect measure modification for
 ratio measures (relative risk -- RR; odds ratio -- OR) or difference measures
 (risk difference -- RD).}
 
-\item{p}{Numeric vector defining the prevalence of the confounder. This vector
-has 4 elements between 0 and 1, in the following order:
+\item{bias_parms}{Numeric vector defining the bias parameters. This vector
+has 6 elements, in the following order:
 \enumerate{
-\item Prevalence of the highest level confounder among the exposed,
-\item Prevalence of the highest level confounder among the unexposed,
-\item Prevalence of the mid-level confounder among the exposed, and
-\item Prevalence of the mid-level confounder among the unexposed.
-}}
-
-\item{RR.cd}{Vector defining the confounder-disease relative risk. This vector
-has two elements in the following order:
-\enumerate{
-\item Relative risk of having the highest-level confounder in diseased, and
-\item Relative risk of having the mid-level confounder in diseased.
-}}
-
-\item{OR.cd}{Vector defining the confounder-disease odds ratio. This vector has
-two elements in the following order:
-\enumerate{
-\item Odds ratio of having the highest-level confounder in diseased, and
-\item Odds ratio of having the mid-level confounder in diseased.
-}}
-
-\item{RD.cd}{Vector defining the confounder-disease risk difference. This
-vector has two elements in the following order:
-\enumerate{
-\item Risk difference of having the highest-level confounder in diseased, and
-\item Risk difference of having the mid-level confounder in diseased.
+\item the association between the highest level confounder and the outcome,
+\item the association between the mid-level confounder and the outcome,
+\item the prevalence of the highest level confounder among the exposed,
+\item the prevalence of the highest level confounder among the unexposed,
+\item the prevalence of the mid-level confounder among the exposed, and
+\item the prevalence of the mid-level confounder among the unexposed.
 }}
 
 \item{alpha}{Significance level.}
@@ -84,20 +62,17 @@ confounders.poly(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "RR",
-p = c(.6, .05, .2, .2),
-RR.cd = c(.4, .8))
+bias_parms = c(.4, .8, .6, .05, .2, .2))
 confounders.poly(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "OR",
-p = c(.6, .05, .2, .2),
-OR.cd = c(.4, .8))
+bias_parms = c(.4, .8, .6, .05, .2, .2))
 confounders.poly(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "RD",
-p = c(.6, .05, .2, .2),
-RD.cd = c(-.4, -.2))
+bias_parms = c(-.4, -.2, .6, .05, .2, .2))
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative

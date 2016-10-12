@@ -5,8 +5,7 @@
 \title{Sensitivity analysis to correct for unknown or unmeasured confounding without
 effect modification}
 \usage{
-confounders(case, exposed, implement = c("RR", "OR", "RD"), type = c("RR",
-  "OR", "RD"), p = NULL, RR.cd = NULL, OR.cd = NULL, RD.cd = NULL,
+confounders(case, exposed, type = c("RR", "OR", "RD"), bias_parms = NULL,
   alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
@@ -14,24 +13,17 @@ confounders(case, exposed, implement = c("RR", "OR", "RD"), type = c("RR",
 
 \item{exposed}{Exposure variable.}
 
-\item{implement}{Deprecated. Please use type instead.}
-
 \item{type}{Choice of implementation, with no effect measure modification for
 ratio measures (relative risk -- RR; odds ratio -- OR) or difference measures
 (risk difference -- RD).}
 
-\item{p}{Numeric vector defining the prevalence of the confounder. This vector
-has 2 elements between 0 and 1, in the following order:
+\item{bias_parms}{Numeric vector defining the 3 necessary bias parameters. This
+vector has 3 elements, in the following order:
 \enumerate{
-\item Prevalence of the confounder among the exposed, and
-\item Prevalence of the confounder among the unexposed.
+\item the association between the confounder and the outcome among those who were not exposed,
+\item the prevalence of the confounder among the exposed, and
+\item the prevalence of the confounder among the unexposed.
 }}
-
-\item{RR.cd}{Confounder-disease relative risk.}
-
-\item{OR.cd}{Confounder-disease odds ratio.}
-
-\item{RD.cd}{Confounder-disease risk difference.}
 
 \item{alpha}{Significance level.}
 
@@ -66,20 +58,17 @@ confounders(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "RR",
-p = c(.8, .05),
-RR.cd = .63)
+bias_parms = c(.63, .8, .05))
 confounders(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "OR",
-p = c(.8, .05),
-OR.cd = .63)
+bias_parms = c(.63, .8, .05))
 confounders(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "RD",
-p = c(.8, .05),
-RD.cd = -.37)
+bias_parms = c(-.37, .8, .05))
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
