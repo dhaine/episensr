@@ -116,6 +116,7 @@ selection <- function(case,
     rmatc <- rbind(rr.corr, or.corr)
     rownames(rmatc) <- c("Selection Bias Corrected Relative Risk:",
                          "   Selection Bias Corrected Odds Ratio:")
+    colnames(rmatc) <- ""
     if (print) 
         print(round(rmat, dec))
     if (print)
@@ -129,6 +130,7 @@ selection <- function(case,
                         "   Selection probability among cases unexposed:",
                         "  Selection probability among noncases exposed:",
                         "Selection probability among noncases unexposed:")
+    colnames(bias) <- ""
     if (print)
         print(bias)
     invisible(list(obs.data = tab, corr.data = tab.corr,
