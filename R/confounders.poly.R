@@ -91,8 +91,8 @@ confounders.poly <- function(case,
     if(inherits(case, c("table", "matrix")))
         tab <- case
     else {
-        tab <- table(case, exposed)
-        tab <- tab[1:2, 1:2]
+        tab.df <- table(case, exposed)
+        tab <- tab.df[2:1, 2:1]
     }
 
     a <- tab[1, 1]
