@@ -55,7 +55,8 @@ selection <- function(case,
 
     if(inherits(case, c("table", "matrix")))
         tab <- case
-    else tab <- table(case, exposed)
+    else {tab.df <- table(case, exposed)
+          tab <- tab.df[2:1, 2:1]}
     tab <- tab[1:2, 1:2]
 
     a <- tab[1, 1]
