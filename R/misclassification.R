@@ -4,14 +4,13 @@
 #'
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
-#' @param implement Deprecated; please use type instead.
 #' @param type Choice of misclassification:
 #' \enumerate{
 #' \item Exposure: bias analysis for exposure misclassification; corrections using
 #' sensitivity and specificity: nondifferential and independent errors,
 #' \item Outcome: bias analysis for outcome misclassification.
 #' }
-#' @param bias Vector defining the bias parameters. This vector has 4 elements
+#' @param bias_parms Vector defining the bias parameters. This vector has 4 elements
 #' between 0 and 1, in the following order:
 #' \enumerate{
 #' \item Sensitivity of exposure (or outcome) classification among those with the
@@ -49,40 +48,42 @@
 #' c("Smoker+", "Smoker-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "exposure",
-#' bias = c(.78, .78, .99, .99))
+#' bias_parms = c(.78, .78, .99, .99))
 #' misclassification(matrix(c(4558, 3428, 46305, 46085),
 #' dimnames = list(c("AMI death+", "AMI death-"),
 #' c("Male+", "Male-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "outcome",
-#' bias = c(.53, .53, .99, .99))
+#' bias_parms = c(.53, .53, .99, .99))
 #' @export
 #' @importFrom stats qnorm
 misclassification <- function(case,
                               exposed,
-                              implement = c("exposure", "outcome"),
                               type = c("exposure", "outcome"),
                               bias = NULL,
+                              bias_parms = NULL,
                               alpha = 0.05,
                               dec = 4,
                               print = TRUE){
-    if (!missing(implement)) {
-        warning("Argument implement is deprecated; please use type instead.", 
+    if (!missing(bias)) {
+        warning("Argument bias is deprecated; please use bias_parms instead.", 
                 call. = FALSE)
-        type <- implement
+        bias_parms <- bias
     }
-    if(is.null(bias))
-        bias <- c(1, 1, 1, 1)
-    else bias <- bias
-    if(length(bias) != 4)
-        stop('The argument bias should be made of the following components: (1) Sensitivity of exposure classification among those with the outcome, (2) Sensitivity of exposure classification among those without the outcome, (3) Specificity of exposure classification among those with the outcome, and (4) Specificity of exposure classification among those without the outcome.')
-    if(!all(bias >= 0 & bias <=1))
+    if(is.null(bias_parms))
+        bias_parms <- c(1, 1, 1, 1)
+    else bias_parms <- bias_parms
+    if(length(bias_parms) != 4)
+        stop('The argument bias_parms should be made of the following components: (1) Sensitivity of exposure classification among those with the outcome, (2) Sensitivity of exposure classification among those without the outcome, (3) Specificity of exposure classification among those with the outcome, and (4) Specificity of exposure classification among those without the outcome.')
+    if(!all(bias_parms >= 0 & bias_parms <=1))
         stop('Bias parameters should be between 0 and 1.')
 
     if(inherits(case, c("table", "matrix")))
         tab <- case
-    else tab <- table(case, exposed)
-    tab <- tab[1:2, 1:2]
+    else {
+        tab.df <- table(case, exposed)
+        tab <- tab.df[2:1, 2:1]
+        }
     
     a <- tab[1, 1]
     b <- tab[1, 2]
@@ -101,8 +102,8 @@ misclassification <- function(case,
         lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
         uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
-        A <- (a - (1 - bias[3]) * (a + b)) / (bias[1] - (1 - bias[3]))
-        C <- (c - (1 - bias[4]) * (c + d)) / (bias[2] - (1 - bias[4]))
+        A <- (a - (1 - bias_parms[3]) * (a + b)) / (bias_parms[1] - (1 - bias_parms[3]))
+        C <- (c - (1 - bias_parms[4]) * (c + d)) / (bias_parms[2] - (1 - bias_parms[4]))
         B <- (a + b) - A
         D <- (c + d) - C
 
@@ -160,10 +161,10 @@ misclassification <- function(case,
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("Se(Outcome+):", bias[1],
-                "\nSe(Outcome-):", bias[2],
-                "\nSp(Outcome+):", bias[3],
-                "\nSp(Outcome-):", bias[4],
+            cat("Se(Outcome+):", bias_parms[1],
+                "\nSe(Outcome-):", bias_parms[2],
+                "\nSp(Outcome+):", bias_parms[3],
+                "\nSp(Outcome-):", bias_parms[4],
                 "\n")
     }
     
@@ -178,8 +179,8 @@ misclassification <- function(case,
         lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
         uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
-        A <- (a - (1 - bias[3]) * (a + c)) / (bias[1] - (1 - bias[3]))
-        B <- (b - (1 - bias[4]) * (b + d)) / (bias[2] - (1 - bias[4]))
+        A <- (a - (1 - bias_parms[3]) * (a + c)) / (bias_parms[1] - (1 - bias_parms[3]))
+        B <- (b - (1 - bias_parms[4]) * (b + d)) / (bias_parms[2] - (1 - bias_parms[4]))
         C <- (a + c) - A
         D <- (b + d) - B
 
@@ -237,15 +238,15 @@ misclassification <- function(case,
             cat("\nBias Parameters:",
                 "\n----------------\n\n")
         if (print)
-            cat("Se(Exposure+):", bias[1],
-                "\nSe(Exposure-):", bias[2],
-                "\nSp(Exposure+):", bias[3],
-                "\nSp(Exposure-):", bias[4],
+            cat("Se(Exposure+):", bias_parms[1],
+                "\nSe(Exposure-):", bias_parms[2],
+                "\nSp(Exposure+):", bias_parms[3],
+                "\nSp(Exposure-):", bias_parms[4],
                 "\n")
     }
     invisible(list(obs.data = tab,
                    corr.data = corr.tab,
                    obs.measures = rmat, 
                    adj.measures = rmatc,
-                   bias.parms = bias))
+                   bias.parms = bias_parms))
 }
