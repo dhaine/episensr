@@ -91,7 +91,10 @@ probsens.sel <- function(case,
 
     if(inherits(case, c("table", "matrix")))
         tab <- case
-    else tab <- table(case, exposed)
+    else {tab.df <- table(case, exposed)
+        tab <- tab.df[2:1, 2:1]
+    }
+    
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]
