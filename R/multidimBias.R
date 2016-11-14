@@ -9,7 +9,7 @@
 #' misclassification, unmeasured confounder, or selection bias.
 #' @param se Numeric vector of sensitivities.
 #' @param sp Numerci vector of specificities.
-#' @param bias List of bias parameters. The list is made of 3 vectors of the same
+#' @param bias_parms List of bias parameters. The list is made of 3 vectors of the same
 #' length:
 #' \enumerate{
 #' \item Prevalence of Confounder in Exposure+ population,
@@ -49,7 +49,7 @@
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "confounder",
-#' bias = list(seq(.72, .92, by = .02),
+#' bias_parms = list(seq(.72, .92, by = .02),
 #' seq(.01, .11, by = .01), seq(.13, 1.13, by = .1)))
 #' multidimBias(matrix(c(136, 107, 297, 165),
 #' dimnames = list(c("Uveal Melanoma+", "Uveal Melanoma-"),
@@ -65,10 +65,16 @@ multidimBias <- function(case,
                          se = NULL,
                          sp = NULL,
                          bias = NULL,
+                         bias_parms = NULL,
                          OR.sel = NULL,
                          alpha = 0.05,
                          dec = 4,
                          print = TRUE) {
+    if (!missing(bias)) {
+        warning("Argument bias is deprecated; please use bias_parms instead.", 
+                call. = FALSE)
+        bias_parms <- bias
+    }
     if(is.null(se))
         se <- c(1, 1)
     else se <- se
@@ -86,16 +92,16 @@ multidimBias <- function(case,
     if(length(se) != length(sp))
         stop('Sensitivity and specificity should be vectors of the same length.')
 
-    if(is.null(bias))
-        bias <- list(1, 1, 1)
-    else bias <- bias
-    if(!is.list(bias))
+    if(is.null(bias_parms))
+        bias_parms <- list(1, 1, 1)
+    else bias_parms <- bias_parms
+    if(!is.list(bias_parms))
         stop('Bias parameters for the impact of unmeasured confounder should be provided as a list made of 3 elements.')
-    if(length(bias) != 3)
+    if(length(bias_parms) != 3)
         stop('The argument bias should be made of the following vectors: (1) Prevalence of Confounder in Exposure+ population, (2) Prevalence of Confounder in Exposure- population, and (3) Relative risk between Confounder and Outcome.')
-    if(!all((bias[[1]] >= 0 & bias[[1]] <= 1) | (bias[[2]] >= 0 & bias[[2]] <= 1)))
+    if(!all((bias_parms[[1]] >= 0 & bias_parms[[1]] <= 1) | (bias_parms[[2]] >= 0 & bias_parms[[2]] <= 1)))
         stop('Prevalences should be between 0 and 1.')
-    if(length(bias[[1]]) != length(bias[[2]]) | length(bias[[2]]) != length(bias[[3]]))
+    if(length(bias_parms[[1]]) != length(bias_parms[[2]]) | length(bias_parms[[2]]) != length(bias_parms[[3]]))
         stop('Prevalences of Confounder in Exposure+ and Exposure- populations and Relative risk between Confounder and Outcome should be of the same length.')
 
     if(is.null(OR.sel))
@@ -108,8 +114,9 @@ multidimBias <- function(case,
     
     if(inherits(case, c("table", "matrix")))
         tab <- case
-    else tab <- table(case, exposed)
-    tab <- tab[1:2, 1:2]
+    else {tab.df <- table(case, exposed)
+          tab <- tab.df[2:1, 2:1]
+         }
 
     a <- tab[1, 1]
     b <- tab[1, 2]
@@ -128,7 +135,7 @@ multidimBias <- function(case,
 
     rr.mat <- matrix(NA, nrow = length(se), ncol = length(se))
     or.mat <- matrix(NA, nrow = length(se), ncol = length(se))
-    rrc.mat <- matrix(NA, nrow = length(bias[[1]]), ncol = length(bias[[1]]))
+    rrc.mat <- matrix(NA, nrow = length(bias_parms[[1]]), ncol = length(bias_parms[[1]]))
     ors.mat <- matrix(NA, nrow = length(OR.sel), ncol = 2)
     
     type <- match.arg(type)
@@ -204,11 +211,11 @@ multidimBias <- function(case,
             print(or.mat)
         if (print)
             cat("\n")
-        bias <- rbind(se, sp)
-        rownames(bias) <- c("Sensitivities:",
-                            "Specificities:")
+        bias_parms <- rbind(se, sp)
+        rownames(bias_parms) <- c("Sensitivities:",
+                                  "Specificities:")
         if (print)
-            print(bias)
+            print(bias_parms)
         }
 
     if (type == "outcome") {
@@ -275,18 +282,18 @@ multidimBias <- function(case,
             print(or.mat)
         if (print)
             cat("\n")
-        bias <- rbind(se, sp)
-        rownames(bias) <- c("Sensitivities:",
-                            "Specificities:")
+        bias_parms <- rbind(se, sp)
+        rownames(bias_parms) <- c("Sensitivities:",
+                                  "Specificities:")
         if (print)
-            print(bias)
+            print(bias_parms)
     }
 
     if (type == "confounder") {
         for (i in 1:nrow(rrc.mat)) {
             for (j in 1:nrow(rrc.mat)) {
-                rrc.mat[i, j] <- rr / ((bias[[1]][i] * (bias[[3]][j] - 1) + 1) /
-                                          (bias[[2]][i] * (bias[[3]][j] - 1) + 1))
+                rrc.mat[i, j] <- rr / ((bias_parms[[1]][i] * (bias_parms[[3]][j] - 1) + 1) /
+                                          (bias_parms[[2]][i] * (bias_parms[[3]][j] - 1) + 1))
             }
         }
 
@@ -294,9 +301,9 @@ multidimBias <- function(case,
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
-        rownames(rrc.mat) <- paste("p(Conf+|Exp+):", bias[[1]],
-                                   "p(Conf+|Exp-):", bias[[2]])
-        colnames(rrc.mat) <- paste("RR(Conf-Outc):", bias[[3]])
+        rownames(rrc.mat) <- paste("p(Conf+|Exp+):", bias_parms[[1]],
+                                   "p(Conf+|Exp-):", bias_parms[[2]])
+        colnames(rrc.mat) <- paste("RR(Conf-Outc):", bias_parms[[3]])
         if (print) 
             cat("Multidimensional Unmeasured Confounding\n",
                 "Observed Data:", "\n---------------------------------------------------", 
@@ -321,16 +328,16 @@ multidimBias <- function(case,
             print(rrc.mat)
         if (print)
             cat("\n")
-        bias.param <- matrix(unlist(bias),
+        bias.param <- matrix(unlist(bias_parms),
                              dimnames = list(c("p(Confounder+|Exposure+):",
                                   "p(Confounder+|Exposure-):",
                                   "RR(Confounder-Outcome)")),
                              nrow = 3, byrow = TRUE)
         if (print)
             print(bias.param)
-        bias <- setNames(bias, c("p(Confounder+|Exposure+):",
-                                  "p(Confounder+|Exposure-):",
-                                  "RR(Confounder-Outcome)"))
+        bias_parms <- setNames(bias_parms, c("p(Confounder+|Exposure+):",
+                                             "p(Confounder+|Exposure-):",
+                                             "RR(Confounder-Outcome)"))
     }
 
     if (type == "selection") {
@@ -367,10 +374,10 @@ multidimBias <- function(case,
             print(ors.mat)
         if (print)
             cat("\n")
-        bias <- ors.mat[, 1]
+        bias_parms <- ors.mat[, 1]
         }
     invisible(list(obs.data = tab,
                    obs.measures = rmat,
                    adj.measures = rmatc,
-                   bias.parms = bias))
+                   bias.parms = bias_parms))
 }
