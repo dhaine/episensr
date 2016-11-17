@@ -15,7 +15,7 @@ print.episensr <- function(x, digits = getOption("digits"), ...) {
     print.table(x$obs.data, digits = digits, ...)
     cat("\n")
     print.table(x$obs.measures, digits = digits, ...)
-    cat("---")
+    cat("---\n")
     print.table(x$adj.measures, digits = digits, ...)
     invisible(NULL)
 }
