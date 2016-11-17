@@ -127,13 +127,13 @@ misclassification <- function(case,
         }
         rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr), c(obs.or, lci.obs.or, uci.obs.or))
         rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
-        colnames(rmat) <- c("",
+        colnames(rmat) <- c(" ",
                             paste(100 * (alpha/2), "%", sep = ""),
                             paste(100 * (1 - alpha/2), "%", sep = ""))
         rmatc <- rbind(corr.rr, corr.or)
         rownames(rmatc) <- c("Misclassification Bias Corrected Relative Risk:",
                              "   Misclassification Bias Corrected Odds Ratio:")
-        colnames(rmatc) <- ""
+        colnames(rmatc) <- " "
     }
     
     if (type == "outcome"){
@@ -176,13 +176,13 @@ misclassification <- function(case,
         }
         rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr), c(obs.or, lci.obs.or, uci.obs.or))
         rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
-        colnames(rmat) <- c("",
+        colnames(rmat) <- c(" ",
                             paste(100 * (alpha/2), "%", sep = ""),
                             paste(100 * (1 - alpha/2), "%", sep = ""))
         rmatc <- rbind(corr.rr, corr.or)
         rownames(rmatc) <- c("Misclassification Bias Corrected Relative Risk:",
                              "   Misclassification Bias Corrected Odds Ratio:")
-        colnames(rmatc) <- ""
+        colnames(rmatc) <- " "
     }
     res <- list(obs.data = tab,
                 corr.data = corr.tab,

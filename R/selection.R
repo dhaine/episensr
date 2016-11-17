@@ -101,19 +101,19 @@ selection <- function(case,
     }
     rmat <- rbind(c(rr, lci.rr, uci.rr), c(or, lci.or, uci.or))
     rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
-    colnames(rmat) <- c("",
+    colnames(rmat) <- c(" ",
                         paste(100 * (alpha/2), "%", sep = ""),
                         paste(100 * (1 - alpha/2), "%", sep = ""))
     rmatc <- rbind(rr.corr, or.corr)
     rownames(rmatc) <- c("Selection Bias Corrected Relative Risk:",
                          "   Selection Bias Corrected Odds Ratio:")
-    colnames(rmatc) <- ""
+    colnames(rmatc) <- " "
     bias <- rbind(bias_parms[1], bias_parms[2], bias_parms[3], bias_parms[4])
     rownames(bias) <- c("Selection probability among cases exposed:",
                         "Selection probability among cases unexposed:",
                         "Selection probability among noncases exposed:",
                         "Selection probability among noncases unexposed:")
-    colnames(bias) <- ""
+    colnames(bias) <- " "
     res <- list(obs.data = tab,
                 corr.data = tab.corr,
                 obs.measures = rmat,
