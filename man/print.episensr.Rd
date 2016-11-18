@@ -7,11 +7,11 @@
 \method{print}{episensr}(x, digits = getOption("digits"), ...)
 }
 \arguments{
-\item{x}{an object of class 'episensr'.}
+\item{x}{An object of class 'episensr'.}
 
-\item{digits}{minimal number of _significant_ digits, see 'print.default'.}
+\item{digits}{Minimal number of _significant_ digits, see 'print.default'.}
 
-\item{...}{other unused arguments.}
+\item{...}{Other unused arguments.}
 }
 \value{
 print the observed and adjusted measures of association.

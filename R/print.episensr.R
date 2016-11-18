@@ -2,9 +2,9 @@
 #'
 #' Print associations for episensr class.
 #'
-#' @param x an object of class 'episensr'.
-#' @param digits minimal number of _significant_ digits, see 'print.default'. 
-#' @param ... other unused arguments.
+#' @param x An object of class 'episensr'.
+#' @param digits Minimal number of _significant_ digits, see 'print.default'. 
+#' @param ... Other unused arguments.
 #'
 #' @return print the observed and adjusted measures of association.
 #'
