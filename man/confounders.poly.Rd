@@ -5,7 +5,7 @@
 \title{Sensitivity analysis to correct for unknown or unmeasured polychotomous confounding without effect modification}
 \usage{
 confounders.poly(case, exposed, type = c("RR", "OR", "RD"),
-  bias_parms = NULL, alpha = 0.05, dec = 4, print = TRUE)
+  bias_parms = NULL, alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -28,10 +28,6 @@ has 6 elements, in the following order:
 }}
 
 \item{alpha}{Significance level.}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
 A list with elements:

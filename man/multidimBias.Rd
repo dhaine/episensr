@@ -5,8 +5,8 @@
 \title{Multidimensional sensitivity analysis for different sources of bias}
 \usage{
 multidimBias(case, exposed, type = c("exposure", "outcome", "confounder",
-  "selection"), se = NULL, sp = NULL, bias = NULL, OR.sel = NULL,
-  alpha = 0.05, dec = 4, print = TRUE)
+  "selection"), se = NULL, sp = NULL, bias = NULL, bias_parms = NULL,
+  OR.sel = NULL, alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated
@@ -21,7 +21,9 @@ misclassification, unmeasured confounder, or selection bias.}
 
 \item{sp}{Numerci vector of specificities.}
 
-\item{bias}{List of bias parameters. The list is made of 3 vectors of the same
+\item{bias}{Deprecated, please use bias_parms instead.}
+
+\item{bias_parms}{List of bias parameters. The list is made of 3 vectors of the same
 length:
 \enumerate{
 \item Prevalence of Confounder in Exposure+ population,
@@ -66,7 +68,7 @@ multidimBias(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "confounder",
-bias = list(seq(.72, .92, by = .02),
+bias_parms = list(seq(.72, .92, by = .02),
 seq(.01, .11, by = .01), seq(.13, 1.13, by = .1)))
 multidimBias(matrix(c(136, 107, 297, 165),
 dimnames = list(c("Uveal Melanoma+", "Uveal Melanoma-"),

@@ -4,8 +4,7 @@
 \alias{selection}
 \title{Sensitivity analysis to correct for selection bias.}
 \usage{
-selection(case, exposed, selprob = NULL, alpha = 0.05, dec = 4,
-  print = TRUE)
+selection(case, exposed, selprob = NULL, bias_parms = NULL, alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated
@@ -13,7 +12,9 @@ against.}
 
 \item{exposed}{Exposure variable.}
 
-\item{selprob}{Numeric vector defining the selection probabilities. This vector has 4 elements between 0 and 1, in the following order:
+\item{selprob}{Deprecated, please use bias_parms instead.}
+
+\item{bias_parms}{Numeric vector defining the selection probabilities. This vector has 4 elements between 0 and 1, in the following order:
 \enumerate{
 \item Selection probability among cases exposed,
 \item Selection probability among cases unexposed,
@@ -22,10 +23,6 @@ against.}
 }}
 
 \item{alpha}{Significance level.}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
 A list with elements:
@@ -49,6 +46,6 @@ the selection proportions.
 selection(matrix(c(136, 107, 297, 165),
 dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
 nrow = 2, byrow = TRUE),
-selprob = c(.94, .85, .64, .25))
+bias_parms = c(.94, .85, .64, .25))
 }
 

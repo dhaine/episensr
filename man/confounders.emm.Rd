@@ -6,7 +6,7 @@
 effect modification}
 \usage{
 confounders.emm(case, exposed, type = c("RR", "OR", "RD"),
-  bias_parms = NULL, alpha = 0.05, dec = 4, print = TRUE)
+  bias_parms = NULL, alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -29,10 +29,6 @@ were not exposed,
 }}
 
 \item{alpha}{Significance level.}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
 A list with elements:
@@ -40,7 +36,7 @@ A list with elements:
 \item{cfder.data}{The same table for Confounder +.}
 \item{nocfder.data}{The same table for Confounder -.}
 \item{obs.measures}{A table of relative risk with confidence intervals; Total,
-for Confoundner +, and for Confounder -.}
+for Confounder +, and for Confounder -.}
 \item{adj.measures}{A table of Standardized Morbidity Ratio and Mantel-Haenszel
 estimates.}
 \item{bias.parms}{Input bias parameters.}

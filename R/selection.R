@@ -6,6 +6,7 @@
 #' @param case Outcome variable. If a variable, this variable is tabulated
 #' against.
 #' @param exposed Exposure variable.
+#' @param selprob Deprecated, please use bias_parms instead.
 #' @param bias_parms Numeric vector defining the selection probabilities. This vector has 4 elements between 0 and 1, in the following order:
 #' \enumerate{
 #' \item Selection probability among cases exposed,

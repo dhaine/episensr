@@ -6,7 +6,7 @@
 effect modification}
 \usage{
 confounders(case, exposed, type = c("RR", "OR", "RD"), bias_parms = NULL,
-  alpha = 0.05, dec = 4, print = TRUE)
+  alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -26,10 +26,6 @@ vector has 3 elements, in the following order:
 }}
 
 \item{alpha}{Significance level.}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
 A list with elements:

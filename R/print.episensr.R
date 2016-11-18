@@ -1,11 +1,12 @@
-#' Print association corrected for selection bias
+#' Print associations for episensr class
 #'
-#' Print association corrected for selection bias.
+#' Print associations for episensr class.
 #'
-#' @param x An object of class 'episensr'.
-#' @param ... Other unused arguments.
+#' @param x an object of class 'episensr'.
+#' @param digits minimal number of _significant_ digits, see 'print.default'. 
+#' @param ... other unused arguments.
 #'
-#' @return Print the observed and adjusted measures of association.
+#' @return print the observed and adjusted measures of association.
 #'
 #' @export
 print.episensr <- function(x, digits = getOption("digits"), ...) {
