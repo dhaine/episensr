@@ -20,7 +20,7 @@ test_that("Observed measures are correct for exposure misclassification", {
     model <- misclassification(matrix(c(215, 1449, 668, 4296),
                                          nrow = 2, byrow = TRUE),
                                   type = "exposure",
-                                  bias_parms = c(.78, .78, .99, .99), print = FALSE)
+                                  bias_parms = c(.78, .78, .99, .99))
     expect_equal(model$obs.measures[1, 1], 0.9654, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 2], 0.8524, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 3], 1.0933, tolerance = 1e-4, scale = 1)
@@ -33,7 +33,7 @@ test_that("Adjusted measures are correct for exposure misclassification", {
     model <- misclassification(matrix(c(215, 1449, 668, 4296),
                                          nrow = 2, byrow = TRUE),
                                   type = "exposure",
-                                  bias_parms = c(.78, .78, .99, .99), print = FALSE)
+                                  bias_parms = c(.78, .78, .99, .99))
     expect_equal(model$adj.measures[1], 0.9614, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2], 0.9491, tolerance = 1e-4, scale = 1)
 })
@@ -42,7 +42,7 @@ test_that("Observed measures are correct for outcome misclassification", {
     model <- misclassification(matrix(c(4558, 3428, 46305, 46085),
                                          nrow = 2, byrow = TRUE),
                                   type = "outcome",
-                                  bias_parms = c(.53, .53, .99, .99), print = FALSE)
+                                  bias_parms = c(.53, .53, .99, .99))
     expect_equal(model$obs.measures[1, 1], 1.2944, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 2], 1.2404, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 3], 1.3506, tolerance = 1e-4, scale = 1)
@@ -55,7 +55,7 @@ test_that("Adjusted measures are correct for outcome misclassification", {
     model <- misclassification(matrix(c(4558, 3428, 46305, 46085),
                                          nrow = 2, byrow = TRUE),
                                   type = "outcome",
-                                  bias_parms = c(.53, .53, .99, .99), print = FALSE)
+                                  bias_parms = c(.53, .53, .99, .99))
     expect_equal(model$adj.measures[1], 1.3440, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2], 1.4062, tolerance = 1e-4, scale = 1)
 })
