@@ -14,8 +14,6 @@
 #' \item Selection probability among noncases unexposed.
 #' }
 #' @param alpha Significance level.
-#' @param dec Number of decimals in the printout.
-#' @param print A logical scalar. Should the results be printed?
 #' 
 #' @return A list with elements:
 #' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
@@ -41,9 +39,7 @@ selection <- function(case,
                       exposed,
                       selprob = NULL,
                       bias_parms = NULL,
-                      alpha = 0.05,
-                      dec = 4,
-                      print = TRUE) {
+                      alpha = 0.05) {
     if (!missing(selprob)) {
         warning("argument selprob is deprecated; please use bias_parms instead.",
                 call. = FALSE)
@@ -103,43 +99,26 @@ selection <- function(case,
         } else {
         colnames(tab.corr) <- colnames(tab)
     }
-    if (print) 
-        cat("Observed Data:", "\n---------------------------------------------------", 
-            "\nOutcome   :", rownames(tab)[1],
-            "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-    if (print) 
-        print(round(tab, dec))
-    if (print)
-        cat("\nData Corrected for Selected Proportions:", "\n---------------------------------------------------\n\n")
-    if (print)
-        print(round(tab.corr, dec))
-    if (print) 
-        cat("\n")
     rmat <- rbind(c(rr, lci.rr, uci.rr), c(or, lci.or, uci.or))
     rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
-    colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
-        sep = ""), "interval")
+    colnames(rmat) <- c(" ",
+                        paste(100 * (alpha/2), "%", sep = ""),
+                        paste(100 * (1 - alpha/2), "%", sep = ""))
     rmatc <- rbind(rr.corr, or.corr)
     rownames(rmatc) <- c("Selection Bias Corrected Relative Risk:",
                          "   Selection Bias Corrected Odds Ratio:")
-    colnames(rmatc) <- ""
-    if (print) 
-        print(round(rmat, dec))
-    if (print)
-        cat("\n")
-    if (print)
-        print(round(rmatc, dec))
-    if (print)
-        cat("\n")
+    colnames(rmatc) <- " "
     bias <- rbind(bias_parms[1], bias_parms[2], bias_parms[3], bias_parms[4])
-    rownames(bias) <- c("     Selection probability among cases exposed:",
-                        "   Selection probability among cases unexposed:",
-                        "  Selection probability among noncases exposed:",
+    rownames(bias) <- c("Selection probability among cases exposed:",
+                        "Selection probability among cases unexposed:",
+                        "Selection probability among noncases exposed:",
                         "Selection probability among noncases unexposed:")
-    colnames(bias) <- ""
-    if (print)
-        print(bias)
-    invisible(list(obs.data = tab, corr.data = tab.corr,
-                   obs.measures = rmat, adj.measures = rmatc,
-                   bias.parms = bias))
+    colnames(bias) <- " "
+    res <- list(obs.data = tab,
+                corr.data = tab.corr,
+                obs.measures = rmat,
+                adj.measures = rmatc,
+                bias.parms = bias)
+    class(res) <- c("episensr", "list")
+    res
 }

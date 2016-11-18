@@ -18,8 +18,6 @@
 #' \item the prevalence of the confounder among the unexposed.
 #' }
 #' @param alpha Significance level.
-#' @param dec Number of decimals in the printout.
-#' @param print A logical scalar. Should the results be printed?
 #' 
 #' @return A list with elements:
 #' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
@@ -62,9 +60,7 @@ confounders <- function(case,
                         exposed,
                         type = c("RR", "OR", "RD"),
                         bias_parms = NULL,
-                        alpha = 0.05,
-                        dec = 4,
-                        print = TRUE){
+                        alpha = 0.05){
     if(length(type) > 1)
         stop('Choose between RR, OR, or RD implementation.')
 
@@ -149,52 +145,14 @@ confounders <- function(case,
         } else {
             colnames(tab.nocfder) <- colnames(tab)
         }
-        if (print)
-            cat("Observed Data:",
-                "\n--------------", 
-                "\nOutcome   :", rownames(tab)[1],
-                "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        if (print) 
-            print(round(tab, dec))
-        if (print)
-            cat("\nData, Counfounder +:",
-                "\n--------------------\n\n")
-        if (print)
-            print(round(tab.cfder, dec))
-        if (print)
-            cat("\nData, Counfounder -:",
-                "\n--------------------\n\n")
-        if (print)
-            print(round(tab.nocfder, dec))
-        if (print) 
-            cat("\n")
         rmat <- rbind(c(crude.rr, lci.crude.rr, uci.crude.rr))
-        rownames(rmat) <- c("        Crude Relative Risk:")
-        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
-                                               sep = ""), "interval")
+        colnames(rmat) <- c(" ",
+                            paste(100 * (alpha/2), "%", sep = ""),
+                            paste(100 * (1 - alpha/2), "%", sep = ""))
         rmatc <- rbind(c(SMRrr, RRadj.smr), c(MHrr, RRadj.mh))
-        rownames(rmatc) <- c("Standardized Morbidity Ratio", "Mantel-Haenszel")
-        colnames(rmatc) <- c("SMR_RR/MH_RR", "RRc")
-        if (print)
-            cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
-                "\n-----------------------------------------------------------------------------------\n\n")
-        if (print) 
-            print(round(rmat, dec))
-        if (print)
-            cat("Relative Risk, Confounder +:", round(cfder.rr, dec), "\nRelative Risk, Confounder -:", round(nocfder.rr, dec), "\n")
-        if (print)
-            cat("\nExposure-Outcome Relationship Adjusted for Confounder:",
-                "\n------------------------------------------------------\n\n")
-        if (print)
-            cat("Standardized Morbidity Ratio", "    SMRrr:", round(SMRrr, dec), "   RR adjusted using SMR estimate:", round(RRadj.smr, dec),
-                "\nMantel-Haenszel", "                  MHrr:", round(MHrr, dec), "    RR adjusted using MH estimate:", round(RRadj.mh, dec), "\n")
-        if (print)
-            cat("\nBias Parameters:",
-                "\n----------------\n\n")
-        if (print)
-            cat("p(Confounder+|Exposure+):", bias_parms[2],
-                "\np(Confounder+|Exposure-):", bias_parms[3],
-                "\n  RR(Confounder-Outcome):", bias_parms[1], "\n")
+        rownames(rmatc) <- c("Standardized Morbidity Ratio:",
+                             "             Mantel-Haenszel:")
+        colnames(rmatc) <- c(" ", "Adjusted RR")
         rmat <- rbind(rmat, c(cfder.rr, NA, NA), c(nocfder.rr, NA, NA))
         rownames(rmat) <- c("        Crude Relative Risk:",
                             "Relative Risk, Confounder +:",
@@ -259,52 +217,14 @@ confounders <- function(case,
         } else {
             colnames(tab.nocfder) <- colnames(tab)
         }
-        if (print) 
-            cat("Observed Data:",
-                "\n--------------", 
-                "\nOutcome   :", rownames(tab)[1],
-                "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        if (print) 
-            print(round(tab, dec))
-        if (print)
-            cat("\nData, Counfounder +:",
-                "\n--------------------\n\n")
-        if (print)
-            print(round(tab.cfder, dec))
-        if (print)
-            cat("\nData, Counfounder -:",
-                "\n--------------------\n\n")
-        if (print)
-            print(round(tab.nocfder, dec))
-        if (print) 
-            cat("\n")
         rmat <- rbind(c(crude.or, lci.crude.or, uci.crude.or))
-        rownames(rmat) <- c("        Crude Odds Ratio:")
-        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
-                                           sep = ""), "interval")
+        colnames(rmat) <- c(" ",
+                            paste(100 * (alpha/2), "%", sep = ""),
+                            paste(100 * (1 - alpha/2), "%", sep = ""))
         rmatc <- rbind(c(SMRor, ORadj.smr), c(MHor, ORadj.mh))
-        rownames(rmatc) <- c("Standardized Morbidity Ratio", "Mantel-Haenszel")
-        colnames(rmatc) <- c("SMR_OR/MH_OR", "ORc")
-        if (print)
-            cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
-                "\n-----------------------------------------------------------------------------------\n\n")
-        if (print) 
-            print(round(rmat, dec))
-        if (print)
-            cat("Odds Ratio, Confounder +:", round(cfder.or, dec), "\nOdds Ratio, Confounder -:", round(nocfder.or, dec), "\n")
-        if (print)
-            cat("\nExposure-Outcome Relationship Adjusted for Confounder:",
-                "\n------------------------------------------------------\n\n")
-        if (print)
-            cat("Standardized Morbidity Ratio", "    SMRor:", round(SMRor, dec), "   OR adjusted using SMR estimate:", round(ORadj.smr, dec),
-                "\nMantel-Haenszel", "                  MHor:", round(MHor, dec), "    OR adjusted using MH estimate:", round(ORadj.mh, dec), "\n")
-        if (print)
-            cat("\nBias Parameters:",
-                "\n----------------\n\n")
-        if (print)
-            cat("p(Confounder+|Exposure+):", bias_parms[2],
-                "\np(Confounder+|Exposure-):", bias_parms[3],
-                "\n  OR(Confounder-Outcome):", bias_parms[1], "\n")
+        rownames(rmatc) <- c("Standardized Morbidity Ratio:",
+                             "             Mantel-Haenszel:")
+        colnames(rmatc) <- c(" ", "Adjusted OR")
         rmat <- rbind(rmat, c(cfder.or, NA, NA), c(nocfder.or, NA, NA))
         rownames(rmat) <- c("        Crude Odds Ratio:",
                             "Odds Ratio, Confounder +:",
@@ -369,59 +289,24 @@ confounders <- function(case,
         } else {
             colnames(tab.nocfder) <- colnames(tab)
         }
-        if (print) 
-            cat("Observed Data:",
-                "\n--------------", 
-                "\nOutcome   :", rownames(tab)[1],
-                "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        if (print) 
-            print(round(tab, dec))
-        if (print)
-            cat("\nData, Counfounder +:",
-                "\n--------------------\n\n")
-        if (print)
-            print(round(tab.cfder, dec))
-        if (print)
-            cat("\nData, Counfounder -:",
-                "\n--------------------\n\n")
-        if (print)
-            print(round(tab.nocfder, dec))
-        if (print) 
-            cat("\n")
         rmat <- rbind(c(crude.rd, lci.crude.rd, uci.crude.rd))
-        rownames(rmat) <- c("        Crude Risk Difference:")
-        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
-                                           sep = ""), "interval")
+        colnames(rmat) <- c("     ",
+                            paste(100 * (alpha/2), "%", sep = ""),
+                            paste(100 * (1 - alpha/2), "%", sep = ""))
         rmatc <- rbind(c(MHrd, RDadj.mh))
-        rownames(rmatc) <- "Mantel-Haenszel"
-        colnames(rmatc) <- c("MH_RD", "RDc")
-        if (print)
-            cat("Crude and Unmeasured Confounder Specific Measures of Exposure-Outcome Relationship:",
-                "\n-----------------------------------------------------------------------------------\n\n")
-        if (print) 
-            print(round(rmat, dec))
-        if (print)
-            cat("Risk Difference, Confounder +:", round(cfder.rd, dec), "\nRisk Difference, Confounder -:", round(nocfder.rd, dec), "\n")
-        if (print)
-            cat("\nExposure-Outcome Relationship Adjusted for Confounder:",
-                "\n------------------------------------------------------\n\n")
-        if (print)
-            cat("\nMantel-Haenszel", "                  MHrd:", round(MHrd, dec), "   RD adjusted using MH estimate:", round(RDadj.mh, dec), "\n")
-        if (print)
-            cat("\nBias Parameters:",
-                "\n----------------\n\n")
-        if (print)
-            cat("p(Confounder+|Exposure+):", bias_parms[2],
-                "\np(Confounder+|Exposure-):", bias_parms[3],
-                "\n  RD(Confounder-Outcome):", bias_parms[1], "\n")
+        rownames(rmatc) <- "Mantel-Haenszel:"
+        colnames(rmatc) <- c(" ", "Adjusted RD")
         rmat <- rbind(rmat, c(cfder.rd, NA, NA), c(nocfder.rd, NA, NA))
         rownames(rmat) <- c("        Crude Risk Difference:",
                             "Risk Difference, Confounder +:",
                             "Risk Difference, Confounder -:")
     }
-    invisible(list(obs.data = tab,
-                   cfder.data = tab.cfder, nocfder.data = tab.nocfder,
-                   obs.measures = rmat,
-                   adj.measures = rmatc, 
-                   bias.parms = bias_parms))
+    res <- list(obs.data = tab,
+                cfder.data = tab.cfder,
+                nocfder.data = tab.nocfder,
+                obs.measures = rmat,
+                adj.measures = rmatc, 
+                bias.parms = bias_parms)
+    class(res) <- c("episensr", "list")
+    res
 }

@@ -23,8 +23,6 @@
 #' the outcome.
 #' }
 #' @param alpha Significance level.
-#' @param dec Number of decimals in the printout.
-#' @param print A logical scalar. Should the results be printed?
 #' 
 #' @return A list with elements:
 #' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
@@ -62,9 +60,7 @@ misclassification <- function(case,
                               type = c("exposure", "outcome"),
                               bias = NULL,
                               bias_parms = NULL,
-                              alpha = 0.05,
-                              dec = 4,
-                              print = TRUE){
+                              alpha = 0.05){
     if (!missing(bias)) {
         warning("Argument bias is deprecated; please use bias_parms instead.", 
                 call. = FALSE)
@@ -129,43 +125,15 @@ misclassification <- function(case,
         } else {
             colnames(corr.tab) <- colnames(tab)
         }
-        if (print)
-            cat("Observed Data:",
-                "\n--------------", 
-                "\nOutcome   :", rownames(tab)[1],
-                "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        if (print) 
-            print(round(tab, dec))
-        if (print)
-            cat("\nCorrected Data:",
-                "\n--------------------\n\n")
-        if (print)
-            print(round(corr.tab, dec))
-        if (print) 
-            cat("\n")
         rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr), c(obs.or, lci.obs.or, uci.obs.or))
-        rownames(rmat) <- c(" Observed Relative Risk:", "    Observed Odds Ratio:")
-        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
-                                               sep = ""), "interval")
+        rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
+        colnames(rmat) <- c(" ",
+                            paste(100 * (alpha/2), "%", sep = ""),
+                            paste(100 * (1 - alpha/2), "%", sep = ""))
         rmatc <- rbind(corr.rr, corr.or)
-        rownames(rmatc) <- c("Corrected Relative Risk:",
-                             "   Corrected Odds Ratio:")
-        if (print)
-            cat("Observed Measures of Exposure-Outcome Relationship:",
-                "\n-----------------------------------------------------------------------------------\n\n")
-        if (print) 
-            print(round(rmat, dec))
-        if (print)
-            cat("Corrected Relative Risk:", round(corr.rr, dec), "\n   Corrected Odds Ratio:", round(corr.or, dec), "\n")
-        if (print)
-            cat("\nBias Parameters:",
-                "\n----------------\n\n")
-        if (print)
-            cat("Se(Outcome+):", bias_parms[1],
-                "\nSe(Outcome-):", bias_parms[2],
-                "\nSp(Outcome+):", bias_parms[3],
-                "\nSp(Outcome-):", bias_parms[4],
-                "\n")
+        rownames(rmatc) <- c("Misclassification Bias Corrected Relative Risk:",
+                             "   Misclassification Bias Corrected Odds Ratio:")
+        colnames(rmatc) <- " "
     }
     
     if (type == "outcome"){
@@ -206,47 +174,21 @@ misclassification <- function(case,
         } else {
             colnames(corr.tab) <- colnames(tab)
         }
-        if (print) 
-            cat("Observed Data:",
-                "\n--------------", 
-                "\nOutcome   :", rownames(tab)[1],
-                "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        if (print) 
-            print(round(tab, dec))
-        if (print)
-            cat("\nCorrected Data:",
-                "\n--------------------\n\n")
-        if (print)
-            print(round(corr.tab, dec))
-        if (print) 
-            cat("\n")
         rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr), c(obs.or, lci.obs.or, uci.obs.or))
-        rownames(rmat) <- c(" Observed Relative Risk:", "    Observed Odds Ratio:")
-        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
-                                           sep = ""), "interval")
+        rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
+        colnames(rmat) <- c(" ",
+                            paste(100 * (alpha/2), "%", sep = ""),
+                            paste(100 * (1 - alpha/2), "%", sep = ""))
         rmatc <- rbind(corr.rr, corr.or)
-        rownames(rmatc) <- c("Corrected Relative Risk:",
-                             "   Corrected Odds Ratio:")
-        if (print)
-            cat("Observed Measures of Exposure-Outcome Relationship:",
-                "\n-----------------------------------------------------------------------------------\n\n")
-        if (print) 
-            print(round(rmat, dec))
-        if (print)
-            cat("Corrected Relative Risk:", round(corr.rr, dec), "\n   Corrected Odds Ratio:", round(corr.or, dec), "\n")
-        if (print)
-            cat("\nBias Parameters:",
-                "\n----------------\n\n")
-        if (print)
-            cat("Se(Exposure+):", bias_parms[1],
-                "\nSe(Exposure-):", bias_parms[2],
-                "\nSp(Exposure+):", bias_parms[3],
-                "\nSp(Exposure-):", bias_parms[4],
-                "\n")
+        rownames(rmatc) <- c("Misclassification Bias Corrected Relative Risk:",
+                             "   Misclassification Bias Corrected Odds Ratio:")
+        colnames(rmatc) <- " "
     }
-    invisible(list(obs.data = tab,
-                   corr.data = corr.tab,
-                   obs.measures = rmat, 
-                   adj.measures = rmatc,
-                   bias.parms = bias_parms))
+    res <- list(obs.data = tab,
+                corr.data = corr.tab,
+                obs.measures = rmat, 
+                adj.measures = rmatc,
+                bias.parms = bias_parms)
+    class(res) <- c("episensr", "list")
+    res
 }
