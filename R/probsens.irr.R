@@ -26,8 +26,6 @@
 #' @param corr.sp Correlation between case and non-case specificities.
 #' @param discard A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.
 #' @param alpha Significance level.
-#' @param dec Number of decimals in the printout.
-#' @param print A logical scalar. Should the results be printed?
 #'
 #' @return A list with elements:
 #' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
@@ -63,9 +61,7 @@ probsens.irr <- function(counts,
                          corr.se = NULL,
                          corr.sp = NULL,
                          discard = TRUE,
-                         alpha = 0.05,
-                         dec = 4,
-                         print = TRUE){
+                         alpha = 0.05){
     if(reps < 1)
         stop(paste("Invalid argument: reps = ", reps))
     
@@ -523,40 +519,19 @@ probsens.irr <- function(counts,
         rownames(tab) <- c("Cases", "Person-time")
     if (is.null(colnames(tab)))
         colnames(tab) <- c("Exposed", "Unexposed")
-    if (print) {
-        cat("Observed Data:",
-            "\n-------------------------",
-            "\n\n")
-        print(round(tab, dec))
-        cat("\n")
-    }
-    rmat <- data.frame(obs.irr, lci.obs.irr, uci.obs.irr)
-    rownames(rmat) <- " Observed Incidence Rate ratio:"
-    colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
-                                       sep = ""), "interval")
-    if (print) {
-        cat("Observed Measures:",
-            "\n-----------------------------------------------------\n\n")
-        print(round(rmat, dec))
-        cat("\n")
-    }
+    rmat <- matrix(c(obs.irr, lci.obs.irr, uci.obs.irr), nrow = 1)
+    rownames(rmat) <- " Observed Incidence Rate Ratio:"
+    colnames(rmat) <- c(" ",
+                        paste(100 * (alpha/2), "%", sep = ""),
+                        paste(100 * (1 - alpha/2), "%", sep = ""))
     rmatc <- rbind(corr.irr, tot.irr)
     rownames(rmatc) <- c("           Incidence Rate Ratio -- systematic error:",
                          "Incidence Rate Ratio -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
-    if (print) {
-        print(round(rmatc, dec))
-        cat("\nBias Parameters:",
-            "\n----------------\n\n")
-        cat("   Se|Cases:", seca.parms[[1]], "(", seca.parms[[2]], ")",
-            "\n   Sp|Cases:", spca.parms[[1]], "(", spca.parms[[2]], ")",
-            "\nSe|No-cases:", seexp.parms[[1]], "(", seexp.parms[[2]], ")",
-            "\nSp|No-cases:", spexp.parms[[1]], "(", spexp.parms[[2]], ")",
-            "\nDiscard negative adjusted counts:", discard,
-            "\n")
-    }
-    invisible(list(obs.data = tab,
-                   obs.measures = rmat, 
-                   adj.measures = rmatc,
-                   sim.df = as.data.frame(draws[, -11])))
+    res <- list(obs.data = tab,
+                obs.measures = rmat, 
+                adj.measures = rmatc,
+                sim.df = as.data.frame(draws[, -11]))
+    class(res) <- c("episensr", "list")
+    res
 }
