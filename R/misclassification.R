@@ -10,6 +10,7 @@
 #' sensitivity and specificity: nondifferential and independent errors,
 #' \item Outcome: bias analysis for outcome misclassification.
 #' }
+#' @param bias Deprecated, please use bias_parms instead.
 #' @param bias_parms Vector defining the bias parameters. This vector has 4 elements
 #' between 0 and 1, in the following order:
 #' \enumerate{

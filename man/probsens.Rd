@@ -10,7 +10,7 @@ probsens(case, exposed, type = c("exposure", "outcome"), reps = 1000,
   seexp.parms = NULL, spca.parms = list(dist = c("constant", "uniform",
   "triangular", "trapezoidal", "logit-logistic", "logit-normal"), parms = NULL),
   spexp.parms = NULL, corr.se = NULL, corr.sp = NULL, discard = TRUE,
-  alpha = 0.05, dec = 4, print = TRUE)
+  alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -44,10 +44,6 @@ probsens(case, exposed, type = c("exposure", "outcome"), reps = 1000,
 \item{discard}{A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.}
 
 \item{alpha}{Significance level.}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
 A list with elements:

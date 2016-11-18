@@ -10,7 +10,7 @@ probsens.irr.conf(counts, pt = NULL, reps = 1000, prev.exp = list(dist =
   "uniform", "triangular", "trapezoidal", "logit-logistic", "logit-normal"),
   parms = NULL), risk = list(dist = c("constant", "uniform", "triangular",
   "trapezoidal", "log-logistic", "log-normal"), parms = NULL), corr.p = NULL,
-  alpha = 0.05, dec = 4, print = TRUE)
+  alpha = 0.05)
 }
 \arguments{
 \item{counts}{A table or matrix where first row contains disease counts and second row contains person-time at risk, and first and second columns are exposed and unexposed observations, as:
@@ -49,10 +49,6 @@ Person-time \tab N1 \tab N0
 \item{corr.p}{Correlation between the exposure-specific confounder prevalences.}
 
 \item{alpha}{Significance level.}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
 A list with elements:

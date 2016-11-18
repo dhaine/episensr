@@ -6,7 +6,7 @@
 \usage{
 probsens.sel(case, exposed, reps = 1000, or.parms = list(dist =
   c("constant", "uniform", "triangular", "trapezoidal", "logit-logistic",
-  "logit-normal"), parms = NULL), alpha = 0.05, dec = 4, print = TRUE)
+  "logit-normal"), parms = NULL), alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -26,10 +26,6 @@ probsens.sel(case, exposed, reps = 1000, or.parms = list(dist =
 }}
 
 \item{alpha}{Significance level.}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
 A list with elements:

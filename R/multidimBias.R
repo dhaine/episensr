@@ -9,6 +9,7 @@
 #' misclassification, unmeasured confounder, or selection bias.
 #' @param se Numeric vector of sensitivities.
 #' @param sp Numerci vector of specificities.
+#' @param bias Deprecated, please use bias_parms instead.
 #' @param bias_parms List of bias parameters. The list is made of 3 vectors of the same
 #' length:
 #' \enumerate{
