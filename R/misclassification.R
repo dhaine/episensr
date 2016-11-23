@@ -190,6 +190,6 @@ misclassification <- function(case,
                 obs.measures = rmat, 
                 adj.measures = rmatc,
                 bias.parms = bias_parms)
-    class(res) <- c("episensr", "list")
+    class(res) <- c("episensr", "episensr.boot", "list")
     res
 }
