@@ -48,7 +48,7 @@ selection <- function(case,
     }
     if(is.null(bias_parms))
         bias_parms <- c(1, 1, 1, 1)
-    else bias_pamrs <- bias_parms
+    else bias_parms <- bias_parms
     if(!is.vector(bias_parms))
         stop('The argument bias_parms should be a vector of length 4')
     if(length(bias_parms) != 4)
@@ -109,17 +109,12 @@ selection <- function(case,
     rownames(rmatc) <- c("Selection Bias Corrected Relative Risk:",
                          "   Selection Bias Corrected Odds Ratio:")
     colnames(rmatc) <- " "
-    bias <- rbind(bias_parms[1], bias_parms[2], bias_parms[3], bias_parms[4])
-    rownames(bias) <- c("Selection probability among cases exposed:",
-                        "Selection probability among cases unexposed:",
-                        "Selection probability among noncases exposed:",
-                        "Selection probability among noncases unexposed:")
-    colnames(bias) <- " "
-    res <- list(obs.data = tab,
+    res <- list(model = "selection",
+                obs.data = tab,
                 corr.data = tab.corr,
                 obs.measures = rmat,
                 adj.measures = rmatc,
-                bias.parms = bias)
-    class(res) <- c("episensr", "list")
+                bias.parms = bias_parms)
+    class(res) <- c("episensr", "episensr.boot", "list")
     res
 }

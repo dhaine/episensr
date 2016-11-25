@@ -8,7 +8,9 @@ Imports:
     plyr,
     ggplot2,
     grid,
-    gridExtra
+    gridExtra,
+    reshape,
+    boot
 Date: 2016-02-02
 Authors@R: person("Denis", "Haine", email = "denis.haine@gmail.com",
                   role = c("aut", "cre"))
