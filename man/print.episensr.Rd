@@ -14,9 +14,9 @@
 \item{...}{Other unused arguments.}
 }
 \value{
-print the observed and adjusted measures of association.
+Print the observed and adjusted measures of association.
 }
 \description{
-Print associations for episensr class.
+Print associations for episensr objects.
 }
 

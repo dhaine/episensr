@@ -185,7 +185,9 @@ misclassification <- function(case,
                              "   Misclassification Bias Corrected Odds Ratio:")
         colnames(rmatc) <- " "
     }
-    res <- list(obs.data = tab,
+    res <- list(model = "misclassification",
+                type = type,
+                obs.data = tab,
                 corr.data = corr.tab,
                 obs.measures = rmat, 
                 adj.measures = rmatc,
