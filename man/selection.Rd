@@ -31,6 +31,7 @@ A list with elements:
 \item{obs.measures}{A table of odds ratios and relative risk with confidence intervals.}
 \item{adj.measures}{Selection bias corrected measures of outcome-exposure relationship.}
 \item{bias.parms}{Input bias parameters: selection probabilities.}
+\item{selbias.or}{Selection bias odds ratio based on the bias parameters chosen.}
 }
 \description{
 Simple sensitivity analysis to correct for selection bias using estimates of
