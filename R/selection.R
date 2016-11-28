@@ -22,6 +22,7 @@
 #' \item{obs.measures}{A table of odds ratios and relative risk with confidence intervals.}
 #' \item{adj.measures}{Selection bias corrected measures of outcome-exposure relationship.}
 #' \item{bias.parms}{Input bias parameters: selection probabilities.}
+#' \item{selbias.or}{Selection bias odds ratio based on the bias parameters chosen.}
 #'
 #' @examples
 #' # The data for this example come from:
@@ -109,12 +110,14 @@ selection <- function(case,
     rownames(rmatc) <- c("Selection Bias Corrected Relative Risk:",
                          "   Selection Bias Corrected Odds Ratio:")
     colnames(rmatc) <- " "
+    selbias <- (bias_parms[1] * bias_parms[4]) / (bias_parms[2] * bias_parms[3])
     res <- list(model = "selection",
                 obs.data = tab,
                 corr.data = tab.corr,
                 obs.measures = rmat,
                 adj.measures = rmatc,
-                bias.parms = bias_parms)
+                bias.parms = bias_parms,
+                selbias.or = selbias)
     class(res) <- c("episensr", "episensr.boot", "list")
     res
 }
