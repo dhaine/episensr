@@ -20,9 +20,9 @@ susceptible to systematic errors as well, from selection bias to the presence of
 misclassification).
 Bias analysis methods were compiled by Lash et al. in their
 book
-[Applying Quantitative Bias Analysis to Epidemiologic Data"](https://www.springer.com/us/book/9780387879604).
+["Applying Quantitative Bias Analysis to Epidemiologic Data"](https://www.springer.com/us/book/9780387879604).
 This package implements the various bias analyses from that book, which are also
-(available)[https://sites.google.com/site/biasanalysis/] (for some) as a
+[available](https://sites.google.com/site/biasanalysis/) (for some) as a
 spreadsheet or a SAS macro.
 This vignette provides some examples on how to use the package.
 
@@ -64,22 +64,20 @@ argument `bias_parms`, a vector with the 4 probabilities (guided by the
 participation rates in cases and controls) in the following order: among cases
 exposed, among cases unexposed, among noncases exposed, and among noncases
 unexposed.
-The output shows the observed 2X2 table, the same table corrected for
-the selection proportions, the observed odds ratio (and relative risk) followed
-by the corrected ones, and the input parameters, including the selection bias
-odds ratio.
+The output shows the observed 2X2 table and the observed odds ratio (and relative
+risk), followed by the corrected ones.
 
 ## Uncontrolled Confounders
 
-We will use date from a cross-sectional study by
+We will use data from a cross-sectional study by
 [Tyndall et al.](http://www.ncbi.nlm.nih.gov/pubmed/8879763) on the association
 between male circumcision and the risk of acquiring HIV, which might be
 confounded by religion.
 The code to account for unmeasured or unknown confounders is the following,
 where the 2X2 table is given as a matrix.
-We choose a risk ratio implementation, provide a vector defining the prevalence
-of the confounder, religion, among the exposed and the unexposed, and give the
-risk ratio associating the confounder with the disease.
+We choose a risk ratio implementation, provide a vector defining the risk ratio
+associating the confounder with the disease, and the prevalence of the
+confounder, religion, among the exposed and the unexposed.
 
 ```{r confounders}
 confounders(matrix(c(105, 85, 527, 93),
@@ -89,20 +87,15 @@ confounders(matrix(c(105, 85, 527, 93),
             bias_parms = c(.63, .8, .05))
 ```
 
-The output gives the crude 2X2 table, the 2X2 tables by levels of the
-confounder, the crude relative risk and confounder specific measures of
+The output gives the crude 2X2 table, the crude relative risk and confounder specific measures of
 association between exposure and outcome, and the relationship adjusted for the
 unknown confounder, using a standardized morbidity ratio (SMR) or a
 Mantel-Haenszel (MH) estimate of the risk ratio.
-Finally, the bias parameters are shown: the association between the confounder
-and the outcome among those who were not exposed, the prevalence of the
-confounder among the exposed, and the prevalence of the confounder among the
-unexposed.
 
 ## Probabilistic Sensitivity Analysis for Exposure Misclassification
 
 We use a study on the effect of smoking during pregnancy on breast cancer risk
-([Fink & Lash](http://www.ncbi.nlm.nih.gov/pubmed/12946045), where we assume
+by [Fink & Lash](http://www.ncbi.nlm.nih.gov/pubmed/12946045), where we assume
 nondifferential misclassification of the exposure, smoking, with probability
 density functions for sensitivities (Se) and specificities (Sp) among cases and
 noncases equal to uniform distributions with a minimum of 0.7 and a maximum of
@@ -119,6 +112,7 @@ By avoiding to provide information on the noncases (`seexp`, `spexp`), we are
 referring to a nondifferential misclassification.
 
 ```{r probsens}
+set.seed(123)
 smoke.nd <- probsens(matrix(c(215, 1449, 668, 4296),
                             dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")),
                             nrow = 2, byrow = TRUE),
@@ -126,13 +120,14 @@ smoke.nd <- probsens(matrix(c(215, 1449, 668, 4296),
                      reps = 10000,
                      seca.parms = list("uniform", c(.7, .95)),
                      spca.parms = list("uniform", c(.9, .99)))
+smoke.nd
 ```
 
 The output gives the 2X2 table, the observed measures of association, and the
 corrected measures of association.
 
-We saved the `probsens` analysis in a new variable `smoke.nd`.
-We can see the element of the object `probsens` with the function `str()`:
+We saved the `probsens` analysis in a new object `smoke.nd`.
+We can see its elements with the function `str()`:
 
 ```{r str}
 str(smoke.nd)
@@ -146,10 +141,10 @@ We have `smoke.nd$obs.data` where we have the observed 2X2 table,
 `smoke.nd$sim.df`, a data frame with the simulated variables from each
 replication, like the Se and Sp, the 4 cells of the adjusted 2X2 table, and the
 adjusted measures.
-We can plot the Se prior distribution (not forgetting to discard the draws that
+We can plot the Se prior distribution (and not forgetting to discard the draws that
 led to negative adjustments).
 
-```{r plot}
+```{r plot, fig.cap = "Sensibility prior distribution."}
 hist(smoke.nd$sim.df[!is.na(smoke.nd$sim.df$corr.RR), ]$seca,
      breaks = seq(0.65, 1, 0.01),
      col = "lightgreen",
@@ -163,22 +158,32 @@ Selection and misclassification bias models can be bootstrapped in order to get
 confidence interval on the adjusted association parameter.
 We can use the ICU dataset from Hosmer and
 Lemeshow
-[Applied Logistic Regression](http://ca.wiley.com/WileyCDA/WileyTitle/productCd-0470582472.html) textbook.
+[Applied Logistic Regression](http://ca.wiley.com/WileyCDA/WileyTitle/productCd-0470582472.html) textbook
+as an example.
+The replicates that give negative cells in the adjusted 2X2 table are silently
+ignored and the number of effective bootstrap replicates is provided in the
+output.
 
 ```{r, boot}
 library(aplore3)  # to get ICU data
 data(icu)
 
+## First run the model
 misclass_eval <- misclassification(icu$sta, icu$inf,
                                    type = "exposure",
                                    bias_parms = c(.75, .85, .9, .95))
 misclass_eval
+
+## Then bootstrap it
 set.seed(123)
 misclass_boot <- boot.bias(misclass_eval, R = 10000)
 misclass_boot
 ```
 
-```{r, boot_fig, fig.cap = "Bootstrap confidence interval.", warning=F}
+Bootstrap replicates can also be plotted, with the confidence interval shown as
+dotted lines.
+
+```{r, boot_fig, fig.cap = "Bootstrap replicates and confidence interval.", warning=F}
 plot(misclass_boot, "rr")
 ```
 
