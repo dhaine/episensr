@@ -6,22 +6,19 @@
 #' @param exposed Exposure variable.
 #' @param type Choice of misclassification:
 #' \enumerate{
-#' \item Exposure: bias analysis for exposure misclassification; corrections using
+#' \item exposure: bias analysis for exposure misclassification; corrections using
 #' sensitivity and specificity: nondifferential and independent errors,
-#' \item Outcome: bias analysis for outcome misclassification.
+#' \item outcome: bias analysis for outcome misclassification.
+#' \item confounder: bias analysis for confounder misclassification.
 #' }
 #' @param bias Deprecated, please use bias_parms instead.
 #' @param bias_parms Vector defining the bias parameters. This vector has 4 elements
 #' between 0 and 1, in the following order:
 #' \enumerate{
-#' \item Sensitivity of exposure (or outcome) classification among those with the
-#' outcome,
-#' \item Sensitivity of exposure (or outcome) classification among those without
-#' the outcome,
-#' \item Specificity of exposure (or outcome) classification among those with the
-#' outcome,and
-#' \item Specificity of exposure (or outcome) classification among those without
-#' the outcome.
+#' \item Sensitivity of exposure (or outcome, or confounder) classification among those with the outcome,
+#' \item Sensitivity of exposure (or outcome, or confounder) classification among those without the outcome,
+#' \item Specificity of exposure (or outcome, or confounder) classification among those with the outcome,and
+#' \item Specificity of exposure (or outcome, or confounder) classification among those without the outcome.
 #' }
 #' @param alpha Significance level.
 #' 
@@ -58,7 +55,7 @@
 #' @importFrom stats qnorm
 misclassification <- function(case,
                               exposed,
-                              type = c("exposure", "outcome"),
+                              type = c("exposure", "outcome", "confounder"),
                               bias = NULL,
                               bias_parms = NULL,
                               alpha = 0.05){
@@ -71,7 +68,7 @@ misclassification <- function(case,
         bias_parms <- c(1, 1, 1, 1)
     else bias_parms <- bias_parms
     if(length(bias_parms) != 4)
-        stop('The argument bias_parms should be made of the following components: (1) Sensitivity of exposure classification among those with the outcome, (2) Sensitivity of exposure classification among those without the outcome, (3) Specificity of exposure classification among those with the outcome, and (4) Specificity of exposure classification among those without the outcome.')
+        stop('The argument bias_parms should be made of the following components: (1) Sensitivity of classification among those with the outcome, (2) Sensitivity of classification among those without the outcome, (3) Specificity of classification among those with the outcome, and (4) Specificity of classification among those without the outcome.')
     if(!all(bias_parms >= 0 & bias_parms <=1))
         stop('Bias parameters should be between 0 and 1.')
 
@@ -185,6 +182,56 @@ misclassification <- function(case,
                              "   Misclassification Bias Corrected Odds Ratio:")
         colnames(rmatc) <- " "
     }
+
+    if (type == "confounder") {
+        obs.rr <- (a/(a + c)) / (b/(b + d))
+        se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
+        lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha/2) * se.log.obs.rr)
+        uci.obs.rr <- exp(log(obs.rr) + qnorm(1 - alpha/2) * se.log.obs.rr)
+
+        obs.or <- (a/b) / (c/d)
+        se.log.obs.or <- sqrt(1/a + 1/b + 1/c + 1/d)
+        lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
+        uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
+
+        Ac1 <- (a - (1 - bias_parms[3]) * (a + b)) / (bias_parms[1] - (1 - bias_parms[3]))
+        C <- (c - (1 - bias_parms[4]) * (c + d)) / (bias_parms[2] - (1 - bias_parms[4]))
+        B <- (a + b) - A
+        D <- (c + d) - C
+
+        if(A < 1 | B < 1 | C < 1 | D < 1)
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table.')
+        
+        corr.tab <- matrix(c(A, B, C, D), nrow = 2, byrow = TRUE)
+
+        corr.rr <- (A/(A + C)) / (B/(B + D))
+        corr.or <- (A/B) / (C/D)
+
+        if (is.null(rownames(tab)))
+            rownames(tab) <- paste("Row", 1:2)
+        if (is.null(colnames(tab)))
+            colnames(tab) <- paste("Col", 1:2)
+        if (is.null(rownames(tab))){
+            rownames(corr.tab) <- paste("Row", 1:2)
+        } else {
+            rownames(corr.tab) <- row.names(tab)
+        }
+        if (is.null(colnames(tab))){
+            colnames(corr.tab) <- paste("Col", 1:2)
+        } else {
+            colnames(corr.tab) <- colnames(tab)
+        }
+        rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr), c(obs.or, lci.obs.or, uci.obs.or))
+        rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
+        colnames(rmat) <- c(" ",
+                            paste(100 * (alpha/2), "%", sep = ""),
+                            paste(100 * (1 - alpha/2), "%", sep = ""))
+        rmatc <- rbind(corr.rr, corr.or)
+        rownames(rmatc) <- c("Misclassification Bias Corrected Relative Risk:",
+                             "   Misclassification Bias Corrected Odds Ratio:")
+        colnames(rmatc) <- " "
+    }
+
     res <- list(model = "misclassification",
                 type = type,
                 obs.data = tab,
