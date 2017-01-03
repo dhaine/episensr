@@ -1,0 +1,189 @@
+---
+title: "Quantitative Bias Analysis for Epidemiologic Data"
+author: "Denis Haine"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Quantitative Bias Analysis for Epidemiologic Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Quantitative bias analysis allows to estimate nonrandom errors in epidemiologic
+studies, assessing the magnitude and direction of biases, and quantifying their
+uncertainties.
+Every study has some random error due to its limited sample size, and is
+susceptible to systematic errors as well, from selection bias to the presence of
+(un)known confounders or information bias (measurement error, including
+misclassification).
+Bias analysis methods were compiled by Lash et al. in their
+book
+["Applying Quantitative Bias Analysis to Epidemiologic Data"](https://www.springer.com/us/book/9780387879604).
+This package implements the various bias analyses from that book, which are also
+[available](https://sites.google.com/site/biasanalysis/) (for some) as a
+spreadsheet or a SAS macro.
+This vignette provides some examples on how to use the package.
+
+## Selection Bias
+
+We will use a case-control study by
+[Stang et al.](http://www.ncbi.nlm.nih.gov/pubmed/16523014) on the relation
+between mobile phone use and uveal melanoma.
+The observed odds ratio for the association between regular mobile phone use vs.
+no mobile phone use with uveal melanoma incidence is 0.71 [95% CI 0.51-0.97].
+But there was a substantial difference in participation rates between cases and
+controls (94% vs 55%, respectively) and so selection bias could have an impact
+on the association estimate.
+The 2X2 table for this study is the following:
+
+|          | Regular use | No use |
+|---------:|:-----------:|:------:|
+| Cases    | 136         | 107    |
+| Controls | 297         | 165    |
+
+We use the function `selection` as shown below.
+
+```{r selection}
+library(episensr)
+
+stang <- selection(matrix(c(136, 107, 297, 165),
+                          dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
+                          nrow = 2, byrow = TRUE),
+                   bias_parms = c(.94, .85, .64, .25))
+stang
+```
+
+The various `episensr` functions return an object which is a list containing the
+input and output variables.
+You can check it out with `str()`.
+
+The 2X2 table is provided as a matrix and selection probabilities given with the
+argument `bias_parms`, a vector with the 4 probabilities (guided by the
+participation rates in cases and controls) in the following order: among cases
+exposed, among cases unexposed, among noncases exposed, and among noncases
+unexposed.
+The output shows the observed 2X2 table and the observed odds ratio (and relative
+risk), followed by the corrected ones.
+
+## Uncontrolled Confounders
+
+We will use data from a cross-sectional study by
+[Tyndall et al.](http://www.ncbi.nlm.nih.gov/pubmed/8879763) on the association
+between male circumcision and the risk of acquiring HIV, which might be
+confounded by religion.
+The code to account for unmeasured or unknown confounders is the following,
+where the 2X2 table is given as a matrix.
+We choose a risk ratio implementation, provide a vector defining the risk ratio
+associating the confounder with the disease, and the prevalence of the
+confounder, religion, among the exposed and the unexposed.
+
+```{r confounders}
+confounders(matrix(c(105, 85, 527, 93),
+                   dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+                   nrow = 2, byrow = TRUE),
+            type = "RR",
+            bias_parms = c(.63, .8, .05))
+```
+
+The output gives the crude 2X2 table, the crude relative risk and confounder specific measures of
+association between exposure and outcome, and the relationship adjusted for the
+unknown confounder, using a standardized morbidity ratio (SMR) or a
+Mantel-Haenszel (MH) estimate of the risk ratio.
+
+## Probabilistic Sensitivity Analysis for Exposure Misclassification
+
+We use a study on the effect of smoking during pregnancy on breast cancer risk
+by [Fink & Lash](http://www.ncbi.nlm.nih.gov/pubmed/12946045), where we assume
+nondifferential misclassification of the exposure, smoking, with probability
+density functions for sensitivities (Se) and specificities (Sp) among cases and
+noncases equal to uniform distributions with a minimum of 0.7 and a maximum of
+0.95 for sensitivities (0.9 and 0.99 respectively for specificities).
+We choose to correct for exposure misclassification with the argument `type =
+exposure`.
+We ask for 10000 replications (default is 1000).
+The Se and Sp for cases (`seca`, `spca`) are given as a list with its first
+element referring to the type of distribution (choice between constant, uniform,
+triangular, trapezoidal, logit-logistic, and logit-normal) and the second
+element giving the distribution parameters (min and max for uniform
+distribution).
+By avoiding to provide information on the noncases (`seexp`, `spexp`), we are
+referring to a nondifferential misclassification.
+
+```{r probsens}
+set.seed(123)
+smoke.nd <- probsens(matrix(c(215, 1449, 668, 4296),
+                            dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")),
+                            nrow = 2, byrow = TRUE),
+                     type = "exposure",
+                     reps = 10000,
+                     seca.parms = list("uniform", c(.7, .95)),
+                     spca.parms = list("uniform", c(.9, .99)))
+smoke.nd
+```
+
+The output gives the 2X2 table, the observed measures of association, and the
+corrected measures of association.
+
+We saved the `probsens` analysis in a new object `smoke.nd`.
+We can see its elements with the function `str()`:
+
+```{r str}
+str(smoke.nd)
+```
+
+`smoke.nd` is a list of 4 elements where different information on the analysis
+done are saved.
+We have `smoke.nd$obs.data` where we have the observed 2X2 table,
+`smoke.nd$obs.measures` (the observed measures of association),
+`smoke.nd$adj.measures` (the adjusted measures of association), and
+`smoke.nd$sim.df`, a data frame with the simulated variables from each
+replication, like the Se and Sp, the 4 cells of the adjusted 2X2 table, and the
+adjusted measures.
+We can plot the Se prior distribution (and not forgetting to discard the draws that
+led to negative adjustments).
+
+```{r plot, fig.cap = "Sensibility prior distribution."}
+hist(smoke.nd$sim.df[!is.na(smoke.nd$sim.df$corr.RR), ]$seca,
+     breaks = seq(0.65, 1, 0.01),
+     col = "lightgreen",
+     main = NULL,
+     xlab = "Sensitivity for Cases")
+```
+
+## Bootstrapping
+
+Selection and misclassification bias models can be bootstrapped in order to get
+confidence interval on the adjusted association parameter.
+We can use the ICU dataset from Hosmer and
+Lemeshow
+[Applied Logistic Regression](http://ca.wiley.com/WileyCDA/WileyTitle/productCd-0470582472.html) textbook
+as an example.
+The replicates that give negative cells in the adjusted 2X2 table are silently
+ignored and the number of effective bootstrap replicates is provided in the
+output.
+
+```{r, boot}
+library(aplore3)  # to get ICU data
+data(icu)
+
+## First run the model
+misclass_eval <- misclassification(icu$sta, icu$inf,
+                                   type = "exposure",
+                                   bias_parms = c(.75, .85, .9, .95))
+misclass_eval
+
+## Then bootstrap it
+set.seed(123)
+misclass_boot <- boot.bias(misclass_eval, R = 10000)
+misclass_boot
+```
+
+Bootstrap replicates can also be plotted, with the confidence interval shown as
+dotted lines.
+
+```{r, boot_fig, fig.cap = "Bootstrap replicates and confidence interval.", warning=F}
+plot(misclass_boot, "rr")
+```
+
