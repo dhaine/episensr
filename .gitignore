@@ -2,6 +2,6 @@
 
 /.projectile
 /planning
-
 *~
 .#*
+inst/doc

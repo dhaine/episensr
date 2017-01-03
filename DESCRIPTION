@@ -25,5 +25,8 @@ Depends:
     R (>= 3.2.3)
 License: GPL-2
 Suggests:
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 RoxygenNote: 5.0.1
+VignetteBuilder: knitr
