@@ -1,9 +1,3 @@
----
-output:
-  md_document:
-    variant: markdown_github
----
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 
@@ -50,58 +44,30 @@ library(episensr)
 selection(matrix(c(136, 107, 297, 165),
                  dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
                  nrow = 2, byrow = TRUE),
-          selprob = c(.94, .85, .64, .25))
-#> Observed Data: 
-#> --------------------------------------------------- 
-#> Outcome   : UM+ 
-#> Comparing : Mobile+ vs. Mobile- 
+          bias_parms = c(.94, .85, .64, .25))
+#> --Observed data-- 
+#>          Outcome: UM+ 
+#>        Comparing: Mobile+ vs. Mobile- 
 #> 
 #>     Mobile+ Mobile-
 #> UM+     136     107
 #> UM-     297     165
 #> 
-#> Data Corrected for Selected Proportions: 
-#> ---------------------------------------------------
-#> 
-#>      Mobile+  Mobile-
-#> UM+ 144.6809 125.8824
-#> UM- 464.0625 660.0000
-#> 
-#>                                95% conf. interval
-#> Observed Relative Risk: 0.7984    0.6518   0.9780
-#>    Observed Odds Ratio: 0.7061    0.5144   0.9693
-#> 
-#>                                           [,1]
-#> Selection Bias Corrected Relative Risk: 1.4838
-#>    Selection Bias Corrected Odds Ratio: 1.6346
-#> 
-#>                                                 [,1]
-#>      Selection probability among cases exposed: 0.94
-#>    Selection probability among cases unexposed: 0.85
-#>   Selection probability among noncases exposed: 0.64
-#> Selection probability among noncases unexposed: 0.25
+#>                                        2.5%     97.5%
+#> Observed Relative Risk: 0.7984287 0.6518303 0.9779975
+#>    Observed Odds Ratio: 0.7061267 0.5143958 0.9693215
+#> ---
+#>                                                 
+#> Selection Bias Corrected Relative Risk: 1.483780
+#>    Selection Bias Corrected Odds Ratio: 1.634608
 ```
 
 The 2X2 table is provided as a matrix and selection probabilities given with the
-argument selprob, a vector with the 4 probabilities (guided by the participation
+argument `bias_parms`, a vector with the 4 probabilities (guided by the participation
 rates in cases and controls) in the following order: among cases exposed, among
 cases unexposed, among noncases exposed, and among noncases unexposed.
-The output shows the observed 2X2 table, the same table corrected for the
-selection proportions, the observed odds ratio (and relative risk) followed by
-the corrected ones, and the input parameters.
-
-Here's an other example to correct for selection bias caused by M bias.
-
-
-```r
-mbias(or = c(2, 5.4, 2.5, 1.5, 1),
-      var = c("HIV", "Circumcision", "Muslim", "Low CD4", "Participation"))
-#> Correction for selection bias: 
-#> ---------------------------------------- 
-#> OR observed between the exposure and the outcome: 1 
-#>              Maximum bias from conditioning on P: 1.006236 
-#>                  OR corrected for selection bias: 0.9938024
-```
+The output shows the observed 2X2 table, the observed odds ratio (and relative
+risk) followed by the corrected ones.
 
 ## Installation
 

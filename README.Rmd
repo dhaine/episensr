@@ -55,23 +55,15 @@ library(episensr)
 selection(matrix(c(136, 107, 297, 165),
                  dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
                  nrow = 2, byrow = TRUE),
-          selprob = c(.94, .85, .64, .25))
+          bias_parms = c(.94, .85, .64, .25))
 ```
 
 The 2X2 table is provided as a matrix and selection probabilities given with the
-argument selprob, a vector with the 4 probabilities (guided by the participation
+argument `bias_parms`, a vector with the 4 probabilities (guided by the participation
 rates in cases and controls) in the following order: among cases exposed, among
 cases unexposed, among noncases exposed, and among noncases unexposed.
-The output shows the observed 2X2 table, the same table corrected for the
-selection proportions, the observed odds ratio (and relative risk) followed by
-the corrected ones, and the input parameters.
-
-Here's an other example to correct for selection bias caused by M bias.
-
-```{r}
-mbias(or = c(2, 5.4, 2.5, 1.5, 1),
-      var = c("HIV", "Circumcision", "Muslim", "Low CD4", "Participation"))
-```
+The output shows the observed 2X2 table, the observed odds ratio (and relative
+risk) followed by the corrected ones.
 
 ## Installation
 
