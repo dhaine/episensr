@@ -1,3 +1,16 @@
+# episensr 0.8.0
+
+- Fix bug when building 2-by-2 table.
+
+- Various formatting improvements in output of `confounders`, `confounders.emm`,
+  `misclassification` and `selection` functions.
+- Standardize use of `bias_parms`.
+
+- Add vignette.
+
+- Selection bias factor now available in output of `selection` function.
+- Add bootstrap option
+
 # episensr 0.7.2
 
 - Fix 2-by-2 tables when variables are provided instead of a matrix.
