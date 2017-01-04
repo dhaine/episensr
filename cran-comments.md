@@ -4,7 +4,8 @@
 * win-builder (devel and release)
 
 ## R CMD check results
-There were no ERRORs or WARNINGs.
-
+There were no ERRORs or WARNINGs. One NOTE with buil_win: 2 mispelled words in
+  DESCRIPTION (Epidemiologic and misclassification). These 2 words are correct.
+  
 ## Downstream dependencies
 There are no downstream dependencies.
