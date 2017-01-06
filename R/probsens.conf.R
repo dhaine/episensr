@@ -27,8 +27,6 @@
 #' @param corr.p Correlation between the exposure-specific confounder prevalences.
 #' @param discard A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.
 #' @param alpha Significance level.
-#' @param dec Number of decimals in the printout.
-#' @param print A logical scalar. Should the results be printed?
 #'
 #' @return A list with elements:
 #' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
@@ -70,9 +68,7 @@ probsens.conf <- function(case,
                               parms = NULL),
                           corr.p = NULL,
                           discard = TRUE,
-                          alpha = 0.05,
-                          dec = 4,
-                          print = TRUE){
+                          alpha = 0.05){
     if(reps < 1)
         stop(paste("Invalid argument: reps =", reps))
 
@@ -188,7 +184,10 @@ probsens.conf <- function(case,
 
     if(inherits(case, c("table", "matrix")))
         tab <- case
-    else tab <- table(case, exposed)
+    else {tab.df <- table(case, exposed)
+        tab <- tab.df[2:1, 2:1]
+    }
+    
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]
@@ -463,44 +462,24 @@ probsens.conf <- function(case,
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    if (print) {
-        cat("Observed Data:",
-            "\n--------------", 
-            "\nOutcome   :", rownames(tab)[1],
-            "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        print(round(tab, dec))
-        cat("\n")
-        }
     rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr),
                   c(obs.or, lci.obs.or, uci.obs.or))
-    rownames(rmat) <- c(" Observed Relative Risk:", "    Observed Odds Ratio:")
-    colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
-                                               sep = ""), "interval")
-    if (print) {
-        cat("Observed Measures of Exposure-Outcome Relationship:",
-            "\n-----------------------------------------------------------------------------------\n\n")
-        print(round(rmat, dec))
-        cat("\n")
-        }
+    rownames(rmat) <- c("Observed Relative Risk:",
+                        "   Observed Odds Ratio:")
+    colnames(rmat) <- c(" ",
+                        paste(100 * (alpha/2), "%", sep = ""),
+                        paste(100 * (1 - alpha/2), "%", sep = ""))
     rmatc <- rbind(corr.rr.smr, tot.rr.smr, corr.or.smr, tot.or.smr)
-    rownames(rmatc) <- c("RR (SMR) -- systematic error:",
+    rownames(rmatc) <- c("           RR (SMR) -- systematic error:",
                          "RR (SMR) -- systematic and random error:",
-                         "OR (SMR) -- systematic error:",
+                         "           OR (SMR) -- systematic error:",
                          "OR (SMR) -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
-    if (print) {
-        print(round(rmatc, dec))
-        cat("\nBias Parameters:",
-            "\n----------------\n\n")
-        cat("p(Confounder+|Exposure+):", prev.exp[[1]], "(", prev.exp[[2]], ")",
-            "\np(Confounder+|Exposure-):", prev.nexp[[1]], "(", prev.nexp[[2]], ")",
-            "\nRisk(Confounder-Outcome):", risk[[1]], "(", risk[[2]], ")",
-            "\nDiscard negative adjusted counts:", discard,
-            "\n")
-        }
-    invisible(list(obs.data = tab,
-                   obs.measures = rmat, 
-                   adj.measures = rmatc, 
-                   sim.df = as.data.frame(draws[, -18])))
+    res <- list(obs.data = tab,
+                obs.measures = rmat, 
+                adj.measures = rmatc, 
+                sim.df = as.data.frame(draws[, -18]))
+    class(res) <- c("episensr", "list")
+    res
 }
 

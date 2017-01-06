@@ -1,15 +1,17 @@
 Package: episensr
 Type: Package
 Title: Basic Sensitivity Analysis of Epidemiological Results
-Version: 0.7.2
+Version: 0.8.0
 Imports:
     triangle,
     trapezoid,
     plyr,
     ggplot2,
     grid,
-    gridExtra
-Date: 2016-02-02
+    gridExtra,
+    reshape,
+    boot
+Date: 2017-01-03
 Authors@R: person("Denis", "Haine", email = "denis.haine@gmail.com",
                   role = c("aut", "cre"))
 BugReports: https://github.com/dhaine/episensr/issues
@@ -20,8 +22,12 @@ Description: Basic sensitivity analysis of the observed relative risks adjusting
     "Applying Quantitative Bias Analysis to Epidemiologic Data",
     ('Springer', 2009).
 Depends:
-    R (>= 3.2.3)
+    R (>= 3.3.1)
 License: GPL-2
 Suggests:
-    testthat
+    testthat,
+    knitr,
+    rmarkdown,
+    aplore3
 RoxygenNote: 5.0.1
+VignetteBuilder: knitr

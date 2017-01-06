@@ -4,42 +4,34 @@
 \alias{misclassification}
 \title{Sensitivity analysis for misclassification.}
 \usage{
-misclassification(case, exposed, implement = c("exposure", "outcome"),
-  type = c("exposure", "outcome"), bias = NULL, alpha = 0.05, dec = 4,
-  print = TRUE)
+misclassification(case, exposed, type = c("exposure", "outcome",
+  "confounder"), bias = NULL, bias_parms = NULL, alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
 
 \item{exposed}{Exposure variable.}
 
-\item{implement}{Deprecated; please use type instead.}
-
 \item{type}{Choice of misclassification:
 \enumerate{
-\item Exposure: bias analysis for exposure misclassification; corrections using
+\item exposure: bias analysis for exposure misclassification; corrections using
 sensitivity and specificity: nondifferential and independent errors,
-\item Outcome: bias analysis for outcome misclassification.
+\item outcome: bias analysis for outcome misclassification.
+\item confounder: bias analysis for confounder misclassification.
 }}
 
-\item{bias}{Vector defining the bias parameters. This vector has 4 elements
+\item{bias}{Deprecated, please use bias_parms instead.}
+
+\item{bias_parms}{Vector defining the bias parameters. This vector has 4 elements
 between 0 and 1, in the following order:
 \enumerate{
-\item Sensitivity of exposure (or outcome) classification among those with the
-outcome,
-\item Sensitivity of exposure (or outcome) classification among those without
-the outcome,
-\item Specificity of exposure (or outcome) classification among those with the
-outcome,and
-\item Specificity of exposure (or outcome) classification among those without
-the outcome.
+\item Sensitivity of exposure (or outcome, or confounder) classification among those with the outcome,
+\item Sensitivity of exposure (or outcome, or confounder) classification among those without the outcome,
+\item Specificity of exposure (or outcome, or confounder) classification among those with the outcome,and
+\item Specificity of exposure (or outcome, or confounder) classification among those without the outcome.
 }}
 
 \item{alpha}{Significance level.}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
 A list with elements:
@@ -64,13 +56,13 @@ dimnames = list(c("Breast cancer+", "Breast cancer-"),
 c("Smoker+", "Smoker-")),
 nrow = 2, byrow = TRUE),
 type = "exposure",
-bias = c(.78, .78, .99, .99))
+bias_parms = c(.78, .78, .99, .99))
 misclassification(matrix(c(4558, 3428, 46305, 46085),
 dimnames = list(c("AMI death+", "AMI death-"),
 c("Male+", "Male-")),
 nrow = 2, byrow = TRUE),
 type = "outcome",
-bias = c(.53, .53, .99, .99))
+bias_parms = c(.53, .53, .99, .99))
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative

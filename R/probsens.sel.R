@@ -15,8 +15,6 @@
 #' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
 #' }
 #' @param alpha Significance level.
-#' @param dec Number of decimals in the printout.
-#' @param print A logical scalar. Should the results be printed?
 #'
 #' @return A list with elements:
 #' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
@@ -46,9 +44,7 @@ probsens.sel <- function(case,
                                              "trapezoidal", "logit-logistic",
                                                   "logit-normal"),
                              parms = NULL),
-                         alpha = 0.05,
-                         dec = 4,
-                         print = TRUE){
+                         alpha = 0.05){
     if(reps < 1)
         stop(paste("Invalid argument: reps =", reps))
     
@@ -91,7 +87,10 @@ probsens.sel <- function(case,
 
     if(inherits(case, c("table", "matrix")))
         tab <- case
-    else tab <- table(case, exposed)
+    else {tab.df <- table(case, exposed)
+        tab <- tab.df[2:1, 2:1]
+    }
+    
     a <- tab[1, 1]
     b <- tab[1, 2]
     c <- tab[2, 1]
@@ -159,36 +158,19 @@ probsens.sel <- function(case,
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    if (print) {
-        cat("Observed Data:",
-            "\n--------------", 
-            "nOutcome   :", rownames(tab)[1],
-            "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        print(round(tab, dec))
-        cat("\n")
-        }
-    rmat <- data.frame(obs.or, lci.obs.or, uci.obs.or)
-    rownames(rmat) <- "Observed Odds Ratio:"
-    colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.",
-                                       sep = ""), "interval")
-    if (print) {
-        cat("Observed Measures of Exposure-Outcome Relationship:",
-            "\n-----------------------------------------------------------------------------------\n\n")
-        print(round(rmat, dec))
-        cat("\n")
-        }
+    rmat <- matrix(c(obs.or, lci.obs.or, uci.obs.or), nrow = 1)
+    rownames(rmat) <- c("Observed Odds Ratio:")
+    colnames(rmat) <- c(" ",
+                        paste(100 * (alpha/2), "%", sep = ""),
+                        paste(100 * (1 - alpha/2), "%", sep = ""))
     rmatc <- rbind(corr.or, tot.or)
-    rownames(rmatc) <- c("Odds Ratio -- systematic error:", "Odds Ratio -- systematic and random error")
+    rownames(rmatc) <- c("           Odds Ratio -- systematic error:",
+                         "Odds Ratio -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
-    if (print) {
-        print(round(rmatc, dec))
-        cat("\nBias Parameters:",
-            "\n----------------\n\n")
-        cat("OR selection:", or.parms[[1]], "(", or.parms[[2]], ")",
-            "\n")
-        }
-    invisible(list(obs.data = tab,
-                   obs.measures = rmat, 
-                   adj.measures = rmatc, 
-                   sim.df = as.data.frame(draws[, -3])))
+    res <- list(obs.data = tab,
+                obs.measures = rmat, 
+                adj.measures = rmatc, 
+                sim.df = as.data.frame(draws[, -3]))
+    class(res) <- c("episensr", "list")
+    res
 }

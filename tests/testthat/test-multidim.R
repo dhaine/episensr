@@ -47,7 +47,7 @@ test_that("Adjusted measures are correct for outcome misclassification", {
 test_that("Observed measures are correct for confounder misclassification", {
     model <- multidimBias(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
              type = "confounder",
-             bias = list(seq(.72, .92, by = .02),
+             bias_parms = list(seq(.72, .92, by = .02),
                  seq(.01, .11, by = .01), seq(.13, 1.13, by = .1)), print = FALSE)
     expect_equal(model$obs.measures[1, 1], 0.3479, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 2], 0.2757, tolerance = 1e-4, scale = 1)
@@ -60,7 +60,7 @@ test_that("Observed measures are correct for confounder misclassification", {
 test_that("Adjusted measures are correct for confounder misclassification", {
     model <- multidimBias(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
              type = "confounder",
-             bias = list(seq(.72, .92, by = .02),
+             bias_parms = list(seq(.72, .92, by = .02),
                  seq(.01, .11, by = .01), seq(.13, 1.13, by = .1)), print = FALSE)
     expect_equal(model$adj.measures[1, 1], 0.9232, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[1, 2], 0.7748, tolerance = 1e-4, scale = 1)

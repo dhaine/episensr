@@ -10,7 +10,7 @@ probsens.conf(case, exposed, reps = 1000, prev.exp = list(dist =
   "uniform", "triangular", "trapezoidal", "logit-logistic", "logit-normal"),
   parms = NULL), risk = list(dist = c("constant", "uniform", "triangular",
   "trapezoidal", "log-logistic", "log-normal"), parms = NULL), corr.p = NULL,
-  discard = TRUE, alpha = 0.05, dec = 4, print = TRUE)
+  discard = TRUE, alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -46,10 +46,6 @@ probsens.conf(case, exposed, reps = 1000, prev.exp = list(dist =
 \item{discard}{A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.}
 
 \item{alpha}{Significance level.}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
 A list with elements:

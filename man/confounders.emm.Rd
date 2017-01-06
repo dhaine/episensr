@@ -5,54 +5,30 @@
 \title{Sensitivity analysis to correct for unknown or unmeasured confounding with
 effect modification}
 \usage{
-confounders.emm(case, exposed, implement = c("RR", "OR", "RD"),
-  type = c("RR", "OR", "RD"), p = NULL, RR.cd = NULL, OR.cd = NULL,
-  RD.cd = NULL, alpha = 0.05, dec = 4, print = TRUE)
+confounders.emm(case, exposed, type = c("RR", "OR", "RD"),
+  bias_parms = NULL, alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
 
 \item{exposed}{Exposure variable.}
 
-\item{implement}{Deprecated. Please use type instead.}
-
 \item{type}{Choice of implementation, with no effect measure modification for
 ratio measures (relative risk -- RR; odds ratio -- OR) or difference measures
 (risk difference -- RD).}
 
-\item{p}{Numeric vector defining the prevalence of the confounder. This vector
-has 2 elements between 0 and 1, in the following order:
+\item{bias_parms}{Numeric vector defining the 4 necessary bias parameters. This
+vector has 4 elements, in the following order:
 \enumerate{
-\item Prevalence of the confounder among the exposed, and
-\item Prevalence of the confounder among the unexposed.
-}}
-
-\item{RR.cd}{Vector defining the confounder-disease relative risk. This vector
-has two elements between 0 and 1, in the following order:
-\enumerate{
-\item Among the exposed, and
-\item among the unexposed.
-}}
-
-\item{OR.cd}{Vector defining the confounder-disease odds ratio. This vector
-has two elements between 0 and 1, in the folowing order:
-\enumerate{
-\item Among the exposed, and
-\item among the unexposed.
-}}
-
-\item{RD.cd}{Vector dfining the confounder-disease risk difference. This vector
-has two elements between 0 and 1, in the following order:
-\enumerate{
-\item Among the exposed, and
-\item among the unexposed.
+\item the association between the confounder and the outcome among those who
+were exposed,
+\item the association between the confounder and the outcome among those who
+were not exposed,
+\item the prevalence of the confounder among the exposed, and
+\item the prevalence of the confounder among the unexposed.
 }}
 
 \item{alpha}{Significance level.}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
 A list with elements:
@@ -60,7 +36,7 @@ A list with elements:
 \item{cfder.data}{The same table for Confounder +.}
 \item{nocfder.data}{The same table for Confounder -.}
 \item{obs.measures}{A table of relative risk with confidence intervals; Total,
-for Confoundner +, and for Confounder -.}
+for Confounder +, and for Confounder -.}
 \item{adj.measures}{A table of Standardized Morbidity Ratio and Mantel-Haenszel
 estimates.}
 \item{bias.parms}{Input bias parameters.}
@@ -81,20 +57,17 @@ confounders.emm(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "RR",
-p = c(.8, .05),
-RR.cd = c(.4, .7))
+bias_parms = c(.4, .7, .8, .05))
 confounders.emm(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "OR",
-p = c(.8, .05),
-OR.cd = c(.4, .7))
+bias_parms = c(.4, .7, .8, .05))
 confounders.emm(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "RD",
-p = c(.8, .05),
-RD.cd = c(-.6, -.3))
+bias_parms = c(-.6, -.3, .8, .05))
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative

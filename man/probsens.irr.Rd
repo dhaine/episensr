@@ -9,7 +9,7 @@ probsens.irr(counts, pt = NULL, reps = 1000, seca.parms = list(dist =
   "logit-normal"), parms = NULL), seexp.parms = NULL, spca.parms = list(dist
   = c("constant", "uniform", "triangular", "trapezoidal", "logit-logistic",
   "logit-normal"), parms = NULL), spexp.parms = NULL, corr.se = NULL,
-  corr.sp = NULL, discard = TRUE, alpha = 0.05, dec = 4, print = TRUE)
+  corr.sp = NULL, discard = TRUE, alpha = 0.05)
 }
 \arguments{
 \item{counts}{A table or matrix where first row contains disease counts and second row contains person-time at risk, and first and second columns are exposed and unexposed observations, as:
@@ -46,10 +46,6 @@ Person-time \tab N1 \tab N0
 \item{discard}{A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.}
 
 \item{alpha}{Significance level.}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
 A list with elements:
