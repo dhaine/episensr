@@ -17,4 +17,3 @@ Print the observed and adjusted measures of association.
 \description{
 Print association corrected for M bias.
 }
-

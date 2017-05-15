@@ -40,4 +40,3 @@ var = c("HIV", "Circumcision", "Muslim", "Low CD4", "Participation")))
 \seealso{
 \code{\link{mbias}}
 }
-

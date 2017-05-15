@@ -40,4 +40,3 @@ Flanders, W. Dana, Khoury, Muin J., 1990. Indirect Assessment of
 Confounding: Graphic Description and Limits on Effect of Adjusting for
 Covariates. \emph{Epidemiology} 1(3): 239--246.
 }
-

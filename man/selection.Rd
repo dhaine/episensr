@@ -49,4 +49,3 @@ dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
 nrow = 2, byrow = TRUE),
 bias_parms = c(.94, .85, .64, .25))
 }
-
