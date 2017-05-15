@@ -81,4 +81,3 @@ OR.sel = seq(1.5, 6.5, by = .5))
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 Bias Analysis to Epidemiologic Data}, pp.109--116, Springer.
 }
-

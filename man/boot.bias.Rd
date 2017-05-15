@@ -44,4 +44,3 @@ boot.bias(misclass_eval)
 \seealso{
 \code{\link{boot}, \link{selection}, \link{misclassification}}
 }
-

@@ -19,4 +19,3 @@ Print the confidence interval of the adjusted measures of association.
 \description{
 Print bootstraped confidence intervals for selection and misclassification bias functions.
 }
-

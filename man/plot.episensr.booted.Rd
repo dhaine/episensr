@@ -32,4 +32,3 @@ plot(misclass_boot, association = "rr")
 \seealso{
 \code{\link{boot.bias}, \link{boot}, \link{selection}, \link{misclassification}}
 }
-

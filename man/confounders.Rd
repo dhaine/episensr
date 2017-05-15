@@ -70,4 +70,3 @@ bias_parms = c(-.37, .8, .05))
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.
 }
-

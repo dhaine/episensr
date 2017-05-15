@@ -2,10 +2,10 @@
 % Please edit documentation in R/misclassification.R
 \name{misclassification}
 \alias{misclassification}
-\title{Sensitivity analysis for misclassification.}
+\title{Sensitivity analysis for disease or exposure misclassification.}
 \usage{
-misclassification(case, exposed, type = c("exposure", "outcome",
-  "confounder"), bias = NULL, bias_parms = NULL, alpha = 0.05)
+misclassification(case, exposed, type = c("exposure", "outcome"),
+  bias = NULL, bias_parms = NULL, alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -17,7 +17,6 @@ misclassification(case, exposed, type = c("exposure", "outcome",
 \item exposure: bias analysis for exposure misclassification; corrections using
 sensitivity and specificity: nondifferential and independent errors,
 \item outcome: bias analysis for outcome misclassification.
-\item confounder: bias analysis for confounder misclassification.
 }}
 
 \item{bias}{Deprecated, please use bias_parms instead.}
@@ -25,10 +24,10 @@ sensitivity and specificity: nondifferential and independent errors,
 \item{bias_parms}{Vector defining the bias parameters. This vector has 4 elements
 between 0 and 1, in the following order:
 \enumerate{
-\item Sensitivity of exposure (or outcome, or confounder) classification among those with the outcome,
-\item Sensitivity of exposure (or outcome, or confounder) classification among those without the outcome,
-\item Specificity of exposure (or outcome, or confounder) classification among those with the outcome,and
-\item Specificity of exposure (or outcome, or confounder) classification among those without the outcome.
+\item Sensitivity of exposure (or outcome) classification among those with the outcome,
+\item Sensitivity of exposure (or outcome) classification among those without the outcome,
+\item Specificity of exposure (or outcome) classification among those with the outcome,and
+\item Specificity of exposure (or outcome) classification among those without the outcome.
 }}
 
 \item{alpha}{Significance level.}
@@ -44,7 +43,7 @@ confidence intervals.}
 \item{bias.parms}{Input bias parameters.}
 }
 \description{
-Simple sensitivity analysis for misclassification.
+Simple sensitivity analysis for disease or exposure misclassification.
 }
 \examples{
 # The data for this example come from:
@@ -68,4 +67,3 @@ bias_parms = c(.53, .53, .99, .99))
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 Bias Analysis to Epidemiologic Data}, pp.79--108, Springer.
 }
-

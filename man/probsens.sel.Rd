@@ -52,4 +52,3 @@ or.parms = list("triangular", c(.35, 1.1, .43)))
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
 }
-

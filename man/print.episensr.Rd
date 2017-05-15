@@ -19,4 +19,3 @@ Print the observed and adjusted measures of association.
 \description{
 Print associations for episensr objects.
 }
-
