@@ -1,3 +1,10 @@
+# episensr 0.8.x
+
+- Add `misclassification_cov` for a misclassified covariate (confounder or
+  effect modifier).
+- As such, this (wrongly) added option into `misclassification` in the previous
+  version is now removed.
+
 # episensr 0.8.0
 
 - Fix bug when building 2-by-2 table.
