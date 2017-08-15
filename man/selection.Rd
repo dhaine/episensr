@@ -4,7 +4,7 @@
 \alias{selection}
 \title{Sensitivity analysis to correct for selection bias.}
 \usage{
-selection(case, exposed, selprob = NULL, bias_parms = NULL, alpha = 0.05)
+selection(case, exposed, bias_parms = NULL, alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated
@@ -12,13 +12,11 @@ against.}
 
 \item{exposed}{Exposure variable.}
 
-\item{selprob}{Deprecated, please use bias_parms instead.}
-
 \item{bias_parms}{Numeric vector defining the selection probabilities. This vector has 4 elements between 0 and 1, in the following order:
 \enumerate{
 \item Selection probability among cases exposed,
 \item Selection probability among cases unexposed,
-\item Selection probabillity among noncases exposed, and
+\item Selection probability among noncases exposed, and
 \item Selection probability among noncases unexposed.
 }}
 
@@ -26,7 +24,7 @@ against.}
 }
 \value{
 A list with elements:
-\item{obs.data}{The analysed 2 x 2 table from the observed data.}
+\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 \item{corr.data}{The same table corrected for  selection proportions.}
 \item{obs.measures}{A table of odds ratios and relative risk with confidence intervals.}
 \item{adj.measures}{Selection bias corrected measures of outcome-exposure relationship.}
