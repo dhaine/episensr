@@ -1,6 +1,6 @@
-#' Print bootstraped confidence intervals
+#' Print bootstrapped confidence intervals
 #'
-#' Print bootstraped confidence intervals for selection and misclassification bias functions.
+#' Print bootstrap-ed confidence intervals for selection and misclassification bias functions.
 #'
 #' @param x An object of class 'episensr.booted'.
 #' @param digits Minimal number of _significant_ digits, see 'print.default'. 

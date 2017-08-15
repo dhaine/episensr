@@ -29,7 +29,7 @@ probsens.sel(case, exposed, reps = 1000, or.parms = list(dist =
 }
 \value{
 A list with elements:
-\item{obs.data}{The analysed 2 x 2 table from the observed data.}
+\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 \item{obs.measures}{A table of observed odds ratio with confidence intervals.}
 \item{adj.measures}{A table of corrected odds ratios.}
 \item{sim.df}{Data frame of random parameters and computed values.}
