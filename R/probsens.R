@@ -18,14 +18,14 @@
 #' }
 #' @param seexp.parms List defining the sensitivity of exposure classification among those without the outcome.
 #' @param spca.parms List defining the specificity of exposure classification among those with the outcome.
-#' @param spexp.parms List defining the specifity of exposure classification among those without the outcome.
+#' @param spexp.parms List defining the specificity of exposure classification among those without the outcome.
 #' @param corr.se Correlation between case and non-case sensitivities.
 #' @param corr.sp Correlation between case and non-case specificities.
 #' @param discard A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.
 #' @param alpha Significance level.
 #'
 #' @return A list with elements:
-#' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
+#' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 #' \item{obs.measures}{A table of observed relative risk and odds ratio with confidence intervals.}
 #' \item{adj.measures}{A table of corrected relative risks and odds ratios.}
 #' \item{sim.df}{Data frame of random parameters and computed values.}

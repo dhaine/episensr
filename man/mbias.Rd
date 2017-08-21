@@ -43,4 +43,3 @@ var = c("HIV", "Circumcision", "Muslim", "Low CD4", "Participation"))
 Greenland S. Quantifying biases in causal models: classical
 confounding vs. collider-stratification bias. Epidemiology 2003;14:300-6.
 }
-

@@ -19,7 +19,7 @@ misclassification, unmeasured confounder, or selection bias.}
 
 \item{se}{Numeric vector of sensitivities.}
 
-\item{sp}{Numerci vector of specificities.}
+\item{sp}{Numeric vector of specificities.}
 
 \item{bias}{Deprecated, please use bias_parms instead.}
 
@@ -41,7 +41,7 @@ length:
 }
 \value{
 A list with elements:
-\item{obs.data}{The analysed 2 x 2 table from the observed data.}
+\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 \item{obs.measures}{A table of odds ratios and relative risk with confidence
 intervals.}
 \item{adj.measures}{Multidimensional corrected relative risk and/or odds ratio
@@ -81,4 +81,3 @@ OR.sel = seq(1.5, 6.5, by = .5))
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 Bias Analysis to Epidemiologic Data}, pp.109--116, Springer.
 }
-

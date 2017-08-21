@@ -29,7 +29,7 @@ vector has 3 elements, in the following order:
 }
 \value{
 A list with elements:
-\item{obs.data}{The analysed 2 x 2 table from the observed data.}
+\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 \item{cfder.data}{The same table for Confounder +.}
 \item{nocfder.data}{The same table for Confounder -.}
 \item{obs.measures}{A table of relative risk with confidence intervals; for
@@ -70,4 +70,3 @@ bias_parms = c(-.37, .8, .05))
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.
 }
-

@@ -49,13 +49,13 @@ probsens.conf(case, exposed, reps = 1000, prev.exp = list(dist =
 }
 \value{
 A list with elements:
-\item{obs.data}{The analysed 2 x 2 table from the observed data.}
+\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 \item{obs.measures}{A table of observed relative risk and odds ratio with confidence intervals.}
 \item{adj.measures}{A table of corrected relative risks and odds ratios.}
 \item{sim.df}{Data frame of random parameters and computed values.}
 }
 \description{
-Probabilistic sensitivity analysis to correct for unknown or unmeasurred confounding and random error simultaneously.
+Probabilistic sensitivity analysis to correct for unknown or unmeasured confounding and random error simultaneously.
 }
 \examples{
 # The data for this example come from:
@@ -75,4 +75,3 @@ corr.p = .8)
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
 }
-

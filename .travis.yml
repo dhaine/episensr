@@ -4,6 +4,7 @@ language: R
 warnings_are_errors: false
 sudo: required
 cache: packages
+dist: trusty
 
 notifications:
   email:

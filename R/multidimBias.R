@@ -8,7 +8,7 @@
 #' @param type Implement analysis for exposure misclassification, outcome
 #' misclassification, unmeasured confounder, or selection bias.
 #' @param se Numeric vector of sensitivities.
-#' @param sp Numerci vector of specificities.
+#' @param sp Numeric vector of specificities.
 #' @param bias Deprecated, please use bias_parms instead.
 #' @param bias_parms List of bias parameters. The list is made of 3 vectors of the same
 #' length:
@@ -23,7 +23,7 @@
 #' @param print A logical scalar. Should the results be printed?
 #' 
 #' @return A list with elements:
-#' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
+#' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 #' \item{obs.measures}{A table of odds ratios and relative risk with confidence
 #' intervals.}
 #' \item{adj.measures}{Multidimensional corrected relative risk and/or odds ratio

@@ -52,7 +52,7 @@ Person-time \tab N1 \tab N0
 }
 \value{
 A list with elements:
-\item{obs.data}{The analysed 2 x 2 table from the observed data.}
+\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 \item{obs.measures}{A table of observed incidence rate ratio with exact confidence interval.}
 \item{adj.measures}{A table of corrected incidence rate ratios.}
 \item{sim.df}{Data frame of random parameters and computed values.}
@@ -75,4 +75,3 @@ corr.p = .8)
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
 }
-

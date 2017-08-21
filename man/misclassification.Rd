@@ -2,10 +2,10 @@
 % Please edit documentation in R/misclassification.R
 \name{misclassification}
 \alias{misclassification}
-\title{Sensitivity analysis for misclassification.}
+\title{Sensitivity analysis for disease or exposure misclassification.}
 \usage{
-misclassification(case, exposed, type = c("exposure", "outcome",
-  "confounder"), bias = NULL, bias_parms = NULL, alpha = 0.05)
+misclassification(case, exposed, type = c("exposure", "outcome"),
+  bias_parms = NULL, alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -17,34 +17,34 @@ misclassification(case, exposed, type = c("exposure", "outcome",
 \item exposure: bias analysis for exposure misclassification; corrections using
 sensitivity and specificity: nondifferential and independent errors,
 \item outcome: bias analysis for outcome misclassification.
-\item confounder: bias analysis for confounder misclassification.
 }}
-
-\item{bias}{Deprecated, please use bias_parms instead.}
 
 \item{bias_parms}{Vector defining the bias parameters. This vector has 4 elements
 between 0 and 1, in the following order:
 \enumerate{
-\item Sensitivity of exposure (or outcome, or confounder) classification among those with the outcome,
-\item Sensitivity of exposure (or outcome, or confounder) classification among those without the outcome,
-\item Specificity of exposure (or outcome, or confounder) classification among those with the outcome,and
-\item Specificity of exposure (or outcome, or confounder) classification among those without the outcome.
+\item Sensitivity of exposure (or outcome) classification among those with the outcome (or exposure),
+\item Sensitivity of exposure (or outcome) classification among those without the outcome (or exposure),
+\item Specificity of exposure (or outcome) classification among those with the outcome (or exposure), and
+\item Specificity of exposure (or outcome) classification among those without the outcome (or exposure).
 }}
 
 \item{alpha}{Significance level.}
 }
 \value{
 A list with elements:
-\item{obs.data}{The analysed 2 x 2 table from the observed data.}
+\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 \item{corr.data}{The expected observed data given the true data assuming
-misclassfication.}
+misclassification.}
 \item{obs.measures}{A table of observed relative risk and odds ratio with
 confidence intervals.}
-\item{adj.measures}{A table of adjusted relative risk and odds ratio.}
+\item{adj.measures}{A table of adjusted relative risk and odds ratio with confidence
+interval for odds ratio.}
 \item{bias.parms}{Input bias parameters.}
 }
 \description{
-Simple sensitivity analysis for misclassification.
+Simple sensitivity analysis for disease or exposure misclassification.
+Confidence interval for odds ratio is computed as in Chu et al. (2006),
+for exposure misclassification.
 }
 \examples{
 # The data for this example come from:
@@ -63,9 +63,20 @@ c("Male+", "Male-")),
 nrow = 2, byrow = TRUE),
 type = "outcome",
 bias_parms = c(.53, .53, .99, .99))
+# The following example comes from Chu et al. Sensitivity analysis of
+# misclassification: A graphical and a Bayesian approach.
+# Annals of Epidemiology 2006;16:834-841.
+misclassification(matrix(c(126, 92, 71, 224),
+dimnames = list(c("Case", "Control"), c("Smoker +", "Smoker -")),
+nrow = 2, byrow = TRUE),
+type = "exposure",
+bias_parms = c(.94, .94, .97, .97))
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 Bias Analysis to Epidemiologic Data}, pp.79--108, Springer.
-}
 
+Chu, H., Zhaojie, W., Cole, S.R., Greenland, S., \emph{Sensitivity analysis of
+misclassification: A graphical and a Bayesian approach},
+Annals of Epidemiology 2006;16:834-841.
+}

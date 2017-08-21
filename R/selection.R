@@ -6,18 +6,17 @@
 #' @param case Outcome variable. If a variable, this variable is tabulated
 #' against.
 #' @param exposed Exposure variable.
-#' @param selprob Deprecated, please use bias_parms instead.
 #' @param bias_parms Numeric vector defining the selection probabilities. This vector has 4 elements between 0 and 1, in the following order:
 #' \enumerate{
 #' \item Selection probability among cases exposed,
 #' \item Selection probability among cases unexposed,
-#' \item Selection probabillity among noncases exposed, and
+#' \item Selection probability among noncases exposed, and
 #' \item Selection probability among noncases unexposed.
 #' }
 #' @param alpha Significance level.
 #' 
 #' @return A list with elements:
-#' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
+#' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 #' \item{corr.data}{The same table corrected for  selection proportions.}
 #' \item{obs.measures}{A table of odds ratios and relative risk with confidence intervals.}
 #' \item{adj.measures}{Selection bias corrected measures of outcome-exposure relationship.}
@@ -39,14 +38,8 @@
 #' @importFrom stats qnorm
 selection <- function(case,
                       exposed,
-                      selprob = NULL,
                       bias_parms = NULL,
                       alpha = 0.05) {
-    if (!missing(selprob)) {
-        warning("argument selprob is deprecated; please use bias_parms instead.",
-                call. = FALSE)
-        bias_parms <- selprob
-    }
     if(is.null(bias_parms))
         bias_parms <- c(1, 1, 1, 1)
     else bias_parms <- bias_parms

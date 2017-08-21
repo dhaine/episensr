@@ -59,3 +59,12 @@ test_that("Adjusted measures are correct for outcome misclassification", {
     expect_equal(model$adj.measures[1], 1.3440, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2], 1.4062, tolerance = 1e-4, scale = 1)
 })
+
+test_that("CI is correct for OR when exposure misclassification", {
+    model <- misclassification(matrix(c(126, 92, 71, 224),
+                                      nrow = 2, byrow = TRUE),
+                               type = "exposure",
+                               bias_parms = c(.94, .94, .97, .97))
+    expect_equal(model$adj.measures[2, 2], 3.2825, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 7.6909, tolerance = 1e-4, scale = 1)
+})
