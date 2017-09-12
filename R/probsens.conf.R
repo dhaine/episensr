@@ -1,6 +1,6 @@
 #' Probabilistic sensitivity analysis for unmeasured confounding.
 #'
-#' Probabilistic sensitivity analysis to correct for unknown or unmeasurred confounding and random error simultaneously.
+#' Probabilistic sensitivity analysis to correct for unknown or unmeasured confounding and random error simultaneously.
 #'
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
@@ -29,7 +29,7 @@
 #' @param alpha Significance level.
 #'
 #' @return A list with elements:
-#' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
+#' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 #' \item{obs.measures}{A table of observed relative risk and odds ratio with confidence intervals.}
 #' \item{adj.measures}{A table of corrected relative risks and odds ratios.}
 #' \item{sim.df}{Data frame of random parameters and computed values.}

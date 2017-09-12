@@ -1,9 +1,12 @@
-# episensr 0.8.x
+# episensr 0.9.0
 
 - Add `misclassification_cov` for a misclassified covariate (confounder or
   effect modifier).
 - As such, this (wrongly) added option into `misclassification` in the previous
   version is now removed.
+- Add computation of confidence interval for odds ratio as per Chu et al. for
+  exposure misclassification.
+- Use `bias_parms` instead of `bias` in `misclassification` function.
 
 # episensr 0.8.0
 
