@@ -1,3 +1,7 @@
+# episensr 0.9.1
+- Fix bug when using triangular distribution in `probsens.conf` function for
+  prevalence of exposure among the non-exposed (as producing NaNs) (#1).
+
 # episensr 0.9.0
 
 - Add `misclassification_cov` for a misclassified covariate (confounder or
