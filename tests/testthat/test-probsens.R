@@ -331,3 +331,19 @@ test_that("Confounding bias: adjusted measures are correct", {
     expect_equal(model$adj.measures[2, 2], 0.3769, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2, 3], 0.6094, tolerance = 1e-4, scale = 1)
 })
+
+test_that("Confounding bias: adjusted measures are correct", {
+    set.seed(123)
+    model <- probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
+                      reps = 50000,
+                      prev.exp = list("triangular", c(.7, .9, .8)),
+                      prev.nexp = list("triangular", c(.03, .05, .04)),
+                      risk = list("triangular", c(.6, .7, .65)),
+                      corr.p = .8)
+    expect_equal(model$adj.measures[1, 1], 0.4759, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.4519, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 0.5058, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 0.4759, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.3751, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 0.6063, tolerance = 1e-4, scale = 1)
+})

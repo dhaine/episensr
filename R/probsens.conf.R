@@ -335,7 +335,7 @@ probsens.conf <- function(case,
                              prev.nexp[[2]][1] + sqrt(abs((prev.nexp[[2]][3] - prev.nexp[[2]][1]) * (2 * draws[, 2] - prev.nexp[[2]][1] - prev.nexp[[2]][3]))),
                              draws[, 2])
         draws[, 2] <- ifelse(draws[, 2] > prev.nexp[[2]][3],
-                             prev.nexp[[2]][2] - sqrt(2 * (prev.nexp[[2]][2] - prev.nexp[[2]][3]) * (draws[, 2] - prev.nexp[[2]][3])),
+                             prev.nexp[[2]][2] - sqrt(abs(2 * (prev.nexp[[2]][2] - prev.nexp[[2]][3]) * (draws[, 2] - prev.nexp[[2]][3]))),
                              draws[, 2])
     }
     if (prev.nexp[[1]] == "trapezoidal") {
