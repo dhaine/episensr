@@ -237,9 +237,9 @@ probsens.conf <- function(case,
         return(p)
     }
     lognorm.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- exp(sesp[[2]] + sesp[[3]] * qnorm(u))
-        p <- log(w)
+        z <- rnorm(sesp[[1]], 1, 0)
+        w <- sesp[[2]] + z*sesp[[3]]
+        p <- exp(w)
         return(p)
     }
     
