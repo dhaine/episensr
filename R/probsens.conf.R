@@ -193,10 +193,10 @@ probsens.conf <- function(case,
     c <- tab[2, 1]
     d <- tab[2, 2]
 
-    draws <- matrix(NA, nrow = reps, ncol = 20)
+    draws <- matrix(NA, nrow = reps, ncol = 10)
     colnames(draws) <- c("p1", "p0", "RR.cd",
-                         "M1", "N1", "A1", "B1", "C1", "D1",
-                         "M0", "N0", "A0", "B0", "C0", "D0",
+                         "A_11",
+                         "A_01",
                          "RR.SMR.rr", 
                          "OR.SMR.or", 
                          "reps",
@@ -377,86 +377,59 @@ probsens.conf <- function(case,
         draws[, 3] <- lognorm.dstr(rr.cd)
     }
     
-    draws[, 18] <- runif(reps)
+    draws[, 8] <- runif(reps)
 
-    draws[, 4] <- (a + c) * draws[, 1]
-    draws[, 5] <- (b + d) * draws[, 2]
-    draws[, 6] <- (draws[, 3] * draws[, 4] * a) /
-        (draws[, 3] * draws[, 4] + (a + c) - draws[, 4])
-    draws[, 7] <- (draws[, 3] * draws[, 5] * b) /
-        (draws[, 3] * draws[, 5] + (b + d) - draws[, 5])
-    draws[, 8] <- draws[, 4] - draws[, 6]
-    draws[, 9] <- draws[, 5] - draws[, 7]
-    draws[, 10] <- a + c - draws[, 4]
-    draws[, 11] <- b + d - draws[, 5]
-    draws[, 12] <- a - draws[, 6]
-    draws[, 13] <- b - draws[, 7]
-    draws[, 14] <- c - draws[, 8]
-    draws[, 15] <- d - draws[, 9]
-
-    draws[, 16] <- a /
-        ((draws[, 4] * draws[, 7]/draws[, 5]) +
-             (draws[, 10] * draws[, 13]/draws[, 11]))
-
-    draws[, 17] <- a /
-        ((draws[, 8] * draws[, 7]/draws[, 9]) +
-             (draws[, 14] * draws[, 13]/draws[, 15]))
+    draws[, 4] <- (draws[, 3]*a*draws[, 1]*c) / ((draws[, 3]*draws[, 1]*c) + c -
+                                                 (draws[, 1]*c))
+    draws[, 5] <- (draws[, 3]*b*draws[, 2]*d) / ((draws[, 3]*draws[, 2]*d) + d -
+                                                 (draws[, 2]*d))
+    draws[, 6] <- (draws[, 4]/(draws[, 4]+draws[, 1]*c)) /
+        (draws[, 5]/(draws[, 5]+(draws[, 2]*d)))
+    draws[, 7] <- (draws[, 4]*draws[, 2]*d) / (draws[, 5]*draws[, 1]*c)
     
-    draws[, 16] <- ifelse(draws[, 6] < 1 |
-                               draws[, 7] < 1 |
-                                 draws[, 8] < 1 |
-                                   draws[, 9] < 1 |
-                          draws[, 12] < 1 |
-                            draws[, 13] < 1 |
-                              draws[, 14] < 1 |
-                                draws[, 15] < 1, NA, draws[, 16])
-    draws[, 17] <- ifelse(draws[, 6] < 1 |
-                               draws[, 7] < 1 |
-                                 draws[, 8] < 1 |
-                                   draws[, 9] < 1 |
-                          draws[, 12] < 1 |
-                            draws[, 13] < 1 |
-                              draws[, 14] < 1 |
-                                  draws[, 15] < 1, NA, draws[, 17])
-    if(all(is.na(draws[, 16])) | all(is.na(draws[, 17])))
+    draws[, 6] <- ifelse(draws[, 4] < 1 |
+                               draws[, 5] < 1, NA, draws[, 6])
+    draws[, 7] <- ifelse(draws[, 4] < 1 |
+                               draws[, 5] < 1, NA, draws[, 7])
+    if(all(is.na(draws[, 6])) | all(is.na(draws[, 7])))
         warning('Prior Prevalence distributions lead to all negative adjusted counts.')
     if (discard) {
-        if(sum(is.na(draws[, 16])) > 0)
+        if(sum(is.na(draws[, 6])) > 0)
             message('Chosen prior Prevalence distributions lead to ',
-                    sum(is.na(draws[, 16])),
+                    sum(is.na(draws[, 6])),
                     ' negative adjusted counts which were discarded.')
     }
     else {
-        if(sum(is.na(draws[, 16])) > 0) {
+        if(sum(is.na(draws[, 6])) > 0) {
             message('Chosen prior Prevalence distributions lead to ',
-                    sum(is.na(draws[, 16])),
+                    sum(is.na(draws[, 6])),
                     ' negative adjusted counts which were set to zero.')
         }
-        draws[, 16] <- ifelse(is.na(draws[, 16]), 0, draws[, 16])
-        draws[, 17] <- ifelse(is.na(draws[, 17]), 0, draws[, 17])
+        draws[, 6] <- ifelse(is.na(draws[, 6]), 0, draws[, 6])
+        draws[, 7] <- ifelse(is.na(draws[, 7]), 0, draws[, 7])
         }
 
-    draws[, 19] <- exp(log(draws[, 16]) -
-                               qnorm(draws[, 18]) *
+    draws[, 9] <- exp(log(draws[, 6]) -
+                               qnorm(draws[, 8]) *
                                          ((log(uci.obs.rr) - log(lci.obs.rr)) /
                                               (qnorm(.975) * 2)))
-    draws[, 20] <- exp(log(draws[, 17]) -
-                               qnorm(draws[, 18]) *
+    draws[, 10] <- exp(log(draws[, 7]) -
+                               qnorm(draws[, 8]) *
                                          ((log(uci.obs.or) - log(lci.obs.or)) /
                                               (qnorm(.975) * 2)))
 
-    corr.rr.smr <- c(median(draws[, 16], na.rm = TRUE),
-                     quantile(draws[, 16], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 16], probs = .975, na.rm = TRUE))
-    corr.or.smr <- c(median(draws[, 17], na.rm = TRUE),
-                     quantile(draws[, 17], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 17], probs = .975, na.rm = TRUE))
-    tot.rr.smr <- c(median(draws[, 19], na.rm = TRUE),
-                    quantile(draws[, 19], probs = .025, na.rm = TRUE),
-                    quantile(draws[, 19], probs = .975, na.rm = TRUE))
-    tot.or.smr <- c(median(draws[, 20], na.rm = TRUE),
-                    quantile(draws[, 20], probs = .025, na.rm = TRUE),
-                    quantile(draws[, 20], probs = .975, na.rm = TRUE))
+    corr.rr.smr <- c(median(draws[, 6], na.rm = TRUE),
+                     quantile(draws[, 6], probs = .025, na.rm = TRUE),
+                     quantile(draws[, 6], probs = .975, na.rm = TRUE))
+    corr.or.smr <- c(median(draws[, 7], na.rm = TRUE),
+                     quantile(draws[, 7], probs = .025, na.rm = TRUE),
+                     quantile(draws[, 7], probs = .975, na.rm = TRUE))
+    tot.rr.smr <- c(median(draws[, 9], na.rm = TRUE),
+                    quantile(draws[, 9], probs = .025, na.rm = TRUE),
+                    quantile(draws[, 9], probs = .975, na.rm = TRUE))
+    tot.or.smr <- c(median(draws[, 10], na.rm = TRUE),
+                    quantile(draws[, 10], probs = .025, na.rm = TRUE),
+                    quantile(draws[, 10], probs = .975, na.rm = TRUE))
 
     if (is.null(rownames(tab)))
         rownames(tab) <- paste("Row", 1:2)
