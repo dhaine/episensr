@@ -5,6 +5,9 @@ Version: 0.9.1
 Imports:
     triangle,
     trapezoid,
+    actuar,
+    llogistic,
+    logitnorm,
     plyr,
     ggplot2,
     grid,
