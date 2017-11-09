@@ -11,7 +11,7 @@
 #' \item Uniform: min, max,
 #' \item Triangular: lower limit, upper limit, mode,
 #' \item Trapezoidal: min, lower mode, upper mode, max.
-#' \item Logit-logistic: location, scale, lower bound shift, upper bound shift,
+#' \item Logit-logistic: median, scale,
 #' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
 #' }
 #' @param prev.nexp List defining the prevalence of exposure among the unexposed.
@@ -99,13 +99,10 @@ probsens.conf <- function(case,
                                          (prev.exp[[2]][2] > prev.exp[[2]][3]) |
                                          (prev.exp[[2]][3] > prev.exp[[2]][4])))
         stop('Wrong arguments for your trapezoidal distribution.')
-    if(prev.exp[[1]] == "logit-logistic" & (length(prev.exp[[2]]) < 2 | length(prev.exp[[2]]) == 3 | length(prev.exp[[2]]) > 4))
-        stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
-    if(prev.exp[[1]] == "logit-logistic" & length(prev.exp[[2]]) == 4 &
-       ((prev.exp[[2]][3] >= prev.exp[[2]][4]) | (!all(prev.exp[[2]][3:4] >= 0 & prev.exp[[2]][3:4] <= 1))))
-        stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
-    if(prev.exp[[1]] == "logit-logistic" & length(prev.exp[[2]]) == 2)
-        prev.exp <- list(prev.exp[[1]], c(prev.exp[[2]], c(0, 1)))
+    if(prev.exp[[1]] == "logit-logistic" & (length(prev.exp[[2]]) != 2))
+        stop('For logit-logistic distribution, please provide vector of median and scale.')
+    if(prev.exp[[1]] == "logit-logistic" & (prev.exp[[2]][1] < 0 | prev.exp[[2]][1] > 1 | prev.exp[[2]][2] < 0))
+        stop('For logit-logistic distribution, please provide sensible values for median value (between 0 and 1) and/or for scale (should be positive).')
     if(prev.exp[[1]] == "logit-normal" & (length(prev.exp[[2]]) < 2 | length(prev.exp[[2]]) == 3 | length(prev.exp[[2]]) > 4))
         stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
     if(prev.exp[[1]] == "logit-normal" & length(prev.exp[[2]]) == 4 &
@@ -137,13 +134,10 @@ probsens.conf <- function(case,
                                          (prev.nexp[[2]][2] > prev.nexp[[2]][3]) |
                                          (prev.nexp[[2]][3] > prev.nexp[[2]][4])))
         stop('Wrong arguments for your trapezoidal distribution.')
-    if(prev.nexp[[1]] == "logit-logistic" & (length(prev.nexp[[2]]) < 2 | length(prev.nexp[[2]]) == 3 | length(prev.nexp[[2]]) > 4))
-        stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
-    if(prev.nexp[[1]] == "logit-logistic" & length(prev.nexp[[2]]) == 4 &
-       ((prev.nexp[[2]][3] >= prev.nexp[[2]][4]) | (!all(prev.nexp[[2]][3:4] >= 0 & prev.nexp[[2]][3:4] <= 1))))
-        stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
-    if(prev.nexp[[1]] == "logit-logistic" & length(prev.nexp[[2]]) == 2)
-        prev.nexp <- list(prev.nexp[[1]], c(prev.nexp[[2]], c(0, 1)))
+    if(prev.nexp[[1]] == "logit-logistic" & (length(prev.nexp[[2]]) != 2))
+        stop('For logit-logistic distribution, please provide vector of median and scale.')
+    if(prev.nexp[[1]] == "logit-logistic" & (prev.nexp[[2]][1] < 0 | prev.nexp[[2]][1] > 1 | prev.nexp[[2]][2] < 0))
+        stop('For logit-logistic distribution, please provide sensible values for median value (between 0 and 1) and/or scale (should be positive).')
     if(prev.nexp[[1]] == "logit-normal" & (length(prev.nexp[[2]]) < 2 | length(prev.nexp[[2]]) == 3 | length(prev.nexp[[2]]) > 4))
         stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
     if(prev.nexp[[1]] == "logit-normal" & length(prev.nexp[[2]]) == 4 &
@@ -218,12 +212,6 @@ probsens.conf <- function(case,
     lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
     uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
-    logitlog.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- sesp[[2]] + sesp[[3]] * (log(u / (1 - u)))
-        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
     logitnorm.dstr <- function(sesp) {
         u <- runif(sesp[[1]])
         w <- sesp[[2]] + sesp[[3]] * qnorm(u)
@@ -245,7 +233,7 @@ probsens.conf <- function(case,
             draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(p1))
         }
         if (prev.exp[[1]] == "logit-logistic") {
-            draws[, 1] <- logitlog.dstr(p1)
+            draws[, 1] <- do.call(llogistic::rllogistic, as.list(p1))
         }
         if (prev.exp[[1]] == "logit-normal") {
             draws[, 1] <- logitnorm.dstr(p1)
@@ -263,7 +251,7 @@ probsens.conf <- function(case,
             draws[, 2] <- do.call(trapezoid::rtrapezoid, as.list(p0))
         }
         if (prev.nexp[[1]] == "logit-logistic") {
-            draws[, 2] <- logitlog.dstr(p0)
+            draws[, 2] <- do.call(llogistic::rllogistic, as.list(p0))
         }
         if (prev.nexp[[1]] == "logit-normal") {
             draws[, 2] <- logitnorm.dstr(p0)
