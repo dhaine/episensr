@@ -232,13 +232,7 @@ probsens.conf <- function(case,
     }
     loglog.dstr <- function(sesp) {
         u <- runif(sesp[[1]])
-        w <- exp(sesp[[2]] + sesp[[3]] * (log(u / (1 - u))))
-        p <- log(w)
-        return(p)
-    }
-    lognorm.dstr <- function(sesp) {
-        z <- rnorm(sesp[[1]], 1, 0)
-        w <- sesp[[2]] + z*sesp[[3]]
+        w <- exp(sesp[[2]] + (sesp[[3]] * plogis(u)))
         p <- exp(w)
         return(p)
     }
@@ -374,7 +368,7 @@ probsens.conf <- function(case,
         draws[, 3] <- loglog.dstr(rr.cd)
     }
     if (risk[[1]] == "log-normal") {
-        draws[, 3] <- lognorm.dstr(rr.cd)
+        draws[, 3] <- do.call(rlnorm, as.list(rr.cd))
     }
     
     draws[, 8] <- runif(reps)
