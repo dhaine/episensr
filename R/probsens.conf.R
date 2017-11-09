@@ -12,7 +12,7 @@
 #' \item Triangular: lower limit, upper limit, mode,
 #' \item Trapezoidal: min, lower mode, upper mode, max.
 #' \item Logit-logistic: median, scale,
-#' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
+#' \item Logit-normal: mean, standard deviation.
 #' }
 #' @param prev.nexp List defining the prevalence of exposure among the unexposed.
 #' @param risk List defining the confounder-disease relative risk or the confounder-exposure odds ratio. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, log-logistic, or log-normal) and the second its parameters as a vector:
@@ -103,13 +103,10 @@ probsens.conf <- function(case,
         stop('For logit-logistic distribution, please provide vector of median and scale.')
     if(prev.exp[[1]] == "logit-logistic" & (prev.exp[[2]][1] < 0 | prev.exp[[2]][1] > 1 | prev.exp[[2]][2] < 0))
         stop('For logit-logistic distribution, please provide sensible values for median value (between 0 and 1) and/or for scale (should be positive).')
-    if(prev.exp[[1]] == "logit-normal" & (length(prev.exp[[2]]) < 2 | length(prev.exp[[2]]) == 3 | length(prev.exp[[2]]) > 4))
-        stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
-    if(prev.exp[[1]] == "logit-normal" & length(prev.exp[[2]]) == 4 &
-       ((prev.exp[[2]][3] >= prev.exp[[2]][4]) | (!all(prev.exp[[2]][3:4] >= 0 & prev.exp[[2]][3:4] <= 1))))
-        stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
-    if(prev.exp[[1]] == "logit-normal" & length(prev.exp[[2]]) == 2)
-        prev.exp <- list(prev.exp[[1]], c(prev.exp[[2]], c(0, 1)))
+    if(prev.exp[[1]] == "logit-normal" & length(prev.exp[[2]]) != 2)
+        stop('For logit-normal distribution, please provide vector of mu and sigma.')
+    if(prev.exp[[1]] == "logit-normal" & prev.exp[[2]][2] < 0)
+        stop('For logit-normal distribution, please provide sensible value for sigma (should be > 0).')
     if((prev.exp[[1]] == "constant" | prev.exp[[1]] == "uniform" | prev.exp[[1]] == "triangular" | prev.exp[[1]] == "trapezoidal") & !all(prev.exp[[2]] >= 0 & prev.exp[[2]] <= 1))
         stop('Prevalence should be between 0 and 1.')
 
@@ -138,13 +135,10 @@ probsens.conf <- function(case,
         stop('For logit-logistic distribution, please provide vector of median and scale.')
     if(prev.nexp[[1]] == "logit-logistic" & (prev.nexp[[2]][1] < 0 | prev.nexp[[2]][1] > 1 | prev.nexp[[2]][2] < 0))
         stop('For logit-logistic distribution, please provide sensible values for median value (between 0 and 1) and/or scale (should be positive).')
-    if(prev.nexp[[1]] == "logit-normal" & (length(prev.nexp[[2]]) < 2 | length(prev.nexp[[2]]) == 3 | length(prev.nexp[[2]]) > 4))
-        stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
-    if(prev.nexp[[1]] == "logit-normal" & length(prev.nexp[[2]]) == 4 &
-       ((prev.nexp[[2]][3] >= prev.nexp[[2]][4]) | (!all(prev.nexp[[2]][3:4] >= 0 & prev.nexp[[2]][3:4] <= 1))))
-        stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
-    if(prev.nexp[[1]] == "logit-normal" & length(prev.nexp[[2]]) == 2)
-        prev.nexp <- list(prev.nexp[[1]], c(prev.nexp[[2]], c(0, 1)))
+    if(prev.nexp[[1]] == "logit-normal" & length(prev.nexp[[2]]) != 2)
+        stop('For logit-normal distribution, please provide vector of mu and sigma.')
+    if(prev.nexp[[1]] == "logit-normal" & prev.nexp[[2]][2] < 0)
+        stop('For logit-normal distribution, please provide sensible value for sigma (should be > 0).')
     if((prev.nexp[[1]] == "constant" | prev.nexp[[1]] == "uniform" | prev.nexp[[1]] == "triangular" | prev.nexp[[1]] == "trapezoidal") & !all(prev.nexp[[2]] >= 0 & prev.nexp[[2]] <= 1))
         stop('Prevalence should be between 0 and 1.')
 
@@ -212,13 +206,6 @@ probsens.conf <- function(case,
     lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
     uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
-    logitnorm.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- sesp[[2]] + sesp[[3]] * qnorm(u)
-        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
-    
     if (is.null(corr.p)) {
         if (prev.exp[[1]] == "constant") {
             draws[, 1] <- prev.exp[[2]]
@@ -236,7 +223,7 @@ probsens.conf <- function(case,
             draws[, 1] <- do.call(llogistic::rllogistic, as.list(p1))
         }
         if (prev.exp[[1]] == "logit-normal") {
-            draws[, 1] <- logitnorm.dstr(p1)
+            draws[, 1] <- logitnorm::rlogitnorm(p1[1], mu = p1[2], sigma = p1[3])
         }
         if (prev.nexp[[1]] == "constant") {
             draws[, 2] <- prev.nexp[[2]]
@@ -254,7 +241,7 @@ probsens.conf <- function(case,
             draws[, 2] <- do.call(llogistic::rllogistic, as.list(p0))
         }
         if (prev.nexp[[1]] == "logit-normal") {
-            draws[, 2] <- logitnorm.dstr(p0)
+            draws[, 2] <- logitnorm::rlogitnorm(p0[1], mu = p0[2], sigma = p0[3])
         }
     } else {
         corr.draws[, 1:3] <- apply(corr.draws[, 1:3],
