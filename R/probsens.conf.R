@@ -21,8 +21,8 @@
 #' \item Uniform: min, max,
 #' \item Triangular: lower limit, upper limit, mode,
 #' \item Trapezoidal: min, lower mode, upper mode, max.
-#' \item Log-logistic: location, scale,
-#' \item Log-normal: location, scale.
+#' \item Log-logistic: shape, rate,
+#' \item Log-normal: meanlog, sdlog.
 #' }
 #' @param corr.p Correlation between the exposure-specific confounder prevalences.
 #' @param discard A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.
@@ -230,12 +230,6 @@ probsens.conf <- function(case,
         p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
         return(p)
     }
-    loglog.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- exp(sesp[[2]] + (sesp[[3]] * plogis(u)))
-        p <- exp(w)
-        return(p)
-    }
     
     if (is.null(corr.p)) {
         if (prev.exp[[1]] == "constant") {
@@ -365,7 +359,7 @@ probsens.conf <- function(case,
         draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(rr.cd))
     }
     if (risk[[1]] == "log-logistic") {
-        draws[, 3] <- loglog.dstr(rr.cd)
+        draws[, 3] <- do.call(actuar::rllogis, as.list(rr.cd))
     }
     if (risk[[1]] == "log-normal") {
         draws[, 3] <- do.call(rlnorm, as.list(rr.cd))
