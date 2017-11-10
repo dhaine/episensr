@@ -25,7 +25,7 @@ probsens.conf(case, exposed, reps = 1000, prev.exp = list(dist =
 \item Uniform: min, max,
 \item Triangular: lower limit, upper limit, mode,
 \item Trapezoidal: min, lower mode, upper mode, max.
-\item Logit-logistic: median, scale,
+\item Logit-logistic: median, dispersion,
 \item Logit-normal: mean, standard deviation.
 }}
 

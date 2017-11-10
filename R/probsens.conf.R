@@ -11,7 +11,7 @@
 #' \item Uniform: min, max,
 #' \item Triangular: lower limit, upper limit, mode,
 #' \item Trapezoidal: min, lower mode, upper mode, max.
-#' \item Logit-logistic: median, scale,
+#' \item Logit-logistic: median, dispersion,
 #' \item Logit-normal: mean, standard deviation.
 #' }
 #' @param prev.nexp List defining the prevalence of exposure among the unexposed.
@@ -50,7 +50,7 @@
 #' risk = list("triangular", c(.6, .7, .63)),
 #' corr.p = .8)
 #' @export
-#' @importFrom stats median qnorm quantile runif
+#' @importFrom stats median qnorm quantile runif rlnorm
 probsens.conf <- function(case,
                           exposed,
                           reps = 1000,
