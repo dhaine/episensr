@@ -25,8 +25,8 @@ probsens.conf(case, exposed, reps = 1000, prev.exp = list(dist =
 \item Uniform: min, max,
 \item Triangular: lower limit, upper limit, mode,
 \item Trapezoidal: min, lower mode, upper mode, max.
-\item Logit-logistic: location, scale, lower bound shift, upper bound shift,
-\item Logit-normal: location, scale, lower bound shift, upper bound shift.
+\item Logit-logistic: median, dispersion,
+\item Logit-normal: mean, standard deviation.
 }}
 
 \item{prev.nexp}{List defining the prevalence of exposure among the unexposed.}
@@ -37,8 +37,8 @@ probsens.conf(case, exposed, reps = 1000, prev.exp = list(dist =
 \item Uniform: min, max,
 \item Triangular: lower limit, upper limit, mode,
 \item Trapezoidal: min, lower mode, upper mode, max.
-\item Log-logistic: location, scale,
-\item Log-normal: location, scale.
+\item Log-logistic: shape, rate,
+\item Log-normal: meanlog, sdlog.
 }}
 
 \item{corr.p}{Correlation between the exposure-specific confounder prevalences.}

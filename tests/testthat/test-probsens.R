@@ -324,12 +324,12 @@ test_that("Confounding bias: adjusted measures are correct", {
                       prev.nexp = list("trapezoidal", c(.03, .04, .05, .06)),
                       risk = list("triangular", c(.6, .7, .63)),
                       corr.p = .8)
-    expect_equal(model$adj.measures[1, 1], 0.4790, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.4531, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 0.5082, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.4785, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.3769, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 0.6094, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 0.4062, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.3918, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 0.4242, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 0.4061, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.3211, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 0.5158, tolerance = 1e-4, scale = 1)
 })
 
 test_that("Confounding bias: adjusted measures are correct", {
@@ -340,10 +340,10 @@ test_that("Confounding bias: adjusted measures are correct", {
                       prev.nexp = list("triangular", c(.03, .05, .04)),
                       risk = list("triangular", c(.6, .7, .65)),
                       corr.p = .8)
-    expect_equal(model$adj.measures[1, 1], 0.4759, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.4519, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 0.5058, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.4759, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.3751, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 0.6063, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 0.4051, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.3911, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 0.4229, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 0.4050, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.3202, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 0.5144, tolerance = 1e-4, scale = 1)
 })
