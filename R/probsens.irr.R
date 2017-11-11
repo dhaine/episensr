@@ -10,7 +10,7 @@
 #' }
 #' @param pt A numeric vector of person-time at risk. If provided, \code{counts} must be a numeric vector of disease counts.
 #' @param reps Number of replications to run.
-#' @param seca.parms List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
+#' @param seca.parms List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 #' \enumerate{
 #' \item Constant: constant value,
 #' \item Uniform: min, max,
