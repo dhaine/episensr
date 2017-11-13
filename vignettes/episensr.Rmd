@@ -26,6 +26,8 @@ This package implements the various bias analyses from that book, which are also
 spreadsheet or a SAS macro.
 This vignette provides some examples on how to use the package.
 
+(_Note: A Shiny app is available for some functions, at <https://dhaine.shinyapps.io/episensr_shiny/>._)
+
 ## Selection Bias
 
 We will use a case-control study by
@@ -102,7 +104,9 @@ noncases equal to uniform distributions with a minimum of 0.7 and a maximum of
 0.95 for sensitivities (0.9 and 0.99 respectively for specificities).
 We choose to correct for exposure misclassification with the argument `type =
 exposure`.
-We ask for 10000 replications (default is 1000).
+We ask for 50000 replications (default is 1000).
+Don't be shy with the number of iterations, episensr is fast.
+
 The Se and Sp for cases (`seca`, `spca`) are given as a list with its first
 element referring to the type of distribution (choice between constant, uniform,
 triangular, trapezoidal, logit-logistic, and logit-normal) and the second
@@ -117,7 +121,7 @@ smoke.nd <- probsens(matrix(c(215, 1449, 668, 4296),
                             dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")),
                             nrow = 2, byrow = TRUE),
                      type = "exposure",
-                     reps = 10000,
+                     reps = 50000,
                      seca.parms = list("uniform", c(.7, .95)),
                      spca.parms = list("uniform", c(.9, .99)))
 smoke.nd
@@ -152,6 +156,42 @@ hist(smoke.nd$sim.df[!is.na(smoke.nd$sim.df$corr.RR), ]$seca,
      xlab = "Sensitivity for Cases")
 ```
 
+## Probabilistic Sensitivity Analysis for Uncontrolled Confounding
+
+Let's illustrate this function with this example from [Modern Epidemiology by
+Rothman, Greenland &
+Lash](https://shop.lww.com/Modern-Epidemiology/p/9781451190052), where the
+association between occupational resins exposure and lung cancer mortality is
+studied, together with the presence of an unmeasured potential confounder,
+smoking ([Greenland et al., 1994](https://www.ncbi.nlm.nih.gov/pubmed/7927843)).
+
+|          | Resins exposed | Resins unexposed |
+|---------:|:--------------:|:----------------:|
+|    Cases | 45             | 94               |
+| Controls | 257            | 945              |
+
+Prior probability distributions are given to each bias parameters.
+Prevalences of smoking in those exposed to resins, and of smoking in those
+unexposed to resins receive prior distributions that are uniform between 0.40
+and 0.70. 
+Prior distribution for the odds ratio associating smoking with lung cancer
+mortality is log-normal with 95% limits of 5 and 15.
+The mean of this distribution is [ln(15) + ln(5)] / 2 = 2.159, and its standard
+deviation is [ln(15) - ln(5)] / 3.92 = 0.28.
+
+```{r probsens-conf}
+set.seed(123)
+probsens.conf(matrix(c(45, 94, 257, 945),
+                     dimnames = list(c("Cases+", "Cases-"), c("Res+", "Res-")),
+                     nrow = 2, byrow = TRUE),
+              reps = 50000,
+              prev.exp = list("uniform", c(.4, .7)),
+              prev.nexp = list("uniform", c(.4, .7)),
+              risk = list("log-normal", c(2.159, .28)))
+```
+
+The median adjusted OR is 1.76 [1.25,2.49].
+
 ## Bootstrapping
 
 Selection and misclassification bias models can be bootstrapped in order to get
@@ -163,6 +203,9 @@ as an example.
 The replicates that give negative cells in the adjusted 2X2 table are silently
 ignored and the number of effective bootstrap replicates is provided in the
 output.
+Ten thousands bootstrap samples are a good number for testing everything runs
+smoothly.
+But again, don't be afraid of running more, like 100,000 bootstrap samples.
 
 ```{r, boot}
 library(aplore3)  # to get ICU data

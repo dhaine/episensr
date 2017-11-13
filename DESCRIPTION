@@ -1,7 +1,7 @@
 Package: episensr
 Type: Package
 Title: Basic Sensitivity Analysis of Epidemiological Results
-Version: 0.9.1
+Version: 0.9.2
 Imports:
     triangle,
     trapezoid,
@@ -14,7 +14,7 @@ Imports:
     gridExtra,
     reshape,
     boot
-Date: 2017-09-12
+Date: 2017-11-13
 Authors@R: person("Denis", "Haine", email = "denis.haine@gmail.com",
                   role = c("aut", "cre"))
 BugReports: https://github.com/dhaine/episensr/issues

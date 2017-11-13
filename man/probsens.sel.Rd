@@ -21,7 +21,7 @@ probsens.sel(case, exposed, reps = 1000, or.parms = list(dist =
 \item Uniform: min, max,
 \item Triangular: lower limit, upper limit, mode,
 \item Trapezoidal: min, lower mode, upper mode, max.
-\item Log-logistic: shape, rate. Must be stricty positive,
+\item Log-logistic: shape, rate. Must be strictly positive,
 \item Log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 }}
 
