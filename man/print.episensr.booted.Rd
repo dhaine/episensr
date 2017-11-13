@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.episensr.booted.R
 \name{print.episensr.booted}
 \alias{print.episensr.booted}
-\title{Print bootstraped confidence intervals}
+\title{Print bootstrapped confidence intervals}
 \usage{
 \method{print}{episensr.booted}(x, digits = getOption("digits"), ...)
 }
@@ -17,5 +17,5 @@
 Print the confidence interval of the adjusted measures of association.
 }
 \description{
-Print bootstraped confidence intervals for selection and misclassification bias functions.
+Print bootstrap-ed confidence intervals for selection and misclassification bias functions.
 }

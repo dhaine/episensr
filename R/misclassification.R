@@ -18,7 +18,7 @@
 #' \item Sensitivity of exposure (or outcome) classification among those with the outcome (or exposure),
 #' \item Sensitivity of exposure (or outcome) classification among those without the outcome (or exposure),
 #' \item Specificity of exposure (or outcome) classification among those with the outcome (or exposure), and
-#' \item Specificity of exposure (or outcome) classification among those without the outcom (or exposure).
+#' \item Specificity of exposure (or outcome) classification among those without the outcome (or exposure).
 #' }
 #' @param alpha Significance level.
 #' 
