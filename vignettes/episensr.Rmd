@@ -26,6 +26,8 @@ This package implements the various bias analyses from that book, which are also
 spreadsheet or a SAS macro.
 This vignette provides some examples on how to use the package.
 
+(_Note: A Shiny app is available for some functions, at <https://dhaine.shinyapps.io/episensr_shiny/>._)
+
 ## Selection Bias
 
 We will use a case-control study by
@@ -102,7 +104,9 @@ noncases equal to uniform distributions with a minimum of 0.7 and a maximum of
 0.95 for sensitivities (0.9 and 0.99 respectively for specificities).
 We choose to correct for exposure misclassification with the argument `type =
 exposure`.
-We ask for 10000 replications (default is 1000).
+We ask for 50000 replications (default is 1000).
+Don't be shy with the number of iterations, episensr is fast.
+
 The Se and Sp for cases (`seca`, `spca`) are given as a list with its first
 element referring to the type of distribution (choice between constant, uniform,
 triangular, trapezoidal, logit-logistic, and logit-normal) and the second
@@ -117,7 +121,7 @@ smoke.nd <- probsens(matrix(c(215, 1449, 668, 4296),
                             dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")),
                             nrow = 2, byrow = TRUE),
                      type = "exposure",
-                     reps = 10000,
+                     reps = 50000,
                      seca.parms = list("uniform", c(.7, .95)),
                      spca.parms = list("uniform", c(.9, .99)))
 smoke.nd
@@ -199,6 +203,9 @@ as an example.
 The replicates that give negative cells in the adjusted 2X2 table are silently
 ignored and the number of effective bootstrap replicates is provided in the
 output.
+Ten thousands bootstrap samples are a good number for testing everything runs
+smoothly.
+But again, don't be afraid of running more, like 100,000 bootstrap samples.
 
 ```{r, boot}
 library(aplore3)  # to get ICU data
