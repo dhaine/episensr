@@ -4,7 +4,7 @@
 * win-builder (devel and release)
 
 ## R CMD check results
-There were no ERRORs or WARNINGs. Only NOTEs for mispelled word but this is correct.
+There were no ERRORs, WARNINGs, or NOTEs.
   
 ## Downstream dependencies
 There are no downstream dependencies.
