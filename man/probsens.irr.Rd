@@ -23,7 +23,7 @@ Person-time \tab N1 \tab N0
 
 \item{reps}{Number of replications to run.}
 
-\item{seca.parms}{List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
+\item{seca.parms}{List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 \enumerate{
 \item Constant: constant value,
 \item Uniform: min, max,
@@ -37,7 +37,7 @@ Person-time \tab N1 \tab N0
 
 \item{spca.parms}{List defining the specificity of exposure classification among those with the outcome.}
 
-\item{spexp.parms}{List defining the specifity of exposure classification among those without the outcome.}
+\item{spexp.parms}{List defining the specificity of exposure classification among those without the outcome.}
 
 \item{corr.se}{Correlation between case and non-case sensitivities.}
 
@@ -49,7 +49,7 @@ Person-time \tab N1 \tab N0
 }
 \value{
 A list with elements:
-\item{obs.data}{The analysed 2 x 2 table from the observed data.}
+\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 \item{obs.measures}{A table of observed incidence rate ratio with exact confidence interval.}
 \item{adj.measures}{A table of corrected incidence rate ratios.}
 \item{sim.df}{Data frame of random parameters and computed values.}

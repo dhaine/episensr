@@ -23,7 +23,7 @@
 #' @param alpha Significance level.
 #' 
 #' @return A list with elements:
-#' \item{obs.data}{The analysed 2 x 2 table from the observed data.}
+#' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 #' \item{cfder1.data}{The same table for Mid-level Confounder +.}
 #' \item{cfder2.data}{The same table for Highest-level Confounder +.}
 #' \item{nocfder.data}{The same table for Confounder -.}

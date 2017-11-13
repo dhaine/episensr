@@ -5,8 +5,8 @@
 \title{Probabilistic sensitivity analysis for selection bias.}
 \usage{
 probsens.sel(case, exposed, reps = 1000, or.parms = list(dist =
-  c("constant", "uniform", "triangular", "trapezoidal", "logit-logistic",
-  "logit-normal"), parms = NULL), alpha = 0.05)
+  c("constant", "uniform", "triangular", "trapezoidal", "log-logistic",
+  "log-normal"), parms = NULL), alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -15,21 +15,21 @@ probsens.sel(case, exposed, reps = 1000, or.parms = list(dist =
 
 \item{reps}{Number of replications to run.}
 
-\item{or.parms}{List defining the selection bias odds. The first argument provides the probability distribution function (constant, uniform, triangular, or trapezoidal) and the second its parameters as a vector:
+\item{or.parms}{List defining the selection bias odds. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, log-logistic or log-normal) and the second its parameters as a vector:
 \enumerate{
 \item Constant: constant value,
 \item Uniform: min, max,
 \item Triangular: lower limit, upper limit, mode,
 \item Trapezoidal: min, lower mode, upper mode, max.
-\item Logit-logistic: location, scale, lower bound shift, upper bound shift,
-\item Logit-normal: location, scale, lower bound shift, upper bound shift.
+\item Log-logistic: shape, rate. Must be strictly positive,
+\item Log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 }}
 
 \item{alpha}{Significance level.}
 }
 \value{
 A list with elements:
-\item{obs.data}{The analysed 2 x 2 table from the observed data.}
+\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 \item{obs.measures}{A table of observed odds ratio with confidence intervals.}
 \item{adj.measures}{A table of corrected odds ratios.}
 \item{sim.df}{Data frame of random parameters and computed values.}
