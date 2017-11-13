@@ -5,14 +5,14 @@
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
 #' @param reps Number of replications to run.
-#' @param or.parms List defining the selection bias odds. The first argument provides the probability distribution function (constant, uniform, triangular, or trapezoidal) and the second its parameters as a vector:
+#' @param or.parms List defining the selection bias odds. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, log-logistic or log-normal) and the second its parameters as a vector:
 #' \enumerate{
 #' \item Constant: constant value,
 #' \item Uniform: min, max,
 #' \item Triangular: lower limit, upper limit, mode,
 #' \item Trapezoidal: min, lower mode, upper mode, max.
-#' \item Logit-logistic: location, scale, lower bound shift, upper bound shift,
-#' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
+#' \item Log-logistic: shape, rate. Must be strictly positive,
+#' \item Log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 #' }
 #' @param alpha Significance level.
 #'
@@ -41,8 +41,8 @@ probsens.sel <- function(case,
                          exposed,
                          reps = 1000,
                          or.parms = list(dist = c("constant", "uniform", "triangular",
-                                             "trapezoidal", "logit-logistic",
-                                                  "logit-normal"),
+                                                  "trapezoidal", "log-logistic",
+                                                  "log-normal"),
                              parms = NULL),
                          alpha = 0.05){
     if(reps < 1)
@@ -70,20 +70,10 @@ probsens.sel <- function(case,
                                          (or.parms[[2]][2] > or.parms[[2]][3]) |
                                          (or.parms[[2]][3] > or.parms[[2]][4])))
         stop('Wrong arguments for your trapezoidal distribution.')    
-        if(or.parms[[1]] == "logit-logistic" & (length(or.parms[[2]]) < 2 | length(or.parms[[2]]) == 3 | length(or.parms[[2]]) > 4))
-        stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
-    if(or.parms[[1]] == "logit-logistic" & length(or.parms[[2]]) == 4 &
-       ((or.parms[[2]][3] >= or.parms[[2]][4]) | (!all(or.parms[[2]][3:4] >= 0 & or.parms[[2]][3:4] <= 1))))
-        stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
-    if(or.parms[[1]] == "logit-logistic" & length(or.parms[[2]]) == 2)
-        or.parms <- list(or.parms[[1]], c(or.parms[[2]], c(0, 1)))
-    if(or.parms[[1]] == "logit-normal" & (length(or.parms[[2]]) < 2 | length(or.parms[[2]]) == 3 | length(or.parms[[2]]) > 4))
-        stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
-    if(or.parms[[1]] == "logit-normal" & length(or.parms[[2]]) == 4 &
-       ((or.parms[[2]][3] >= or.parms[[2]][4]) | (!all(or.parms[[2]][3:4] >= 0 & or.parms[[2]][3:4] <= 1))))
-        stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
-    if(or.parms[[1]] == "logit-normal" & length(or.parms[[2]]) == 2)
-        or.parms <- list(or.parms[[1]], c(or.parms[[2]], c(0, 1)))
+    if(or.parms[[1]] == "logit-logistic" & length(or.parms[[2]]) != 2)
+        stop('For log-logistic distribution, please provide vector of location and scale.')
+    if(or.parms[[1]] == "log-normal" & length(or.parms[[2]]) != 2)
+        stop('For log-normal distribution, please provide vector of meanlog and sdlog.')
 
     if(inherits(case, c("table", "matrix")))
         tab <- case
@@ -106,19 +96,6 @@ probsens.sel <- function(case,
     lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
     uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
-    logitlog.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- sesp[[2]] + sesp[[3]] * (log(u / (1 - u)))
-        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
-    logitnorm.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- sesp[[2]] + sesp[[3]] * qnorm(u)
-        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
-
     if (or.parms[[1]] == "constant") {
         draws[, 1] <- or.parms[[2]]
     }
@@ -131,11 +108,11 @@ probsens.sel <- function(case,
     if (or.parms[[1]] == "trapezoidal") {
         draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(or.sel))
     }
-    if (or.parms[[1]] == "logit-logistic") {
-        draws[, 1] <- logitlog.dstr(or.sel)
+    if (or.parms[[1]] == "log-logistic") {
+        draws[, 1] <- do.call(actuar::rllogis, as.list(or.sel))
     }
-    if (or.parms[[1]] == "logit-normal") {
-        draws[, 1] <- logitnorm.dstr(or.sel)
+    if (or.parms[[1]] == "log-normal") {
+        draws[, 1] <- do.call(rlnorm, as.list(or.sel))
     }
 
     draws[, 3] <- runif(reps)

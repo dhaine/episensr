@@ -1,3 +1,8 @@
+# episensr 0.9.2
+- Fix bug for distributions and computations of OR/RR in `probsens.conf`
+- Update distributions in `probsens.irr.conf`
+- Add example using `probsens.conf` in vignette
+
 # episensr 0.9.1
 - Fix bug when using triangular distribution in `probsens.conf` function for
   prevalence of exposure among the non-exposed (as producing NaNs) (#1).

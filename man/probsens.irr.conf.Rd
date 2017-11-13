@@ -24,7 +24,7 @@ Person-time \tab N1 \tab N0
 
 \item{reps}{Number of replications to run.}
 
-\item{prev.exp}{List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant,uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
+\item{prev.exp}{List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant,uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 \enumerate{
 \item Constant; value,
 \item Uniform: min, max,
@@ -42,8 +42,8 @@ Person-time \tab N1 \tab N0
 \item Uniform: min, max,
 \item Triangular: lower limit, upper limit, mode,
 \item Trapezoidal: min, lower mode, upper mode, max.
-\item Log-logistic: location, scale,
-\item Log-normal: location, scale.
+\item Log-logistic: shape, rate. Must be strictly positive,
+\item Log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 }}
 
 \item{corr.p}{Correlation between the exposure-specific confounder prevalences.}

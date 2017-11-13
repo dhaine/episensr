@@ -10,7 +10,7 @@
 #' }
 #' @param pt A numeric vector of person-time at risk. If provided, \code{counts} must be a numeric vector of disease counts.
 #' @param reps Number of replications to run.
-#' @param prev.exp List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant,uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector:
+#' @param prev.exp List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant,uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 #' \enumerate{
 #' \item Constant; value,
 #' \item Uniform: min, max,
@@ -26,8 +26,8 @@
 #' \item Uniform: min, max,
 #' \item Triangular: lower limit, upper limit, mode,
 #' \item Trapezoidal: min, lower mode, upper mode, max.
-#' \item Log-logistic: location, scale,
-#' \item Log-normal: location, scale.
+#' \item Log-logistic: shape, rate. Must be strictly positive,
+#' \item Log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 #' }
 #' @param corr.p Correlation between the exposure-specific confounder prevalences.
 #' @param alpha Significance level.
@@ -176,7 +176,7 @@ probsens.irr.conf <- function(counts,
     if(risk[[1]] == "log-logistic" & length(risk[[2]]) != 2)
         stop('For log-logistic distribution, please provide vector of location and scale.')
     if(risk[[1]] == "log-normal" & length(risk[[2]]) != 2)
-        stop('For log-logistic distribution, please provide vector of location and scale.')
+        stop('For log-logistic distribution, please provide vector of meanlog and sdlog.')
 
     if(!is.null(corr.p) && (corr.p == 0 | corr.p == 1))
         stop('Correlations should be > 0 and < 1.')
@@ -220,18 +220,6 @@ probsens.irr.conf <- function(counts,
         u <- runif(sesp[[1]])
         w <- sesp[[2]] + sesp[[3]] * qnorm(u)
         p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
-    loglog.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- exp(sesp[[2]] + sesp[[3]] * (log(u / (1 - u))))
-        p <- log(w)
-        return(p)
-    }
-    lognorm.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- exp(sesp[[2]] + sesp[[3]] * qnorm(u))
-        p <- log(w)
         return(p)
     }
     
@@ -363,10 +351,10 @@ probsens.irr.conf <- function(counts,
         draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(rr.cd))
     }
     if (risk[[1]] == "log-logistic") {
-        draws[, 3] <- loglog.dstr(rr.cd)
+        draws[, 3] <- do.call(actuar::rllogis, as.list(rr.cd))
     }
     if (risk[[1]] == "log-normal") {
-        draws[, 3] <- lognorm.dstr(rr.cd)
+        draws[, 3] <- do.call(rlnorm, as.list(rr.cd))
     }
     
     draws[, 13] <- runif(reps)
