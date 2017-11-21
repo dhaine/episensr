@@ -6,8 +6,6 @@ Imports:
     triangle,
     trapezoid,
     actuar,
-    llogistic,
-    logitnorm,
     plyr,
     ggplot2,
     grid,
