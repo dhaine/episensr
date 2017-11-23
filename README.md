@@ -1,3 +1,9 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 
@@ -5,6 +11,7 @@
 # episensr
 
 [![Build Status](https://travis-ci.org/dhaine/episensr.svg?branch=master)](https://travis-ci.org/dhaine/episensr)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/pkgdown)](https://cran.r-project.org/package=pkgdown)
 
 The R package **episensr** allows to do basic sensitivity analysis of
 epidemiological results as described in **Applying Quantitative Bias Analysis to
