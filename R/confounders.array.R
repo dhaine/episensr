@@ -45,8 +45,8 @@
 #' confounders.array(crude.risk = 1.5, type = "binary",
 #' bias_parms = c(5.5, 0.5, 0.1))
 #' # Examples from Patorno E., Gopalakrishnan, C., Franklin, J.M., Brodovicz, K.G.,
-#' # Masso‐Gonzalez, E., Bartels, D.B., Liu, J., and Schneeweiss, S. Claims‐based
-#' # studies of oral glucose‐lowering medications can achieve balance in critical
+#' # Masso-Gonzalez, E., Bartels, D.B., Liu, J., and Schneeweiss, S. Claims-based
+#' # studies of oral glucose-lowering medications can achieve balance in critical
 #' # clinical variables only observed in electronic health records 2017; 20(4): 974-
 #' # 984.
 #' confounders.array(crude.risk = 1.5, type = "binary",
