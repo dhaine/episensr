@@ -13,8 +13,11 @@ Imports:
     reshape,
     boot
 Date: 2017-11-13
-Authors@R: person("Denis", "Haine", email = "denis.haine@gmail.com",
-                  role = c("aut", "cre"))
+Authors@R: 
+    person(given = "Denis",
+           family = "Haine",
+           role = c("aut", "cre"),
+           email = "denis.haine@gmail.com")
 BugReports: https://github.com/dhaine/episensr/issues
 Description: Basic sensitivity analysis of the observed relative risks adjusting
     for unmeasured confounding and misclassification of the
