@@ -7,10 +7,10 @@
 probsens.conf(case, exposed, reps = 1000, prev.exp = list(dist =
   c("constant", "uniform", "triangular", "trapezoidal", "logit-logistic",
   "logit-normal"), parms = NULL), prev.nexp = list(dist = c("constant",
-  "uniform", "triangular", "trapezoidal", "logit-logistic", "logit-normal"),
-  parms = NULL), risk = list(dist = c("constant", "uniform", "triangular",
-  "trapezoidal", "log-logistic", "log-normal"), parms = NULL), corr.p = NULL,
-  discard = TRUE, alpha = 0.05)
+  "uniform", "triangular", "trapezoidal", "logit-logistic",
+  "logit-normal"), parms = NULL), risk = list(dist = c("constant",
+  "uniform", "triangular", "trapezoidal", "log-logistic", "log-normal"),
+  parms = NULL), corr.p = NULL, discard = TRUE, alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -53,6 +53,7 @@ A list with elements:
 \item{obs.measures}{A table of observed relative risk and odds ratio with confidence intervals.}
 \item{adj.measures}{A table of corrected relative risks and odds ratios.}
 \item{sim.df}{Data frame of random parameters and computed values.}
+\item{reps}{Number of replications.}
 }
 \description{
 Probabilistic sensitivity analysis to correct for unknown or unmeasured confounding and random error simultaneously.
