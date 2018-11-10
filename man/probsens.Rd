@@ -21,7 +21,12 @@ probsens(case, exposed, type = c("exposure", "outcome"), reps = 1000,
 
 \item{reps}{Number of replications to run.}
 
-\item{seca.parms}{List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+\item{seca.parms}{List defining:
+\enumerate{
+\item The sensitivity of exposure classification among those with the outcome (when \code{type = "exposure"}), or
+\item The sensitivity of outcome classification among those with the exposure (when \code{type = "outcome"}).
+}
+The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 \enumerate{
 \item Constant: constant value,
 \item Uniform: min, max,
@@ -31,11 +36,15 @@ probsens(case, exposed, type = c("exposure", "outcome"), reps = 1000,
 \item Logit-normal: location, scale, lower bound shift, upper bound shift.
 }}
 
-\item{seexp.parms}{List defining the sensitivity of exposure classification among those without the outcome.}
+\item{seexp.parms}{List defining:
+\enumerate{
+\item The sensitivity of exposure classification among those without the outcome (when \code{type = "exposure"}), or
+\item The sensitivity of outcome classification among those without the exposure (when \code{type = "outcome"}).
+}}
 
-\item{spca.parms}{List defining the specificity of exposure classification among those with the outcome.}
+\item{spca.parms}{List as above for \code{seca.parms} but for specificity.}
 
-\item{spexp.parms}{List defining the specificity of exposure classification among those without the outcome.}
+\item{spexp.parms}{List as above for \code{seexp.parms} but for specificity.}
 
 \item{corr.se}{Correlation between case and non-case sensitivities.}
 

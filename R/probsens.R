@@ -11,7 +11,12 @@
 #' @param exposed Exposure variable.
 #' @param type Choice of correction for exposure or outcome misclassification.
 #' @param reps Number of replications to run.
-#' @param seca.parms List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+#' @param seca.parms List defining:
+#' \enumerate{
+#' \item The sensitivity of exposure classification among those with the outcome (when \code{type = "exposure"}), or
+#' \item The sensitivity of outcome classification among those with the exposure (when \code{type = "outcome"}).
+#' }
+#' The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 #' \enumerate{
 #' \item Constant: constant value,
 #' \item Uniform: min, max,
@@ -20,9 +25,13 @@
 #' \item Logit-logistic: location, scale, lower bound shift, upper bound shift,
 #' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
 #' }
-#' @param seexp.parms List defining the sensitivity of exposure classification among those without the outcome.
-#' @param spca.parms List defining the specificity of exposure classification among those with the outcome.
-#' @param spexp.parms List defining the specificity of exposure classification among those without the outcome.
+#' @param seexp.parms List defining:
+#' \enumerate{
+#' \item The sensitivity of exposure classification among those without the outcome (when \code{type = "exposure"}), or
+#' \item The sensitivity of outcome classification among those without the exposure (when \code{type = "outcome"}).
+#' }
+#' @param spca.parms List as above for \code{seca.parms} but for specificity.
+#' @param spexp.parms List as above for \code{seexp.parms} but for specificity.
 #' @param corr.se Correlation between case and non-case sensitivities.
 #' @param corr.sp Correlation between case and non-case specificities.
 #' @param discard A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.
