@@ -33,6 +33,8 @@
 #' \item{obs.measures}{A table of observed relative risk and odds ratio with confidence intervals.}
 #' \item{adj.measures}{A table of corrected relative risks and odds ratios.}
 #' \item{sim.df}{Data frame of random parameters and computed values.}
+#' \item{reps}{Number of replications.}
+#' 
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
 #'
 #' @examples
@@ -182,32 +184,26 @@ probsens.conf <- function(case,
     if(!is.null(corr.p) && (corr.p == 0 | corr.p == 1))
         stop('Correlations should be > 0 and < 1.')
 
-    if(inherits(case, c("table", "matrix")))
-        tab <- case
-    else {tab.df <- table(case, exposed)
-        tab <- tab.df[2:1, 2:1]
-    }
-    
-    a <- tab[1, 1]
-    b <- tab[1, 2]
-    c <- tab[2, 1]
-    d <- tab[2, 2]
+    if(!inherits(case, "episensr.probsens")){
+        if(inherits(case, c("table", "matrix")))
+            tab <- case
+        else {tab.df <- table(case, exposed)
+            tab <- tab.df[2:1, 2:1]
+        }
+        
+        a <- tab[1, 1]
+        b <- tab[1, 2]
+        c <- tab[2, 1]
+        d <- tab[2, 2]
+    } else {
+        a <- case[[3]][, 1]
+        b <- case[[3]][, 2]
+        c <- case[[3]][, 3]
+        d <- case[[3]][, 4]
 
-    draws <- matrix(NA, nrow = reps, ncol = 10)
-    colnames(draws) <- c("p1", "p0", "RR.cd",
-                         "A_11",
-                         "A_01",
-                         "RR.SMR.rr", 
-                         "OR.SMR.or", 
-                         "reps",
-                         "tot.RRadj.smr", 
-                         "tot.ORadj.smr")
-    corr.draws <- matrix(NA, nrow = reps, ncol = 5)
+        reps <- case[[4]]
+}
 
-    p1 <- c(reps, prev.exp[[2]])
-    p0 <- c(reps, prev.nexp[[2]])
-    rr.cd <- c(reps, risk[[2]])
-    
     obs.rr <- (a/(a + c)) / (b/(b + d))
     se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
     lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha/2) * se.log.obs.rr)
@@ -218,6 +214,22 @@ probsens.conf <- function(case,
     lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
     uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
+    draws <- matrix(NA, nrow = reps, ncol = 14)
+    colnames(draws) <- c("p1", "p0", "RR.cd",
+                         "A_11",
+                         "A_01",
+                         "RR.SMR.rr", 
+                         "OR.SMR.or", 
+                         "reps",
+                         "tot.RRadj.smr", 
+                         "tot.ORadj.smr",
+                         "A1", "B1", "C1", "D1")
+    corr.draws <- matrix(NA, nrow = reps, ncol = 5)
+
+    p1 <- c(reps, prev.exp[[2]])
+    p0 <- c(reps, prev.nexp[[2]])
+    rr.cd <- c(reps, risk[[2]])
+    
     logitlog.dstr <- function(sesp) {
         u <- runif(sesp[[1]])
         w <- sesp[[2]] + sesp[[3]] * (log(u / (1 - u)))
@@ -404,7 +416,11 @@ probsens.conf <- function(case,
     draws[, 10] <- exp(log(draws[, 7]) -
                                qnorm(draws[, 8]) *
                                          ((log(uci.obs.or) - log(lci.obs.or)) /
-                                              (qnorm(.975) * 2)))
+                                          (qnorm(.975) * 2)))
+    draws[, 11] <- a
+    draws[, 12] <- b
+    draws[, 13] <- c
+    draws[, 14] <- d
 
     corr.rr.smr <- c(median(draws[, 6], na.rm = TRUE),
                      quantile(draws[, 6], probs = .025, na.rm = TRUE),
@@ -419,17 +435,23 @@ probsens.conf <- function(case,
                     quantile(draws[, 10], probs = .025, na.rm = TRUE),
                     quantile(draws[, 10], probs = .975, na.rm = TRUE))
 
+    if(!inherits(case, "episensr.probsens")){
+        tab <- tab
+        rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr),
+                      c(obs.or, lci.obs.or, uci.obs.or))
+        rownames(rmat) <- c("Observed Relative Risk:",
+                            "   Observed Odds Ratio:")
+        colnames(rmat) <- c(" ",
+                            paste(100 * (alpha/2), "%", sep = ""),
+                            paste(100 * (1 - alpha/2), "%", sep = ""))        
+    } else {
+        tab <- case[[1]]
+        rmat <- case[[2]]
+    }
     if (is.null(rownames(tab)))
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr),
-                  c(obs.or, lci.obs.or, uci.obs.or))
-    rownames(rmat) <- c("Observed Relative Risk:",
-                        "   Observed Odds Ratio:")
-    colnames(rmat) <- c(" ",
-                        paste(100 * (alpha/2), "%", sep = ""),
-                        paste(100 * (1 - alpha/2), "%", sep = ""))
     rmatc <- rbind(corr.rr.smr, tot.rr.smr, corr.or.smr, tot.or.smr)
     rownames(rmatc) <- c("           RR (SMR) -- systematic error:",
                          "RR (SMR) -- systematic and random error:",
@@ -439,8 +461,9 @@ probsens.conf <- function(case,
     res <- list(obs.data = tab,
                 obs.measures = rmat, 
                 adj.measures = rmatc, 
-                sim.df = as.data.frame(draws[, -18]))
-    class(res) <- c("episensr", "list")
+                sim.df = as.data.frame(draws[, -8]),
+                reps = reps)
+    class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }
 
