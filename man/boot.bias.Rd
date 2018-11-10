@@ -4,7 +4,8 @@
 \alias{boot.bias}
 \title{Bootstrap resampling for selection and misclassification bias models.}
 \usage{
-boot.bias(bias_model, R = 1000, conf = 0.95, ci_type = c("norm", "perc"))
+boot.bias(bias_model, R = 1000, conf = 0.95, ci_type = c("norm",
+  "perc"))
 }
 \arguments{
 \item{bias_model}{An object of class "episensr.boot", i.e. either selection bias function or misclassification bias function.}

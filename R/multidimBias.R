@@ -9,7 +9,6 @@
 #' misclassification, unmeasured confounder, or selection bias.
 #' @param se Numeric vector of sensitivities.
 #' @param sp Numeric vector of specificities.
-#' @param bias Deprecated, please use bias_parms instead.
 #' @param bias_parms List of bias parameters. The list is made of 3 vectors of the same
 #' length:
 #' \enumerate{
@@ -65,17 +64,11 @@ multidimBias <- function(case,
                          type = c("exposure", "outcome", "confounder", "selection"),
                          se = NULL,
                          sp = NULL,
-                         bias = NULL,
                          bias_parms = NULL,
                          OR.sel = NULL,
                          alpha = 0.05,
                          dec = 4,
                          print = TRUE) {
-    if (!missing(bias)) {
-        warning("Argument bias is deprecated; please use bias_parms instead.", 
-                call. = FALSE)
-        bias_parms <- bias
-    }
     if(is.null(se))
         se <- c(1, 1)
     else se <- se

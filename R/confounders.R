@@ -13,9 +13,9 @@
 #' @param bias_parms Numeric vector defining the 3 necessary bias parameters. This
 #' vector has 3 elements, in the following order:
 #' \enumerate{
-#' \item the association between the confounder and the outcome among those who were not exposed,
-#' \item the prevalence of the confounder among the exposed, and
-#' \item the prevalence of the confounder among the unexposed.
+#' \item the association between the confounder and the outcome among those who were not exposed (RR, OR, or RD according to choice of implementation),
+#' \item the prevalence of the confounder among the exposed (between 0 and 1), and
+#' \item the prevalence of the confounder among the unexposed (between 0 and 1).
 #' }
 #' @param alpha Significance level.
 #' 

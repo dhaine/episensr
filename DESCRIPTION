@@ -13,8 +13,12 @@ Imports:
     reshape,
     boot
 Date: 2017-11-13
-Authors@R: person("Denis", "Haine", email = "denis.haine@gmail.com",
-                  role = c("aut", "cre"))
+Authors@R: 
+    person(given = "Denis",
+           family = "Haine",
+           role = c("aut", "cre"),
+           email = "denis.haine@gmail.com",
+           comment = c(ORCID = "0000-0002-6691-7335"))
 BugReports: https://github.com/dhaine/episensr/issues
 Description: Basic sensitivity analysis of the observed relative risks adjusting
     for unmeasured confounding and misclassification of the
@@ -23,12 +27,12 @@ Description: Basic sensitivity analysis of the observed relative risks adjusting
     "Applying Quantitative Bias Analysis to Epidemiologic Data",
     ('Springer', 2009).
 Depends:
-    R (>= 3.4.1)
+    R (>= 3.5.0)
 License: GPL-2
 Suggests:
     testthat,
     knitr,
     rmarkdown,
     aplore3
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr
