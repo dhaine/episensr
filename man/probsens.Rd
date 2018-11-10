@@ -56,6 +56,10 @@ A list with elements:
 \description{
 Probabilistic sensitivity analysis to correct for exposure misclassification or
 outcome misclassification and random error.
+Non-differential misclassification is assumed when only the two bias parameters
+\code{seca.parms} and \code{spca.parms} are provided. Adding the 2 parameters
+\code{seexp.parms} and \code{spexp.parms} (i.e. providing the 4 bias parameters)
+evaluates a differential misclassification.
 }
 \examples{
 # The data for this example come from:

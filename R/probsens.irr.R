@@ -1,6 +1,10 @@
 #' Probabilistic sensitivity analysis for exposure misclassification of person-time data and random error.
 #'
 #' Probabilistic sensitivity analysis to correct for exposure misclassification when person-time data has been collected.
+#' Non-differential misclassification is assumed when only the two bias parameters
+#' \code{seca.parms} and \code{spca.parms} are provided. Adding the 2 parameters
+#' \code{seexp.parms} and \code{spexp.parms} (i.e. providing the 4 bias parameters)
+#' evaluates a differential misclassification.
 #'
 #' @param counts A table or matrix where first row contains disease counts and second row contains person-time at risk, and first and second columns are exposed and unexposed observations, as:
 #' \tabular{lll}{
