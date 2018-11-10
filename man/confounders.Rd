@@ -5,8 +5,8 @@
 \title{Sensitivity analysis to correct for unknown or unmeasured confounding without
 effect modification}
 \usage{
-confounders(case, exposed, type = c("RR", "OR", "RD"), bias_parms = NULL,
-  alpha = 0.05)
+confounders(case, exposed, type = c("RR", "OR", "RD"),
+  bias_parms = NULL, alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -20,9 +20,9 @@ ratio measures (relative risk -- RR; odds ratio -- OR) or difference measures
 \item{bias_parms}{Numeric vector defining the 3 necessary bias parameters. This
 vector has 3 elements, in the following order:
 \enumerate{
-\item the association between the confounder and the outcome among those who were not exposed,
-\item the prevalence of the confounder among the exposed, and
-\item the prevalence of the confounder among the unexposed.
+\item the association between the confounder and the outcome among those who were not exposed (RR, OR, or RD according to choice of implementation),
+\item the prevalence of the confounder among the exposed (between 0 and 1), and
+\item the prevalence of the confounder among the unexposed (between 0 and 1).
 }}
 
 \item{alpha}{Significance level.}

@@ -6,10 +6,11 @@
 \usage{
 probsens.irr(counts, pt = NULL, reps = 1000, seca.parms = list(dist =
   c("constant", "uniform", "triangular", "trapezoidal", "logit-logistic",
-  "logit-normal"), parms = NULL), seexp.parms = NULL, spca.parms = list(dist
-  = c("constant", "uniform", "triangular", "trapezoidal", "logit-logistic",
-  "logit-normal"), parms = NULL), spexp.parms = NULL, corr.se = NULL,
-  corr.sp = NULL, discard = TRUE, alpha = 0.05)
+  "logit-normal"), parms = NULL), seexp.parms = NULL,
+  spca.parms = list(dist = c("constant", "uniform", "triangular",
+  "trapezoidal", "logit-logistic", "logit-normal"), parms = NULL),
+  spexp.parms = NULL, corr.se = NULL, corr.sp = NULL,
+  discard = TRUE, alpha = 0.05)
 }
 \arguments{
 \item{counts}{A table or matrix where first row contains disease counts and second row contains person-time at risk, and first and second columns are exposed and unexposed observations, as:
