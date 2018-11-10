@@ -257,7 +257,7 @@ probsens <- function(case,
     
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
                                 is.null(corr.se) | is.null(corr.sp)))
-        stop('For non-differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations.')
+        stop('For differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations.')
 
     if(!is.null(corr.se) && (corr.se == 0 | corr.se == 1))
         stop('Correlations should be > 0 and < 1.')
