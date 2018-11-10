@@ -1,8 +1,8 @@
-#' Sensitivity analysis to correct for unknown or unmeasured confounding with
-#' effect modification
+#' Sensitivity analysis to correct for unknown or unmeasured confounding in the presence
+#' of effect modification
 #'
 #' Simple sensitivity analysis to correct for unknown or unmeasured confounding
-#' with effect measure modification. Implementation for ratio measures (relative
+#' in the presence of effect modification. Implementation for ratio measures (relative
 #' risk -- RR, or odds ratio -- OR) and difference measures (risk difference -- RD).
 #'
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
@@ -17,8 +17,8 @@
 #' were exposed,
 #' \item the association between the confounder and the outcome among those who
 #' were not exposed,
-#' \item the prevalence of the confounder among the exposed, and
-#' \item the prevalence of the confounder among the unexposed.
+#' \item the prevalence of the confounder among the exposed (between 0 and 1), and
+#' \item the prevalence of the confounder among the unexposed (between 0 and 1).
 #' }
 #' @param alpha Significance level.
 #' 

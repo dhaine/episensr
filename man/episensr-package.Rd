@@ -1,26 +1,23 @@
-\name{episensr}
-\alias{episensr}
+\name{episensr-package}
 \alias{episensr-package}
+\alias{episensr}
 \docType{package}
-\title{Basic sensitivity analysis of epidemiological results}
+\title{episensr: Basic sensitivity analysis of epidemiological results}
 \description{
-  episensr provides basic sensitivity analysis of the observed relative
+  'episensr' provides basic sensitivity analysis of the observed relative
   risks adjusting for unmeasured confounding and misclassification of
-  the exposure/outcome, or both.
-}
-\details{
-  \tabular{ll}{
-    Package: \tab episensr\cr
-    Type: \tab Package\cr
-    Version: \tab 0.6\cr
-    Date: \tab 2015-03-24\cr
-    License: \tab GPL-2\cr
-  }
-}
+  the exposure/outcome, or both.}
 \author{
-  Denis Haine \email{denis.haine@gmail.com}
+Maintainer: Denis Haine \email{denis.haine@gmail.com}
 }
 \references{
   Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
     Bias Analysis to Epidemiologic Data}, Springer.
+}
+\seealso{
+  Useful links:
+  \itemize{
+    \item \url{https://github.com/dhaine/episensr}
+    \item Report bugs at \url{https://github.com/dhaine/episensr/issues}
+  }
 }

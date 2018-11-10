@@ -21,10 +21,10 @@ has 6 elements, in the following order:
 \enumerate{
 \item the association between the highest level confounder and the outcome,
 \item the association between the mid-level confounder and the outcome,
-\item the prevalence of the highest level confounder among the exposed,
-\item the prevalence of the highest level confounder among the unexposed,
-\item the prevalence of the mid-level confounder among the exposed, and
-\item the prevalence of the mid-level confounder among the unexposed.
+\item the prevalence of the highest level confounder among the exposed (between 0 and 1),
+\item the prevalence of the highest level confounder among the unexposed (between 0 and 1),
+\item the prevalence of the mid-level confounder among the exposed (between 0 and 1), and
+\item the prevalence of the mid-level confounder among the unexposed (between 0 and 1).
 }}
 
 \item{alpha}{Significance level.}
