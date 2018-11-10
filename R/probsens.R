@@ -2,12 +2,21 @@
 #'
 #' Probabilistic sensitivity analysis to correct for exposure misclassification or
 #' outcome misclassification and random error.
-#'
+#' Non-differential misclassification is assumed when only the two bias parameters
+#' \code{seca.parms} and \code{spca.parms} are provided. Adding the 2 parameters
+#' \code{seexp.parms} and \code{spexp.parms} (i.e. providing the 4 bias parameters)
+#' evaluates a differential misclassification.
+#' 
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
 #' @param type Choice of correction for exposure or outcome misclassification.
 #' @param reps Number of replications to run.
-#' @param seca.parms List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+#' @param seca.parms List defining:
+#' \enumerate{
+#' \item The sensitivity of exposure classification among those with the outcome (when \code{type = "exposure"}), or
+#' \item The sensitivity of outcome classification among those with the exposure (when \code{type = "outcome"}).
+#' }
+#' The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 #' \enumerate{
 #' \item Constant: constant value,
 #' \item Uniform: min, max,
@@ -16,9 +25,13 @@
 #' \item Logit-logistic: location, scale, lower bound shift, upper bound shift,
 #' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
 #' }
-#' @param seexp.parms List defining the sensitivity of exposure classification among those without the outcome.
-#' @param spca.parms List defining the specificity of exposure classification among those with the outcome.
-#' @param spexp.parms List defining the specificity of exposure classification among those without the outcome.
+#' @param seexp.parms List defining:
+#' \enumerate{
+#' \item The sensitivity of exposure classification among those without the outcome (when \code{type = "exposure"}), or
+#' \item The sensitivity of outcome classification among those without the exposure (when \code{type = "outcome"}).
+#' }
+#' @param spca.parms List as above for \code{seca.parms} but for specificity.
+#' @param spexp.parms List as above for \code{seexp.parms} but for specificity.
 #' @param corr.se Correlation between case and non-case sensitivities.
 #' @param corr.sp Correlation between case and non-case specificities.
 #' @param discard A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.
@@ -253,7 +266,7 @@ probsens <- function(case,
     
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
                                 is.null(corr.se) | is.null(corr.sp)))
-        stop('For non-differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations.')
+        stop('For differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations.')
 
     if(!is.null(corr.se) && (corr.se == 0 | corr.se == 1))
         stop('Correlations should be > 0 and < 1.')
