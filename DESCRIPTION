@@ -17,7 +17,8 @@ Authors@R:
     person(given = "Denis",
            family = "Haine",
            role = c("aut", "cre"),
-           email = "denis.haine@gmail.com")
+           email = "denis.haine@gmail.com",
+           comment = c(ORCID = "0000-0002-6691-7335"))
 BugReports: https://github.com/dhaine/episensr/issues
 Description: Basic sensitivity analysis of the observed relative risks adjusting
     for unmeasured confounding and misclassification of the
