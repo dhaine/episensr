@@ -2,8 +2,8 @@
 % Please edit documentation in R/confounders.emm.R
 \name{confounders.emm}
 \alias{confounders.emm}
-\title{Sensitivity analysis to correct for unknown or unmeasured confounding with
-effect modification}
+\title{Sensitivity analysis to correct for unknown or unmeasured confounding in the presence
+of effect modification}
 \usage{
 confounders.emm(case, exposed, type = c("RR", "OR", "RD"),
   bias_parms = NULL, alpha = 0.05)
@@ -24,8 +24,8 @@ vector has 4 elements, in the following order:
 were exposed,
 \item the association between the confounder and the outcome among those who
 were not exposed,
-\item the prevalence of the confounder among the exposed, and
-\item the prevalence of the confounder among the unexposed.
+\item the prevalence of the confounder among the exposed (between 0 and 1), and
+\item the prevalence of the confounder among the unexposed (between 0 and 1).
 }}
 
 \item{alpha}{Significance level.}
@@ -43,7 +43,7 @@ estimates.}
 }
 \description{
 Simple sensitivity analysis to correct for unknown or unmeasured confounding
-with effect measure modification. Implementation for ratio measures (relative
+in the presence of effect modification. Implementation for ratio measures (relative
 risk -- RR, or odds ratio -- OR) and difference measures (risk difference -- RD).
 }
 \examples{

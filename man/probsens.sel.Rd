@@ -6,7 +6,15 @@
 \usage{
 probsens.sel(case, exposed, reps = 1000, or.parms = list(dist =
   c("constant", "uniform", "triangular", "trapezoidal", "log-logistic",
-  "log-normal"), parms = NULL), alpha = 0.05)
+  "log-normal"), parms = NULL), case.exp = list(dist = c("constant",
+  "uniform", "triangular", "trapezoidal", "logit-logistic",
+  "logit-normal"), parms = NULL), case.nexp = list(dist = c("constant",
+  "uniform", "triangular", "trapezoidal", "logit-logistic",
+  "logit-normal"), parms = NULL), ncase.exp = list(dist = c("constant",
+  "uniform", "triangular", "trapezoidal", "logit-logistic",
+  "logit-normal"), parms = NULL), ncase.nexp = list(dist = c("constant",
+  "uniform", "triangular", "trapezoidal", "logit-logistic",
+  "logit-normal"), parms = NULL), alpha = 0.05)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -25,6 +33,22 @@ probsens.sel(case, exposed, reps = 1000, or.parms = list(dist =
 \item Log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 }}
 
+\item{case.exp}{If or.parms not provided, defines the selection probability among case exposed. The first argument provides the probability distribution function and the second its parameters as a vector:
+\enumerate{
+\item Constant: constant value,
+\item Uniform: min, max,
+\item Triangular: lower limit, upper limit, mode,
+\item Trapezoidal: min, lower mode, upper mode, max.
+\item Logit-logistic: location, scale, lower bound shift, upper bound shift,
+\item Logit-normal: location, scale, lower bound shift, upper bound shift.
+}}
+
+\item{case.nexp}{Same among cases non-exposed.}
+
+\item{ncase.exp}{Same among non-cases exposed.}
+
+\item{ncase.nexp}{Same among non-cases non-exposed.}
+
 \item{alpha}{Significance level.}
 }
 \value{
@@ -33,6 +57,7 @@ A list with elements:
 \item{obs.measures}{A table of observed odds ratio with confidence intervals.}
 \item{adj.measures}{A table of corrected odds ratios.}
 \item{sim.df}{Data frame of random parameters and computed values.}
+\item{reps}{Number of replications.}
 }
 \description{
 Probabilistic sensitivity analysis to correct for selection bias.

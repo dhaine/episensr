@@ -4,8 +4,8 @@
 \alias{confounders.limit}
 \title{Bounding the bias limits of unmeasured confounding.}
 \usage{
-confounders.limit(p = NA, RR = NA, OR = NA, crude.RR = NULL, dec = 4,
-  print = TRUE)
+confounders.limit(p = NA, RR = NA, OR = NA, crude.RR = NULL,
+  dec = 4, print = TRUE)
 }
 \arguments{
 \item{p}{Proportion with the confounder among the unexposed group.}
