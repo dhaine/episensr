@@ -18,7 +18,7 @@
 #' dimnames = list(c("BC+", "BC-"), c("AD+", "AD-")), nrow = 2, byrow = TRUE)
 #' dat %>% misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97))
 #' # also for multiple bias:
-#' chien %>%
+#' dat %>%
 #' misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) %>%
 #' multiple.bias(., bias_function = "selection", bias_parms = c(.73, .61, .82, .76))
 NULL
