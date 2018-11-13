@@ -13,9 +13,11 @@
 #' @return A list with the elements corresponding to the bias function called.
 #'
 #' @examples
-#' chien %>%
-#'   misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) %>%
-#'   multiple.bias(., bias_function = "selection", bias_parms = c(.73, .61, .82, .76))
+#' dat <- matrix(c(118, 832, 103, 884),
+#' dimnames = list(c("BC+", "BC-"), c("AD+", "AD-")), nrow = 2, byrow = TRUE)
+#' dat %>%
+#' misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) %>%
+#' multiple.bias(., bias_function = "selection", bias_parms = c(.73, .61, .82, .76))
 #' @seealso \code{\link{selection}}, \code{\link{misclassification}},
 #' \code{\link{confounders}}, \code{\link{probsens}}, \code{\link{probsens.sel}},
 #' \code{\link{probsens.conf}}
