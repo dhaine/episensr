@@ -1,20 +1,24 @@
 #' Extract adjusted 2-by-2 table from episensr object
 #'
 #' Extract the adjusted 2-by-2 table from an episensr function, so that it can be re-used
-#' into an other episensr function.
+#' into an other episensr function when performing multiple (combined) bias analysis.
+#' Allowed functions are: 'selection', 'misclassification', 'confounders', 'probsens',
+#' 'probsens.sel', and 'probsens.conf'.
 #'
-#' @param x An object of class 'episensr'.
-#' @param bias_function Bias function to be called. Choices between \code{selection},
-#' \code{confounders}, \code{misclassification}, \code{probsens.sel}, \code{probsens.conf},
-#' and \code{probsens}.
+#' @param x An object of class 'episensr' or 'episensr.probsens'.
+#' @param bias_function Bias function to be called. Choices between 'selection',
+#' 'misclassification', 'confounders', 'probsens', 'probsens.sel', 'probsens.conf'.
 #' @param ... Additional arguments passed on to methods.
 #' 
-#' @return A matrix.
+#' @return A list with the elements corresponding to the bias function called.
 #'
 #' @examples
 #' chien %>%
 #'   misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) %>%
 #'   multiple.bias(., bias_function = "selection", bias_parms = c(.73, .61, .82, .76))
+#' @seealso \code{\link{selection}}, \code{\link{misclassification}},
+#' \code{\link{confounders}}, \code{\link{probsens}}, \code{\link{probsens.sel}},
+#' \code{\link{probsens.conf}}
 #' @export
 multiple.bias <- function(x,
                           bias_function = c("selection", "misclassification",
