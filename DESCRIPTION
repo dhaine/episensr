@@ -11,7 +11,8 @@ Imports:
     grid,
     gridExtra,
     reshape,
-    boot
+    boot,
+    magrittr
 Date: 2017-11-13
 Authors@R: 
     person(given = "Denis",
