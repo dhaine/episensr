@@ -102,25 +102,10 @@ confounders.evalue <- function(assoc,
         e.value <- sapply(tab, function(x) .compute_evalue(x, true_x = true_assoc))
     }
 
-#    if (type == "ORc") {
-#        assoc <- sqrt(assoc)
-#        lower_ci <- sqrt(lower_ci)
-#        upper_ci <- sqrt(upper_ci)
-#        RR_true <- sqrt(RR_true)
-#        
-#        if (!is.na(lower_ci) & !is.na(upper_ci) & (lower_ci < 1) & (upper_ci > 1)) {
-#            lci.e.value <- 1
-#            uci.e.value <- 1
-#        }
-#        if ((!is.na(lower_ci) | !is.na(upper_ci))) {
-#            if (assoc > RR_true) uci.e.value <- NA
-#            if (assoc < RR_true) lci.e.value <- NA
-#            if (assoc == RR_true) {
-#                lci.e.value <- 1
-#                uci.e.value <- NA
-#            }
-#        }
-#    }
+    if (type == "ORc") {
+        tab <- sqrt(tab)
+        e.value <- sapply(tab, function(x) .compute_evalue(x, true_x = sqrt(true_assoc)))
+    }
 
 #    if (type == "HRc") {
 #        assoc <- (1 - 0.5^sqrt(assoc)) / (1 - 0.5^sqrt(1 / assoc))
