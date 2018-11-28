@@ -14,6 +14,8 @@
 #' and continuous outcomes --- IRR; odds ratio for common outcome -- ORc; hazard ratio
 #' for common outcome i.e. > 15% at end of follow-up -- HRc; difference in continuous
 #' outcomes -- diff; and risk difference -- RD).
+#' @param true_assoc True association to assess E-value for. Default to 1 to assess
+#' against null value. Set to a different value to assess for non-null hypotheses.
 #' 
 #' @return A list with elements:
 #' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
