@@ -6,15 +6,18 @@
 #' on the measured covariates, to fully explain away a specific exposure-outcome
 #' association.
 #'
-#' @param assoc Association between an exposure and an outcome.
-#' @param lower_ci Lower limit of the confidence interval for the association.
-#' @param upper_ci Upper limit of the confidence interval for the association.
-#' @param type Choice of implementation (relative risk, and odds ratio or hazard ratio
+#' @param est Point estimate for the effect measure.
+#' @param lower_ci Lower limit of the confidence interval for the association (relative
+#' risk, odds ratio, hazard ratio, incidence rate ratio, risk differece).
+#' @param upper_ci Upper limit of the confidence interval for the association (relative
+#' risk, odds ratio, hazard ratio, incidence rate ratio, risk differece).
+#' @param sd 
+#' @param type Choice of effect measure (relative risk, and odds ratio or hazard ratio
 #' for rare outcomes i.e. < 15% at end of follow-up -- RR; incidence rate ratio for count
 #' and continuous outcomes --- IRR; odds ratio for common outcome -- ORc; hazard ratio
 #' for common outcome i.e. > 15% at end of follow-up -- HRc; difference in continuous
 #' outcomes -- diff; and risk difference -- RD).
-#' @param true_assoc True association to assess E-value for. Default to 1 to assess
+#' @param true_est True estimate to assess E-value for. Default to 1 to assess
 #' against null value. Set to a different value to assess for non-null hypotheses.
 #' 
 #' @return A list with elements:
@@ -37,39 +40,40 @@
 #' # Evidence for protection by breast-feeding against infant deaths from infectious
 #' # diseases in Brazil.
 #' # Lancet 1987;2:319-22.
-#' confounders.evalue(assoc = 3.9, type = "RR")
+#' confounders.evalue(est = 3.9, type = "RR")
 #' @export
 #' @importFrom stats qnorm
-confounders.evalue <- function(assoc,
+confounders.evalue <- function(est,
                                lower_ci = NULL,
                                upper_ci = NULL,
+                               sd = NULL,
                                type = c("RR", "IRR", "ORc", "HRc", "diff", "RD"),
-                               true_assoc = 1){
+                               true_est = 1){
     if (length(type) > 1)
         stop('Choose between RR, OR, IRR, ORc, HRc, diff, or RD implementation.')
 
-    if (type != "RD" & assoc < 0)
+    if ((type != "RD" | type != "diff") & est < 0)
         stop('Association cannot be negative.')
 
-    if (assoc == 1)
+    if ((type != "RD" | type != "diff") & est == 1)
         stop('Association = 1! No E-value.')
 
     if(!is.null(lower_ci) & !is.null(upper_ci)){
         if (!is.na(lower_ci) & !is.na(upper_ci) & lower_ci > upper_ci)
             stop("Lower confidence interval should be less than the upper limit.")
-        if ((!is.na(lower_ci) & assoc < lower_ci) |
-            (!is.na(upper_ci) & assoc > upper_ci))
+        if ((type != "diff") & (!is.na(lower_ci) & est < lower_ci) |
+            (!is.na(upper_ci) & est > upper_ci))
             stop("Provided association is not within provided confidence interval.")        
-        if (true_assoc == 1 &
+        if ((type != "diff") & true_est == 1 &
             (!is.na(lower_ci) & lower_ci < 1) &
             (!is.na(upper_ci) & 1 < upper_ci))
             stop("True association within provided confidence interval: E-value = 1.")
     }
 
-    if (true_assoc < 0)
-        stop("True RR should not be negative.")
+    if ((type != "RD" | type != "diff") & true_est < 0)
+        stop("True association should not be negative.")
     
-    if (!inherits(assoc, "numeric"))
+    if (!inherits(est, "numeric"))
         stop("Please provide a valid value for association measure.")
 
 
@@ -79,12 +83,12 @@ confounders.evalue <- function(assoc,
     }
 
     if (!is.null(lower_ci) | !is.null(upper_ci)) {
-        closest_ci <- .closest(c(lower_ci, upper_ci), true_assoc)
+        closest_ci <- .closest(c(lower_ci, upper_ci), true_est)
     } else {
         closest_ci <- NA
     }
 
-    tab <- c(assoc, closest_ci)
+    tab <- c(est, closest_ci)
 
     .compute_evalue <- function(x, true_x) {
         if (is.na(x)) return(NA)
@@ -101,12 +105,16 @@ confounders.evalue <- function(assoc,
 
     type <- match.arg(type)
     if (type == "RR") {
-        e.value <- sapply(tab, function(x) .compute_evalue(x, true_x = true_assoc))
+        e.value <- sapply(tab, function(x) .compute_evalue(x, true_x = true_est))
     }
 
     if (type == "ORc") {
         tab <- sqrt(tab)
-        e.value <- sapply(tab, function(x) .compute_evalue(x, true_x = sqrt(true_assoc)))
+        e.value <- sapply(tab, function(x) .compute_evalue(x, true_x = sqrt(true_est)))
+    }
+
+    if (type == "diff") {
+        
     }
 
 #    if (type == "HRc") {
