@@ -16,11 +16,10 @@
 #' @param sd For difference in continuous outcomes, the standard error of the outcome
 #' divided by its standard deviation.
 #' @param type Choice of effect measure (relative risk, and odds ratio or hazard ratio
-#' for rare outcomes i.e. < 15% at end of follow-up -- RR; incidence rate ratio for count
-#' and continuous outcomes --- IRR; odds ratio for common outcome -- ORc; hazard ratio
-#' for common outcome i.e. > 15% at end of follow-up -- HRc; difference in continuous
-#' outcomes, RR approximation -- diff_RR; difference in continuous outcomes, OR
-#' approximation -- diff_OR; and risk difference -- RD).
+#' for rare outcomes i.e. < 15% at end of follow-up -- RR; odds ratio for common
+#' outcome -- ORc; hazard ratio for common outcome i.e. > 15% at end of follow-up -- HRc;
+#' difference in continuous outcomes, RR approximation -- diff_RR; difference in
+#' continuous outcomes, OR approximation -- diff_OR).
 #' @param true_est True estimate to assess E-value for. Default to 1 on risk scale
 #' to assess against null value. Set to a different value to assess for non-null
 #' hypotheses.
@@ -54,17 +53,15 @@ confounders.evalue <- function(est,
                                lower_ci = NULL,
                                upper_ci = NULL,
                                sd = NA,
-                               type = c("RR", "IRR", "ORc", "HRc", "diff_RR",
-                                        "diff_OR", "RD"),
+                               type = c("RR", "ORc", "HRc", "diff_RR", "diff_OR"),
                                true_est = 1){
     if (length(type) > 1)
-        stop('Choose between RR, OR, IRR, ORc, HRc, diff_RR, diff_OR, or RD
-implementation.')
+        stop('Choose between RR, ORc, HRc, diff_RR, or diff_OR implementation.')
 
-    if (!(type %in% c("RD", "diff_RR", "diff_OR")) & est < 0)
+    if (!(type %in% c("diff_RR", "diff_OR")) & est < 0)
         stop('Association cannot be negative.')
 
-    if ((type != "RD" | type != "diff_RR" | type != "diff_OR") & est == 1)
+    if ((type != "diff_RR" | type != "diff_OR") & est == 1)
         stop('Association = 1! No E-value.')
 
     if(!is.null(lower_ci) & !is.null(upper_ci)){
@@ -79,7 +76,7 @@ implementation.')
             stop("True association within provided confidence interval: E-value = 1.")
     }
 
-    if ((type != "RD" | type != "diff_RR" | type != "diff_OR") & true_est < 0)
+    if ((type != "diff_RR" | type != "diff_OR") & true_est < 0)
         stop("True association should not be negative.")
     
     if (!inherits(est, "numeric"))
@@ -137,6 +134,14 @@ implementation.')
         e.value <- sapply(tab, function(x) .compute_evalue(x, true_x = sqrt(true_est)))
     }
 
+    if (type == "HRc") {
+        tab <- sapply(tab, function(x) (1 - 0.5^sqrt(x)) / (1 - 0.5^sqrt(1/x)))
+        e.value <- sapply(tab,
+                          function(x) .compute_evalue(x,
+                                                      true_x = (1 - 0.5^sqrt(true_est)) /
+                                                          (1 - 0.5^sqrt(1/true_est))))
+    }
+
     if (type == "diff_RR") {
         if (true_est == 1) true_est <- 0
         e.value <- sapply(tab,
@@ -147,30 +152,6 @@ implementation.')
         e.value <- sapply(tab,
                           function(x) .compute_evalue(x, true_x = sqrt(exp(1.81*true_est))))
     }
-
-#    if (type == "HRc") {
-#        assoc <- (1 - 0.5^sqrt(assoc)) / (1 - 0.5^sqrt(1 / assoc))
-#        lower__ci <- (1 - 0.5^sqrt(lower_ci)) / (1 - 0.5^sqrt(1 / lower_ci))
-#        upper_ci <- (1 - 0.5^sqrt(upper_ci)) / (1 - 0.5^sqrt(1 / upper_ci))
-#        RR_true <- (1 - 0.5^sqrt(RR_true)) / (1 - 0.5^sqrt(1/RR_true))
-#        assoc <- sqrt(assoc)
-#        lower_ci <- sqrt(lower_ci)
-#        upper_ci <- sqrt(upper_ci)
-#        RR_true <- sqrt(RR_true)
-#        
-#        if (!is.na(lower_ci) & !is.na(upper_ci) & (lower_ci < 1) & (upper_ci > 1)) {
-#            lci.e.value <- 1
-#            uci.e.value <- 1
-#        }
-#        if ((!is.na(lower_ci) | !is.na(upper_ci))) {
-#            if (assoc > RR_true) uci.e.value <- NA
-#            if (assoc < RR_true) lci.e.value <- NA
-#            if (assoc == RR_true) {
-#                lci.e.value <- 1
-#                uci.e.value <- NA
-#            }
-#        }
-#    }
 
     return(c(e.value, tab))
 #    print(paste("With an observed risk ratio of", assoc, "an unmeasured confounder that was associated with both the outcome and the exposure by a risk ratioof", round(e.value, 2), "-fold each, above and beyond the measured confounders, could explain away the estimate, but weaker confounding could not."))
