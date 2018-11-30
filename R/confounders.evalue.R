@@ -6,19 +6,24 @@
 #' on the measured covariates, to fully explain away a specific exposure-outcome
 #' association.
 #'
-#' @param est Point estimate for the effect measure.
+#' @param est Point estimate for the effect measure. For difference in continuous outcomes,
+#' it is the standardized effect size (i.e. mean of the outcome divided by its standard
+#' deviation).
 #' @param lower_ci Lower limit of the confidence interval for the association (relative
 #' risk, odds ratio, hazard ratio, incidence rate ratio, risk differece).
 #' @param upper_ci Upper limit of the confidence interval for the association (relative
 #' risk, odds ratio, hazard ratio, incidence rate ratio, risk differece).
-#' @param sd 
+#' @param sd For difference in continuous outcomes, the standard error of the outcome
+#' divided by its standard deviation.
 #' @param type Choice of effect measure (relative risk, and odds ratio or hazard ratio
 #' for rare outcomes i.e. < 15% at end of follow-up -- RR; incidence rate ratio for count
 #' and continuous outcomes --- IRR; odds ratio for common outcome -- ORc; hazard ratio
 #' for common outcome i.e. > 15% at end of follow-up -- HRc; difference in continuous
-#' outcomes -- diff; and risk difference -- RD).
-#' @param true_est True estimate to assess E-value for. Default to 1 to assess
-#' against null value. Set to a different value to assess for non-null hypotheses.
+#' outcomes, RR approximation -- diff_RR; difference in continuous outcomes, OR
+#' approximation -- diff_OR; and risk difference -- RD).
+#' @param true_est True estimate to assess E-value for. Default to 1 on risk scale
+#' to assess against null value. Set to a different value to assess for non-null
+#' hypotheses.
 #' 
 #' @return A list with elements:
 #' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
@@ -41,21 +46,24 @@
 #' # diseases in Brazil.
 #' # Lancet 1987;2:319-22.
 #' confounders.evalue(est = 3.9, type = "RR")
+#' confounders.evalue(est = -0.42, sd = 0.14, type = "diff_RR")
 #' @export
 #' @importFrom stats qnorm
 confounders.evalue <- function(est,
                                lower_ci = NULL,
                                upper_ci = NULL,
                                sd = NULL,
-                               type = c("RR", "IRR", "ORc", "HRc", "diff", "RD"),
+                               type = c("RR", "IRR", "ORc", "HRc", "diff_RR",
+                                        "diff_OR", "RD"),
                                true_est = 1){
     if (length(type) > 1)
-        stop('Choose between RR, OR, IRR, ORc, HRc, diff, or RD implementation.')
+        stop('Choose between RR, OR, IRR, ORc, HRc, diff_RR, diff_OR, or RD
+implementation.')
 
-    if ((type != "RD" | type != "diff") & est < 0)
+    if (!(type %in% c("RD", "diff_RR", "diff_OR")) & est < 0)
         stop('Association cannot be negative.')
 
-    if ((type != "RD" | type != "diff") & est == 1)
+    if ((type != "RD" | type != "diff_RR" | type != "diff_OR") & est == 1)
         stop('Association = 1! No E-value.')
 
     if(!is.null(lower_ci) & !is.null(upper_ci)){
@@ -64,31 +72,43 @@ confounders.evalue <- function(est,
         if ((type != "diff") & (!is.na(lower_ci) & est < lower_ci) |
             (!is.na(upper_ci) & est > upper_ci))
             stop("Provided association is not within provided confidence interval.")        
-        if ((type != "diff") & true_est == 1 &
+        if ((type != "diff_RR" | type != "diff_OR") & true_est == 1 &
             (!is.na(lower_ci) & lower_ci < 1) &
             (!is.na(upper_ci) & 1 < upper_ci))
             stop("True association within provided confidence interval: E-value = 1.")
     }
 
-    if ((type != "RD" | type != "diff") & true_est < 0)
+    if ((type != "RD" | type != "diff_RR" | type != "diff_OR") & true_est < 0)
         stop("True association should not be negative.")
     
     if (!inherits(est, "numeric"))
         stop("Please provide a valid value for association measure.")
 
-
+    if ((type == "diff_OR" | type == "diff_OR") & sd < 0)
+        stop("Standardized SE cannot be negative.")
 
     .closest <- function(x, y) {
         x[which(abs(x - y) == min(abs(x - y)))]
     }
 
-    if (!is.null(lower_ci) | !is.null(upper_ci)) {
+    if ((type != "diff_RR" | type != "diff_OR") &
+        (!is.null(lower_ci) | !is.null(upper_ci))) {
         closest_ci <- .closest(c(lower_ci, upper_ci), true_est)
     } else {
         closest_ci <- NA
     }
 
-    tab <- c(est, closest_ci)
+    if (type != "diff_RR" & type != "diff_OR") {
+        tab <- c(est, closest_ci)
+    } else if (type == "diff_RR") {
+        tab <- c(exp(0.91*est),
+                 .closest(c(exp(0.91*est - 1.78*sd), exp(0.91*est + 1.78*sd)),
+                          true_est))
+    } else if (type == "diff_OR") {
+        tab <- c(exp(1.81*est),
+                 .closest(c(exp(1.81*est - 3.55*sd), exp(1.81*est + 3.55*sd)),
+                          true_est))
+    }
 
     .compute_evalue <- function(x, true_x) {
         if (is.na(x)) return(NA)
@@ -113,8 +133,15 @@ confounders.evalue <- function(est,
         e.value <- sapply(tab, function(x) .compute_evalue(x, true_x = sqrt(true_est)))
     }
 
-    if (type == "diff") {
-        
+    if (type == "diff_RR") {
+        if (true_est == 1) true_est <- 0
+        e.value <- sapply(tab,
+                          function(x) .compute_evalue(x, true_x = sqrt(exp(0.91*true_est))))
+    }
+
+    if (type == "diff_OR") {
+        e.value <- sapply(tab,
+                          function(x) .compute_evalue(x, true_x = sqrt(exp(1.81*true_est))))
     }
 
 #    if (type == "HRc") {
@@ -141,6 +168,6 @@ confounders.evalue <- function(est,
 #        }
 #    }
 
-e.value
+    return(c(e.value, tab))
 #    print(paste("With an observed risk ratio of", assoc, "an unmeasured confounder that was associated with both the outcome and the exposure by a risk ratioof", round(e.value, 2), "-fold each, above and beyond the measured confounders, could explain away the estimate, but weaker confounding could not."))
 }
