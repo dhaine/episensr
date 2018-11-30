@@ -46,13 +46,14 @@
 #' # diseases in Brazil.
 #' # Lancet 1987;2:319-22.
 #' confounders.evalue(est = 3.9, type = "RR")
+#' confounders.evalue(est = 1.47, lower_ci = 1.12, upper_ci = 1.93, type = "ORc")
 #' confounders.evalue(est = -0.42, sd = 0.14, type = "diff_RR")
 #' @export
 #' @importFrom stats qnorm
 confounders.evalue <- function(est,
                                lower_ci = NULL,
                                upper_ci = NULL,
-                               sd = NULL,
+                               sd = NA,
                                type = c("RR", "IRR", "ORc", "HRc", "diff_RR",
                                         "diff_OR", "RD"),
                                true_est = 1){
@@ -84,7 +85,10 @@ implementation.')
     if (!inherits(est, "numeric"))
         stop("Please provide a valid value for association measure.")
 
-    if ((type == "diff_OR" | type == "diff_OR") & sd < 0)
+    if ((type == "diff_RR" | type == "diff_OR") & is.na(sd))
+        stop("Please provide sd.")
+
+    if (((type == "diff_RR" | type == "diff_OR") & !is.na(sd)) & sd < 0)
         stop("Standardized SE cannot be negative.")
 
     .closest <- function(x, y) {
