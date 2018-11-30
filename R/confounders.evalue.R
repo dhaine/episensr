@@ -24,15 +24,8 @@
 #' to assess against null value. Set to a different value to assess for non-null
 #' hypotheses.
 #' 
-#' @return A list with elements:
-#' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
-#' \item{cfder.data}{The same table for Confounder +.}
-#' \item{nocfder.data}{The same table for Confounder -.}
-#' \item{obs.measures}{A table of relative risk with confidence intervals; for
-#' Total, Confounder +, and Confounder -.}
-#' \item{adj.measures}{A table of Standardized Morbidity Ratio and Mantel-Haenszel
-#' estimates.}
-#' \item{bias.parms}{Input bias parameters.}
+#' @return A matrix with the observed point estimate and closest confidence interval to
+#' the null hypothesis, expressed as a relative risk, and their corresponding E-value.
 #'
 #' @references VanderWeele T.J and Ding P. Sensitivity analysis in observational research:
 #' Introducing the E-value. Annals of Internal Medicine 2017;167:268-274.
@@ -45,7 +38,19 @@
 #' # diseases in Brazil.
 #' # Lancet 1987;2:319-22.
 #' confounders.evalue(est = 3.9, type = "RR")
+#'
+#' # The data for this example come from:
+#' # Oddy W.H, Smith G.J., Jacony P. 
+#' # A possible strategy for developing a model to account for attrition bias in a
+#' # longitudinal cohort to investigate associations between exclusive breastfeeding and
+#' # overweight and obesity at 20 years.
+#' # Annals of Nutrition and Metabolism 2014;65:234-235.
 #' confounders.evalue(est = 1.47, lower_ci = 1.12, upper_ci = 1.93, type = "ORc")
+#'
+#' # The data for this example come from:
+#' # Reinisch J., Sanders S., Mortensen E., Rubin D.B.
+#' # In-utero exposure to phenobarbital and intelligence deficits in adult men.
+#' # Journal of the American Medical Association 1995;274:1518-1525
 #' confounders.evalue(est = -0.42, sd = 0.14, type = "diff_RR")
 #' @export
 #' @importFrom stats qnorm
@@ -153,6 +158,10 @@ confounders.evalue <- function(est,
                           function(x) .compute_evalue(x, true_x = sqrt(exp(1.81*true_est))))
     }
 
-    return(c(e.value, tab))
-#    print(paste("With an observed risk ratio of", assoc, "an unmeasured confounder that was associated with both the outcome and the exposure by a risk ratioof", round(e.value, 2), "-fold each, above and beyond the measured confounders, could explain away the estimate, but weaker confounding could not."))
+    res <- rbind(tab, e.value)
+    colnames(res) <- c("Point estimate", "  CI closest to H_0")
+    rownames(res) <- c("     RR:",
+                       "E-value:")
+    class(res) <- c("episensr.evalue", "episensr", "matrix")
+    res
 }
