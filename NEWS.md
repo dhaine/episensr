@@ -1,4 +1,4 @@
-# episensr 1.0.0
+# episensr 0.9.3
 - Update description of `parms` in `confounders`, `confounders.emm`, and
   `confounders.poly`
 - New function `confounders.array`, sensitivity analysis for unmeasured
@@ -6,6 +6,8 @@
   (Schneeweiss, 2006)
 - Deprecated `bias` parameters removed from function `multidimBias`. Please use
   `bias_parms` instead.
+- New function `confounders.evalue`, computing E-value to assess bias due to
+  unmeasured confounder (VanderWeele and Ding, 2017)
 
 # episensr 0.9.2
 - Fix bug for distributions and computations of OR/RR in `probsens.conf`
