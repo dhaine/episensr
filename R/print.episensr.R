@@ -26,5 +26,9 @@ print.episensr <- function(x, digits = getOption("digits"), ...) {
         cat("---\n")
         print.table(x$adj.measures, digits = digits, ...)
         invisible(NULL)
+    } else if (class(x)[1] == "episensr.evalue") {
+        cat("\n--E-value--\n")
+        print.table(x, digits = digits, ...)
+        invisible(NULL)
     }
 }
