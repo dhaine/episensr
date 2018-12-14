@@ -15,7 +15,7 @@
 #' @param bias_parms Vector defining the bias parameters. This vector has 4 elements
 #' between 0 and 1, in the following order:
 #' \enumerate{
-#' \item Sensitivity of exposure (or outcome) classification among those with the outcome (or exposure),
+#' \item Sensitivity of exposure (when \code{type = "exposure"}) or outcome (when \code{type = "outcome"}) classification among those with the outcome (when \code{type = "exposure"}) or exposure (when \code{type = "outcome"}),
 #' \item Sensitivity of exposure (or outcome) classification among those without the outcome (or exposure),
 #' \item Specificity of exposure (or outcome) classification among those with the outcome (or exposure), and
 #' \item Specificity of exposure (or outcome) classification among those without the outcome (or exposure).

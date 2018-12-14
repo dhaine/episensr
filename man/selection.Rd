@@ -12,13 +12,18 @@ against.}
 
 \item{exposed}{Exposure variable.}
 
-\item{bias_parms}{Numeric vector defining the selection probabilities. This vector has 4 elements between 0 and 1, in the following order:
+\item{bias_parms}{Selection probabilities. Either a vector of 4 elements
+between 0 and 1 defining the following probabilities in this order can be
+provided:
 \enumerate{
-\item Selection probability among cases exposed,
-\item Selection probability among cases unexposed,
-\item Selection probability among noncases exposed, and
-\item Selection probability among noncases unexposed.
-}}
+\item Selection probability among cases exposed (1),
+\item Selection probability among cases unexposed (2),
+\item Selection probability among noncases exposed (3), and
+\item Selection probability among noncases unexposed (4).
+}
+or a single positive selection-bias factor which is the ratio of the exposed
+versus unexposed selection probabilities comparing cases and noncases [(1*4)/(2*3)
+from above].}
 
 \item{alpha}{Significance level.}
 }
@@ -46,4 +51,8 @@ selection(matrix(c(136, 107, 297, 165),
 dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
 nrow = 2, byrow = TRUE),
 bias_parms = c(.94, .85, .64, .25))
+selection(matrix(c(136, 107, 297, 165),
+dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
+nrow = 2, byrow = TRUE),
+bias_parms = 0.43)
 }

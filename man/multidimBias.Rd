@@ -5,7 +5,7 @@
 \title{Multidimensional sensitivity analysis for different sources of bias}
 \usage{
 multidimBias(case, exposed, type = c("exposure", "outcome", "confounder",
-  "selection"), se = NULL, sp = NULL, bias = NULL, bias_parms = NULL,
+  "selection"), se = NULL, sp = NULL, bias_parms = NULL,
   OR.sel = NULL, alpha = 0.05, dec = 4, print = TRUE)
 }
 \arguments{
@@ -20,8 +20,6 @@ misclassification, unmeasured confounder, or selection bias.}
 \item{se}{Numeric vector of sensitivities.}
 
 \item{sp}{Numeric vector of specificities.}
-
-\item{bias}{Deprecated, please use bias_parms instead.}
 
 \item{bias_parms}{List of bias parameters. The list is made of 3 vectors of the same
 length:
