@@ -82,7 +82,7 @@ selection <- function(case,
     lci.or <- exp(log(or) - qnorm(1 - alpha/2) * se.log.or)
     uci.or <- exp(log(or) + qnorm(1 - alpha/2) * se.log.or)
 
-    if(length(bias_parms == 4)){
+    if(length(bias_parms) == 4){
         A0 <- a / bias_parms[1]
         B0 <- b / bias_parms[2]
         C0 <- c / bias_parms[3]
