@@ -1,3 +1,7 @@
+# episensr 0.9.4
+- Fix `bias_parms` in `selection` to use a single selection-bias factor (was
+  skipping it and returning NAs).
+
 # episensr 0.9.3
 - Update description of `parms` in `confounders`, `confounders.emm`, and
   `confounders.poly`
