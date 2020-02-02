@@ -4,14 +4,19 @@
 \alias{probsens.irr.conf}
 \title{Probabilistic sensitivity analysis for unmeasured confounding of person-time data and random error.}
 \usage{
-probsens.irr.conf(counts, pt = NULL, reps = 1000,
-  prev.exp = list(dist = c("constant", "uniform", "triangular",
-  "trapezoidal", "logit-logistic", "logit-normal"), parms = NULL),
-  prev.nexp = list(dist = c("constant", "uniform", "triangular",
-  "trapezoidal", "logit-logistic", "logit-normal"), parms = NULL),
-  risk = list(dist = c("constant", "uniform", "triangular",
-  "trapezoidal", "log-logistic", "log-normal"), parms = NULL),
-  corr.p = NULL, alpha = 0.05)
+probsens.irr.conf(
+  counts,
+  pt = NULL,
+  reps = 1000,
+  prev.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "logit-logistic", "logit-normal"), parms = NULL),
+  prev.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "logit-logistic", "logit-normal"), parms = NULL),
+  risk = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "log-logistic", "log-normal"), parms = NULL),
+  corr.p = NULL,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{counts}{A table or matrix where first row contains disease counts and second row contains person-time at risk, and first and second columns are exposed and unexposed observations, as:

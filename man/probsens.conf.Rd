@@ -4,13 +4,20 @@
 \alias{probsens.conf}
 \title{Probabilistic sensitivity analysis for unmeasured confounding.}
 \usage{
-probsens.conf(case, exposed, reps = 1000, prev.exp = list(dist =
-  c("constant", "uniform", "triangular", "trapezoidal", "logit-logistic",
-  "logit-normal"), parms = NULL), prev.nexp = list(dist = c("constant",
-  "uniform", "triangular", "trapezoidal", "logit-logistic",
-  "logit-normal"), parms = NULL), risk = list(dist = c("constant",
-  "uniform", "triangular", "trapezoidal", "log-logistic", "log-normal"),
-  parms = NULL), corr.p = NULL, discard = TRUE, alpha = 0.05)
+probsens.conf(
+  case,
+  exposed,
+  reps = 1000,
+  prev.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "logit-logistic", "logit-normal"), parms = NULL),
+  prev.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "logit-logistic", "logit-normal"), parms = NULL),
+  risk = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "log-logistic", "log-normal"), parms = NULL),
+  corr.p = NULL,
+  discard = TRUE,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
