@@ -4,9 +4,16 @@
 \alias{plot.mbias}
 \title{Plot DAGs before and after conditioning on collider (M bias)}
 \usage{
-\method{plot}{mbias}(x, title1 = "DAG before conditioning on C",
-  title2 = "DAG after conditioning on C", title.size = 6, size = 6,
-  dec = 2, layout = c("landscape", "portrait"), ...)
+\method{plot}{mbias}(
+  x,
+  title1 = "DAG before conditioning on C",
+  title2 = "DAG after conditioning on C",
+  title.size = 6,
+  size = 6,
+  dec = 2,
+  layout = c("landscape", "portrait"),
+  ...
+)
 }
 \arguments{
 \item{x}{'mbias' object to plot.}

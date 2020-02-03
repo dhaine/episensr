@@ -4,13 +4,21 @@
 \alias{probsens.irr}
 \title{Probabilistic sensitivity analysis for exposure misclassification of person-time data and random error.}
 \usage{
-probsens.irr(counts, pt = NULL, reps = 1000, seca.parms = list(dist =
-  c("constant", "uniform", "triangular", "trapezoidal", "logit-logistic",
-  "logit-normal"), parms = NULL), seexp.parms = NULL,
-  spca.parms = list(dist = c("constant", "uniform", "triangular",
-  "trapezoidal", "logit-logistic", "logit-normal"), parms = NULL),
-  spexp.parms = NULL, corr.se = NULL, corr.sp = NULL,
-  discard = TRUE, alpha = 0.05)
+probsens.irr(
+  counts,
+  pt = NULL,
+  reps = 1000,
+  seca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "logit-logistic", "logit-normal"), parms = NULL),
+  seexp.parms = NULL,
+  spca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "logit-logistic", "logit-normal"), parms = NULL),
+  spexp.parms = NULL,
+  corr.se = NULL,
+  corr.sp = NULL,
+  discard = TRUE,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{counts}{A table or matrix where first row contains disease counts and second row contains person-time at risk, and first and second columns are exposed and unexposed observations, as:
@@ -57,6 +65,10 @@ A list with elements:
 }
 \description{
 Probabilistic sensitivity analysis to correct for exposure misclassification when person-time data has been collected.
+Non-differential misclassification is assumed when only the two bias parameters
+\code{seca.parms} and \code{spca.parms} are provided. Adding the 2 parameters
+\code{seexp.parms} and \code{spexp.parms} (i.e. providing the 4 bias parameters)
+evaluates a differential misclassification.
 }
 \examples{
 set.seed(123)

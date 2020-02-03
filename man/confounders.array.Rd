@@ -5,8 +5,13 @@
 \title{Sensitivity analysis for unmeasured confounders based on confounding imbalance
 among exposed and unexposed}
 \usage{
-confounders.array(crude.risk, type = c("binary", "continuous", "RD"),
-  bias_parms = NULL, dec = 2, print = TRUE)
+confounders.array(
+  crude.risk,
+  type = c("binary", "continuous", "RD"),
+  bias_parms = NULL,
+  dec = 2,
+  print = TRUE
+)
 }
 \arguments{
 \item{crude.risk}{Crude (apparent or observed) relative risk between the exposure

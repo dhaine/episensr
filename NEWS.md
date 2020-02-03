@@ -1,4 +1,11 @@
-# episensr 1.0.0
+# episensr 0.9.5
+- Fix selection-bias factor in `selection` which was returning a constant value.
+
+# episensr 0.9.4
+- Fix `bias_parms` in `selection` to use a single selection-bias factor (was
+  skipping it and returning NAs).
+
+# episensr 0.9.3
 - Update description of `parms` in `confounders`, `confounders.emm`, and
   `confounders.poly`
 - New function `confounders.array`, sensitivity analysis for unmeasured
@@ -6,6 +13,10 @@
   (Schneeweiss, 2006)
 - Deprecated `bias` parameters removed from function `multidimBias`. Please use
   `bias_parms` instead.
+- New function `confounders.evalue`, computing E-value to assess bias due to
+  unmeasured confounder (VanderWeele and Ding, 2017)
+- New function `multiple.bias` allowing to extract 2-by-2 table from an
+  `episensr` object to feed another function (multiple bias analysis)
 
 # episensr 0.9.2
 - Fix bug for distributions and computations of OR/RR in `probsens.conf`
