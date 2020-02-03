@@ -1,3 +1,6 @@
+# episensr 0.9.5
+- Fix selection-bias factor in `selection` which was returning a constant value.
+
 # episensr 0.9.4
 - Fix `bias_parms` in `selection` to use a single selection-bias factor (was
   skipping it and returning NAs).

@@ -4,8 +4,14 @@
 \alias{confounders.evalue}
 \title{Compute E-value to assess bias due to unmeasured confounder.}
 \usage{
-confounders.evalue(est, lower_ci = NULL, upper_ci = NULL, sd = NA,
-  type = c("RR", "ORc", "HRc", "diff_RR", "diff_OR"), true_est = 1)
+confounders.evalue(
+  est,
+  lower_ci = NULL,
+  upper_ci = NULL,
+  sd = NA,
+  type = c("RR", "ORc", "HRc", "diff_RR", "diff_OR"),
+  true_est = 1
+)
 }
 \arguments{
 \item{est}{Point estimate for the effect measure. For difference in continuous outcomes,

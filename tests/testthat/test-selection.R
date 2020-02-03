@@ -46,10 +46,18 @@ test_that("Adjusted OR is correct", {
     expect_equal(model$adj.measures[2], 1.6346, tolerance = 1e-4, scale = 1)
 })
 
-test_that("bias-factor works", {
+test_that("bias-factor works (1)", {
               model <- selection(matrix(c(136, 107, 297, 165),
                                  nrow = 2, byrow = TRUE),
                                  bias_parms = 0.43)
-              expect_equal(model$adj.measures[1], 0.7984, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj.measures[2], 0.7061, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj.measures[1], 1.8568, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj.measures[2], 1.6421, tolerance = 1e-4, scale = 1)
+          })
+
+test_that("bias-factor works (2)", {
+              model <- selection(matrix(c(136, 107, 297, 165),
+                                 nrow = 2, byrow = TRUE),
+                                 bias_parms = 0.99)
+              expect_equal(model$adj.measures[1], 0.8065, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj.measures[2], 0.7132, tolerance = 1e-4, scale = 1)
           })

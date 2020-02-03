@@ -4,8 +4,12 @@
 \alias{multiple.bias}
 \title{Extract adjusted 2-by-2 table from episensr object}
 \usage{
-multiple.bias(x, bias_function = c("selection", "misclassification",
-  "confounders", "probsens.sel", "probsens.conf", "probsens"), ...)
+multiple.bias(
+  x,
+  bias_function = c("selection", "misclassification", "confounders", "probsens.sel",
+    "probsens.conf", "probsens"),
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class 'episensr' or 'episensr.probsens'.}

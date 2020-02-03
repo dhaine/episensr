@@ -4,8 +4,13 @@
 \alias{misclassification}
 \title{Sensitivity analysis for disease or exposure misclassification.}
 \usage{
-misclassification(case, exposed, type = c("exposure", "outcome"),
-  bias_parms = NULL, alpha = 0.05)
+misclassification(
+  case,
+  exposed,
+  type = c("exposure", "outcome"),
+  bias_parms = NULL,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}

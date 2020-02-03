@@ -1,7 +1,7 @@
 Package: episensr
 Type: Package
 Title: Basic Sensitivity Analysis of Epidemiological Results
-Version: 0.9.4
+Version: 0.9.5
 Imports:
     triangle,
     trapezoid,
@@ -13,7 +13,7 @@ Imports:
     reshape,
     boot,
     magrittr
-Date: 2019-09-02
+Date: 2020-02-02
 Authors@R: 
     person(given = "Denis",
            family = "Haine",
@@ -36,5 +36,5 @@ Suggests:
     rmarkdown,
     aplore3,
     covr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 VignetteBuilder: knitr
