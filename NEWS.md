@@ -1,3 +1,7 @@
+# episensr 0.9.6
+- Provide default values for variables in `mbias`.
+- Update M-bias plot by using `ggdag` (and `dagitty`).
+
 # episensr 0.9.5
 - Fix selection-bias factor in `selection` which was returning a constant value.
 
