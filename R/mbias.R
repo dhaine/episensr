@@ -32,7 +32,7 @@
 #' var = c("HIV", "Circumcision", "Muslim", "Low CD4", "Participation"))
 #' @export
 mbias <- function(or,
-                  var) {
+                  var = c("y", "x", "a", "b", "m")) {
     if(is.null(or))
         stop('Missing input bias parameters.')
     else or <- or
