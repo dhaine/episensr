@@ -4,3 +4,6 @@
 ^README-.*\.png$
 ^CRAN-RELEASE$
 ^codecov\.yml$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
