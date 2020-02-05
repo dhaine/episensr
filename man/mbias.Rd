@@ -4,7 +4,7 @@
 \alias{mbias}
 \title{Sensitivity analysis to correct for selection bias caused by M bias.}
 \usage{
-mbias(or, var)
+mbias(or, var = c("y", "x", "a", "b", "m"))
 }
 \arguments{
 \item{or}{Vector defining the input bias parameters, in the following order:

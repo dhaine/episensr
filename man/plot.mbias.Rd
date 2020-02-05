@@ -4,40 +4,23 @@
 \alias{plot.mbias}
 \title{Plot DAGs before and after conditioning on collider (M bias)}
 \usage{
-\method{plot}{mbias}(
-  x,
-  title1 = "DAG before conditioning on C",
-  title2 = "DAG after conditioning on C",
-  title.size = 6,
-  size = 6,
-  dec = 2,
-  layout = c("landscape", "portrait"),
-  ...
-)
+\method{plot}{mbias}(x, type = c("before", "after"), dec = 2, ...)
 }
 \arguments{
 \item{x}{'mbias' object to plot.}
 
-\item{title1}{Title of DAG graph before conditioning on C.}
-
-\item{title2}{Title of DAG graph after conditioning on C.}
-
-\item{title.size}{Title size.}
-
-\item{size}{Text size.}
+\item{type}{DAG before or after conditioning on C.}
 
 \item{dec}{Number of digits displayed.}
-
-\item{layout}{Side-by-side graphs in landscape or portrait layout.}
 
 \item{...}{Other unused arguments.}
 }
 \value{
-Two DAGs for selection bias caused by M bias.
+A DAG for selection bias caused by M bias.
 }
 \description{
-Create two DAGs, before and after conditioning on the collider C, for selection
-bias caused by M bias, using ggplot2.
+Create two Directed Acyclic Graphs (DAGs), before and after conditioning on the
+collider C, for selection bias caused by M bias, using ggdag.
 }
 \examples{
 plot(mbias(or = c(2, 5.4, 2.5, 1.5, 1),
