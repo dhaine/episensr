@@ -20,7 +20,7 @@ A DAG for selection bias caused by M bias.
 }
 \description{
 Create two Directed Acyclic Graphs (DAGs), before and after conditioning on the
-collider C, for selection bias caused by M bias, using ggdag.
+collider M, for selection bias caused by M bias, using 'ggdag'.
 }
 \examples{
 plot(mbias(or = c(2, 5.4, 2.5, 1.5, 1),

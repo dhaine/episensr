@@ -10,8 +10,8 @@ mbias(or, var = c("y", "x", "a", "b", "m"))
 \item{or}{Vector defining the input bias parameters, in the following order:
 \enumerate{
 \item Odds ratio between A and the exposure E,
-\item Odds ratio between A and the collider C,
-\item Odds ratio between B and the collider C,
+\item Odds ratio between A and the collider M,
+\item Odds ratio between B and the collider M,
 \item Odds ratio between B and the outcome D,
 \item Odds ratio observed between the exposure E and the outcome D.
 }}
@@ -30,6 +30,7 @@ A list with elements:
 \item{mbias.parms}{Maximum bias parameters.}
 \item{adj.measures}{Selection bias corrected measures.}
 \item{bias.parms}{Input bias parameters.}
+\item{labels}{Variables' labels.}
 }
 \description{
 Simple sensitivity analysis to correct for selection bias caused by M bias using
