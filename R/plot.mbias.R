@@ -1,7 +1,7 @@
 #' Plot DAGs before and after conditioning on collider (M bias)
 #'
 #' Create two Directed Acyclic Graphs (DAGs), before and after conditioning on the
-#' collider C, for selection bias caused by M bias, using ggdag.
+#' collider M, for selection bias caused by M bias, using 'ggdag'.
 #'
 #' @param x 'mbias' object to plot.
 #' @param type DAG before or after conditioning on C.

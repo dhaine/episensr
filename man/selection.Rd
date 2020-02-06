@@ -51,6 +51,8 @@ selection(matrix(c(136, 107, 297, 165),
 dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
 nrow = 2, byrow = TRUE),
 bias_parms = c(.94, .85, .64, .25))
+
+
 selection(matrix(c(136, 107, 297, 165),
 dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
 nrow = 2, byrow = TRUE),

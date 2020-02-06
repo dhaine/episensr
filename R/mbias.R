@@ -6,8 +6,8 @@
 #' @param or Vector defining the input bias parameters, in the following order:
 #' \enumerate{
 #' \item Odds ratio between A and the exposure E,
-#' \item Odds ratio between A and the collider C,
-#' \item Odds ratio between B and the collider C,
+#' \item Odds ratio between A and the collider M,
+#' \item Odds ratio between B and the collider M,
 #' \item Odds ratio between B and the outcome D,
 #' \item Odds ratio observed between the exposure E and the outcome D.
 #' }
@@ -24,6 +24,7 @@
 #' \item{mbias.parms}{Maximum bias parameters.}
 #' \item{adj.measures}{Selection bias corrected measures.}
 #' \item{bias.parms}{Input bias parameters.}
+#' \item{labels}{Variables' labels.}
 #'
 #' @references Greenland S. Quantifying biases in causal models: classical
 #' confounding vs. collider-stratification bias. Epidemiology 2003;14:300-6. 
