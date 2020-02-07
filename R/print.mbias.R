@@ -13,7 +13,7 @@ print.mbias <- function(x, ...) {
         "\n----------------------------------------",
         "\nOR observed between the exposure and the outcome:",
         x$bias.parms[5],
-        "\n             Maximum bias from conditioning on P:",
+        "\n             Maximum bias from conditioning on M:",
         x$mbias.parms[3],
         "\n                 OR corrected for selection bias:",
         x$adj.measures,

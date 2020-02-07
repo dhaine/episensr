@@ -4,7 +4,7 @@
 #' collider M, for selection bias caused by M bias, using 'ggdag'.
 #'
 #' @param x 'mbias' object to plot.
-#' @param type DAG before or after conditioning on C.
+#' @param type DAG before or after conditioning on M.
 #' @param dec Number of digits displayed.
 #' @param ... Other unused arguments.
 #'
@@ -34,25 +34,25 @@ plot.mbias <- function(x,
         .dag <- dagify(x ~ a,
                        m ~ a + b,
                        y ~ x + b,
-                       exposure = obj[[4]][2],
-                       outcome = obj[[4]][1],
-                       labels = c(x = obj[[4]][2], 
-                                  y = obj[[4]][1], 
-                                  a = obj[[4]][3], 
-                                  b = obj[[4]][4], 
-                                  m = obj[[4]][5]),
+                       exposure = obj[[5]][2],
+                       outcome = obj[[5]][1],
+                       labels = c(x = obj[[5]][2], 
+                                  y = obj[[5]][1], 
+                                  a = obj[[5]][3], 
+                                  b = obj[[5]][4], 
+                                  m = obj[[5]][5]),
                        coords = coords2list(coords))
 
         ggdag(.dag, text = FALSE, use_labels = "label") +
             theme_dag() +
             annotate("text", x = .1, y = .5,
-                     label = round(obj[[3]][1], dec)) +
+                     label = round(obj[[4]][1], dec)) +
             annotate("text", x = .4, y = .7,
-                     label = round(obj[[3]][2], dec)) + 
+                     label = round(obj[[4]][2], dec)) + 
         annotate("text", x = 1.6, y = .7,
-                 label = round(obj[[3]][3], dec)) +
+                 label = round(obj[[4]][3], dec)) +
         annotate("text", x = 1.9, y = .5,
-                 label = round(obj[[3]][4], dec))
+                 label = round(obj[[4]][4], dec))
     }
 
     else {
@@ -61,20 +61,20 @@ plot.mbias <- function(x,
 
         .dag <- dagify(x ~ z,
                        y ~ x + z,
-                       exposure = obj[[4]][2],
-                       outcome = obj[[4]][1],
-                       labels = c(x = obj[[4]][2],
-                                  y = obj[[4]][1],
-                                  z = obj[[4]][5]),
+                       exposure = obj[[5]][2],
+                       outcome = obj[[5]][1],
+                       labels = c(x = obj[[5]][2],
+                                  y = obj[[5]][1],
+                                  z = obj[[5]][5]),
                        coords = coords2list(coords))
 
         ggdag(.dag, use_labels = "label") +
             theme_dag() +
             annotate("text", x = .4, y = .5,
-                     label = round(obj[[1]][1], dec)) +
+                     label = round(obj[[2]][1], dec)) +
         annotate("text", x = 1.6, y = .5,
-                     label = round(obj[[1]][2], dec)) +
+                     label = round(obj[[2]][2], dec)) +
         annotate("text", x = 1, y = 0.05,
-                     label = round(obj[[1]][3], dec))
+                     label = round(obj[[2]][3], dec))
     }
 }

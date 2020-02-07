@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{'mbias' object to plot.}
 
-\item{type}{DAG before or after conditioning on C.}
+\item{type}{DAG before or after conditioning on M.}
 
 \item{dec}{Number of digits displayed.}
 
