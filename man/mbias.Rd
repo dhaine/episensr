@@ -27,8 +27,12 @@ mbias(or, var = c("y", "x", "a", "b", "m"))
 }
 \value{
 A list with elements:
-\item{mbias.parms}{Maximum bias parameters.}
-\item{adj.measures}{Selection bias corrected measures.}
+\item{model}{Bias analysis performed.}
+\item{mbias.parms}{Three maximum bias parameters: in collider-exposure relationship
+created by conditioning on the collider, in collider-outcome relationship created by
+conditioning on the collider, and in exposure-outcome relationship created by
+conditioning on the collider.}
+\item{adj.measures}{Selection bias corrected odds ratio.}
 \item{bias.parms}{Input bias parameters.}
 \item{labels}{Variables' labels.}
 }
