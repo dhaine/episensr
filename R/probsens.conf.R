@@ -217,7 +217,7 @@ probsens.conf <- function(case,
     draws <- matrix(NA, nrow = reps, ncol = 14)
     colnames(draws) <- c("p1", "p0", "RR.cd",
                          "A_11",
-                         "A_01",
+                         "B_11",
                          "RR.SMR.rr", 
                          "OR.SMR.or", 
                          "reps",
@@ -379,14 +379,17 @@ probsens.conf <- function(case,
     
     draws[, 8] <- runif(reps)
 
-    draws[, 4] <- (draws[, 3]*a*draws[, 1]*c) / ((draws[, 3]*draws[, 1]*c) + c -
-                                                 (draws[, 1]*c))
-    draws[, 5] <- (draws[, 3]*b*draws[, 2]*d) / ((draws[, 3]*draws[, 2]*d) + d -
-                                                 (draws[, 2]*d))
-    draws[, 6] <- (draws[, 4]/(draws[, 4]+draws[, 1]*c)) /
-        (draws[, 5]/(draws[, 5]+(draws[, 2]*d)))
-    draws[, 7] <- (draws[, 4]*draws[, 2]*d) / (draws[, 5]*draws[, 1]*c)
-    
+    draws[, 4] <- (draws[, 3] * ((a + c) * draws[, 1]) * a) /
+        (draws[, 3] * ((a + c) * draws[, 1]) + (a + c) - ((a + c) * draws[, 1]))  # A_11
+    draws[, 5] <- (draws[, 3] * b * (draws[, 2] * (b + d))) /
+        (draws[, 3] * (draws[, 2] * (b + d)) + (b + d) - (draws[, 2] * (b + d)))  # B_01
+    draws[, 6] <- a / ((((a + c) * draws[, 1]) * draws[, 5] / ((b + d) * draws[, 2])) +
+                       (((a + c) - ((a + c) * draws[, 1])) * (b - draws[, 5]) /
+                        ((b +d) - ((b + d) * draws[, 2]))))  # RR.SMR.rr
+    draws[, 7] <- a / (((((a + c) * draws[, 1]) - draws[, 4]) * draws[, 5] /
+                        (((b + d) * draws[, 2]) - draws[, 5])) +
+                       ((c - (((a + c) * draws[, 1]) - draws[, 4])) * (b - draws[, 5]) /
+                        (d - (((b + d) * draws[, 2]) - draws[, 5]))))  # OR.SMR.or
     draws[, 6] <- ifelse(draws[, 4] < 1 |
                                draws[, 5] < 1, NA, draws[, 6])
     draws[, 7] <- ifelse(draws[, 4] < 1 |
