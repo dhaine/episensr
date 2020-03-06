@@ -256,7 +256,7 @@ probsens.conf(matrix(c(45, 94, 257, 945),
               risk = list("log-normal", c(2.159, .28)))
 ```
 
-The median adjusted OR is 1.76 [1.25,2.49].
+The median adjusted OR is 1.84 [1.21,2.81].
 
 ## Bootstrapping
 
