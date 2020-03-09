@@ -4,17 +4,22 @@
 \alias{probsens.sel}
 \title{Probabilistic sensitivity analysis for selection bias.}
 \usage{
-probsens.sel(case, exposed, reps = 1000, or.parms = list(dist =
-  c("constant", "uniform", "triangular", "trapezoidal", "log-logistic",
-  "log-normal"), parms = NULL), case.exp = list(dist = c("constant",
-  "uniform", "triangular", "trapezoidal", "logit-logistic",
-  "logit-normal"), parms = NULL), case.nexp = list(dist = c("constant",
-  "uniform", "triangular", "trapezoidal", "logit-logistic",
-  "logit-normal"), parms = NULL), ncase.exp = list(dist = c("constant",
-  "uniform", "triangular", "trapezoidal", "logit-logistic",
-  "logit-normal"), parms = NULL), ncase.nexp = list(dist = c("constant",
-  "uniform", "triangular", "trapezoidal", "logit-logistic",
-  "logit-normal"), parms = NULL), alpha = 0.05)
+probsens.sel(
+  case,
+  exposed,
+  reps = 1000,
+  or.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "log-logistic", "log-normal"), parms = NULL),
+  case.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "logit-logistic", "logit-normal"), parms = NULL),
+  case.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "logit-logistic", "logit-normal"), parms = NULL),
+  ncase.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "logit-logistic", "logit-normal"), parms = NULL),
+  ncase.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "logit-logistic", "logit-normal"), parms = NULL),
+  alpha = 0.05
+)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}

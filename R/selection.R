@@ -21,6 +21,7 @@
 #' @param alpha Significance level.
 #' 
 #' @return A list with elements:
+#' \item{model}{Bias analysis performed.}
 #' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 #' \item{corr.data}{The same table corrected for  selection proportions.}
 #' \item{obs.measures}{A table of odds ratios and relative risk with confidence intervals.}
@@ -39,6 +40,8 @@
 #' dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
 #' nrow = 2, byrow = TRUE),
 #' bias_parms = c(.94, .85, .64, .25))
+#'
+#'
 #' selection(matrix(c(136, 107, 297, 165),
 #' dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
 #' nrow = 2, byrow = TRUE),
@@ -82,21 +85,21 @@ selection <- function(case,
     lci.or <- exp(log(or) - qnorm(1 - alpha/2) * se.log.or)
     uci.or <- exp(log(or) + qnorm(1 - alpha/2) * se.log.or)
 
-    if(length(bias_parms == 4)){
+    if(length(bias_parms) == 4){
         A0 <- a / bias_parms[1]
         B0 <- b / bias_parms[2]
         C0 <- c / bias_parms[3]
         D0 <- d / bias_parms[4]
+
+        tab.corr <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
+        rr.corr <- (A0/(A0 + C0)) / (B0/(B0 + D0))
+        or.corr <- (A0/B0) / (C0/D0)
     } else {
-        A0 <- a / bias_parms
-        B0 <- b / bias_parms
-        C0 <- c / bias_parms
-        D0 <- d / bias_parms
+        tab.corr <- matrix(c(NA, NA, NA, NA), nrow = 2, byrow = TRUE)
+        rr.corr <- rr / bias_parms
+        or.corr <- or / bias_parms
     }
     
-    tab.corr <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
-    rr.corr <- (A0/(A0 + C0)) / (B0/(B0 + D0))
-    or.corr <- (A0/B0) / (C0/D0)
    
     if (is.null(rownames(tab)))
         rownames(tab) <- paste("Row", 1:2)

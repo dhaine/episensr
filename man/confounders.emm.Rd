@@ -5,8 +5,13 @@
 \title{Sensitivity analysis to correct for unknown or unmeasured confounding in the presence
 of effect modification}
 \usage{
-confounders.emm(case, exposed, type = c("RR", "OR", "RD"),
-  bias_parms = NULL, alpha = 0.05)
+confounders.emm(
+  case,
+  exposed,
+  type = c("RR", "OR", "RD"),
+  bias_parms = NULL,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}

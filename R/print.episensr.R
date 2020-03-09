@@ -10,13 +10,25 @@
 #'
 #' @export
 print.episensr <- function(x, digits = getOption("digits"), ...) {
-    cat("--Observed data--",
-        "\n         Outcome:", rownames(x$obs.data)[1],
-        "\n       Comparing:", colnames(x$obs.data)[1], "vs.", colnames(x$obs.data)[2], "\n\n")
-    print.table(x$obs.data, digits = digits, ...)
-    cat("\n")
-    print.table(x$obs.measures, digits = digits, ...)
-    cat("---\n")
-    print.table(x$adj.measures, digits = digits, ...)
-    invisible(NULL)
+    if(class(x)[1] == "episensr") {
+        cat("--Observed data--",
+            "\n         Outcome:", rownames(x$obs.data)[1],
+            "\n       Comparing:", colnames(x$obs.data)[1], "vs.",
+            colnames(x$obs.data)[2], "\n\n")
+        print.table(x$obs.data, digits = digits, ...)
+        cat("\n")
+        print.table(x$obs.measures, digits = digits, ...)
+        cat("---\n")
+        print.table(x$adj.measures, digits = digits, ...)
+        invisible(NULL)
+    } else if(class(x)[1] == "episensr.multiple") {
+        cat("\nMultiple bias analysis\n")
+        cat("---\n")
+        print.table(x$adj.measures, digits = digits, ...)
+        invisible(NULL)
+    } else if (class(x)[1] == "episensr.evalue") {
+        cat("\n--E-value--\n")
+        print.table(x, digits = digits, ...)
+        invisible(NULL)
+    }
 }
