@@ -20,7 +20,7 @@
 #' @return A vector with elements:
 #' \item{RR}{True (adjusted) exposure relative risk.}
 #' \item{RR_CD}{The association between the confounder and the outcome.}
-#' \item{OR_EC}{The association betwen exposure category and the confounder.}
+#' \item{OR_EC}{The association between exposure category and the confounder.}
 #' \item{P_C}{The prevalence of the confounder.}
 #' \item{P_E}{The prevalence of the exposure.}
 #' \item{crude.RR}{Crude (observed) exposure relative risk.}
