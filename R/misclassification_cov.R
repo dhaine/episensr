@@ -83,7 +83,7 @@ misclassification_cov <- function(case,
     lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha/2) * se.log.obs.rr)
     uci.obs.rr <- exp(log(obs.rr) + qnorm(1 - alpha/2) * se.log.obs.rr)
 
-    obs.or <- (a/b) / (c/d)
+    obs.or <- (a/c) / (b/d)
     se.log.obs.or <- sqrt(1/a + 1/b + 1/c + 1/d)
     lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
     uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
