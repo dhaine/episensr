@@ -90,7 +90,7 @@ test_that("CI is correct for OR when exposure misclassification", {
 })
 
 test_that("correct number of arguments for bias parameters", {
-    expect_that(misclassification_cov(array(c(1319, 38054, 5641, 405546, 565,
+    expect_that(misclassification.cov(array(c(1319, 38054, 5641, 405546, 565,
                                               3583, 781, 21958, 754, 34471,
                                               4860, 383588),
                                             dimnames = list(c("Twins+", "Twins-"),
@@ -102,7 +102,7 @@ test_that("correct number of arguments for bias parameters", {
 })
 
 test_that("bias parameters between 0 and 1", {
-    expect_that(misclassification_cov(array(c(1319, 38054, 5641, 405546, 565,
+    expect_that(misclassification.cov(array(c(1319, 38054, 5641, 405546, 565,
                                               3583, 781, 21958, 754, 34471,
                                               4860, 383588),
                                             dimnames = list(c("Twins+", "Twins-"),
@@ -114,7 +114,7 @@ test_that("bias parameters between 0 and 1", {
 })
 
 test_that("Observed measures are correct for covariate misclassification", {
-    model <- misclassification_cov(array(c(1319, 38054, 5641, 405546, 565,
+    model <- misclassification.cov(array(c(1319, 38054, 5641, 405546, 565,
                                               3583, 781, 21958, 754, 34471,
                                               4860, 383588),
                                             dimnames = list(c("Twins+", "Twins-"),
@@ -131,7 +131,7 @@ test_that("Observed measures are correct for covariate misclassification", {
 })
 
 test_that("Adjusted measures are correct for covariate misclassification", {
-    model <- misclassification_cov(array(c(1319, 38054, 5641, 405546, 565,
+    model <- misclassification.cov(array(c(1319, 38054, 5641, 405546, 565,
                                               3583, 781, 21958, 754, 34471,
                                               4860, 383588),
                                             dimnames = list(c("Twins+", "Twins-"),
@@ -158,7 +158,7 @@ test_that("Adjusted measures are correct for covariate misclassification", {
 })
 
 test_that("Adjusted measures are correct for covariate misclassification", {
-    model <- misclassification_cov(array(c(1319, 38054, 5641, 405546, 565,
+    model <- misclassification.cov(array(c(1319, 38054, 5641, 405546, 565,
                                               3583, 781, 21958, 754, 34471,
                                               4860, 383588),
                                             dimnames = list(c("Twins+", "Twins-"),
