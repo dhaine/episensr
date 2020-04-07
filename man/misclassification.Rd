@@ -62,12 +62,14 @@ c("Smoker+", "Smoker-")),
 nrow = 2, byrow = TRUE),
 type = "exposure",
 bias_parms = c(.78, .78, .99, .99))
+
 misclassification(matrix(c(4558, 3428, 46305, 46085),
 dimnames = list(c("AMI death+", "AMI death-"),
 c("Male+", "Male-")),
 nrow = 2, byrow = TRUE),
 type = "outcome",
 bias_parms = c(.53, .53, .99, .99))
+
 # The following example comes from Chu et al. Sensitivity analysis of
 # misclassification: A graphical and a Bayesian approach.
 # Annals of Epidemiology 2006;16:834-841.
