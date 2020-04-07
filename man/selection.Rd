@@ -29,6 +29,7 @@ from above].}
 }
 \value{
 A list with elements:
+\item{model}{Bias analysis performed.}
 \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 \item{corr.data}{The same table corrected for  selection proportions.}
 \item{obs.measures}{A table of odds ratios and relative risk with confidence intervals.}
@@ -51,6 +52,8 @@ selection(matrix(c(136, 107, 297, 165),
 dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
 nrow = 2, byrow = TRUE),
 bias_parms = c(.94, .85, .64, .25))
+
+
 selection(matrix(c(136, 107, 297, 165),
 dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
 nrow = 2, byrow = TRUE),

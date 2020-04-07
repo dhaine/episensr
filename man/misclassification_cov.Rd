@@ -4,8 +4,13 @@
 \alias{misclassification_cov}
 \title{Sensitivity analysis for covariate misclassification.}
 \usage{
-misclassification_cov(case, exposed, covariate, bias_parms = NULL,
-  alpha = 0.05)
+misclassification_cov(
+  case,
+  exposed,
+  covariate,
+  bias_parms = NULL,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}

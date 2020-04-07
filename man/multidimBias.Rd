@@ -4,9 +4,18 @@
 \alias{multidimBias}
 \title{Multidimensional sensitivity analysis for different sources of bias}
 \usage{
-multidimBias(case, exposed, type = c("exposure", "outcome", "confounder",
-  "selection"), se = NULL, sp = NULL, bias_parms = NULL,
-  OR.sel = NULL, alpha = 0.05, dec = 4, print = TRUE)
+multidimBias(
+  case,
+  exposed,
+  type = c("exposure", "outcome", "confounder", "selection"),
+  se = NULL,
+  sp = NULL,
+  bias_parms = NULL,
+  OR.sel = NULL,
+  alpha = 0.05,
+  dec = 4,
+  print = TRUE
+)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated

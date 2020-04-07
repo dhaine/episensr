@@ -5,8 +5,13 @@
 \title{Sensitivity analysis to correct for unknown or unmeasured confounding without
 effect modification}
 \usage{
-confounders(case, exposed, type = c("RR", "OR", "RD"),
-  bias_parms = NULL, alpha = 0.05)
+confounders(
+  case,
+  exposed,
+  type = c("RR", "OR", "RD"),
+  bias_parms = NULL,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -55,11 +60,13 @@ dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "RR",
 bias_parms = c(.63, .8, .05))
+
 confounders(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "OR",
 bias_parms = c(.63, .8, .05))
+
 confounders(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
