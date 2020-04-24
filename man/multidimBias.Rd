@@ -26,12 +26,14 @@ against.}
 \item{type}{Implement analysis for exposure misclassification, outcome
 misclassification, unmeasured confounder, or selection bias.}
 
-\item{se}{Numeric vector of sensitivities.}
+\item{se}{Numeric vector of sensitivities. Parameter used with exposure or outcome
+misclassification}
 
-\item{sp}{Numeric vector of specificities.}
+\item{sp}{Numeric vector of specificities. Parameter used with exposure or outcome
+misclassification}
 
-\item{bias_parms}{List of bias parameters. The list is made of 3 vectors of the same
-length:
+\item{bias_parms}{List of bias parameters used with unmeasured confounder. The list
+is made of 3 vectors of the same length:
 \enumerate{
 \item Prevalence of Confounder in Exposure+ population,
 \item Prevalence of Confounder in Exposure- population, and
@@ -56,7 +58,9 @@ data.}
 \item{bias.parms}{Bias parameters.}
 }
 \description{
-Multidimensional sensitivity analysis for different sources of bias
+Multidimensional sensitivity analysis for different sources of bias,
+where the bias analysis is repeated within a range of values for the
+bias parameter(s).
 }
 \examples{
 multidimBias(matrix(c(45, 94, 257, 945),

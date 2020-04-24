@@ -1,16 +1,20 @@
 #' Multidimensional sensitivity analysis for different sources of bias
 #'
-#' Multidimensional sensitivity analysis for different sources of bias
+#' Multidimensional sensitivity analysis for different sources of bias,
+#' where the bias analysis is repeated within a range of values for the
+#' bias parameter(s).
 #'
 #' @param case Outcome variable. If a variable, this variable is tabulated
 #' against.
 #' @param exposed Exposure variable.
 #' @param type Implement analysis for exposure misclassification, outcome
 #' misclassification, unmeasured confounder, or selection bias.
-#' @param se Numeric vector of sensitivities.
-#' @param sp Numeric vector of specificities.
-#' @param bias_parms List of bias parameters. The list is made of 3 vectors of the same
-#' length:
+#' @param se Numeric vector of sensitivities. Parameter used with exposure or outcome
+#' misclassification
+#' @param sp Numeric vector of specificities. Parameter used with exposure or outcome
+#' misclassification
+#' @param bias_parms List of bias parameters used with unmeasured confounder. The list
+#' is made of 3 vectors of the same length:
 #' \enumerate{
 #' \item Prevalence of Confounder in Exposure+ population,
 #' \item Prevalence of Confounder in Exposure- population, and
@@ -69,6 +73,13 @@ multidimBias <- function(case,
                          alpha = 0.05,
                          dec = 4,
                          print = TRUE) {
+    if(type %in% c("exposure", "outcome") && (!is.null(bias_parms) | !is.null(OR.sel)))
+        stop('Please provide adequate bias parameters (se and sp).')
+    if(type == "confounder" && (!is.null(se) | !is.null(sp) | !is.null(OR.sel)))
+        stop('Please provide adequate bias parameters (bias_parms).')
+    if(type == "selection" && (!is.null(se) | !is.null(sp) | !is.null(bias_parms)))
+        stop('Please provide adequate bias parameters (OR_sel).')
+    
     if(is.null(se))
         se <- c(1, 1)
     else se <- se
