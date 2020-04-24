@@ -44,9 +44,9 @@ boot.bias <- function(bias_model,
     model <- bias_model$model
     if (model == "misclassification") type <- bias_model$type
     obs_table <- bias_model$obs.data
-    obs_df <- reshape::untable(data.frame(x = gl(2, 1), y = gl(2, 2)),
-                      c(obs_table[2, 2], obs_table[2, 1],
-                        obs_table[1, 2], obs_table[1, 1]))
+    obs_df <- callback_df(data.frame(x = gl(2, 1), y = gl(2, 2)),
+                          c(obs_table[2, 2], obs_table[2, 1],
+                            obs_table[1, 2], obs_table[1, 1]))
     bias <- bias_model$bias.parms
     ci_type <- match.arg(ci_type)
 
