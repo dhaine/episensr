@@ -1,9 +1,9 @@
 #' Plot of bootstrap simulation output for selection and misclassification bias
 #'
-#' This takes an episensr bootstrap object and produces the pot of bootstrap replicates for selection or misclassification bias of the variable of interest, either relative risk or odds ratio.
+#' This takes an episensr bootstrap object and produces the plot of bootstrap replicates for selection or misclassification bias of the variable of interest, either relative risk or odds ratio.
 #'
 #' @param x An object of class "episensr.booted" returned from the episensr bootstrap generation function.
-#' @param association Choice between bias adjusted relative risk and odds ratio.
+#' @param association Choice between bias adjusted relative risk (rr) and odds ratio (or).
 #' @param ... Other unused arguments.
 #' 
 #' @seealso \code{\link{boot.bias}, \link{boot}, \link{selection}, \link{misclassification}}
