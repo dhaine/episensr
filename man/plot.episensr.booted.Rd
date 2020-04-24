@@ -9,12 +9,12 @@
 \arguments{
 \item{x}{An object of class "episensr.booted" returned from the episensr bootstrap generation function.}
 
-\item{association}{Choice between bias adjusted relative risk and odds ratio.}
+\item{association}{Choice between bias adjusted relative risk (rr) and odds ratio (or).}
 
 \item{...}{Other unused arguments.}
 }
 \description{
-This takes an episensr bootstrap object and produces the pot of bootstrap replicates for selection or misclassification bias of the variable of interest, either relative risk or odds ratio.
+This takes an episensr bootstrap object and produces the plot of bootstrap replicates for selection or misclassification bias of the variable of interest, either relative risk or odds ratio.
 }
 \examples{
 misclass_eval <- misclassification(matrix(c(215, 1449, 668, 4296),
