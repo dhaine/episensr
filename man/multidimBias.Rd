@@ -12,6 +12,7 @@ multidimBias(
   sp = NULL,
   bias_parms = NULL,
   OR.sel = NULL,
+  OR_sel = NULL,
   alpha = 0.05,
   dec = 4,
   print = TRUE
@@ -40,7 +41,9 @@ is made of 3 vectors of the same length:
 \item Relative risk between Confounder and Outcome.
 }}
 
-\item{OR.sel}{Selection odds ratios, for selection bias implementation.}
+\item{OR.sel}{Deprecated; please use OR_sel instead.}
+
+\item{OR_sel}{Selection odds ratios, for selection bias implementation.}
 
 \item{alpha}{Significance level.}
 
@@ -86,7 +89,7 @@ dimnames = list(c("Uveal Melanoma+", "Uveal Melanoma-"),
 c("Mobile Use+", "Mobile Use -")),
 nrow = 2, byrow = TRUE),
 type = "selection",
-OR.sel = seq(1.5, 6.5, by = .5))
+OR_sel = seq(1.5, 6.5, by = .5))
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative

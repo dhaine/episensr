@@ -20,7 +20,8 @@
 #' \item Prevalence of Confounder in Exposure- population, and
 #' \item Relative risk between Confounder and Outcome.
 #' }
-#' @param OR.sel Selection odds ratios, for selection bias implementation.
+#' @param OR.sel Deprecated; please use OR_sel instead.
+#' @param OR_sel Selection odds ratios, for selection bias implementation.
 #' @param alpha Significance level.
 #' @param dec Number of decimals in the printout.
 #' @param print A logical scalar. Should the results be printed?
@@ -60,7 +61,7 @@
 #' c("Mobile Use+", "Mobile Use -")),
 #' nrow = 2, byrow = TRUE),
 #' type = "selection",
-#' OR.sel = seq(1.5, 6.5, by = .5))
+#' OR_sel = seq(1.5, 6.5, by = .5))
 #' @export
 #' @importFrom stats qnorm setNames
 multidimBias <- function(case,
@@ -70,12 +71,19 @@ multidimBias <- function(case,
                          sp = NULL,
                          bias_parms = NULL,
                          OR.sel = NULL,
+                         OR_sel = NULL,
                          alpha = 0.05,
                          dec = 4,
                          print = TRUE) {
-    if(type %in% c("exposure", "outcome") && (!is.null(bias_parms) | !is.null(OR.sel)))
+    if (!missing(OR.sel)) {
+        warning("Argument OR.sel is deprecated; please use OR_sel instead",
+                call. = FALSE)
+        OR_sel <- OR.sel
+    }
+    
+    if(type %in% c("exposure", "outcome") && (!is.null(bias_parms) | !is.null(OR_sel)))
         stop('Please provide adequate bias parameters (se and sp).')
-    if(type == "confounder" && (!is.null(se) | !is.null(sp) | !is.null(OR.sel)))
+    if(type == "confounder" && (!is.null(se) | !is.null(sp) | !is.null(OR_sel)))
         stop('Please provide adequate bias parameters (bias_parms).')
     if(type == "selection" && (!is.null(se) | !is.null(sp) | !is.null(bias_parms)))
         stop('Please provide adequate bias parameters (OR_sel).')
@@ -109,12 +117,12 @@ multidimBias <- function(case,
     if(length(bias_parms[[1]]) != length(bias_parms[[2]]) | length(bias_parms[[2]]) != length(bias_parms[[3]]))
         stop('Prevalences of Confounder in Exposure+ and Exposure- populations and Relative risk between Confounder and Outcome should be of the same length.')
 
-    if(is.null(OR.sel))
-        OR.sel <- 1
-    else OR.sel <- OR.sel
-    if(!is.vector(OR.sel))
+    if(is.null(OR_sel))
+        OR_sel <- 1
+    else OR_sel <- OR_sel
+    if(!is.vector(OR_sel))
         stop('Selection odds ratios should be a vector.')
-    if(!all(OR.sel > 0))
+    if(!all(OR_sel > 0))
         stop('Selection odds ratios should be positive.')
     
     if(inherits(case, c("table", "matrix")))
@@ -141,7 +149,7 @@ multidimBias <- function(case,
     rr.mat <- matrix(NA, nrow = length(se), ncol = length(se))
     or.mat <- matrix(NA, nrow = length(se), ncol = length(se))
     rrc.mat <- matrix(NA, nrow = length(bias_parms[[1]]), ncol = length(bias_parms[[1]]))
-    ors.mat <- matrix(NA, nrow = length(OR.sel), ncol = 2)
+    ors.mat <- matrix(NA, nrow = length(OR_sel), ncol = 2)
     
     type <- match.arg(type)
     if (type == "exposure") {
@@ -346,9 +354,9 @@ multidimBias <- function(case,
     }
 
     if (type == "selection") {
-        ors.mat[, 1] <- OR.sel
+        ors.mat[, 1] <- OR_sel
         for (i in 1:nrow(ors.mat)) {
-                ors.mat[i, 2] <- or / OR.sel[i]
+                ors.mat[i, 2] <- or / OR_sel[i]
             }
 
         if (is.null(rownames(tab)))
