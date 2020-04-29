@@ -28,10 +28,10 @@ against.}
 misclassification, unmeasured confounder, or selection bias.}
 
 \item{se}{Numeric vector of sensitivities. Parameter used with exposure or outcome
-misclassification}
+misclassification.}
 
 \item{sp}{Numeric vector of specificities. Parameter used with exposure or outcome
-misclassification}
+misclassification. Should be the same length as `se`.}
 
 \item{bias_parms}{List of bias parameters used with unmeasured confounder. The list
 is made of 3 vectors of the same length:

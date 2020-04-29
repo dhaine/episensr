@@ -10,9 +10,9 @@
 #' @param type Implement analysis for exposure misclassification, outcome
 #' misclassification, unmeasured confounder, or selection bias.
 #' @param se Numeric vector of sensitivities. Parameter used with exposure or outcome
-#' misclassification
+#' misclassification.
 #' @param sp Numeric vector of specificities. Parameter used with exposure or outcome
-#' misclassification
+#' misclassification. Should be the same length as `se`.
 #' @param bias_parms List of bias parameters used with unmeasured confounder. The list
 #' is made of 3 vectors of the same length:
 #' \enumerate{
