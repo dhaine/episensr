@@ -4,13 +4,22 @@
 \alias{probsens}
 \title{Probabilistic sensitivity analysis.}
 \usage{
-probsens(case, exposed, type = c("exposure", "outcome"), reps = 1000,
-  seca.parms = list(dist = c("constant", "uniform", "triangular",
-  "trapezoidal", "logit-logistic", "logit-normal"), parms = NULL),
-  seexp.parms = NULL, spca.parms = list(dist = c("constant", "uniform",
-  "triangular", "trapezoidal", "logit-logistic", "logit-normal"), parms =
-  NULL), spexp.parms = NULL, corr.se = NULL, corr.sp = NULL,
-  discard = TRUE, alpha = 0.05)
+probsens(
+  case,
+  exposed,
+  type = c("exposure", "outcome"),
+  reps = 1000,
+  seca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "logit-logistic", "logit-normal"), parms = NULL),
+  seexp.parms = NULL,
+  spca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
+    "logit-logistic", "logit-normal"), parms = NULL),
+  spexp.parms = NULL,
+  corr.se = NULL,
+  corr.sp = NULL,
+  discard = TRUE,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
