@@ -83,6 +83,13 @@
 #' spexp.parms = list("beta", c(205, 18)),
 #' corr.se = .8,
 #' corr.sp = .8)
+#'
+#' probsens(matrix(c(338, 490, 17984, 32024),
+#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+#' type = "exposure",
+#' reps = 1000,
+#' seca.parms = list("trapezoidal", c(.8, .9, .9, 1)),
+#' spca.parms = list("trapezoidal", c(.8, .9, .9, 1)))
 #' 
 #' # Disease misclassification
 #' probsens(matrix(c(173, 602, 134, 663),
@@ -91,6 +98,17 @@
 #' reps = 20000,
 #' seca.parms = list("uniform", c(.8, 1)),
 #' spca.parms = list("uniform", c(.8, 1)))
+#'
+#' probsens(matrix(c(338, 490, 17984, 32024),
+#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+#' type = "outcome",
+#' reps = 20000,
+#' seca.parms = list("uniform", c(.2, .6)),
+#' seexp.parms = list("uniform", c(.1, .5)),
+#' spca.parms = list("uniform", c(.99, 1)),
+#' spexp.parms = list("uniform", c(.99, 1)),
+#' corr.se = .8,
+#' corr.sp = .8)
 #'
 #' probsens(matrix(c(173, 602, 134, 663),
 #' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
@@ -688,21 +706,13 @@ probsens <- function(case,
         draws[, 10] <- (draws[, 5]/draws[, 7]) / (draws[, 6]/draws[, 8])
 
         draws[, 9] <- ifelse(draws[, 5] < 1 |
-                               draws[, 6] < 1 |
-                                 draws[, 7] < 1 |
-                                   draws[, 8] < 1, NA, draws[, 9])
+                             draws[, 6] < 1 |
+                             draws[, 7] < 1 |
+                             draws[, 8] < 1, NA, draws[, 9])
         draws[, 10] <- ifelse(draws[, 5] < 1 |
-                               draws[, 6] < 1 |
-                                 draws[, 7] < 1 |
-                                   draws[, 8] < 1, NA, draws[, 10])
-        draws[, 9] <- ifelse(draws[, 2] < (c / (c + d)) |
-                             draws[, 4] < (d / (c + d)) |
-                             draws[, 1] < (a / (a + b)) |
-                             draws[, 3] < (b / (a + b)), NA, draws[, 9])
-        draws[, 10] <- ifelse(draws[, 2] < (c / (c + d)) |
-                              draws[, 4] < (d / (c + d)) |
-                              draws[, 1] < (a / (a + b)) |
-                              draws[, 3] < (b / (a + b)), NA, draws[, 10])
+                              draws[, 6] < 1 |
+                              draws[, 7] < 1 |
+                              draws[, 8] < 1, NA, draws[, 10])
 
         if(all(is.na(draws[, 9])) | all(is.na(draws[, 10])))
             warning('Prior Se/Sp distributions lead to all negative adjusted counts.')
