@@ -602,14 +602,14 @@ probsens <- function(case,
             (draws[, 6]/(draws[, 6] + draws[, 8]))
         draws[, 10] <- (draws[, 5]/draws[, 7]) / (draws[, 6]/draws[, 8])
 
-        draws[, 9] <- ifelse(draws[, 5] < 1 |
-                                 draws[, 6] < 1 |
-                                     draws[, 7] < 1 |
-                                         draws[, 8] < 1, NA, draws[, 9])
-        draws[, 10] <- ifelse(draws[, 5] < 1 |
-                                 draws[, 6] < 1 |
-                                     draws[, 7] < 1 |
-                                         draws[, 8] < 1, NA, draws[, 10])
+        draws[, 9] <- ifelse(draws[, 5] < 0 |
+                             draws[, 6] < 0 |
+                             draws[, 7] < 0 |
+                             draws[, 8] < 0, NA, draws[, 9])
+        draws[, 10] <- ifelse(draws[, 5] < 0 |
+                              draws[, 6] < 0 |
+                              draws[, 7] < 0 |
+                              draws[, 8] < 0, NA, draws[, 10])
         draws[, 9] <- ifelse(draws[, 2] < (c / (c + d)) |
                                  draws[, 4] < (d / (c + d)) |
                                      draws[, 1] < (a / (a + b)) |
@@ -711,6 +711,7 @@ probsens <- function(case,
                               draws[, 4] < (d / (c + d)) |
                               draws[, 1] < (a / (a + b)) |
                               draws[, 3] < (b / (a + b)), NA, draws[, 10])
+
         if(all(is.na(draws[, 9])) | all(is.na(draws[, 10])))
             warning('Prior Se/Sp distributions lead to all negative adjusted counts.')
         if (discard) {
