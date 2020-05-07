@@ -16,14 +16,15 @@
 #' \item The sensitivity of exposure classification among those with the outcome (when \code{type = "exposure"}), or
 #' \item The sensitivity of outcome classification among those with the exposure (when \code{type = "outcome"}).
 #' }
-#' The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+#' The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 #' \enumerate{
-#' \item Constant: constant value,
-#' \item Uniform: min, max,
-#' \item Triangular: lower limit, upper limit, mode,
-#' \item Trapezoidal: min, lower mode, upper mode, max,
-#' \item Logit-logistic: location, scale, lower bound shift, upper bound shift,
-#' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
+#' \item constant: constant value,
+#' \item uniform: min, max,
+#' \item triangular: lower limit, upper limit, mode,
+#' \item trapezoidal: min, lower mode, upper mode, max,
+#' \item logit-logistic: location, scale, lower bound shift, upper bound shift,
+#' \item logit-normal: location, scale, lower bound shift, upper bound shift.
+#' \item beta: alpha, beta.
 #' }
 #' @param seexp.parms List defining:
 #' \enumerate{
@@ -84,13 +85,13 @@ probsens <- function(case,
                      type = c("exposure", "outcome"),
                      reps = 1000,
                      seca.parms = list(dist = c("constant", "uniform", "triangular",
-                                           "trapezoidal", "logit-logistic",
-                                                "logit-normal"),
+                                                "trapezoidal", "logit-logistic",
+                                                "logit-normal", "beta"),
                                        parms = NULL),
                      seexp.parms = NULL,
                      spca.parms = list(dist = c("constant", "uniform", "triangular",
-                                           "trapezoidal", "logit-logistic",
-                                                "logit-normal"),
+                                                "trapezoidal", "logit-logistic",
+                                                "logit-normal", "beta"),
                                        parms = NULL),
                      spexp.parms = NULL,
                      corr.se = NULL,
@@ -142,6 +143,8 @@ probsens <- function(case,
         seca.parms <- list(seca.parms[[1]], c(seca.parms[[2]], c(0, 1)))
     if((seca.parms[[1]] == "constant" | seca.parms[[1]] == "uniform" | seca.parms[[1]] == "triangular" | seca.parms[[1]] == "trapezoidal") & !all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
         stop('Sensitivity of exposure classification among those with the outcome should be between 0 and 1.')
+    if(seca.parms[[1]] == "beta" & (seca.parms[[2]][1] < 0 | seca.parms[[2]][2] < 0))
+        stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
     
     if(!is.null(seexp.parms) & !is.list(seexp.parms))
         stop('Sensitivity of exposure classification among those without the outcome should be a list.')
@@ -423,6 +426,12 @@ probsens <- function(case,
         seca.w <- seca.parms[[2]][1] + (seca.parms[[2]][2] * qnorm(corr.draws[, 7]))
         draws[, 1] <- seca.parms[[2]][3] + (seca.parms[[2]][4] - seca.parms[[2]][3]) * exp(seca.w) / (1 + exp(seca.w))
     }
+        if (seca.parms[[1]] == "beta") {
+            draws[, 1] <- qbeta(corr.draws[, 7]/(1 + corr.draws[, 7]),
+                                seca.parms[[2]][1],
+                                seca.parms[[2]][2])
+    }
+        
     if (seexp.parms[[1]] == "uniform") {
         draws[, 2] <- seexp.parms[[2]][2] -
             (seexp.parms[[2]][2] - seexp.parms[[2]][1]) * corr.draws[, 8]
@@ -455,7 +464,13 @@ probsens <- function(case,
         seexp.w <- seexp.parms[[2]][1] + (seexp.parms[[2]][2] * qnorm(corr.draws[, 8]))
         draws[, 2] <- seexp.parms[[2]][3] + (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * exp(seexp.w) / (1 + exp(seexp.w))
     }
-    if (spca.parms[[1]] == "uniform") {
+        if (seexp.parms[[1]] == "beta") {
+            draws[, 2] <- qbeta(corr.draws[, 8]/(1 + corr.draws[, 8]),
+                                seexp.parms[[2]][1],
+                                seexp.parms[[2]][2])
+    }
+
+        if (spca.parms[[1]] == "uniform") {
         draws[, 3] <- spca.parms[[2]][2] -
             (spca.parms[[2]][2] - spca.parms[[2]][1]) * corr.draws[, 9]
     }
@@ -487,7 +502,13 @@ probsens <- function(case,
         spca.w <- spca.parms[[2]][1] + (spca.parms[[2]][2] * qnorm(corr.draws[, 9]))
         draws[, 3] <- spca.parms[[2]][3] + (spca.parms[[2]][4] - spca.parms[[2]][3]) * exp(spca.w) / (1 + exp(spca.w))
     }
-    if (spexp.parms[[1]] == "uniform") {
+        if (spca.parms[[1]] == "beta") {
+            draws[, 3] <- qbeta(corr.draws[, 9]/(1 + corr.draws[, 9]),
+                                spca.parms[[2]][1],
+                                spca.parms[[2]][2])
+    }
+
+        if (spexp.parms[[1]] == "uniform") {
         draws[, 4] <- spexp.parms[[2]][2] -
             (spexp.parms[[2]][2] - spexp.parms[[2]][1]) * corr.draws[, 10]
     }
@@ -518,6 +539,11 @@ probsens <- function(case,
     if (spexp.parms[[1]] == "logit-normal") {
         spexp.w <- spexp.parms[[2]][1] + (spexp.parms[[2]][2] * qnorm(corr.draws[, 10]))
         draws[, 4] <- spexp.parms[[2]][3] + (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * exp(spexp.w) / (1 + exp(spexp.w))
+    }
+    if (spexp.parms[[1]] == "beta") {
+        draws[, 4] <- qbeta(corr.draws[, 10]/(1 + corr.draws[, 10]),
+                            spexp.parms[[2]][1],
+                            spexp.parms[[2]][2])
     }
     }
 
