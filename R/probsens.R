@@ -60,6 +60,7 @@
 #' reps = 20000,
 #' seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
 #' spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
+#' 
 #' # Exposure misclassification, differential
 #' probsens(matrix(c(45, 94, 257, 945),
 #' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
@@ -71,6 +72,18 @@
 #' spexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
 #' corr.se = .8,
 #' corr.sp = .8)
+#'
+#' probsens(matrix(c(45, 94, 257, 945),
+#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+#' type = "exposure",
+#' reps = 20000,
+#' seca.parms = list("beta", c(908, 16)),
+#' seexp.parms = list("beta", c(156, 56)),
+#' spca.parms = list("beta", c(153, 6)),
+#' spexp.parms = list("beta", c(205, 18)),
+#' corr.se = .8,
+#' corr.sp = .8)
+#' 
 #' # Disease misclassification
 #' probsens(matrix(c(173, 602, 134, 663),
 #' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
@@ -78,6 +91,17 @@
 #' reps = 20000,
 #' seca.parms = list("uniform", c(.8, 1)),
 #' spca.parms = list("uniform", c(.8, 1)))
+#'
+#' probsens(matrix(c(173, 602, 134, 663),
+#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+#' type = "outcome",
+#' reps = 20000,
+#' seca.parms = list("beta", c(100, 5)),
+#' seexp.parms = list("beta", c(110, 10)),
+#' spca.parms = list("beta", c(120, 15)),
+#' spexp.parms = list("beta", c(130, 30)),
+#' corr.se = .8,
+#' corr.sp = .8)
 #' @export
 #' @importFrom stats median qnorm quantile runif
 probsens <- function(case,
@@ -143,6 +167,8 @@ probsens <- function(case,
         seca.parms <- list(seca.parms[[1]], c(seca.parms[[2]], c(0, 1)))
     if((seca.parms[[1]] == "constant" | seca.parms[[1]] == "uniform" | seca.parms[[1]] == "triangular" | seca.parms[[1]] == "trapezoidal") & !all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
         stop('Sensitivity of exposure classification among those with the outcome should be between 0 and 1.')
+    if(seca.parms[[1]] == "beta" & length(seca.parms[[2]]) != 2)
+        stop('For beta distribution, please provide alpha and beta.')
     if(seca.parms[[1]] == "beta" & (seca.parms[[2]][1] < 0 | seca.parms[[2]][2] < 0))
         stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
     
@@ -187,6 +213,11 @@ probsens <- function(case,
         seexp.parms <- list(seexp.parms[[1]], c(seexp.parms[[2]], c(0, 1)))
     if(!is.null(seexp.parms) && (seexp.parms[[1]] == "constant" | seexp.parms[[1]] == "uniform" | seexp.parms[[1]] == "triangular" | seexp.parms[[1]] == "trapezoidal") & !all(seexp.parms[[2]] >= 0 & seexp.parms[[2]] <= 1))
         stop('Sensitivity of exposure classification among those without the outcome should be between 0 and 1.')
+    if(!is.null(seexp.parms) && seexp.parms[[1]] == "beta" && length(seexp.parms[[2]]) != 2)
+        stop('For beta distribution, please provide alpha and beta.')
+    if(!is.null(seexp.parms) && seexp.parms[[1]] == "beta" &&
+       (seexp.parms[[2]][1] < 0 | seexp.parms[[2]][2] < 0))
+        stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
     
     if(!is.list(spca.parms))
         stop('Specificity of exposure classification among those with the outcome should be a list.')
@@ -224,6 +255,10 @@ probsens <- function(case,
         spca.parms <- list(spca.parms[[1]], c(spca.parms[[2]], c(0, 1)))
     if((spca.parms[[1]] == "constant" | spca.parms[[1]] == "uniform" | spca.parms[[1]] == "triangular" | spca.parms[[1]] == "trapezoidal") & !all(spca.parms[[2]] >= 0 & spca.parms[[2]] <= 1))
         stop('Specificity of exposure classification among those with the outcome should be between 0 and 1.')
+    if(spca.parms[[1]] == "beta" & length(spca.parms[[2]]) != 2)
+        stop('For beta distribution, please provide alpha and beta.')
+    if(spca.parms[[1]] == "beta" & (spca.parms[[2]][1] < 0 | spca.parms[[2]][2] < 0))
+        stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
     
     if(!is.null(spexp.parms) & !is.list(spexp.parms))
         stop('Specificity of exposure classification among those without the outcome should be a list.')
@@ -266,6 +301,11 @@ probsens <- function(case,
         spexp.parms <- list(spexp.parms[[1]], c(spexp.parms[[2]], c(0, 1)))
     if(!is.null(spexp.parms) && (spexp.parms[[1]] == "constant" | spexp.parms[[1]] == "uniform" | spexp.parms[[1]] == "triangular" | spexp.parms[[1]] == "trapezoidal") & !all(spexp.parms[[2]] >= 0 & spexp.parms[[2]] <= 1))
         stop('Specificity of exposure classification among those without the outcome should be between 0 and 1.')
+    if(!is.null(spexp.parms) && spexp.parms[[1]] == "beta" && length(spexp.parms[[2]]) != 2)
+        stop('For beta distribution, please provide alpha and beta.')
+    if(!is.null(spexp.parms) && spexp.parms[[1]] == "beta" &&
+       (spexp.parms[[2]][1] < 0 | spexp.parms[[2]][2] < 0))
+        stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
     
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
                                 is.null(corr.se) | is.null(corr.sp)))
