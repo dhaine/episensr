@@ -336,38 +336,44 @@ probsens <- function(case,
         }
         if (seca.parms[[1]] == "uniform") {
             draws[, 1] <- do.call(runif, as.list(seca))
-            }
+        }
         if (seca.parms[[1]] == "triangular") {
             draws[, 1] <- do.call(triangle::rtriangle, as.list(seca))
-            }
+        }
         if (seca.parms[[1]] == "trapezoidal") {
             draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(seca))
-            }
+        }
         if (seca.parms[[1]] == "logit-logistic") {
             draws[, 1] <- logitlog.dstr(seca)
-            }
+        }
         if (seca.parms[[1]] == "logit-normal") {
             draws[, 1] <- logitnorm.dstr(seca)
-            }
+        }
+        if (seca.parms[[1]] == "beta") {
+            draws[, 1] <- do.call(rbeta, as.list(seca))
+        }
         draws[, 2] <- draws[, 1]
         if (spca.parms[[1]] == "constant") {
-            draws[, 2] <- spca.parms[[2]]
+            draws[, 3] <- spca.parms[[2]]
         }
         if (spca.parms[[1]] == "uniform") {
             draws[, 3] <- do.call(runif, as.list(spca))
-            }
+        }
         if (spca.parms[[1]] == "triangular") {
             draws[, 3] <- do.call(triangle::rtriangle, as.list(spca))
-            }
+        }
         if (spca.parms[[1]] == "trapezoidal") {
             draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(spca))
-            }
+        }
         if (spca.parms[[1]] == "logit-logistic") {
             draws[, 3] <- logitlog.dstr(spca)
-            }
+        }
         if (spca.parms[[1]] == "logit-normal") {
             draws[, 3] <- logitnorm.dstr(spca)
-            }
+        }
+        if (spca.parms[[1]] == "beta") {
+            draws[, 3] <- do.call(rbeta, as.list(spca))
+        }
         draws[, 4] <- draws[, 3]
     } else {
         corr.draws[, 1:6] <- apply(corr.draws[, 1:6],
