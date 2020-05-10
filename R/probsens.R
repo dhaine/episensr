@@ -148,6 +148,16 @@ probsens <- function(case,
     if(!is.list(seca.parms))
         stop('Sensitivity of exposure classification among those with the outcome should be a list.')
     else seca.parms <- seca.parms
+    if((length(seca.parms) != 2) | (length(spca.parms) != 2))
+        stop('Check distribution parameters')
+    if((!is.null(seexp.parms) & length(seexp.parms) != 2) |
+       (!is.null(spexp.parms) & length(spexp.parms) != 2))
+        stop('Check distribution parameters')
+    if((length(seca.parms[[1]]) != 1) | (length(spca.parms[[1]]) != 1))
+        stop('Which distribution?')
+    if((!is.null(seexp.parms[[1]]) & length(seexp.parms[[1]]) != 1) |
+       (!is.null(spexp.parms[[1]]) & length(spexp.parms[[1]]) != 1))
+        stop('Which distribution?')
     if(!is.null(corr.se) && (seca.parms[[1]] == "constant" | seexp.parms[[1]] == "constant"))
         stop('No correlated distributions with constant values.')
     if(!is.null(corr.sp) && (spca.parms[[1]] == "constant" | spexp.parms[[1]] == "constant"))
