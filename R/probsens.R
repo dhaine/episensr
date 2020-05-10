@@ -121,7 +121,7 @@
 #' corr.se = .8,
 #' corr.sp = .8)
 #' @export
-#' @importFrom stats median qnorm quantile runif
+#' @importFrom stats median qnorm quantile runif qbeta rbeta
 probsens <- function(case,
                      exposed,
                      type = c("exposure", "outcome"),
