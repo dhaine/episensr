@@ -230,19 +230,6 @@ probsens.conf <- function(case,
     p0 <- c(reps, prev.nexp[[2]])
     rr.cd <- c(reps, risk[[2]])
     
-    logitlog.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- sesp[[2]] + sesp[[3]] * (log(u / (1 - u)))
-        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
-    logitnorm.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- sesp[[2]] + sesp[[3]] * qnorm(u)
-        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
-
     if (is.null(corr.p)) {
         if (prev.exp[[1]] == "constant") {
             draws[, 1] <- prev.exp[[2]]

@@ -316,19 +316,6 @@ probsens.sel <- function(case,
         ncase_exp <- c(reps, ncase.exp[[2]])
         ncase_nexp <- c(reps, ncase.nexp[[2]])
         
-        logitlog.dstr <- function(sesp) {
-            u <- runif(sesp[[1]])
-            w <- sesp[[2]] + sesp[[3]] * (log(u / (1 - u)))
-            p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-            return(p)
-        }
-        logitnorm.dstr <- function(sesp) {
-            u <- runif(sesp[[1]])
-            w <- sesp[[2]] + sesp[[3]] * qnorm(u)
-            p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-            return(p)
-        }
-
         if (case.exp[[1]] == "constant") {
             bias_factor[, 1] <- case.exp[[2]]
         }

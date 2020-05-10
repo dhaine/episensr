@@ -387,19 +387,6 @@ probsens <- function(case,
     spca <- c(reps, spca.parms[[2]])
     spexp <- c(reps, spexp.parms[[2]])
 
-    logitlog.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- sesp[[2]] + sesp[[3]] * (log(u / (1 - u)))
-        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
-    logitnorm.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- sesp[[2]] + sesp[[3]] * qnorm(u)
-        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
-    
     if (is.null(seexp.parms) & !is.null(spca.parms) & is.null(spexp.parms) &
         is.null(corr.se) & is.null(corr.sp)) {
         if (seca.parms[[1]] == "constant") {
