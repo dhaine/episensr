@@ -395,6 +395,13 @@ test_that("exposure misclassification (D---logit-normal): adjusted measures are 
     expect_equal(model$adj.measures[2, 3], 55.4015, tolerance = 1e-4, scale = 1)
 })
 
+test_that("correct arguments --- list", {
+    expect_that(probsens.sel(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
+                         reps = 1000,
+                         or.parms = list("beta", c(900, 10))),
+                throws_error())
+})
+
 test_that("Selection bias: observed measures are correct", {
     set.seed(123)
     model <- probsens.sel(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
@@ -428,7 +435,24 @@ test_that("Selection bias: adjusted measures are correct (logit)", {
     expect_equal(model$adj.measures[1, 3], 17.9912, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2, 1], 14.0991, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2, 2], 9.5216, tolerance = 1e-4, scale = 1)
+
     expect_equal(model$adj.measures[2, 3], 20.9828, tolerance = 1e-4, scale = 1)
+})
+
+test_that("Selection bias: adjusted measures are correct (beta)", {
+    set.seed(123)
+    model <- probsens.sel(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
+                      reps = 20000,
+                      case.exp = list("beta", c(200, 56)),
+                      case.nexp = list("beta", c(100, 16)),
+                      ncase.exp = list("beta", c(200, 16)),
+                      ncase.nexp = list("beta", c(100, 56)))
+    expect_equal(model$adj.measures[1, 1], 1.1266, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.9649, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 1.3281, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 1.1275, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.7966, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 1.6115, tolerance = 1e-4, scale = 1)
 })
 
 test_that("correct arguments --- list", {
