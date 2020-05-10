@@ -431,6 +431,26 @@ test_that("Selection bias: adjusted measures are correct (logit)", {
     expect_equal(model$adj.measures[2, 3], 20.9828, tolerance = 1e-4, scale = 1)
 })
 
+test_that("correct arguments --- list", {
+    expect_that(probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
+                         reps = 1000,
+                         prev.exp = c("uniform", 1, 2),
+                         prev.nexp = list("beta", c(10, 16)),
+                         risk = list("triangular", c(.6, .7, .63)),
+                         corr.p = .8),
+                throws_error())
+})
+
+test_that("correct arguments --- distribution", {
+    expect_that(probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
+                         reps = 1000,
+                         prev.exp = list(c("uniform", "beta"), c(10, 16)),
+                         prev.nexp = list("beta", c(10, 16)),
+                         risk = list("triangular", c(.6, .7, .63)),
+                         corr.p = .8),
+                throws_error())
+})
+
 test_that("Confounding bias: observed measures are correct", {
     set.seed(123)
     model <- probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
@@ -510,4 +530,26 @@ test_that("Confounding bias: adjusted measures are correct", {
     expect_equal(model$adj.measures[4, 1], 0.3736, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[4, 2], 0.2611, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[4, 3], 0.5356, tolerance = 1e-4, scale = 1)
+})
+
+test_that("Confounding bias: adjusted measures are correct", {
+    set.seed(123)
+    model <- probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
+                      reps = 10000,
+                      prev.exp = list("beta", c(200, 56)),
+                      prev.nexp = list("beta", c(10, 16)),
+                      risk = list("triangular", c(.6, .7, .63)),
+                      corr.p = .8)
+    expect_equal(model$adj.measures[1, 1], 0.4226, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.4079, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 0.4419, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 0.4231, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.3346, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 0.5328, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 1], 0.2953, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 2], 0.2811, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 3], 0.3178, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 1], 0.2965, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 2], 0.2059, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 0.4239, tolerance = 1e-4, scale = 1)
 })
