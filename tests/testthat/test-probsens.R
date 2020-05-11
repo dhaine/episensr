@@ -626,3 +626,42 @@ test_that("IRR exposure misclassification: adjusted measures are correct", {
     expect_equal(model$adj.measures[2, 2], 0.9784, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2, 3], 28.3129, tolerance = 1e-4, scale = 1)
 })
+
+test_that("correct arguments --- list", {
+    expect_that(probsens.irr.conf(matrix(c(77, 10000, 87, 10000), nrow = 2, byrow = TRUE),
+                         reps = 1000,
+                         prev.exp = c("uniform", 1, 2),
+                         prev.nexp = list("beta", c(10, 16)),
+                         risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
+                         corr.p = .8),
+                throws_error())
+})
+
+test_that("IRR confounding bias: observed measures are correct", {
+    set.seed(123)
+    model <- probsens.irr.conf(matrix(c(77, 10000, 87, 10000), nrow = 2, byrow = TRUE),
+                      reps = 20000,
+                      prev.exp = list("trapezoidal", c(.01, .2, .3, .51)),
+                      prev.nexp = list("trapezoidal", c(.09, .27, .35, .59)),
+                      risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
+                      corr.p = .8)
+    expect_equal(model$obs.measures[1, 1], 0.8851, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs.measures[1, 2], 0.6979, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs.measures[1, 3], 1.1072, tolerance = 1e-4, scale = 1)
+})
+
+test_that("IRR Confounding bias: adjusted measures are correct", {
+    set.seed(123)
+    model <- probsens.irr.conf(matrix(c(77, 10000, 87, 10000), nrow = 2, byrow = TRUE),
+                      reps = 20000,
+                      prev.exp = list("trapezoidal", c(.01, .2, .3, .51)),
+                      prev.nexp = list("trapezoidal", c(.09, .27, .35, .59)),
+                      risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
+                      corr.p = .8)
+    expect_equal(model$adj.measures[1, 1], 0.9653, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.7620, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 1.2656, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 0.9711, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.7063, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 1.3607, tolerance = 1e-4, scale = 1)
+})
