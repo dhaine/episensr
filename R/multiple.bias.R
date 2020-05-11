@@ -1,9 +1,13 @@
 #' Extract adjusted 2-by-2 table from episensr object
 #'
-#' Extract the adjusted 2-by-2 table from an episensr function, so that it can be re-used
-#' into an other episensr function when performing multiple (combined) bias analysis.
-#' Allowed functions are: 'selection', 'misclassification', 'confounders', 'probsens',
-#' 'probsens.sel', and 'probsens.conf'.
+#' Extract the adjusted 2-by-2 table from an \code{episensr} function, so that it can
+#' be re-used into an other \code{episensr} function when performing multiple (combined)
+#' bias analysis.
+#' Allowed functions are: \code{selection}, \code{misclassification}, \code{confounders},
+#' \code{probsens}, \code{probsens.sel}, and \code{probsens.conf}.
+#'
+#' For probabilistic bias analyses, median of cells are passed to the next function as
+#' starting 2-by-2 table.
 #'
 #' @param x An object of class 'episensr' or 'episensr.probsens'.
 #' @param bias_function Bias function to be called. Choices between 'selection',
@@ -15,6 +19,7 @@
 #' @examples
 #' dat <- matrix(c(118, 832, 103, 884),
 #' dimnames = list(c("BC+", "BC-"), c("AD+", "AD-")), nrow = 2, byrow = TRUE)
+#' 
 #' dat %>%
 #' misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) %>%
 #' multiple.bias(., bias_function = "selection", bias_parms = c(.73, .61, .82, .76))
