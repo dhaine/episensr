@@ -1,6 +1,6 @@
 ## Test environments
-* x86_64-pc-linux-gnu (64-bit), R 3.4.2
-* x86_64-pc-linux-gnu (64-bit) (on travis-ci), R 3.4.2
+* x86_64-pc-linux-gnu (64-bit), R 3.5.1
+* x86_64-pc-linux-gnu (64-bit) (on travis-ci), R 3.5.1
 * win-builder (devel and release)
 
 ## R CMD check results

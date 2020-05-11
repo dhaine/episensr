@@ -45,3 +45,37 @@ test_that("Adjusted OR is correct", {
                           bias_parms = c(.94, .85, .64, .25))
     expect_equal(model$adj.measures[2], 1.6346, tolerance = 1e-4, scale = 1)
 })
+
+test_that("bias-factor works (1)", {
+              model <- selection(matrix(c(136, 107, 297, 165),
+                                 nrow = 2, byrow = TRUE),
+                                 bias_parms = 0.43)
+              expect_equal(model$adj.measures[1], 1.8568, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj.measures[2], 1.6421, tolerance = 1e-4, scale = 1)
+          })
+
+test_that("bias-factor works (2)", {
+              model <- selection(matrix(c(136, 107, 297, 165),
+                                 nrow = 2, byrow = TRUE),
+                                 bias_parms = 0.99)
+              expect_equal(model$adj.measures[1], 0.8065, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj.measures[2], 0.7132, tolerance = 1e-4, scale = 1)
+          })
+
+test_that("correct number of arguments for M-bias", {
+    expect_that(mbias(or = c(2, 5.4, 2.5)),
+                throws_error())
+})
+
+test_that("M-bias OR positive", {
+    expect_that(mbias(or = c(-2, 5.4, 2.5, 1.5, 1)),
+                throws_error())
+})
+
+test_that("M-bias OR is correct", {
+    model <- mbias(or = c(2, 5.4, 2.5, 1.5, 1))
+    expect_equal(model$adj.measures, 0.9938, tolerance = 1e-4, scale = 1)
+    expect_equal(model$mbias.parms[1], 1.3149, tolerance = 1e-4, scale = 1)
+    expect_equal(model$mbias.parms[2], 1.0952, tolerance = 1e-4, scale = 1)
+    expect_equal(model$mbias.parms[3], 1.0062, tolerance = 1e-4, scale = 1)
+})

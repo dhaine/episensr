@@ -5,24 +5,25 @@
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
 #' @param reps Number of replications to run.
-#' @param prev.exp List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+#' @param prev.exp List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 #' \enumerate{
-#' \item Constant: constant value,
-#' \item Uniform: min, max,
-#' \item Triangular: lower limit, upper limit, mode,
-#' \item Trapezoidal: min, lower mode, upper mode, max.
-#' \item Logit-logistic: location, scale, lower bound shift, upper bound shift,
-#' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
+#' \item constant: constant value,
+#' \item uniform: min, max,
+#' \item triangular: lower limit, upper limit, mode,
+#' \item trapezoidal: min, lower mode, upper mode, max.
+#' \item logit-logistic: location, scale, lower bound shift, upper bound shift,
+#' \item logit-normal: location, scale, lower bound shift, upper bound shift.
+#' \item beta: alpha, beta.
 #' }
 #' @param prev.nexp List defining the prevalence of exposure among the unexposed.
 #' @param risk List defining the confounder-disease relative risk or the confounder-exposure odds ratio. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, log-logistic, or log-normal) and the second its parameters as a vector:
 #' \enumerate{
-#' \item Constant: constant value,
-#' \item Uniform: min, max,
-#' \item Triangular: lower limit, upper limit, mode,
-#' \item Trapezoidal: min, lower mode, upper mode, max.
-#' \item Log-logistic: shape, rate. Must be strictly positive,
-#' \item Log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
+#' \item constant: constant value,
+#' \item uniform: min, max,
+#' \item triangular: lower limit, upper limit, mode,
+#' \item trapezoidal: min, lower mode, upper mode, max.
+#' \item log-logistic: shape, rate. Must be strictly positive,
+#' \item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 #' }
 #' @param corr.p Correlation between the exposure-specific confounder prevalences.
 #' @param discard A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.
@@ -51,18 +52,27 @@
 #' prev.nexp = list("trapezoidal", c(.03, .04, .05, .06)),
 #' risk = list("triangular", c(.6, .7, .63)),
 #' corr.p = .8)
+#'
+#' set.seed(123)
+#' probsens.conf(matrix(c(105, 85, 527, 93),
+#' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")), nrow = 2, byrow = TRUE),
+#' reps = 20000,
+#' prev.exp = list("beta", c(200, 56)),
+#' prev.nexp = list("beta", c(10, 16)),
+#' risk = list("triangular", c(.6, .7, .63)),
+#' corr.p = .8)
 #' @export
-#' @importFrom stats median qnorm quantile runif rlnorm
+#' @importFrom stats median qnorm quantile runif rlnorm rbeta qbeta
 probsens.conf <- function(case,
                           exposed,
                           reps = 1000,
                           prev.exp = list(dist = c("constant", "uniform",
                                               "triangular", "trapezoidal",
-                                              "logit-logistic", "logit-normal"),
+                                              "logit-logistic", "logit-normal", "beta"),
                               parms = NULL),
                           prev.nexp = list(dist = c("constant", "uniform",
                                                "triangular", "trapezoidal",
-                                               "logit-logistic", "logit-normal"),
+                                               "logit-logistic", "logit-normal", "beta"),
                               parms = NULL),
                           risk = list(dist = c("constant", "uniform", "triangular",
                                           "trapezoidal", "log-logistic",
@@ -82,6 +92,11 @@ probsens.conf <- function(case,
     if(!is.list(prev.exp))
         stop('Prevalence of exposure among the exposed should be a list.')
     else prev.exp <- prev.exp
+    if((length(prev.exp) != 2) | (length(prev.nexp) != 2) | (length(risk) != 2))
+        stop('Check distribution parameters.')
+    if((length(prev.exp[[1]]) != 1) | (length(prev.nexp[[1]]) != 1) |
+       (length(risk[[1]]) != 1))
+        stop('Which distribution?')
     if(!is.null(corr.p) && (prev.exp[[1]] == "constant" | prev.nexp[[1]] == "constant"))
         stop('No correlated distributions with constant values.')
     if(prev.exp[[1]] == "constant" & length(prev.exp[[2]]) != 1)
@@ -117,6 +132,11 @@ probsens.conf <- function(case,
         prev.exp <- list(prev.exp[[1]], c(prev.exp[[2]], c(0, 1)))
     if((prev.exp[[1]] == "constant" | prev.exp[[1]] == "uniform" | prev.exp[[1]] == "triangular" | prev.exp[[1]] == "trapezoidal") & !all(prev.exp[[2]] >= 0 & prev.exp[[2]] <= 1))
         stop('Prevalence should be between 0 and 1.')
+    if(!is.null(prev.exp) && prev.exp[[1]] == "beta" && length(prev.exp[[2]]) != 2)
+        stop('For beta distribution, please provide alpha and beta.')
+    if(!is.null(prev.exp) && prev.exp[[1]] == "beta" &&
+       (prev.exp[[2]][1] < 0 | prev.exp[[2]][2] < 0))
+        stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
 
         if(!is.list(prev.nexp))
         stop('Prevalence of exposure among the non-exposed should be a list.')
@@ -155,6 +175,11 @@ probsens.conf <- function(case,
         prev.nexp <- list(prev.nexp[[1]], c(prev.nexp[[2]], c(0, 1)))
     if((prev.nexp[[1]] == "constant" | prev.nexp[[1]] == "uniform" | prev.nexp[[1]] == "triangular" | prev.nexp[[1]] == "trapezoidal") & !all(prev.nexp[[2]] >= 0 & prev.nexp[[2]] <= 1))
         stop('Prevalence should be between 0 and 1.')
+    if(!is.null(prev.nexp) && prev.nexp[[1]] == "beta" && length(prev.nexp[[2]]) != 2)
+        stop('For beta distribution, please provide alpha and beta.')
+    if(!is.null(prev.nexp) && prev.nexp[[1]] == "beta" &&
+       (prev.nexp[[2]][1] < 0 | prev.nexp[[2]][2] < 0))
+        stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
 
     if(!is.list(risk))
         stop('Risk should be a list.')
@@ -217,7 +242,7 @@ probsens.conf <- function(case,
     draws <- matrix(NA, nrow = reps, ncol = 14)
     colnames(draws) <- c("p1", "p0", "RR.cd",
                          "A_11",
-                         "A_01",
+                         "B_11",
                          "RR.SMR.rr", 
                          "OR.SMR.or", 
                          "reps",
@@ -230,19 +255,6 @@ probsens.conf <- function(case,
     p0 <- c(reps, prev.nexp[[2]])
     rr.cd <- c(reps, risk[[2]])
     
-    logitlog.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- sesp[[2]] + sesp[[3]] * (log(u / (1 - u)))
-        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
-    logitnorm.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- sesp[[2]] + sesp[[3]] * qnorm(u)
-        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
-
     if (is.null(corr.p)) {
         if (prev.exp[[1]] == "constant") {
             draws[, 1] <- prev.exp[[2]]
@@ -262,6 +274,9 @@ probsens.conf <- function(case,
         if (prev.exp[[1]] == "logit-normal") {
             draws[, 1] <- logitnorm.dstr(p1)
         }
+        if (prev.exp[[1]] == "beta") {
+            draws[, 1] <- do.call(rbeta, as.list(p1))
+        }
         if (prev.nexp[[1]] == "constant") {
             draws[, 2] <- prev.nexp[[2]]
         }
@@ -279,6 +294,9 @@ probsens.conf <- function(case,
         }
         if (prev.nexp[[1]] == "logit-normal") {
             draws[, 2] <- logitnorm.dstr(p1)
+        }
+        if (prev.nexp[[1]] == "beta") {
+            draws[, 2] <- do.call(rbeta, as.list(p0))
         }
     } else {
         corr.draws[, 1:3] <- apply(corr.draws[, 1:3],
@@ -324,6 +342,11 @@ probsens.conf <- function(case,
         pexp.w <- prev.exp[[2]][1] + (prev.exp[[2]][2] * qnorm(corr.draws[, 4]))
         draws[, 1] <- prev.exp[[2]][3] + (prev.exp[[2]][4] - prev.exp[[2]][3]) * exp(pexp.w) / (1 + exp(pexp.w))
     }
+    if (prev.exp[[1]] == "beta") {
+        draws[, 1] <- qbeta(corr.draws[, 4]/(1 + corr.draws[, 4]),
+                            prev.exp[[2]][1],
+                            prev.exp[[2]][2])
+    }
     if (prev.nexp[[1]] == "uniform") {
         draws[, 2] <- prev.nexp[[2]][2] -
             (prev.nexp[[2]][2] - prev.nexp[[2]][1]) * corr.draws[, 5]
@@ -356,6 +379,11 @@ probsens.conf <- function(case,
         punexp.w <- prev.nexp[[2]][1] + (prev.nexp[[2]][2] * qnorm(corr.draws[, 5]))
         draws[, 2] <- prev.nexp[[2]][3] + (prev.nexp[[2]][4] - prev.nexp[[2]][3]) * exp(punexp.w) / (1 + exp(punexp.w))
     }
+    if (prev.nexp[[1]] == "beta") {
+        draws[, 2] <- qbeta(corr.draws[, 5]/(1 + corr.draws[, 5]),
+                            prev.nexp[[2]][1],
+                            prev.nexp[[2]][2])
+    }
     }
 
     if(risk[[1]] == "constant") {
@@ -379,18 +407,21 @@ probsens.conf <- function(case,
     
     draws[, 8] <- runif(reps)
 
-    draws[, 4] <- (draws[, 3]*a*draws[, 1]*c) / ((draws[, 3]*draws[, 1]*c) + c -
-                                                 (draws[, 1]*c))
-    draws[, 5] <- (draws[, 3]*b*draws[, 2]*d) / ((draws[, 3]*draws[, 2]*d) + d -
-                                                 (draws[, 2]*d))
-    draws[, 6] <- (draws[, 4]/(draws[, 4]+draws[, 1]*c)) /
-        (draws[, 5]/(draws[, 5]+(draws[, 2]*d)))
-    draws[, 7] <- (draws[, 4]*draws[, 2]*d) / (draws[, 5]*draws[, 1]*c)
-    
-    draws[, 6] <- ifelse(draws[, 4] < 1 |
-                               draws[, 5] < 1, NA, draws[, 6])
-    draws[, 7] <- ifelse(draws[, 4] < 1 |
-                               draws[, 5] < 1, NA, draws[, 7])
+    draws[, 4] <- (draws[, 3] * ((a + c) * draws[, 1]) * a) /
+        (draws[, 3] * ((a + c) * draws[, 1]) + (a + c) - ((a + c) * draws[, 1]))  # A_11
+    draws[, 5] <- (draws[, 3] * b * (draws[, 2] * (b + d))) /
+        (draws[, 3] * (draws[, 2] * (b + d)) + (b + d) - (draws[, 2] * (b + d)))  # B_01
+    draws[, 6] <- a / ((((a + c) * draws[, 1]) * draws[, 5] / ((b + d) * draws[, 2])) +
+                       (((a + c) - ((a + c) * draws[, 1])) * (b - draws[, 5]) /
+                        ((b +d) - ((b + d) * draws[, 2]))))  # RR.SMR.rr
+    draws[, 7] <- a / (((((a + c) * draws[, 1]) - draws[, 4]) * draws[, 5] /
+                        (((b + d) * draws[, 2]) - draws[, 5])) +
+                       ((c - (((a + c) * draws[, 1]) - draws[, 4])) * (b - draws[, 5]) /
+                        (d - (((b + d) * draws[, 2]) - draws[, 5]))))  # OR.SMR.or
+    draws[, 6] <- ifelse(draws[, 4] < 0 |
+                               draws[, 5] < 0, NA, draws[, 6])
+    draws[, 7] <- ifelse(draws[, 4] < 0 |
+                               draws[, 5] < 0, NA, draws[, 7])
     if(all(is.na(draws[, 6])) | all(is.na(draws[, 7])))
         warning('Prior Prevalence distributions lead to all negative adjusted counts.')
     if (discard) {
