@@ -10,10 +10,10 @@ probsens(
   type = c("exposure", "outcome"),
   reps = 1000,
   seca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal"), parms = NULL),
+    "logit-logistic", "logit-normal", "beta"), parms = NULL),
   seexp.parms = NULL,
   spca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal"), parms = NULL),
+    "logit-logistic", "logit-normal", "beta"), parms = NULL),
   spexp.parms = NULL,
   corr.se = NULL,
   corr.sp = NULL,
@@ -35,14 +35,15 @@ probsens(
 \item The sensitivity of exposure classification among those with the outcome (when \code{type = "exposure"}), or
 \item The sensitivity of outcome classification among those with the exposure (when \code{type = "outcome"}).
 }
-The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 \enumerate{
-\item Constant: constant value,
-\item Uniform: min, max,
-\item Triangular: lower limit, upper limit, mode,
-\item Trapezoidal: min, lower mode, upper mode, max,
-\item Logit-logistic: location, scale, lower bound shift, upper bound shift,
-\item Logit-normal: location, scale, lower bound shift, upper bound shift.
+\item constant: constant value,
+\item uniform: min, max,
+\item triangular: lower limit, upper limit, mode,
+\item trapezoidal: min, lower mode, upper mode, max,
+\item logit-logistic: location, scale, lower bound shift, upper bound shift,
+\item logit-normal: location, scale, lower bound shift, upper bound shift.
+\item beta: alpha, beta.
 }}
 
 \item{seexp.parms}{List defining:
@@ -92,6 +93,7 @@ type = "exposure",
 reps = 20000,
 seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
 spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
+
 # Exposure misclassification, differential
 probsens(matrix(c(45, 94, 257, 945),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
@@ -103,6 +105,25 @@ spca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
 spexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
 corr.se = .8,
 corr.sp = .8)
+
+probsens(matrix(c(45, 94, 257, 945),
+dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+type = "exposure",
+reps = 20000,
+seca.parms = list("beta", c(908, 16)),
+seexp.parms = list("beta", c(156, 56)),
+spca.parms = list("beta", c(153, 6)),
+spexp.parms = list("beta", c(205, 18)),
+corr.se = .8,
+corr.sp = .8)
+
+probsens(matrix(c(338, 490, 17984, 32024),
+dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+type = "exposure",
+reps = 1000,
+seca.parms = list("trapezoidal", c(.8, .9, .9, 1)),
+spca.parms = list("trapezoidal", c(.8, .9, .9, 1)))
+
 # Disease misclassification
 probsens(matrix(c(173, 602, 134, 663),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
@@ -110,6 +131,28 @@ type = "outcome",
 reps = 20000,
 seca.parms = list("uniform", c(.8, 1)),
 spca.parms = list("uniform", c(.8, 1)))
+
+probsens(matrix(c(338, 490, 17984, 32024),
+dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+type = "outcome",
+reps = 20000,
+seca.parms = list("uniform", c(.2, .6)),
+seexp.parms = list("uniform", c(.1, .5)),
+spca.parms = list("uniform", c(.99, 1)),
+spexp.parms = list("uniform", c(.99, 1)),
+corr.se = .8,
+corr.sp = .8)
+
+probsens(matrix(c(173, 602, 134, 663),
+dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+type = "outcome",
+reps = 20000,
+seca.parms = list("beta", c(100, 5)),
+seexp.parms = list("beta", c(110, 10)),
+spca.parms = list("beta", c(120, 15)),
+spexp.parms = list("beta", c(130, 30)),
+corr.se = .8,
+corr.sp = .8)
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
