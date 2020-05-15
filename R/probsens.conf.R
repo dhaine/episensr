@@ -422,22 +422,35 @@ probsens.conf <- function(case,
                                draws[, 5] < 0, NA, draws[, 6])
     draws[, 7] <- ifelse(draws[, 4] < 0 |
                                draws[, 5] < 0, NA, draws[, 7])
-    if(all(is.na(draws[, 6])) | all(is.na(draws[, 7])))
+    if(all(is.na(draws[, 6])) | all(is.na(draws[, 7]))) {
         warning('Prior Prevalence distributions lead to all negative adjusted counts.')
+        neg_warn <- "Prior Se/Sp distributions lead to all negative adjusted counts."
+    } else {
+            neg_warn <- NULL
+        }
     if (discard) {
-        if(sum(is.na(draws[, 6])) > 0)
+        if(sum(is.na(draws[, 6])) > 0) {
             message('Chosen prior Prevalence distributions lead to ',
                     sum(is.na(draws[, 6])),
                     ' negative adjusted counts which were discarded.')
+                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                        sum(is.na(draws[, 9])),
+                                        ' negative adjusted counts which were discarded.'))
+        } else discard_mess <- NULL
     }
     else {
         if(sum(is.na(draws[, 6])) > 0) {
             message('Chosen prior Prevalence distributions lead to ',
                     sum(is.na(draws[, 6])),
                     ' negative adjusted counts which were set to zero.')
+                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                        sum(is.na(draws[, 9])),
+                                        ' negative adjusted counts which were set to zero.'))
+        } else {
+            discard_mess <- NULL
+            draws[, 6] <- ifelse(is.na(draws[, 6]), 0, draws[, 6])
+            draws[, 7] <- ifelse(is.na(draws[, 7]), 0, draws[, 7])
         }
-        draws[, 6] <- ifelse(is.na(draws[, 6]), 0, draws[, 6])
-        draws[, 7] <- ifelse(is.na(draws[, 7]), 0, draws[, 7])
         }
 
     draws[, 9] <- exp(log(draws[, 6]) -
@@ -493,7 +506,9 @@ probsens.conf <- function(case,
                 obs.measures = rmat, 
                 adj.measures = rmatc, 
                 sim.df = as.data.frame(draws[, -8]),
-                reps = reps)
+                reps = reps,
+                warnings = neg_warn,
+                message = discard_mess)
     class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }

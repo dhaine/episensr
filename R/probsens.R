@@ -625,22 +625,35 @@ probsens <- function(case,
                               draws[, 6] < 0 |
                               draws[, 7] < 0 |
                               draws[, 8] < 0, NA, draws[, 10])
-        if(all(is.na(draws[, 9])) | all(is.na(draws[, 10])))
+        if(all(is.na(draws[, 9])) | all(is.na(draws[, 10]))) {
             warning('Prior Se/Sp distributions lead to all negative adjusted counts.')
+            neg_warn <- "Prior Se/Sp distributions lead to all negative adjusted counts."
+        } else {
+            neg_warn <- NULL
+        }
         if (discard) {
-            if(sum(is.na(draws[, 9])) > 0)
+            if(sum(is.na(draws[, 9])) > 0) {
                 message('Chosen prior Se/Sp distributions lead to ',
                         sum(is.na(draws[, 9])),
                         ' negative adjusted counts which were discarded.')
+                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                        sum(is.na(draws[, 9])),
+                                        ' negative adjusted counts which were discarded.'))
+            } else discard_mess <- NULL
         }
         else {
             if(sum(is.na(draws[, 9])) > 0) {
                 message('Chosen prior Se/Sp distributions lead to ',
                         sum(is.na(draws[, 9])),
                         ' negative adjusted counts which were set to zero.')
+                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                        sum(is.na(draws[, 9])),
+                                        ' negative adjusted counts which were set to zero.'))
+            } else {
+                discard_mess <- NULL
+                draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
+                draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])
             }
-            draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
-            draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])
         }
 
         draws[, 12] <- exp(log(draws[, 9]) -
@@ -711,22 +724,33 @@ probsens <- function(case,
                               draws[, 7] < 1 |
                               draws[, 8] < 1, NA, draws[, 10])
 
-        if(all(is.na(draws[, 9])) | all(is.na(draws[, 10])))
+        if(all(is.na(draws[, 9])) | all(is.na(draws[, 10]))) {
             warning('Prior Se/Sp distributions lead to all negative adjusted counts.')
+            neg_warn <- "Prior Se/Sp distributions lead to all negative adjusted counts."
+        } else neg_warn <- NULL
         if (discard) {
-            if(sum(is.na(draws[, 9])) > 0)
+            if(sum(is.na(draws[, 9])) > 0) {
                 message('Chosen prior Se/Sp distributions lead to ',
                         sum(is.na(draws[, 9])),
                         ' negative adjusted counts which were discarded.')
+                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                        sum(is.na(draws[, 9])),
+                                        ' negative adjusted counts which were discarded.'))
+            } else discard_mess <- NULL
         }
         else {
             if(sum(is.na(draws[, 9])) > 0) {
                 message('Chosen prior Se/Sp distributions lead to ',
                         sum(is.na(draws[, 9])),
                         ' negative adjusted counts which were set to zero.')
+                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                        sum(is.na(draws[, 9])),
+                                        ' negative adjusted counts which were set to zero.'))
+            } else {
+                discard_mess <- NULL
+                draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
+                draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])               
             }
-            draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
-            draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])
         }
 
         draws[, 12] <- exp(log(draws[, 9]) -
@@ -779,7 +803,9 @@ probsens <- function(case,
                 obs.measures = rmat, 
                 adj.measures = rmatc,
                 sim.df = as.data.frame(draws[, -11]),
-                reps = reps)
+                reps = reps,
+                warnings = neg_warn,
+                message = discard_mess)
     class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }

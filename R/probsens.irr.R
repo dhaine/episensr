@@ -531,21 +531,32 @@ probsens.irr <- function(counts,
                              draws[, 6] < 0 |
                                  draws[, 7] < 0 |
                                      draws[, 8] < 0, NA, draws[, 9])
-    if(all(is.na(draws[, 9])))
+    if(all(is.na(draws[, 9]))) {
         warning('Prior Se/Sp distributions lead to all negative adjusted counts.')
+        neg_warn <- "Prior Se/Sp distributions lead to all negative adjusted counts."
+    } else neg_warn <- NULL
     if (discard) {
-        if(sum(is.na(draws[, 9])) > 0)
+        if(sum(is.na(draws[, 9])) > 0) {
             message('Chosen prior Se/Sp distributions lead to ',
                     sum(is.na(draws[, 9])),
                     ' negative adjusted counts which were discarded.')
+            discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                    sum(is.na(draws[, 9])),
+                                    ' negative adjusted counts which were discarded.'))
+        } else discard_mess <- NULL
     }
     else {
         if(sum(is.na(draws[, 9])) > 0) {
             message('Chosen prior Se/Sp distributions lead to ',
                     sum(is.na(draws[, 9])),
                     ' negative adjusted counts which were set to zero.')
+                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                        sum(is.na(draws[, 9])),
+                                        ' negative adjusted counts which were set to zero.'))
+        } else {
+            discard_mess <- NULL
+            draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])            
         }
-        draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
     }
 
     draws[, 10] <- exp(log(draws[, 9]) -
@@ -576,7 +587,9 @@ probsens.irr <- function(counts,
     res <- list(obs.data = tab,
                 obs.measures = rmat, 
                 adj.measures = rmatc,
-                sim.df = as.data.frame(draws[, -11]))
+                sim.df = as.data.frame(draws[, -11]),
+                warnings = neg_warn,
+                message = discard_mess)
     class(res) <- c("episensr", "list")
     res
 }
