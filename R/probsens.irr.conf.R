@@ -400,12 +400,20 @@ probsens.irr.conf <- function(counts,
                                      draws[, 8] < 0 |
                                          draws[, 11] < 0, NA, draws[, 12])
 
-    if(all(is.na(draws[, 12])))
+    if(all(is.na(draws[, 12]))) {
         warning('Prior prevalence distributions lead to all negative adjusted values.')
-    if(sum(is.na(draws[, 12])) > 0)
+        neg_warn <- "Prior Se/Sp distributions lead to all negative adjusted counts."
+    } else {
+            neg_warn <- NULL
+        }
+    if(sum(is.na(draws[, 12])) > 0) {
         message('Chosen prior prevalence distributions lead to ',
                 sum(is.na(draws[, 12])),
                 ' negative adjusted values which were discarded.')
+        discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                sum(is.na(draws[, 9])),
+                                ' negative adjusted counts which were discarded.'))
+    } else discard_mess <- NULL
 
     draws[, 14] <- exp(log(draws[, 12]) -
                            qnorm(draws[, 13]) *
@@ -435,7 +443,9 @@ probsens.irr.conf <- function(counts,
     res <- list(obs.data = tab,
                 obs.measures = rmat, 
                 adj.measures = rmatc,
-                sim.df = as.data.frame(draws[, -13]))
+                sim.df = as.data.frame(draws[, -13]),
+                warnings = neg_warn,
+                message = discard_mess)
     class(res) <- c("episensr", "list")
     res
 }
