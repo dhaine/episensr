@@ -507,6 +507,7 @@ probsens.conf <- function(case,
                 adj.measures = rmatc, 
                 sim.df = as.data.frame(draws[, -8]),
                 reps = reps,
+                fun = "probsens.conf",
                 warnings = neg_warn,
                 message = discard_mess)
     class(res) <- c("episensr", "episensr.probsens", "list")

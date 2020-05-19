@@ -475,7 +475,8 @@ probsens.sel <- function(case,
                 obs.measures = rmat, 
                 adj.measures = rmatc, 
                 sim.df = as.data.frame(draws[, -3]),
-                reps = reps)
+                reps = reps,
+                fun = "probsens.sel")
     class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }

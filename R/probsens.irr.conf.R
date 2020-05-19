@@ -444,8 +444,10 @@ probsens.irr.conf <- function(counts,
                 obs.measures = rmat, 
                 adj.measures = rmatc,
                 sim.df = as.data.frame(draws[, -13]),
+                reps = reps,
+                fun = "probsens.irr.conf",
                 warnings = neg_warn,
                 message = discard_mess)
-    class(res) <- c("episensr", "list")
+    class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }

@@ -804,6 +804,7 @@ probsens <- function(case,
                 adj.measures = rmatc,
                 sim.df = as.data.frame(draws[, -11]),
                 reps = reps,
+                fun = "probsens",
                 warnings = neg_warn,
                 message = discard_mess)
     class(res) <- c("episensr", "episensr.probsens", "list")
