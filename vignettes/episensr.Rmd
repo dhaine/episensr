@@ -387,7 +387,7 @@ mod2
 ```
 
 ```{r plot3, message=FALSE}
-ggplot(mod2$sim.df, aes(x = corr.or)) + 
+ggplot(mod2$sim.df, aes(x = corr.OR)) + 
     geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
     geom_density(alpha = .2, fill = "#FF6666") +
     labs(title = "2. Selection bias", x = "OR without random error incorporated") +
@@ -406,7 +406,7 @@ mod3
 ```
 
 ```{r plot4, message=FALSE, warning=FALSE}
-ggplot(mod3$sim.df, aes(x = OR.SMR.or)) + 
+ggplot(mod3$sim.df, aes(x = corr.OR)) + 
     geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
     geom_density(alpha = .2, fill = "#FF6666") +
     labs(title = "3. Confounding bias", x = "OR without random error incorporated") +
@@ -453,13 +453,13 @@ mod6
 ```
 
 ```{r plot5, message=FALSE, warning=FALSE}
-ggplot(mod6$sim.df, aes(x = OR.SMR.or)) + 
+ggplot(mod6$sim.df, aes(x = corr.OR)) + 
     geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
     geom_density(alpha = .2, fill = "#FF6666") +
     labs(title = "6. Misclassification, then\nselection, then confounding",
          x = "OR without random error incorporated") +
     coord_cartesian(xlim = c(0, 3))
-ggplot(mod6$sim.df, aes(x = tot.ORadj.smr)) + 
+ggplot(mod6$sim.df, aes(x = tot.OR)) + 
     geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
     geom_density(alpha = .2, fill = "#FF6666") +
     labs(title = "6. Misclassification, then\nselection, then confounding",
