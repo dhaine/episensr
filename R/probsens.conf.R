@@ -446,12 +446,10 @@ probsens.conf <- function(case,
                 discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
                                         sum(is.na(draws[, 9])),
                                         ' negative adjusted counts which were set to zero.'))
-        } else {
-            discard_mess <- NULL
             draws[, 6] <- ifelse(is.na(draws[, 6]), 0, draws[, 6])
             draws[, 7] <- ifelse(is.na(draws[, 7]), 0, draws[, 7])
-        }
-        }
+        } else discard_mess <- NULL
+    }
 
     draws[, 9] <- exp(log(draws[, 6]) -
                                qnorm(draws[, 8]) *
