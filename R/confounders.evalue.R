@@ -93,13 +93,9 @@ confounders.evalue <- function(est,
     if (((type == "diff_RR" | type == "diff_OR") & !is.na(sd)) & sd < 0)
         stop("Standardized SE cannot be negative.")
 
-    .closest <- function(x, y) {
-        x[which(abs(x - y) == min(abs(x - y)))]
-    }
-
     if ((type != "diff_RR" | type != "diff_OR") &
         (!is.null(lower_ci) | !is.null(upper_ci))) {
-        closest_ci <- .closest(c(lower_ci, upper_ci), true_est)
+        closest_ci <- closest(c(lower_ci, upper_ci), true_est)
     } else {
         closest_ci <- NA
     }
@@ -108,11 +104,11 @@ confounders.evalue <- function(est,
         tab <- c(est, closest_ci)
     } else if (type == "diff_RR") {
         tab <- c(exp(0.91*est),
-                 .closest(c(exp(0.91*est - 1.78*sd), exp(0.91*est + 1.78*sd)),
+                 closest(c(exp(0.91*est - 1.78*sd), exp(0.91*est + 1.78*sd)),
                           true_est))
     } else if (type == "diff_OR") {
         tab <- c(exp(1.81*est),
-                 .closest(c(exp(1.81*est - 3.55*sd), exp(1.81*est + 3.55*sd)),
+                 closest(c(exp(1.81*est - 3.55*sd), exp(1.81*est + 3.55*sd)),
                           true_est))
     }
 
