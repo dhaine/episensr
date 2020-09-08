@@ -16,14 +16,15 @@
 #' \item The sensitivity of exposure classification among those with the outcome (when \code{type = "exposure"}), or
 #' \item The sensitivity of outcome classification among those with the exposure (when \code{type = "outcome"}).
 #' }
-#' The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+#' The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 #' \enumerate{
-#' \item Constant: constant value,
-#' \item Uniform: min, max,
-#' \item Triangular: lower limit, upper limit, mode,
-#' \item Trapezoidal: min, lower mode, upper mode, max,
-#' \item Logit-logistic: location, scale, lower bound shift, upper bound shift,
-#' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
+#' \item constant: constant value,
+#' \item uniform: min, max,
+#' \item triangular: lower limit, upper limit, mode,
+#' \item trapezoidal: min, lower mode, upper mode, max,
+#' \item logit-logistic: location, scale, lower bound shift, upper bound shift,
+#' \item logit-normal: location, scale, lower bound shift, upper bound shift.
+#' \item beta: alpha, beta.
 #' }
 #' @param seexp.parms List defining:
 #' \enumerate{
@@ -59,6 +60,7 @@
 #' reps = 20000,
 #' seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
 #' spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
+#' 
 #' # Exposure misclassification, differential
 #' probsens(matrix(c(45, 94, 257, 945),
 #' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
@@ -70,6 +72,25 @@
 #' spexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
 #' corr.se = .8,
 #' corr.sp = .8)
+#'
+#' probsens(matrix(c(45, 94, 257, 945),
+#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+#' type = "exposure",
+#' reps = 20000,
+#' seca.parms = list("beta", c(908, 16)),
+#' seexp.parms = list("beta", c(156, 56)),
+#' spca.parms = list("beta", c(153, 6)),
+#' spexp.parms = list("beta", c(205, 18)),
+#' corr.se = .8,
+#' corr.sp = .8)
+#'
+#' probsens(matrix(c(338, 490, 17984, 32024),
+#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+#' type = "exposure",
+#' reps = 1000,
+#' seca.parms = list("trapezoidal", c(.8, .9, .9, 1)),
+#' spca.parms = list("trapezoidal", c(.8, .9, .9, 1)))
+#' 
 #' # Disease misclassification
 #' probsens(matrix(c(173, 602, 134, 663),
 #' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
@@ -77,20 +98,42 @@
 #' reps = 20000,
 #' seca.parms = list("uniform", c(.8, 1)),
 #' spca.parms = list("uniform", c(.8, 1)))
+#'
+#' probsens(matrix(c(338, 490, 17984, 32024),
+#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+#' type = "outcome",
+#' reps = 20000,
+#' seca.parms = list("uniform", c(.2, .6)),
+#' seexp.parms = list("uniform", c(.1, .5)),
+#' spca.parms = list("uniform", c(.99, 1)),
+#' spexp.parms = list("uniform", c(.99, 1)),
+#' corr.se = .8,
+#' corr.sp = .8)
+#'
+#' probsens(matrix(c(173, 602, 134, 663),
+#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
+#' type = "outcome",
+#' reps = 20000,
+#' seca.parms = list("beta", c(100, 5)),
+#' seexp.parms = list("beta", c(110, 10)),
+#' spca.parms = list("beta", c(120, 15)),
+#' spexp.parms = list("beta", c(130, 30)),
+#' corr.se = .8,
+#' corr.sp = .8)
 #' @export
-#' @importFrom stats median qnorm quantile runif
+#' @importFrom stats median qnorm quantile runif qbeta rbeta
 probsens <- function(case,
                      exposed,
                      type = c("exposure", "outcome"),
                      reps = 1000,
                      seca.parms = list(dist = c("constant", "uniform", "triangular",
-                                           "trapezoidal", "logit-logistic",
-                                                "logit-normal"),
+                                                "trapezoidal", "logit-logistic",
+                                                "logit-normal", "beta"),
                                        parms = NULL),
                      seexp.parms = NULL,
                      spca.parms = list(dist = c("constant", "uniform", "triangular",
-                                           "trapezoidal", "logit-logistic",
-                                                "logit-normal"),
+                                                "trapezoidal", "logit-logistic",
+                                                "logit-normal", "beta"),
                                        parms = NULL),
                      spexp.parms = NULL,
                      corr.se = NULL,
@@ -105,6 +148,16 @@ probsens <- function(case,
     if(!is.list(seca.parms))
         stop('Sensitivity of exposure classification among those with the outcome should be a list.')
     else seca.parms <- seca.parms
+    if((length(seca.parms) != 2) | (length(spca.parms) != 2))
+        stop('Check distribution parameters')
+    if((!is.null(seexp.parms) & length(seexp.parms) != 2) |
+       (!is.null(spexp.parms) & length(spexp.parms) != 2))
+        stop('Check distribution parameters')
+    if((length(seca.parms[[1]]) != 1) | (length(spca.parms[[1]]) != 1))
+        stop('Which distribution?')
+    if((!is.null(seexp.parms[[1]]) & length(seexp.parms[[1]]) != 1) |
+       (!is.null(spexp.parms[[1]]) & length(spexp.parms[[1]]) != 1))
+        stop('Which distribution?')
     if(!is.null(corr.se) && (seca.parms[[1]] == "constant" | seexp.parms[[1]] == "constant"))
         stop('No correlated distributions with constant values.')
     if(!is.null(corr.sp) && (spca.parms[[1]] == "constant" | spexp.parms[[1]] == "constant"))
@@ -142,6 +195,10 @@ probsens <- function(case,
         seca.parms <- list(seca.parms[[1]], c(seca.parms[[2]], c(0, 1)))
     if((seca.parms[[1]] == "constant" | seca.parms[[1]] == "uniform" | seca.parms[[1]] == "triangular" | seca.parms[[1]] == "trapezoidal") & !all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
         stop('Sensitivity of exposure classification among those with the outcome should be between 0 and 1.')
+    if(seca.parms[[1]] == "beta" & length(seca.parms[[2]]) != 2)
+        stop('For beta distribution, please provide alpha and beta.')
+    if(seca.parms[[1]] == "beta" & (seca.parms[[2]][1] < 0 | seca.parms[[2]][2] < 0))
+        stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
     
     if(!is.null(seexp.parms) & !is.list(seexp.parms))
         stop('Sensitivity of exposure classification among those without the outcome should be a list.')
@@ -184,6 +241,11 @@ probsens <- function(case,
         seexp.parms <- list(seexp.parms[[1]], c(seexp.parms[[2]], c(0, 1)))
     if(!is.null(seexp.parms) && (seexp.parms[[1]] == "constant" | seexp.parms[[1]] == "uniform" | seexp.parms[[1]] == "triangular" | seexp.parms[[1]] == "trapezoidal") & !all(seexp.parms[[2]] >= 0 & seexp.parms[[2]] <= 1))
         stop('Sensitivity of exposure classification among those without the outcome should be between 0 and 1.')
+    if(!is.null(seexp.parms) && seexp.parms[[1]] == "beta" && length(seexp.parms[[2]]) != 2)
+        stop('For beta distribution, please provide alpha and beta.')
+    if(!is.null(seexp.parms) && seexp.parms[[1]] == "beta" &&
+       (seexp.parms[[2]][1] < 0 | seexp.parms[[2]][2] < 0))
+        stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
     
     if(!is.list(spca.parms))
         stop('Specificity of exposure classification among those with the outcome should be a list.')
@@ -221,6 +283,10 @@ probsens <- function(case,
         spca.parms <- list(spca.parms[[1]], c(spca.parms[[2]], c(0, 1)))
     if((spca.parms[[1]] == "constant" | spca.parms[[1]] == "uniform" | spca.parms[[1]] == "triangular" | spca.parms[[1]] == "trapezoidal") & !all(spca.parms[[2]] >= 0 & spca.parms[[2]] <= 1))
         stop('Specificity of exposure classification among those with the outcome should be between 0 and 1.')
+    if(spca.parms[[1]] == "beta" & length(spca.parms[[2]]) != 2)
+        stop('For beta distribution, please provide alpha and beta.')
+    if(spca.parms[[1]] == "beta" & (spca.parms[[2]][1] < 0 | spca.parms[[2]][2] < 0))
+        stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
     
     if(!is.null(spexp.parms) & !is.list(spexp.parms))
         stop('Specificity of exposure classification among those without the outcome should be a list.')
@@ -263,6 +329,11 @@ probsens <- function(case,
         spexp.parms <- list(spexp.parms[[1]], c(spexp.parms[[2]], c(0, 1)))
     if(!is.null(spexp.parms) && (spexp.parms[[1]] == "constant" | spexp.parms[[1]] == "uniform" | spexp.parms[[1]] == "triangular" | spexp.parms[[1]] == "trapezoidal") & !all(spexp.parms[[2]] >= 0 & spexp.parms[[2]] <= 1))
         stop('Specificity of exposure classification among those without the outcome should be between 0 and 1.')
+    if(!is.null(spexp.parms) && spexp.parms[[1]] == "beta" && length(spexp.parms[[2]]) != 2)
+        stop('For beta distribution, please provide alpha and beta.')
+    if(!is.null(spexp.parms) && spexp.parms[[1]] == "beta" &&
+       (spexp.parms[[2]][1] < 0 | spexp.parms[[2]][2] < 0))
+        stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
     
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
                                 is.null(corr.se) | is.null(corr.sp)))
@@ -316,19 +387,6 @@ probsens <- function(case,
     spca <- c(reps, spca.parms[[2]])
     spexp <- c(reps, spexp.parms[[2]])
 
-    logitlog.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- sesp[[2]] + sesp[[3]] * (log(u / (1 - u)))
-        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
-    logitnorm.dstr <- function(sesp) {
-        u <- runif(sesp[[1]])
-        w <- sesp[[2]] + sesp[[3]] * qnorm(u)
-        p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-        return(p)
-    }
-    
     if (is.null(seexp.parms) & !is.null(spca.parms) & is.null(spexp.parms) &
         is.null(corr.se) & is.null(corr.sp)) {
         if (seca.parms[[1]] == "constant") {
@@ -336,38 +394,44 @@ probsens <- function(case,
         }
         if (seca.parms[[1]] == "uniform") {
             draws[, 1] <- do.call(runif, as.list(seca))
-            }
+        }
         if (seca.parms[[1]] == "triangular") {
             draws[, 1] <- do.call(triangle::rtriangle, as.list(seca))
-            }
+        }
         if (seca.parms[[1]] == "trapezoidal") {
             draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(seca))
-            }
+        }
         if (seca.parms[[1]] == "logit-logistic") {
             draws[, 1] <- logitlog.dstr(seca)
-            }
+        }
         if (seca.parms[[1]] == "logit-normal") {
             draws[, 1] <- logitnorm.dstr(seca)
-            }
+        }
+        if (seca.parms[[1]] == "beta") {
+            draws[, 1] <- do.call(rbeta, as.list(seca))
+        }
         draws[, 2] <- draws[, 1]
         if (spca.parms[[1]] == "constant") {
-            draws[, 2] <- spca.parms[[2]]
+            draws[, 3] <- spca.parms[[2]]
         }
         if (spca.parms[[1]] == "uniform") {
             draws[, 3] <- do.call(runif, as.list(spca))
-            }
+        }
         if (spca.parms[[1]] == "triangular") {
             draws[, 3] <- do.call(triangle::rtriangle, as.list(spca))
-            }
+        }
         if (spca.parms[[1]] == "trapezoidal") {
             draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(spca))
-            }
+        }
         if (spca.parms[[1]] == "logit-logistic") {
             draws[, 3] <- logitlog.dstr(spca)
-            }
+        }
         if (spca.parms[[1]] == "logit-normal") {
             draws[, 3] <- logitnorm.dstr(spca)
-            }
+        }
+        if (spca.parms[[1]] == "beta") {
+            draws[, 3] <- do.call(rbeta, as.list(spca))
+        }
         draws[, 4] <- draws[, 3]
     } else {
         corr.draws[, 1:6] <- apply(corr.draws[, 1:6],
@@ -417,6 +481,12 @@ probsens <- function(case,
         seca.w <- seca.parms[[2]][1] + (seca.parms[[2]][2] * qnorm(corr.draws[, 7]))
         draws[, 1] <- seca.parms[[2]][3] + (seca.parms[[2]][4] - seca.parms[[2]][3]) * exp(seca.w) / (1 + exp(seca.w))
     }
+        if (seca.parms[[1]] == "beta") {
+            draws[, 1] <- qbeta(corr.draws[, 7]/(1 + corr.draws[, 7]),
+                                seca.parms[[2]][1],
+                                seca.parms[[2]][2])
+    }
+        
     if (seexp.parms[[1]] == "uniform") {
         draws[, 2] <- seexp.parms[[2]][2] -
             (seexp.parms[[2]][2] - seexp.parms[[2]][1]) * corr.draws[, 8]
@@ -449,7 +519,13 @@ probsens <- function(case,
         seexp.w <- seexp.parms[[2]][1] + (seexp.parms[[2]][2] * qnorm(corr.draws[, 8]))
         draws[, 2] <- seexp.parms[[2]][3] + (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * exp(seexp.w) / (1 + exp(seexp.w))
     }
-    if (spca.parms[[1]] == "uniform") {
+        if (seexp.parms[[1]] == "beta") {
+            draws[, 2] <- qbeta(corr.draws[, 8]/(1 + corr.draws[, 8]),
+                                seexp.parms[[2]][1],
+                                seexp.parms[[2]][2])
+    }
+
+        if (spca.parms[[1]] == "uniform") {
         draws[, 3] <- spca.parms[[2]][2] -
             (spca.parms[[2]][2] - spca.parms[[2]][1]) * corr.draws[, 9]
     }
@@ -481,7 +557,13 @@ probsens <- function(case,
         spca.w <- spca.parms[[2]][1] + (spca.parms[[2]][2] * qnorm(corr.draws[, 9]))
         draws[, 3] <- spca.parms[[2]][3] + (spca.parms[[2]][4] - spca.parms[[2]][3]) * exp(spca.w) / (1 + exp(spca.w))
     }
-    if (spexp.parms[[1]] == "uniform") {
+        if (spca.parms[[1]] == "beta") {
+            draws[, 3] <- qbeta(corr.draws[, 9]/(1 + corr.draws[, 9]),
+                                spca.parms[[2]][1],
+                                spca.parms[[2]][2])
+    }
+
+        if (spexp.parms[[1]] == "uniform") {
         draws[, 4] <- spexp.parms[[2]][2] -
             (spexp.parms[[2]][2] - spexp.parms[[2]][1]) * corr.draws[, 10]
     }
@@ -513,6 +595,11 @@ probsens <- function(case,
         spexp.w <- spexp.parms[[2]][1] + (spexp.parms[[2]][2] * qnorm(corr.draws[, 10]))
         draws[, 4] <- spexp.parms[[2]][3] + (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * exp(spexp.w) / (1 + exp(spexp.w))
     }
+    if (spexp.parms[[1]] == "beta") {
+        draws[, 4] <- qbeta(corr.draws[, 10]/(1 + corr.draws[, 10]),
+                            spexp.parms[[2]][1],
+                            spexp.parms[[2]][2])
+    }
     }
 
     draws[, 11] <- runif(reps)
@@ -530,38 +617,41 @@ probsens <- function(case,
             (draws[, 6]/(draws[, 6] + draws[, 8]))
         draws[, 10] <- (draws[, 5]/draws[, 7]) / (draws[, 6]/draws[, 8])
 
-        draws[, 9] <- ifelse(draws[, 5] < 1 |
-                                 draws[, 6] < 1 |
-                                     draws[, 7] < 1 |
-                                         draws[, 8] < 1, NA, draws[, 9])
-        draws[, 10] <- ifelse(draws[, 5] < 1 |
-                                 draws[, 6] < 1 |
-                                     draws[, 7] < 1 |
-                                         draws[, 8] < 1, NA, draws[, 10])
-        draws[, 9] <- ifelse(draws[, 2] < (c / (c + d)) |
-                                 draws[, 4] < (d / (c + d)) |
-                                     draws[, 1] < (a / (a + b)) |
-                                         draws[, 3] < (b / (a + b)), NA, draws[, 9])
-        draws[, 10] <- ifelse(draws[, 2] < (c / (c + d)) |
-                                  draws[, 4] < (d / (c + d)) |
-                                      draws[, 1] < (a / (a + b)) |
-                                          draws[, 3] < (b / (a + b)), NA, draws[, 10])
-        if(all(is.na(draws[, 9])) | all(is.na(draws[, 10])))
+        draws[, 9] <- ifelse(draws[, 5] < 0 |
+                             draws[, 6] < 0 |
+                             draws[, 7] < 0 |
+                             draws[, 8] < 0, NA, draws[, 9])
+        draws[, 10] <- ifelse(draws[, 5] < 0 |
+                              draws[, 6] < 0 |
+                              draws[, 7] < 0 |
+                              draws[, 8] < 0, NA, draws[, 10])
+        if(all(is.na(draws[, 9])) | all(is.na(draws[, 10]))) {
             warning('Prior Se/Sp distributions lead to all negative adjusted counts.')
+            neg_warn <- "Prior Se/Sp distributions lead to all negative adjusted counts."
+        } else {
+            neg_warn <- NULL
+        }
         if (discard) {
-            if(sum(is.na(draws[, 9])) > 0)
+            if(sum(is.na(draws[, 9])) > 0) {
                 message('Chosen prior Se/Sp distributions lead to ',
                         sum(is.na(draws[, 9])),
                         ' negative adjusted counts which were discarded.')
+                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                        sum(is.na(draws[, 9])),
+                                        ' negative adjusted counts which were discarded.'))
+            } else discard_mess <- NULL
         }
         else {
             if(sum(is.na(draws[, 9])) > 0) {
                 message('Chosen prior Se/Sp distributions lead to ',
                         sum(is.na(draws[, 9])),
                         ' negative adjusted counts which were set to zero.')
-            }
-            draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
-            draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])
+                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                        sum(is.na(draws[, 9])),
+                                        ' negative adjusted counts which were set to zero.'))
+                draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
+                draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])
+            } else discard_mess <- NULL
         }
 
         draws[, 12] <- exp(log(draws[, 9]) -
@@ -623,38 +713,40 @@ probsens <- function(case,
             (draws[, 6]/(draws[, 6] + draws[, 8]))
         draws[, 10] <- (draws[, 5]/draws[, 7]) / (draws[, 6]/draws[, 8])
 
-        draws[, 9] <- ifelse(draws[, 5] < 1 |
-                               draws[, 6] < 1 |
-                                 draws[, 7] < 1 |
-                                   draws[, 8] < 1, NA, draws[, 9])
-        draws[, 10] <- ifelse(draws[, 5] < 1 |
-                               draws[, 6] < 1 |
-                                 draws[, 7] < 1 |
-                                   draws[, 8] < 1, NA, draws[, 10])
-        draws[, 9] <- ifelse(draws[, 2] < (c / (c + d)) |
-                             draws[, 4] < (d / (c + d)) |
-                             draws[, 1] < (a / (a + b)) |
-                             draws[, 3] < (b / (a + b)), NA, draws[, 9])
-        draws[, 10] <- ifelse(draws[, 2] < (c / (c + d)) |
-                              draws[, 4] < (d / (c + d)) |
-                              draws[, 1] < (a / (a + b)) |
-                              draws[, 3] < (b / (a + b)), NA, draws[, 10])
-        if(all(is.na(draws[, 9])) | all(is.na(draws[, 10])))
+        draws[, 9] <- ifelse(draws[, 5] < 0 |
+                             draws[, 6] < 0 |
+                             draws[, 7] < 0 |
+                             draws[, 8] < 0, NA, draws[, 9])
+        draws[, 10] <- ifelse(draws[, 5] < 0 |
+                              draws[, 6] < 0 |
+                              draws[, 7] < 0 |
+                              draws[, 8] < 0, NA, draws[, 10])
+
+        if(all(is.na(draws[, 9])) | all(is.na(draws[, 10]))) {
             warning('Prior Se/Sp distributions lead to all negative adjusted counts.')
+            neg_warn <- "Prior Se/Sp distributions lead to all negative adjusted counts."
+        } else neg_warn <- NULL
         if (discard) {
-            if(sum(is.na(draws[, 9])) > 0)
+            if(sum(is.na(draws[, 9])) > 0) {
                 message('Chosen prior Se/Sp distributions lead to ',
                         sum(is.na(draws[, 9])),
                         ' negative adjusted counts which were discarded.')
+                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                        sum(is.na(draws[, 9])),
+                                        ' negative adjusted counts which were discarded.'))
+            } else discard_mess <- NULL
         }
         else {
             if(sum(is.na(draws[, 9])) > 0) {
                 message('Chosen prior Se/Sp distributions lead to ',
                         sum(is.na(draws[, 9])),
                         ' negative adjusted counts which were set to zero.')
-            }
-            draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
-            draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])
+                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                        sum(is.na(draws[, 9])),
+                                        ' negative adjusted counts which were set to zero.'))
+                draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
+                draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])               
+            } else discard_mess <- NULL
         }
 
         draws[, 12] <- exp(log(draws[, 9]) -
@@ -707,7 +799,10 @@ probsens <- function(case,
                 obs.measures = rmat, 
                 adj.measures = rmatc,
                 sim.df = as.data.frame(draws[, -11]),
-                reps = reps)
+                reps = reps,
+                fun = "probsens",
+                warnings = neg_warn,
+                message = discard_mess)
     class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }

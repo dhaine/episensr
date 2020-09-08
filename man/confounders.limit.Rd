@@ -4,8 +4,14 @@
 \alias{confounders.limit}
 \title{Bounding the bias limits of unmeasured confounding.}
 \usage{
-confounders.limit(p = NA, RR = NA, OR = NA, crude.RR = NULL,
-  dec = 4, print = TRUE)
+confounders.limit(
+  p = NA,
+  RR = NA,
+  OR = NA,
+  crude.RR = NULL,
+  dec = 4,
+  print = TRUE
+)
 }
 \arguments{
 \item{p}{Proportion with the confounder among the unexposed group.}
@@ -27,7 +33,9 @@ A list with elements:
 }
 \description{
 Function to elicit the limits on measures of effect corrected for an unmeasured
-confounder when only some of the bias parameters are known.
+confounder when only some of the bias parameters are known. Crude relative
+risk between exposure and outcome has minimally to be provided. Up to 3 other
+parameters can be entered.
 }
 \examples{
 confounders.limit(OR = 1.65, crude.RR = 1.5)

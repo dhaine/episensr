@@ -7,21 +7,22 @@
 #' @param reps Number of replications to run.
 #' @param or.parms List defining the selection bias odds. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, log-logistic or log-normal) and the second its parameters as a vector:
 #' \enumerate{
-#' \item Constant: constant value,
-#' \item Uniform: min, max,
-#' \item Triangular: lower limit, upper limit, mode,
-#' \item Trapezoidal: min, lower mode, upper mode, max.
-#' \item Log-logistic: shape, rate. Must be strictly positive,
-#' \item Log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
+#' \item constant: constant value,
+#' \item uniform: min, max,
+#' \item triangular: lower limit, upper limit, mode,
+#' \item trapezoidal: min, lower mode, upper mode, max.
+#' \item log-logistic: shape, rate. Must be strictly positive,
+#' \item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 #' }
 #' @param case.exp If or.parms not provided, defines the selection probability among case exposed. The first argument provides the probability distribution function and the second its parameters as a vector:
 #' \enumerate{
-#' \item Constant: constant value,
-#' \item Uniform: min, max,
-#' \item Triangular: lower limit, upper limit, mode,
-#' \item Trapezoidal: min, lower mode, upper mode, max.
-#' \item Logit-logistic: location, scale, lower bound shift, upper bound shift,
-#' \item Logit-normal: location, scale, lower bound shift, upper bound shift.
+#' \item constant: constant value,
+#' \item uniform: min, max,
+#' \item triangular: lower limit, upper limit, mode,
+#' \item trapezoidal: min, lower mode, upper mode, max.
+#' \item logit-logistic: location, scale, lower bound shift, upper bound shift,
+#' \item logit-normal: location, scale, lower bound shift, upper bound shift,
+#' \item beta: alpha, beta.
 #' }
 #' @param case.nexp Same among cases non-exposed.
 #' @param ncase.exp Same among non-cases exposed.
@@ -49,7 +50,7 @@
 #' reps = 20000,
 #' or.parms = list("triangular", c(.35, 1.1, .43)))
 #' @export
-#' @importFrom stats median qnorm quantile runif rlnorm
+#' @importFrom stats median qnorm quantile runif rlnorm rbeta
 probsens.sel <- function(case,
                          exposed,
                          reps = 1000,
@@ -59,19 +60,20 @@ probsens.sel <- function(case,
                                          parms = NULL),
                          case.exp = list(dist = c("constant", "uniform", "triangular",
                                                   "trapezoidal", "logit-logistic",
-                                                  "logit-normal"),
+                                                  "logit-normal", "beta"),
                                          parms = NULL),
                          case.nexp = list(dist = c("constant", "uniform", "triangular",
                                                    "trapezoidal", "logit-logistic",
-                                                   "logit-normal"),
+                                                   "logit-normal", "beta"),
                                           parms = NULL),
                          ncase.exp = list(dist = c("constant", "uniform", "triangular",
                                                    "trapezoidal", "logit-logistic",
-                                                   "logit-normal"),
+                                                   "logit-normal", "beta"),
                                           parms = NULL),
                          ncase.nexp = list(dist = c("constant", "uniform",
                                                     "triangular", "trapezoidal",
-                                                    "logit-logistic", "logit-normal"),
+                                                    "logit-logistic", "logit-normal",
+                                                    "beta"),
                                            parms = NULL),
                          alpha = 0.05){
     if(reps < 1)
@@ -85,6 +87,9 @@ probsens.sel <- function(case,
         stop('Odds ratio for the probability of being selected should be a list.')
     else or.parms <- or.parms
     if(!is.null(or.parms[[2]])){
+        if(!(or.parms[[1]] %in% c("constant", "uniform", "triangular", "trapezoidal",
+                                  "log-logistic", "log-normal")))
+            stop('Wrong distribution for selection odds ratio.')
         if(or.parms[[1]] == "constant" & length(or.parms[[2]]) != 1)
             stop('For constant value, please provide a single value.')
         if(or.parms[[1]] == "uniform" & length(or.parms[[2]]) != 2)
@@ -108,6 +113,8 @@ probsens.sel <- function(case,
             stop('For log-normal distribution, please provide vector of meanlog and sdlog.')
     }
 
+    if(!is.null(case.exp[[1]]) & !is.list(case.exp))
+        stop("Please provide a list for case exposed parameters.")
     if(!is.null(case.exp[[2]])){
         if(case.exp[[1]] == "constant" & length(case.exp[[2]]) != 1)
             stop('For constant value, please provide a single value.')
@@ -142,6 +149,10 @@ probsens.sel <- function(case,
             case.exp <- list(case.exp[[1]], c(case.exp[[2]], c(0, 1)))
         if((case.exp[[1]] == "constant" | case.exp[[1]] == "uniform" | case.exp[[1]] == "triangular" | case.exp[[1]] == "trapezoidal") & !all(case.exp[[2]] >= 0 & case.exp[[2]] <= 1))
             stop('Selection probability should be between 0 and 1.')
+        if(case.exp[[1]] == "beta" & (case.exp[[2]][1] < 0 | case.exp[[2]][1] < 0))
+            stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0')
+        if(case.exp[[1]] == "beta" & length(case.exp[[2]]) != 2)
+            stop('Wrong arguments for your beta distribution.')
     }
 
     if(!is.null(case.nexp[[2]])){
@@ -178,6 +189,10 @@ probsens.sel <- function(case,
             case.nexp <- list(case.nexp[[1]], c(case.nexp[[2]], c(0, 1)))
         if((case.nexp[[1]] == "constant" | case.nexp[[1]] == "uniform" | case.nexp[[1]] == "triangular" | case.nexp[[1]] == "trapezoidal") & !all(case.nexp[[2]] >= 0 & case.nexp[[2]] <= 1))
             stop('Selection probability should be between 0 and 1.')
+        if(case.nexp[[1]] == "beta" & (case.nexp[[2]][1] < 0 | case.nexp[[2]][1] < 0))
+            stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0')
+        if(case.nexp[[1]] == "beta" & length(case.nexp[[2]]) != 2)
+            stop('Wrong arguments for your beta distribution.')
     }
 
     if(!is.null(ncase.exp[[2]])){
@@ -214,6 +229,10 @@ probsens.sel <- function(case,
             ncase.exp <- list(ncase.exp[[1]], c(ncase.exp[[2]], c(0, 1)))
         if((ncase.exp[[1]] == "constant" | ncase.exp[[1]] == "uniform" | ncase.exp[[1]] == "triangular" | ncase.exp[[1]] == "trapezoidal") & !all(ncase.exp[[2]] >= 0 & ncase.exp[[2]] <= 1))
             stop('Selection probability should be between 0 and 1.')
+        if(ncase.exp[[1]] == "beta" & (ncase.exp[[2]][1] < 0 | ncase.exp[[2]][1] < 0))
+            stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0')
+        if(ncase.exp[[1]] == "beta" & length(ncase.exp[[2]]) != 2)
+            stop('Wrong arguments for your beta distribution.')
     }
 
     if(!is.null(ncase.nexp[[2]])){
@@ -250,6 +269,10 @@ probsens.sel <- function(case,
             ncase.nexp <- list(ncase.nexp[[1]], c(ncase.nexp[[2]], c(0, 1)))
         if((ncase.nexp[[1]] == "constant" | ncase.nexp[[1]] == "uniform" | ncase.nexp[[1]] == "triangular" | ncase.nexp[[1]] == "trapezoidal") & !all(ncase.nexp[[2]] >= 0 & ncase.nexp[[2]] <= 1))
             stop('Selection probability should be between 0 and 1.')
+        if(ncase.nexp[[1]] == "beta" & (ncase.nexp[[2]][1] < 0 | ncase.nexp[[2]][1] < 0))
+            stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0')
+        if(ncase.nexp[[1]] == "beta" & length(ncase.nexp[[2]]) != 2)
+            stop('Wrong arguments for your beta distribution.')
     }
     
     
@@ -284,7 +307,7 @@ probsens.sel <- function(case,
     }
     
     draws <- matrix(NA, nrow = reps, ncol = 8)
-    colnames(draws) <- c("or.sel", "corr.or", "reps", "tot.or",
+    colnames(draws) <- c("or.sel", "corr.OR", "reps", "tot.OR",
                          "A1", "B1", "C1", "D1")
 
     if(!is.null(or.parms[[2]])){
@@ -316,19 +339,6 @@ probsens.sel <- function(case,
         ncase_exp <- c(reps, ncase.exp[[2]])
         ncase_nexp <- c(reps, ncase.nexp[[2]])
         
-        logitlog.dstr <- function(sesp) {
-            u <- runif(sesp[[1]])
-            w <- sesp[[2]] + sesp[[3]] * (log(u / (1 - u)))
-            p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-            return(p)
-        }
-        logitnorm.dstr <- function(sesp) {
-            u <- runif(sesp[[1]])
-            w <- sesp[[2]] + sesp[[3]] * qnorm(u)
-            p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
-            return(p)
-        }
-
         if (case.exp[[1]] == "constant") {
             bias_factor[, 1] <- case.exp[[2]]
         }
@@ -346,6 +356,9 @@ probsens.sel <- function(case,
         }
         if (case.exp[[1]] == "logit-normal") {
             bias_factor[, 1] <- logitnorm.dstr(case_exp)
+        }
+        if (case.exp[[1]] == "beta") {
+            bias_factor[, 1] <- do.call(rbeta, as.list(case_exp))
         }
 
         if (case.nexp[[1]] == "constant") {
@@ -366,6 +379,9 @@ probsens.sel <- function(case,
         if (case.nexp[[1]] == "logit-normal") {
             bias_factor[, 2] <- logitnorm.dstr(case_nexp)
         }
+        if (case.nexp[[1]] == "beta") {
+            bias_factor[, 2] <- do.call(rbeta, as.list(case_nexp))
+        }
 
         if (ncase.exp[[1]] == "constant") {
             bias_factor[, 3] <- ncase.exp[[2]]
@@ -384,6 +400,9 @@ probsens.sel <- function(case,
         }
         if (ncase.exp[[1]] == "logit-normal") {
             bias_factor[, 3] <- logitnorm.dstr(ncase_exp)
+        }
+        if (ncase.exp[[1]] == "beta") {
+            bias_factor[, 3] <- do.call(rbeta, as.list(ncase_exp))
         }
 
         if (ncase.nexp[[1]] == "constant") {
@@ -404,6 +423,9 @@ probsens.sel <- function(case,
         if (ncase.nexp[[1]] == "logit-normal") {
             bias_factor[, 4] <- logitnorm.dstr(ncase_nexp)
         }
+        if (ncase.nexp[[1]] == "beta") {
+            bias_factor[, 4] <- do.call(rbeta, as.list(ncase_nexp))
+        }
 
         draws[, 1] <- (bias_factor[, 1]*bias_factor[, 4]) /
             (bias_factor[, 2]*bias_factor[, 3])
@@ -423,10 +445,10 @@ probsens.sel <- function(case,
     draws[, 7] <- c / draws[, 1]
     draws[, 8] <- d / draws[, 1]
 
-    corr.or <- c(median(draws[, 2], na.rm = TRUE),
+    corr.OR <- c(median(draws[, 2], na.rm = TRUE),
                  quantile(draws[, 2], probs = .025, na.rm = TRUE),
                  quantile(draws[, 2], probs = .975, na.rm = TRUE))
-    tot.or <- c(median(draws[, 4], na.rm = TRUE),
+    tot.OR <- c(median(draws[, 4], na.rm = TRUE),
                 quantile(draws[, 4], probs = .025, na.rm = TRUE),
                 quantile(draws[, 4], probs = .975, na.rm = TRUE))        
 
@@ -445,7 +467,7 @@ probsens.sel <- function(case,
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    rmatc <- rbind(corr.or, tot.or)
+    rmatc <- rbind(corr.OR, tot.OR)
     rownames(rmatc) <- c("           Odds Ratio -- systematic error:",
                          "Odds Ratio -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
@@ -453,7 +475,8 @@ probsens.sel <- function(case,
                 obs.measures = rmat, 
                 adj.measures = rmatc, 
                 sim.df = as.data.frame(draws[, -3]),
-                reps = reps)
+                reps = reps,
+                fun = "probsens.sel")
     class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }

@@ -2,7 +2,7 @@
 #'
 #' Help to quantify the evidence strength for causality in presence of unmeasured
 #' confounding. The E-value is the minimum strength of association that an unmeasured
-#' counfounder would need to have with both the exposure and the outcome, conditional
+#' confounder would need to have with both the exposure and the outcome, conditional
 #' on the measured covariates, to fully explain away a specific exposure-outcome
 #' association.
 #'
@@ -10,9 +10,9 @@
 #' it is the standardized effect size (i.e. mean of the outcome divided by its standard
 #' deviation).
 #' @param lower_ci Lower limit of the confidence interval for the association (relative
-#' risk, odds ratio, hazard ratio, incidence rate ratio, risk differece).
+#' risk, odds ratio, hazard ratio, incidence rate ratio, risk difference).
 #' @param upper_ci Upper limit of the confidence interval for the association (relative
-#' risk, odds ratio, hazard ratio, incidence rate ratio, risk differece).
+#' risk, odds ratio, hazard ratio, incidence rate ratio, risk difference).
 #' @param sd For difference in continuous outcomes, the standard error of the outcome
 #' divided by its standard deviation.
 #' @param type Choice of effect measure (relative risk, and odds ratio or hazard ratio

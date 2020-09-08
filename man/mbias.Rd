@@ -4,14 +4,14 @@
 \alias{mbias}
 \title{Sensitivity analysis to correct for selection bias caused by M bias.}
 \usage{
-mbias(or, var)
+mbias(or, var = c("y", "x", "a", "b", "m"))
 }
 \arguments{
 \item{or}{Vector defining the input bias parameters, in the following order:
 \enumerate{
 \item Odds ratio between A and the exposure E,
-\item Odds ratio between A and the collider C,
-\item Odds ratio between B and the collider C,
+\item Odds ratio between A and the collider M,
+\item Odds ratio between B and the collider M,
 \item Odds ratio between B and the outcome D,
 \item Odds ratio observed between the exposure E and the outcome D.
 }}
@@ -27,9 +27,14 @@ mbias(or, var)
 }
 \value{
 A list with elements:
-\item{mbias.parms}{Maximum bias parameters.}
-\item{adj.measures}{Selection bias corrected measures.}
+\item{model}{Bias analysis performed.}
+\item{mbias.parms}{Three maximum bias parameters: in collider-exposure relationship
+created by conditioning on the collider, in collider-outcome relationship created by
+conditioning on the collider, and in exposure-outcome relationship created by
+conditioning on the collider.}
+\item{adj.measures}{Selection bias corrected odds ratio.}
 \item{bias.parms}{Input bias parameters.}
+\item{labels}{Variables' labels.}
 }
 \description{
 Simple sensitivity analysis to correct for selection bias caused by M bias using

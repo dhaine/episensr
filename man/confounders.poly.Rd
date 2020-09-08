@@ -4,8 +4,13 @@
 \alias{confounders.poly}
 \title{Sensitivity analysis to correct for unknown or unmeasured polychotomous confounding without effect modification}
 \usage{
-confounders.poly(case, exposed, type = c("RR", "OR", "RD"),
-  bias_parms = NULL, alpha = 0.05)
+confounders.poly(
+  case,
+  exposed,
+  type = c("RR", "OR", "RD"),
+  bias_parms = NULL,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -59,11 +64,13 @@ dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "RR",
 bias_parms = c(.4, .8, .6, .05, .2, .2))
+
 confounders.poly(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "OR",
 bias_parms = c(.4, .8, .6, .05, .2, .2))
+
 confounders.poly(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
