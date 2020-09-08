@@ -11,13 +11,13 @@ probsens.sel(
   or.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
     "log-logistic", "log-normal"), parms = NULL),
   case.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal"), parms = NULL),
+    "logit-logistic", "logit-normal", "beta"), parms = NULL),
   case.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal"), parms = NULL),
+    "logit-logistic", "logit-normal", "beta"), parms = NULL),
   ncase.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal"), parms = NULL),
+    "logit-logistic", "logit-normal", "beta"), parms = NULL),
   ncase.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal"), parms = NULL),
+    "logit-logistic", "logit-normal", "beta"), parms = NULL),
   alpha = 0.05
 )
 }
@@ -30,22 +30,23 @@ probsens.sel(
 
 \item{or.parms}{List defining the selection bias odds. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, log-logistic or log-normal) and the second its parameters as a vector:
 \enumerate{
-\item Constant: constant value,
-\item Uniform: min, max,
-\item Triangular: lower limit, upper limit, mode,
-\item Trapezoidal: min, lower mode, upper mode, max.
-\item Log-logistic: shape, rate. Must be strictly positive,
-\item Log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
+\item constant: constant value,
+\item uniform: min, max,
+\item triangular: lower limit, upper limit, mode,
+\item trapezoidal: min, lower mode, upper mode, max.
+\item log-logistic: shape, rate. Must be strictly positive,
+\item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 }}
 
 \item{case.exp}{If or.parms not provided, defines the selection probability among case exposed. The first argument provides the probability distribution function and the second its parameters as a vector:
 \enumerate{
-\item Constant: constant value,
-\item Uniform: min, max,
-\item Triangular: lower limit, upper limit, mode,
-\item Trapezoidal: min, lower mode, upper mode, max.
-\item Logit-logistic: location, scale, lower bound shift, upper bound shift,
-\item Logit-normal: location, scale, lower bound shift, upper bound shift.
+\item constant: constant value,
+\item uniform: min, max,
+\item triangular: lower limit, upper limit, mode,
+\item trapezoidal: min, lower mode, upper mode, max.
+\item logit-logistic: location, scale, lower bound shift, upper bound shift,
+\item logit-normal: location, scale, lower bound shift, upper bound shift,
+\item beta: alpha, beta.
 }}
 
 \item{case.nexp}{Same among cases non-exposed.}

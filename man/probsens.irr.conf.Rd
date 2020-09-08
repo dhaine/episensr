@@ -9,12 +9,13 @@ probsens.irr.conf(
   pt = NULL,
   reps = 1000,
   prev.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal"), parms = NULL),
+    "logit-logistic", "logit-normal", "beta"), parms = NULL),
   prev.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal"), parms = NULL),
+    "logit-logistic", "logit-normal", "beta"), parms = NULL),
   risk = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
     "log-logistic", "log-normal"), parms = NULL),
   corr.p = NULL,
+  discard = TRUE,
   alpha = 0.05
 )
 }
@@ -30,29 +31,32 @@ Person-time \tab N1 \tab N0
 
 \item{reps}{Number of replications to run.}
 
-\item{prev.exp}{List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant,uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+\item{prev.exp}{List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant,uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 \enumerate{
-\item Constant; value,
-\item Uniform: min, max,
-\item Triangular: lower limit, upper limit, mode,
-\item Trapezoidal: min, lower mode, upper mode, max.
-\item Logit-logistic: location, scale, lower bound shift, upper bound shift,
-\item Logit-normal: location, scale, lower bound shift, upper bound shift.
+\item constant; value,
+\item uniform: min, max,
+\item triangular: lower limit, upper limit, mode,
+\item trapezoidal: min, lower mode, upper mode, max.
+\item logit-logistic: location, scale, lower bound shift, upper bound shift,
+\item logit-normal: location, scale, lower bound shift, upper bound shift,
+\item beta: alpha, beta.
 }}
 
 \item{prev.nexp}{List defining the prevalence of exposure among the unexposed.}
 
 \item{risk}{List defining the confounder-disease relative risk or the confounder-exposure odds ratio. The first argument provides the probability distribution function (constant,uniform, triangular, trapezoidal, log-logistic, or log-normal) and the second its parameters as a vector:
 \enumerate{
-\item Constant: value,
-\item Uniform: min, max,
-\item Triangular: lower limit, upper limit, mode,
-\item Trapezoidal: min, lower mode, upper mode, max.
-\item Log-logistic: shape, rate. Must be strictly positive,
-\item Log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
+\item constant: value,
+\item uniform: min, max,
+\item triangular: lower limit, upper limit, mode,
+\item trapezoidal: min, lower mode, upper mode, max.
+\item log-logistic: shape, rate. Must be strictly positive,
+\item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 }}
 
 \item{corr.p}{Correlation between the exposure-specific confounder prevalences.}
+
+\item{discard}{A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.}
 
 \item{alpha}{Significance level.}
 }

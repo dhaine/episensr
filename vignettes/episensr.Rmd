@@ -201,26 +201,21 @@ We have `smoke.nd$obs.data` where we have the observed 2X2 table,
 `smoke.nd$sim.df`, a data frame with the simulated variables from each
 replication, like the Se and Sp, the 4 cells of the adjusted 2X2 table, and the
 adjusted measures.
-We can plot the Se prior distribution (and not forgetting to discard the draws that
-led to negative adjustments).
+We can plot the Se prior distribution.
 
 ```{r plot, fig.cap = "Sensibility prior distribution."}
-hist(smoke.nd$sim.df[!is.na(smoke.nd$sim.df$corr.RR), ]$seca,
-     breaks = seq(0.65, 1, 0.01),
-     col = "lightgreen",
-     main = NULL,
-     xlab = "Sensitivity for Cases")
+plot(smoke.nd, "seca")
 ```
 
 There are combinations of Se, Sp, and disease (or exposure) prevalence that
-  produce negative cells in the corrected 2-by-2 table.
-  For outcome   misclassification, this happen when the frequency of observed
-  exposed cases is less than the total number of diseased individuals multiplied
-  by the false-positive proportion.
-  Negative cell counts occur when the false-positive proportion is greater than
-  the proportion of cases that are exposed.
-  When providing values for Se and Sp that are more or less like random
-  classification (i.e. Se ~50% and Sp ~50%), you obtain negative cell values.
+can produce negative cells in the corrected 2-by-2 table.
+For outcome   misclassification, this happen when the frequency of observed
+exposed cases is less than the total number of diseased individuals multiplied
+by the false-positive proportion.
+Negative cell counts occur when the false-positive proportion is greater than
+the proportion of cases that are exposed.
+When providing values for Se and Sp that are more or less like random
+classification (i.e. Se ~50% and Sp ~50%), you can obtain negative cell values.
 
 ## Probabilistic Sensitivity Analysis for Uncontrolled Confounding
 
@@ -366,12 +361,7 @@ mod1 <- chien %>%
 mod1
 ```
 ```{r plot2, message=FALSE}
-library(ggplot2)
-ggplot(mod1$sim.df, aes(x = corr.OR)) + 
-    geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
-    geom_density(alpha = .2, fill = "#FF6666") +
-    labs(title = "1. Misclassification bias", x = "OR without random error incorporated") +
-    coord_cartesian(xlim = c(0, 3))
+plot(mod1, "or")
 ```
 
 * Selection bias
@@ -387,11 +377,7 @@ mod2
 ```
 
 ```{r plot3, message=FALSE}
-ggplot(mod2$sim.df, aes(x = corr.or)) + 
-    geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
-    geom_density(alpha = .2, fill = "#FF6666") +
-    labs(title = "2. Selection bias", x = "OR without random error incorporated") +
-    coord_cartesian(xlim = c(0, 3))
+plot(mod2, "or")
 ```
 
 * Confounding
@@ -406,7 +392,8 @@ mod3
 ```
 
 ```{r plot4, message=FALSE, warning=FALSE}
-ggplot(mod3$sim.df, aes(x = OR.SMR.or)) + 
+plot(mod3, "or") + coord_cartesian(xlim = c(0, 3))
+ggplot(mod3$sim.df, aes(x = corr.OR)) + 
     geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
     geom_density(alpha = .2, fill = "#FF6666") +
     labs(title = "3. Confounding bias", x = "OR without random error incorporated") +
@@ -453,13 +440,15 @@ mod6
 ```
 
 ```{r plot5, message=FALSE, warning=FALSE}
-ggplot(mod6$sim.df, aes(x = OR.SMR.or)) + 
+plot(mod6, "or")
+ggplot(mod6$sim.df, aes(x = corr.OR)) + 
     geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
     geom_density(alpha = .2, fill = "#FF6666") +
     labs(title = "6. Misclassification, then\nselection, then confounding",
          x = "OR without random error incorporated") +
     coord_cartesian(xlim = c(0, 3))
-ggplot(mod6$sim.df, aes(x = tot.ORadj.smr)) + 
+plot(mod6, "or_tot")
+ggplot(mod6$sim.df, aes(x = tot.OR)) + 
     geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
     geom_density(alpha = .2, fill = "#FF6666") +
     labs(title = "6. Misclassification, then\nselection, then confounding",
