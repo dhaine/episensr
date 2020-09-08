@@ -31,6 +31,7 @@
 #' \item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 #' }
 #' @param corr.p Correlation between the exposure-specific confounder prevalences.
+#' @param discard A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.
 #' @param alpha Significance level.
 #'
 #' @return A list with elements:
@@ -69,6 +70,7 @@ probsens.irr.conf <- function(counts,
                                                "log-normal"),
                               parms = NULL),
                          corr.p = NULL,
+                         discard = TRUE,
                          alpha = 0.05){
     if(reps < 1)
         stop(paste("Invalid argument: reps = ", reps))
@@ -403,17 +405,28 @@ probsens.irr.conf <- function(counts,
     if(all(is.na(draws[, 12]))) {
         warning('Prior prevalence distributions lead to all negative adjusted values.')
         neg_warn <- "Prior Se/Sp distributions lead to all negative adjusted counts."
-    } else {
-            neg_warn <- NULL
-        }
-    if(sum(is.na(draws[, 12])) > 0) {
-        message('Chosen prior prevalence distributions lead to ',
-                sum(is.na(draws[, 12])),
-                ' negative adjusted values which were discarded.')
-        discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
-                                sum(is.na(draws[, 9])),
-                                ' negative adjusted counts which were discarded.'))
-    } else discard_mess <- NULL
+    } else neg_warn <- NULL
+    if (discard) {
+        if(sum(is.na(draws[, 12])) > 0) {
+            message('Chosen prior prevalence distributions lead to ',
+                    sum(is.na(draws[, 12])),
+                    ' negative adjusted values which were discarded.')
+            discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                    sum(is.na(draws[, 12])),
+                                    ' negative adjusted counts which were discarded.'))
+        } else discard_mess <- NULL
+    }
+    else {
+        if(sum(is.na(draws[, 12])) > 0) {
+            message('Chosen prior Se/Sp distributions lead to ',
+                    sum(is.na(draws[, 12])),
+                    ' negative adjusted counts which were set to zero.')
+                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                                        sum(is.na(draws[, 12])),
+                                        ' negative adjusted counts which were set to zero.'))
+            draws[, 12] <- ifelse(is.na(draws[, 12]), 0, draws[, 12])            
+        } else discard_mess <- NULL
+    }
 
     draws[, 14] <- exp(log(draws[, 12]) -
                            qnorm(draws[, 13]) *
@@ -444,8 +457,10 @@ probsens.irr.conf <- function(counts,
                 obs.measures = rmat, 
                 adj.measures = rmatc,
                 sim.df = as.data.frame(draws[, -13]),
+                reps = reps,
+                fun = "probsens.irr.conf",
                 warnings = neg_warn,
                 message = discard_mess)
-    class(res) <- c("episensr", "list")
+    class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }

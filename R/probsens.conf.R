@@ -243,11 +243,11 @@ probsens.conf <- function(case,
     colnames(draws) <- c("p1", "p0", "RR.cd",
                          "A_11",
                          "B_11",
-                         "RR.SMR.rr", 
-                         "OR.SMR.or", 
+                         "corr.RR", 
+                         "corr.OR", 
                          "reps",
-                         "tot.RRadj.smr", 
-                         "tot.ORadj.smr",
+                         "tot.RR", 
+                         "tot.OR",
                          "A1", "B1", "C1", "D1")
     corr.draws <- matrix(NA, nrow = reps, ncol = 5)
 
@@ -446,12 +446,10 @@ probsens.conf <- function(case,
                 discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
                                         sum(is.na(draws[, 9])),
                                         ' negative adjusted counts which were set to zero.'))
-        } else {
-            discard_mess <- NULL
             draws[, 6] <- ifelse(is.na(draws[, 6]), 0, draws[, 6])
             draws[, 7] <- ifelse(is.na(draws[, 7]), 0, draws[, 7])
-        }
-        }
+        } else discard_mess <- NULL
+    }
 
     draws[, 9] <- exp(log(draws[, 6]) -
                                qnorm(draws[, 8]) *
@@ -466,18 +464,18 @@ probsens.conf <- function(case,
     draws[, 13] <- c
     draws[, 14] <- d
 
-    corr.rr.smr <- c(median(draws[, 6], na.rm = TRUE),
-                     quantile(draws[, 6], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 6], probs = .975, na.rm = TRUE))
-    corr.or.smr <- c(median(draws[, 7], na.rm = TRUE),
-                     quantile(draws[, 7], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 7], probs = .975, na.rm = TRUE))
-    tot.rr.smr <- c(median(draws[, 9], na.rm = TRUE),
-                    quantile(draws[, 9], probs = .025, na.rm = TRUE),
-                    quantile(draws[, 9], probs = .975, na.rm = TRUE))
-    tot.or.smr <- c(median(draws[, 10], na.rm = TRUE),
-                    quantile(draws[, 10], probs = .025, na.rm = TRUE),
-                    quantile(draws[, 10], probs = .975, na.rm = TRUE))
+    corr.RR <- c(median(draws[, 6], na.rm = TRUE),
+                 quantile(draws[, 6], probs = .025, na.rm = TRUE),
+                 quantile(draws[, 6], probs = .975, na.rm = TRUE))
+    corr.OR <- c(median(draws[, 7], na.rm = TRUE),
+                 quantile(draws[, 7], probs = .025, na.rm = TRUE),
+                 quantile(draws[, 7], probs = .975, na.rm = TRUE))
+    tot.RR <- c(median(draws[, 9], na.rm = TRUE),
+                quantile(draws[, 9], probs = .025, na.rm = TRUE),
+                quantile(draws[, 9], probs = .975, na.rm = TRUE))
+    tot.OR <- c(median(draws[, 10], na.rm = TRUE),
+                quantile(draws[, 10], probs = .025, na.rm = TRUE),
+                quantile(draws[, 10], probs = .975, na.rm = TRUE))
 
     if(!inherits(case, "episensr.probsens")){
         tab <- tab
@@ -496,7 +494,7 @@ probsens.conf <- function(case,
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    rmatc <- rbind(corr.rr.smr, tot.rr.smr, corr.or.smr, tot.or.smr)
+    rmatc <- rbind(corr.RR, tot.RR, corr.OR, tot.OR)
     rownames(rmatc) <- c("           RR (SMR) -- systematic error:",
                          "RR (SMR) -- systematic and random error:",
                          "           OR (SMR) -- systematic error:",
@@ -507,6 +505,7 @@ probsens.conf <- function(case,
                 adj.measures = rmatc, 
                 sim.df = as.data.frame(draws[, -8]),
                 reps = reps,
+                fun = "probsens.conf",
                 warnings = neg_warn,
                 message = discard_mess)
     class(res) <- c("episensr", "episensr.probsens", "list")

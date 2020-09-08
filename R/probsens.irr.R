@@ -553,10 +553,8 @@ probsens.irr <- function(counts,
                 discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
                                         sum(is.na(draws[, 9])),
                                         ' negative adjusted counts which were set to zero.'))
-        } else {
-            discard_mess <- NULL
             draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])            
-        }
+        } else discard_mess <- NULL
     }
 
     draws[, 10] <- exp(log(draws[, 9]) -
@@ -588,8 +586,10 @@ probsens.irr <- function(counts,
                 obs.measures = rmat, 
                 adj.measures = rmatc,
                 sim.df = as.data.frame(draws[, -11]),
+                reps = reps,
+                fun = "probsens.irr",
                 warnings = neg_warn,
                 message = discard_mess)
-    class(res) <- c("episensr", "list")
+    class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }

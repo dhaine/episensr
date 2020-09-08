@@ -199,12 +199,12 @@ test_that("outcome misclassification (ND): adjusted measures are correct", {
                       reps = 50000,
                       seca.parms = list("uniform", c(.8, 1)),
                       spca.parms = list("uniform", c(.8, 1)))
-    expect_equal(model$adj.measures[1, 1], 2.2803, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 1.6629, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 20.5547, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 2.4596, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 2.2911, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 1.6630, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 26.7703, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 2.4694, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2, 2], 1.7932, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 22.1893, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 28.9868, tolerance = 1e-4, scale = 1)
 })
 
 test_that("outcome misclassification (D): observed measures are correct", {
@@ -235,12 +235,12 @@ test_that("outcome misclassification: adjusted measures are correct", {
                       spca.parms = list("uniform", c(.8, 1)),
                       spexp.parms = list("uniform", c(.7, .95)),
                       corr.se = .8, corr.sp = .8)
-    expect_equal(model$adj.measures[1, 1], 4.8303, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 2.1173, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 50.2278, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 5.4494, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 2.2103, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 57.4525, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 4.8940, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 2.1130, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 77.3781, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 5.5092, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 2.2076, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 88.3274, tolerance = 1e-4, scale = 1)
 })
 
 test_that("outcome misclassification (ND---logit-logistic): adjusted measures are correct", {
@@ -250,12 +250,12 @@ test_that("outcome misclassification (ND---logit-logistic): adjusted measures ar
                       reps = 50000,
                       seca.parms = list("logit-logistic", c(0, .8)),
                       spca.parms = list("logit-logistic", c(0, .8)))
-    expect_equal(model$adj.measures[1, 1], 0.9354, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.4488, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 16.8135, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.5596, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.0387, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 23.7620, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 0.9353, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.4492, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 17.7659, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 0.5570, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.0337, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 27.4472, tolerance = 1e-4, scale = 1)
 })
 
 test_that("outcome misclassification (D---logit-logistic): adjusted measures are correct", {
@@ -269,11 +269,11 @@ test_that("outcome misclassification (D---logit-logistic): adjusted measures are
                       spexp.parms = list("logit-logistic", c(0, .5)),
                       corr.se = .8, corr.sp = .8)
     expect_equal(model$adj.measures[1, 1], 0.9916, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.1969, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 37.2372, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.1921, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 47.2968, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2, 1], 0.9416, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.0100, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 86.3129, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.0081, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 96.2079, tolerance = 1e-4, scale = 1)
 })
 
 test_that("outcome misclassification (D---beta): adjusted measures are correct", {
@@ -336,12 +336,12 @@ test_that("outcome misclassification (ND---logit-normal): adjusted measures are 
                       reps = 50000,
                       seca.parms = list("logit-normal", c(2.159, 0.28)),
                       spca.parms = list("logit-normal", c(2.159, .28)))
-    expect_equal(model$adj.measures[1, 1], 5.9926, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 2.6443, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 48.1013, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 6.4646, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 2.8488, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 51.8446, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 6.2510, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 2.6536, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 117.1292, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 6.7432, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 2.8596, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 126.5486, tolerance = 1e-4, scale = 1)
 })
 
 test_that("outcome misclassification (D---logit-normal): adjusted measures are correct", {

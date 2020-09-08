@@ -307,7 +307,7 @@ probsens.sel <- function(case,
     }
     
     draws <- matrix(NA, nrow = reps, ncol = 8)
-    colnames(draws) <- c("or.sel", "corr.or", "reps", "tot.or",
+    colnames(draws) <- c("or.sel", "corr.OR", "reps", "tot.OR",
                          "A1", "B1", "C1", "D1")
 
     if(!is.null(or.parms[[2]])){
@@ -445,10 +445,10 @@ probsens.sel <- function(case,
     draws[, 7] <- c / draws[, 1]
     draws[, 8] <- d / draws[, 1]
 
-    corr.or <- c(median(draws[, 2], na.rm = TRUE),
+    corr.OR <- c(median(draws[, 2], na.rm = TRUE),
                  quantile(draws[, 2], probs = .025, na.rm = TRUE),
                  quantile(draws[, 2], probs = .975, na.rm = TRUE))
-    tot.or <- c(median(draws[, 4], na.rm = TRUE),
+    tot.OR <- c(median(draws[, 4], na.rm = TRUE),
                 quantile(draws[, 4], probs = .025, na.rm = TRUE),
                 quantile(draws[, 4], probs = .975, na.rm = TRUE))        
 
@@ -467,7 +467,7 @@ probsens.sel <- function(case,
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    rmatc <- rbind(corr.or, tot.or)
+    rmatc <- rbind(corr.OR, tot.OR)
     rownames(rmatc) <- c("           Odds Ratio -- systematic error:",
                          "Odds Ratio -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
@@ -475,7 +475,8 @@ probsens.sel <- function(case,
                 obs.measures = rmat, 
                 adj.measures = rmatc, 
                 sim.df = as.data.frame(draws[, -3]),
-                reps = reps)
+                reps = reps,
+                fun = "probsens.sel")
     class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }
