@@ -76,7 +76,7 @@ plot.episensr.probsens <- function(x,
                                              "or_sel",
                                              "prev.exp", "prev.nexp", "risk"),
                                    ...) {
-    obj <- x$sim.df
+    .data <- x$sim.df
     prob.fun <- x$fun
 
     if (length(parms) != 1)
@@ -97,21 +97,21 @@ plot.episensr.probsens <- function(x,
                                                         "prev.exp", "prev.nexp", "risk")))
         stop("Please provide parameters to plot: irr, irr_tot, prev.exp, prev.nexp, risk.")
     
-    rr <- NULL
-    or <- NULL
-    rr_tot <- NULL
-    or_tot <- NULL
-    irr <- NULL
-    irr_tot <- NULL
-    seca <- NULL
-    seexp <- NULL
-    spca <- NULL
-    spexp <- NULL
-    or_sel <- NULL
-    prev.exp <- NULL
-    prev.nexp <- NULL
-    risk <- NULL
-    ..density.. <- NULL
+#    rr <- NULL
+#    or <- NULL
+#    rr_tot <- NULL
+#    or_tot <- NULL
+#    irr <- NULL
+#    irr_tot <- NULL
+#    seca <- NULL
+#    seexp <- NULL
+#    spca <- NULL
+#    spexp <- NULL
+#    or_sel <- NULL
+#    prev.exp <- NULL
+#    prev.nexp <- NULL
+#    risk <- NULL
+#    ..density.. <- NULL
     parms <- match.arg(parms)
 
     bins <- ceiling(x$reps/25)
@@ -119,81 +119,81 @@ plot.episensr.probsens <- function(x,
             ifelse(bins > 100, 100, bins))
 
     if (parms == "rr" & (prob.fun %in% c("probsens", "probsens.conf"))) {
-        ggplot(obj, aes(x = corr.RR)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$corr.RR)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             ggtitle("Bias adjusted relative risk") +
             xlab("Relative risk")
     } else if (parms == "or" &
                (prob.fun %in% c("probsens", "probsens.conf", "probsens.sel"))) {
-        ggplot(obj, aes(x = corr.OR)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$corr.OR)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             ggtitle("Bias adjusted odds ratio") +
             xlab("Odds ratio")
     } else if (parms == "rr_tot" & (prob.fun %in% c("probsens", "probsens.conf"))) {
-        ggplot(obj, aes(x = tot.RR)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$tot.RR)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             ggtitle("Bias adjusted relative risk (total error)") +
             xlab("Relative risk")
     } else if (parms == "or_tot" &
                (prob.fun %in% c("probsens", "probsens.conf", "probsens.sel"))) {
-        ggplot(obj, aes(x = tot.OR)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$tot.OR)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             ggtitle("Bias adjusted odds ratio (total error)") +
             xlab("Odds ratio")
     } else if (parms == "irr") {
-        ggplot(obj, aes(x = corr.IRR)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$corr.IRR)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             ggtitle("Bias adjusted IRR") +
             xlab("IRR")
     } else if (parms == "irr_tot") {
-        ggplot(obj, aes(x = tot.IRR)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$tot.IRR)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             ggtitle("Bias adjusted IRR (total error)") +
             xlab("IRR")
     } else if (parms == "seca") {
-        ggplot(obj, aes(x = seca)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$seca)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             xlab("seca")
     } else if (parms == "seexp") {
-        ggplot(obj, aes(x = seexp)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$seexp)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             xlab("seexp")
     } else if (parms == "spca") {
-        ggplot(obj, aes(x = spca)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$spca)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             xlab("spca")
     } else if (parms == "spexp") {
-        ggplot(obj, aes(x = spexp)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$spexp)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             xlab("spexp")
     } else if (parms == "or_sel") {
-        ggplot(obj, aes(x = or.sel)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$or.sel)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             xlab("or_sel")
     } else if (parms == "prev.exp") {
-        ggplot(obj, aes(x = p1)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$p1)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             xlab("prev.exp")
     } else if (parms == "prev.nexp") {
-        ggplot(obj, aes(x = p0)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$p0)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             xlab("prev.nexp")
     } else if (parms == "risk") {
-        ggplot(obj, aes(x = RR.cd)) +
-            geom_histogram(aes(y = ..density..), bins = bins) +
+        ggplot(.data, aes(x = .data$RR.cd)) +
+            geom_histogram(aes(y = .data$..density..), bins = bins) +
             geom_density() + 
             xlab("risk")
     }
