@@ -15,6 +15,7 @@ probsens.irr.conf(
   risk = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
     "log-logistic", "log-normal"), parms = NULL),
   corr.p = NULL,
+  discard = TRUE,
   alpha = 0.05
 )
 }
@@ -54,6 +55,8 @@ Person-time \tab N1 \tab N0
 }}
 
 \item{corr.p}{Correlation between the exposure-specific confounder prevalences.}
+
+\item{discard}{A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.}
 
 \item{alpha}{Significance level.}
 }
