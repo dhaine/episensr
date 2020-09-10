@@ -1,0 +1,159 @@
+---
+title: "Probabilistic Sensitivity Analysis"
+author: "Denis Haine"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{02-Probabilistic sensitivity analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Bias parameters are not always known.
+A probabilistic sensitivity analysis allows to specify a probability
+distribution for the bias parameters and then, through Monte Carlo sampling, to
+generate a frequency distribution of the corrected estimates of effect.
+`episensr` has a set of `probsens` functions for this:
+
+* `probsens.sel`: Probabilistic analysis for selection bias
+* `probsens.conf`: Probabilistic analysis for unmeasured confounding
+* `probsens`: Probabilistic analysis for misclassification
+* `probsens.irr.conf`: Probabilistic analysis for unmeasured confounding of person-time data
+* `probsens.irr`: Probabilistic analysis for exposure misclassification of person-time data
+
+## Probabilistic Sensitivity Analysis for Exposure Misclassification
+
+We use a study on the effect of smoking during pregnancy on breast cancer risk
+by [Fink & Lash](http://www.ncbi.nlm.nih.gov/pubmed/12946045), where we assume
+nondifferential misclassification of the exposure, smoking, with probability
+density functions for sensitivities (Se) and specificities (Sp) among cases and
+noncases equal to uniform distributions with a minimum of 0.7 and a maximum of
+0.95 for sensitivities (0.9 and 0.99 respectively for specificities).
+We choose to correct for exposure misclassification with the argument `type =
+exposure`.
+We ask for 50000 replications (default is 1000).
+Don't be shy with the number of iterations, episensr is fast.
+
+The Se and Sp for cases (`seca`, `spca`) are given as a list with its first
+element referring to the type of distribution (choice between constant, uniform,
+triangular, trapezoidal, logit-logistic, and logit-normal) and the second
+element giving the distribution parameters (min and max for uniform
+distribution).
+By avoiding to provide information on the noncases (`seexp`, `spexp`), we are
+referring to a nondifferential misclassification.
+
+```{r probsens}
+library(episensr)
+set.seed(123)
+smoke.nd <- probsens(matrix(c(215, 1449, 668, 4296),
+                            dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")),
+                            nrow = 2, byrow = TRUE),
+                     type = "exposure",
+                     reps = 50000,
+                     seca.parms = list("uniform", c(.7, .95)),
+                     spca.parms = list("uniform", c(.9, .99)))
+smoke.nd
+```
+
+The output gives the 2X2 table, the observed measures of association, and the
+corrected measures of association.
+
+We saved the `probsens` analysis in a new object `smoke.nd`.
+We can see its elements with the function `str()`:
+
+```{r str}
+str(smoke.nd)
+```
+
+`smoke.nd` is a list of 8 elements where different information on the analysis
+done are saved.
+We have `smoke.nd$obs.data` where we have the observed 2X2 table,
+`smoke.nd$obs.measures` (the observed measures of association),
+`smoke.nd$adj.measures` (the adjusted measures of association), and
+`smoke.nd$sim.df`, a data frame with the simulated variables from each
+replication, like the Se and Sp, the 4 cells of the adjusted 2X2 table, and the
+adjusted measures.
+`episensr` offers some plot functions to allow plotting directly these saved
+infromation, for example the Se prior distribution:
+
+```{r plot, fig.cap = "Sensibility prior distribution.",fig.width=6,fig.height=4}
+plot(smoke.nd, "seca")
+```
+
+There are combinations of Se, Sp, and disease (or exposure) prevalence that
+can produce negative cells in the corrected 2-by-2 table.
+For outcome   misclassification, this happen when the frequency of observed
+exposed cases is less than the total number of diseased individuals multiplied
+by the false-positive proportion.
+Negative cell counts occur when the false-positive proportion is greater than
+the proportion of cases that are exposed.
+When providing values for Se and Sp that are more or less like random
+classification (i.e. Se ~50% and Sp ~50%), you can obtain negative cell values.
+
+## Probabilistic Sensitivity Analysis for Uncontrolled Confounding
+
+Let's illustrate this function with this example from [Modern Epidemiology by
+Rothman, Greenland &
+Lash](https://shop.lww.com/Modern-Epidemiology/p/9781451190052), where the
+association between occupational resins exposure and lung cancer mortality is
+studied, together with the presence of an unmeasured potential confounder,
+smoking ([Greenland et al., 1994](https://www.ncbi.nlm.nih.gov/pubmed/7927843)).
+
+|          | Resins exposed | Resins unexposed |
+|---------:|:--------------:|:----------------:|
+|    Cases | 45             | 94               |
+| Controls | 257            | 945              |
+
+After adjustment for age and year at death, Greenland et al. found an OR of 1.77
+(95% CI from 1.18 to 2.64).
+Is smoking, for which they had no data about, had an effect on this association?
+How large the association between resins and smoking had to be to remove the
+association between resins and lung cancer association after adjustment for
+smoking?
+For this, you have to know 3 bias parameters: the association between smoking
+and lung cancer, the prevalence of smoking among those unexposed to resins, and
+the prevalence of smoking in those exposed to resins.
+
+Prior probability distributions are given to each bias parameters.
+Prevalences of smoking in those exposed to resins, and of smoking in those
+unexposed to resins receive prior distributions that are uniform between 0.40
+and 0.70. 
+Prior distribution for the odds ratio associating smoking with lung cancer
+mortality is log-normal with 95% limits of 5 and 15.
+The mean of this distribution is [ln(15) + ln(5)] / 2 = 2.159, and its standard
+deviation is [ln(15) - ln(5)] / 3.92 = 0.28. It looks like this:
+
+```{r, fig.cap='Log-normal distribution with meanlog = 2.159 and sdlog = 0.28.',fig.width=6,fig.height=4}
+set.seed(123)
+x <- rlnorm(10000, meanlog = 2.159, sdlog = 0.28)
+quantile(x, c(0.025, 0.975))
+plot(density(x))
+```
+
+Now, let's run `probsens.conf` with 50,000 iterations:
+
+```{r probsens-conf}
+set.seed(123)
+greenland <- probsens.conf(matrix(c(45, 94, 257, 945),
+                                  dimnames = list(c("Cases+", "Cases-"), c("Res+", "Res-")),
+                                  nrow = 2, byrow = TRUE),
+                           reps = 50000,
+                           prev.exp = list("uniform", c(.4, .7)),
+                           prev.nexp = list("uniform", c(.4, .7)),
+                           risk = list("log-normal", c(2.159, .28)))
+greenland
+```
+
+The median adjusted OR is 1.84 [1.21,2.82].
+The ratio of the two 95% CI bounds is 2.82/1.21 = `r round(2.82/1.21, 2)`.
+The ratio from the conventional 95% confidence limits was 2.57/1.20 = `r round(2.57/1.20, 2)`.
+These 2 ratios are pretty close, and therefore our uncertainty about confounding is
+similar to our uncertainty about random error.
+
+You can plot the bias-adjusted OR including both systematic and random error:
+
+```{r probsens_conf_plot, fig.cap='Distribution of the 50,000 confounder-adjusted odds ratios.',fig.width=6,fig.height=4}
+plot(greenland, "or_tot")
+```

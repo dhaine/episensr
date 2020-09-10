@@ -1,0 +1,160 @@
+---
+title: "Multiple Bias Modeling"
+author: "Denis Haine"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{03-Multiple bias modeling}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Epidemiologic studies can suffer from more than one bias.
+Bias functions in `episensr` can be applied sequentially to quantify bias
+resulting from multiple biases.
+
+Following the example in [Lash et
+al.](https://www.springer.com/us/book/9780387879604), we can use the study by [Chien et
+al.](https://link.springer.com/article/10.1007%2Fs10549-005-9056-0).
+It is a case-control study looking at the association between antidepressant use and the
+occurrence of breast cancer. The observed OR was 1.2 [0.9--1.6].
+
+```{r chien}
+chien <- matrix(c(118, 832, 103, 884),
+                dimnames = list(c("BC+", "BC-"), c("AD+", "AD-")),
+                nrow = 2, byrow = TRUE)
+```
+
+```{r chien-tab, echo=FALSE}
+knitr::kable(chien)
+```
+
+Records on medication use differed between participants, from pharmacy records
+and self-reported use, leading to misclassification:
+
+```{r misclass_chien}
+library(episensr)
+chien %>%
+    misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97))
+```
+
+Controls and cases also enrolled into the study at different rates.
+We can combine the misclassification bias with a selection bias thanks to the
+function `multiple.bias`:
+
+```{r misclass_sel}
+chien %>% 
+    misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) %>%
+    multiple.bias(., bias_function = "selection", bias_parms = c(.73, .61, .82, .76))
+```
+
+The association between antidepressant use and breast cancer was adjusted for
+various confounders (race/ethnicity, income, etc.).
+None of these confounders were found to change the association by more than 10%.
+However, for illustration, we can add the effect of a potential confounder (e.g.
+physical activity):
+
+```{r misclass_sel_conf}
+chien %>%
+    misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) %>%
+    multiple.bias(., bias_function = "selection",
+                  bias_parms = c(.73, .61, .82, .76)) %>%
+    multiple.bias(., bias_function = "confounders",
+                  type = "OR", bias_parms = c(.92, .3, .44))
+```
+
+We can do the same in a probabilistic framework:
+
+* Misclassification bias
+
+```{r multi_prob}
+mod1 <- chien %>%
+    probsens(., type = "exposure", reps = 100000,
+             seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
+             seexp.parms = list("trapezoidal", c(.4, .48, .58, .63)),
+             spca.parms = list("trapezoidal", c(.95, .97, .99, 1)),
+             spexp.parms = list("trapezoidal", c(.96, .98, .99, 1)),
+             corr.se = .8, corr.sp = .8)
+mod1
+```
+```{r plot2, warning=FALSE,message=FALSE,fig.width=6,fig.height=4}
+plot(mod1, "or")
+```
+
+* Selection bias
+
+```{r multi_prob2}
+mod2 <- chien %>%
+    probsens.sel(., reps = 100000,
+                 case.exp = list("logit-normal", c(-1.1, 0, 0, 1)),
+                 case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
+                 ncase.exp = list("logit-normal", c(-1.2, 0, 0, 1)),
+                 ncase.nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1)))
+mod2
+```
+
+```{r plot3, warning=FALSE,message=FALSE,fig.width=6,fig.height=4}
+plot(mod2, "or")
+```
+
+* Confounding
+
+```{r multi_prob3}
+mod3 <- chien %>%
+    probsens.conf(., reps = 100000,
+                  prev.exp = list("logit-normal", c(-0.75, 0.8, 0, 1)),
+                  prev.nexp = list("logit-normal", c(-0.4, 0.8, 0, 1)),
+                  risk = list("trapezoidal", c(.2, .58, 1.01, 1.24)))
+mod3
+```
+
+```{r plot4, message=FALSE, warning=FALSE,fig.width=6,fig.height=4}
+plot(mod3, "or") + coord_cartesian(xlim = c(0, 3))
+```
+
+* Misclassification then selection
+
+```{r multi_ms}
+chien %>%
+    probsens(., type = "exposure", reps = 100000,
+             seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
+             seexp.parms = list("trapezoidal", c(.4, .48, .58, .63)),
+             spca.parms = list("trapezoidal", c(.95, .97, .99, 1)),
+             spexp.parms = list("trapezoidal", c(.96, .98, .99, 1)),
+             corr.se = .8, corr.sp = .8) %>%
+    multiple.bias(., bias_function = "probsens.sel",
+                  case.exp = list("logit-normal", c(-1.1, 0, 0, 1)),
+                  case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
+                  ncase.exp = list("logit-normal", c(-1.2, 0, 0, 1)),
+                  ncase.nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1)))
+```
+
+* Misclassification, selection, and confounding
+
+```{r multi_msc}
+mod6 <- chien %>%
+    probsens(., type = "exposure", reps = 100000,
+             seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
+             seexp.parms = list("trapezoidal", c(.4, .48, .58, .63)),
+             spca.parms = list("trapezoidal", c(.95, .97, .99, 1)),
+             spexp.parms = list("trapezoidal", c(.96, .98, .99, 1)),
+             corr.se = .8, corr.sp = .8) %>%
+    multiple.bias(., bias_function = "probsens.sel",
+                  case.exp = list("logit-normal", c(-1.1, 0, 0, 1)),
+                  case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
+                  ncase.exp = list("logit-normal", c(-1.2, 0, 0, 1)),
+                  ncase.nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1))) %>% 
+    multiple.bias(., bias_function = "probsens.conf",
+                  prev.exp = list("logit-normal", c(-0.75, 0.8, 0, 1)),
+                  prev.nexp = list("logit-normal", c(-0.4, 0.8, 0, 1)),
+                  risk = list("trapezoidal", c(.2, .58, 1.01, 1.24)))
+mod6
+```
+
+```{r plot5, message=FALSE, warning=FALSE,fig.width=6,fig.height=4}
+plot(mod6, "or")
+
+plot(mod6, "or_tot")
+```
