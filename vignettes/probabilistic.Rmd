@@ -103,6 +103,14 @@ the proportion of cases that are exposed.
 When providing values for Se and Sp that are more or less like random
 classification (i.e. Se ~50% and Sp ~50%), you can obtain negative cell values.
 
+Note that a message is provided if the chosen distribution(s) lead to negative
+cell values, with the number of iterations affected.
+By default, these iterations are deleted from the simulation.
+However, user can keep these iterations which will be set to zero by setting
+`discard` to `FALSE`.
+It is recommended to shift distributions upwards if more than 10% of the
+iterations are deleted ([Fox et al., 2005](https://doi.org/10.1093/ije/dyi184)).
+
 ## Probabilistic Sensitivity Analysis for Uncontrolled Confounding
 
 Let's illustrate this function with this example from [Modern Epidemiology by
