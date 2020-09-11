@@ -70,6 +70,7 @@ We can do the same in a probabilistic framework:
 * Misclassification bias
 
 ```{r multi_prob}
+set.seed(123)
 mod1 <- chien %>%
     probsens(., type = "exposure", reps = 100000,
              seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
@@ -86,11 +87,12 @@ plot(mod1, "or")
 * Selection bias
 
 ```{r multi_prob2}
+set.seed(123)
 mod2 <- chien %>%
     probsens.sel(., reps = 100000,
-                 case.exp = list("logit-normal", c(-1.1, 0, 0, 1)),
+                 case.exp = list("beta", c(8.08, 24.25)),
                  case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
-                 ncase.exp = list("logit-normal", c(-1.2, 0, 0, 1)),
+                 ncase.exp = list("beta", c(12.6, 50.4)),
                  ncase.nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1)))
 mod2
 ```
@@ -102,21 +104,23 @@ plot(mod2, "or")
 * Confounding
 
 ```{r multi_prob3}
+set.seed(123)
 mod3 <- chien %>%
     probsens.conf(., reps = 100000,
-                  prev.exp = list("logit-normal", c(-0.75, 0.8, 0, 1)),
-                  prev.nexp = list("logit-normal", c(-0.4, 0.8, 0, 1)),
+                  prev.exp = list("beta", c(24.9, 58.1)),
+                  prev.nexp = list("beta", c(42.9, 54.6)),
                   risk = list("trapezoidal", c(.2, .58, 1.01, 1.24)))
 mod3
 ```
 
 ```{r plot4, message=FALSE, warning=FALSE,fig.width=6,fig.height=4}
-plot(mod3, "or") + coord_cartesian(xlim = c(0, 3))
+plot(mod3, "or")
 ```
 
 * Misclassification then selection
 
 ```{r multi_ms}
+set.seed(123)
 chien %>%
     probsens(., type = "exposure", reps = 100000,
              seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
@@ -125,15 +129,16 @@ chien %>%
              spexp.parms = list("trapezoidal", c(.96, .98, .99, 1)),
              corr.se = .8, corr.sp = .8) %>%
     multiple.bias(., bias_function = "probsens.sel",
-                  case.exp = list("logit-normal", c(-1.1, 0, 0, 1)),
+                  case.exp = list("beta", c(8.08, 24.25)),
                   case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
-                  ncase.exp = list("logit-normal", c(-1.2, 0, 0, 1)),
+                  ncase.exp = list("beta", c(12.6, 50.4)),
                   ncase.nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1)))
 ```
 
 * Misclassification, selection, and confounding
 
 ```{r multi_msc}
+set.seed(123)
 mod6 <- chien %>%
     probsens(., type = "exposure", reps = 100000,
              seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
@@ -142,13 +147,13 @@ mod6 <- chien %>%
              spexp.parms = list("trapezoidal", c(.96, .98, .99, 1)),
              corr.se = .8, corr.sp = .8) %>%
     multiple.bias(., bias_function = "probsens.sel",
-                  case.exp = list("logit-normal", c(-1.1, 0, 0, 1)),
+                  case.exp = list("beta", c(8.08, 24.25)),
                   case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
-                  ncase.exp = list("logit-normal", c(-1.2, 0, 0, 1)),
+                  ncase.exp = list("beta", c(12.6, 50.4)),
                   ncase.nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1))) %>% 
     multiple.bias(., bias_function = "probsens.conf",
-                  prev.exp = list("logit-normal", c(-0.75, 0.8, 0, 1)),
-                  prev.nexp = list("logit-normal", c(-0.4, 0.8, 0, 1)),
+                  prev.exp = list("beta", c(24.9, 58.1)),
+                  prev.nexp = list("beta", c(42.9, 54.6)),
                   risk = list("trapezoidal", c(.2, .58, 1.01, 1.24)))
 mod6
 ```
