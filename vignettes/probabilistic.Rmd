@@ -23,6 +23,17 @@ generate a frequency distribution of the corrected estimates of effect.
 * `probsens.irr.conf`: Probabilistic analysis for unmeasured confounding of person-time data
 * `probsens.irr`: Probabilistic analysis for exposure misclassification of person-time data
 
+The available distributions for the various bias parameters throughout these
+functions are:
+
+* Constant,
+* Uniform,
+* Triangular,
+* Trapezoidal,
+* Logit-logistic,
+* Logit-normal, and
+* Beta.
+
 ## Probabilistic Sensitivity Analysis for Exposure Misclassification
 
 We use a study on the effect of smoking during pregnancy on breast cancer risk
