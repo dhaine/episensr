@@ -1,18 +1,17 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# episensr
+# episensr <img src="man/figures/logo.png" align="right" width=120 />
 
 [![Build
 Status](https://travis-ci.org/dhaine/episensr.svg?branch=master)](https://travis-ci.org/dhaine/episensr)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/episensr)](https://cran.r-project.org/package=episensr)
 [![Codecov test
 coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](https://codecov.io/gh/dhaine/episensr?branch=master)
+[\!Active](https://www.repostatus.org/badges/latest/active.svg)
 [![Lifecycle:maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Total CRAN
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/episensr)](https://cran.r-project.org/package=episensr)
-
-<a href="https://github.com/dhaine/episensr"><img src="man/figures/logo.png" alt="episensr logo" align="right" /></a>
 
 The R package **episensr** allows to do basic sensitivity analysis of
 epidemiological results as described in **Applying Quantitative Bias
