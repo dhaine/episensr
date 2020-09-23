@@ -12,6 +12,8 @@ coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](
 [![Total CRAN
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/episensr)](https://cran.r-project.org/package=episensr)
 
+<a href="https://github.com/dhaine/episensr"><img src="man/figures/logo.png" alt="episensr logo" align="right" /></a>
+
 The R package **episensr** allows to do basic sensitivity analysis of
 epidemiological results as described in **Applying Quantitative Bias
 Analysis to Epidemiological Data** by Timothy L. Lash, Matthew P. Fox,
@@ -45,6 +47,7 @@ We use the function `selection` as shown below.
 
 ``` r
 library(episensr)
+#> Loading required package: ggplot2
 
 selection(matrix(c(136, 107, 297, 165),
                  dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
