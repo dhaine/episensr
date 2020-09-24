@@ -91,5 +91,6 @@ Or install the development version from **GitHub** with **devtools**
 package:
 
 ``` r
-devtools::install_github('dhaine/episensr', ref = "develop")
+#install.packages("remotes")
+remotes::install_github('dhaine/episensr', ref = "develop")
 ```
