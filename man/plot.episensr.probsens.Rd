@@ -25,7 +25,8 @@ total error relative risk and odds ratio (\code{rr_tot} and \code{or_tot}), \cod
 }
 \description{
 This takes a \code{probsens}-family object and produces the distribution plot of
-chosen bias parameters, as well as distribution of adjusted measures.
+chosen bias parameters, as well as distribution of adjusted measures (with confidence
+interval).
 }
 \examples{
 set.seed(123)
