@@ -1,10 +1,22 @@
 context("check bias due to unmeasured confounders based on confounding imbalance")
 
+test_that("correct number of arguments for type", {
+    expect_that(confounders.array(crude.risk = 1.5,
+                            type = c("binary", "continuous"),
+                            bias_parms = c(5.5, 0.5)),
+                throws_error())
+})
+
 test_that("correct number of arguments for bias parameters", {
     expect_that(confounders.array(crude.risk = 1.5,
                             type = "binary",
                             bias_parms = c(5.5, 0.5)),
                 throws_error())
+})
+
+test_that("correct if null bias parameters", {
+    expect_output(confounders.array(crude.risk = 1.5,
+                                    type = "binary"))
 })
 
 test_that("confounder prevalence among exposed between 0 and 1", {
@@ -41,6 +53,12 @@ test_that("crude risk > 0 (continuous)", {
                             bias_parms = c(1.009, 7.8, 7.9)),
                 throws_error())
 })
+
+test_that("crude risk between -1 and 1 (RD)", {
+    expect_error(confounders.array(crude.risk = -2,
+                            type = "RD",
+                            bias_parms = c(0.009, 8.5, 8)))
+    })
 
 test_that("RR and percent are correct (binary)", {
     model <- confounders.array(crude.risk = 1.5,
