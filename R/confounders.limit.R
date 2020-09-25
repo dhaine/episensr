@@ -35,7 +35,7 @@ confounders.limit <- function(p = NA,
                               print = TRUE){
     if(is.null(crude.RR))
         stop('Please provide crude relative risk.')
-    if(is.null(p) & is.null(RR) & is.null(OR))
+    if(is.na(p) & is.na(RR) & is.na(OR))
         stop('Not enough information.')
 
     q <- ifelse(is.null(p), NA, 1 - p)
