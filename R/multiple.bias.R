@@ -64,10 +64,10 @@ multiple.bias <- function(x,
         spec <- c("bias_parms", "alpha")
         if(length(arguments) > 2 | length(arguments) < 1)
             stop('Please provide valid arguments to selection bias function.')
-        if((length(arguments) == 1) & (names(arguments) != "bias_parms"))
+        if((length(arguments) == 1) && (names(arguments) != "bias_parms"))
             stop('Please provide valid arguments to selection bias function.')
-        if(length(arguments) == 2 & (!(names(arguments)[1] %in% spec) |
-                                     !(names(arguments)[2] %in% spec)))
+        if((length(arguments) == 2) && (!(names(arguments)[1] %in% spec) |
+                                       !(names(arguments)[2] %in% spec)))
             stop('Please provide valid arguments to selection bias function.')
         res <- do.call("selection", c(list(corr.data),
                                       arguments[names(arguments) %in% spec]))
@@ -78,12 +78,12 @@ multiple.bias <- function(x,
         spec <- c("type", "bias_parms", "alpha")
         if(length(arguments) > 3 | length(arguments) < 2)
             stop('Please provide valid arguments to confounder bias function.')
-        if(length(arguments) == 2 & (!(names(arguments)[1] %in% spec) |
-                                     !names(arguments)[2] %in% spec))
+        if((length(arguments) == 2) && (!(names(arguments)[1] %in% spec) |
+                                        !names(arguments)[2] %in% spec))
             stop('Please provide valid arguments to confounder bias function.')
-        if(length(arguments) == 3 & (!(names(arguments)[1] %in% spec) |
-                                     !(names(arguments)[2] %in% spec) |
-                                     !(names(arguments)[3] %in% spec)))
+        if((length(arguments) == 3) && (!(names(arguments)[1] %in% spec) |
+                                        !(names(arguments)[2] %in% spec) |
+                                        !(names(arguments)[3] %in% spec)))
             stop('Please provide valid arguments to confounder bias function.')
         res <- do.call('confounders', c(list(corr.data),
                                         arguments[names(arguments) %in% spec]))
