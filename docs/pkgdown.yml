@@ -1,6 +1,10 @@
 pandoc: '2.2'
-pkgdown: 1.4.1
+pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   episensr: episensr.html
+  multiple_bias: multiple_bias.html
+  other_sens: other_sens.html
+  probabilistic: probabilistic.html
+last_built: 2020-10-07T13:37Z
 
