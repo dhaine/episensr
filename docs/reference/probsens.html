@@ -8,25 +8,36 @@
 
 <title>Probabilistic sensitivity analysis. — probsens • episensr</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -42,7 +53,7 @@ Non-differential misclassification is assumed when only the two bias parameters
 seca.parms and spca.parms are provided. Adding the 2 parameters
 seexp.parms and spexp.parms (i.e. providing the 4 bias parameters)
 evaluates a differential misclassification." />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -60,10 +71,10 @@ evaluates a differential misclassification." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
@@ -92,12 +103,35 @@ evaluates a differential misclassification." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/2_probabilistic.html">Probabilistic Sensitivity Analysis</a>
+    </li>
+    <li>
+      <a href="../articles/3_multiple_bias.html">Multiple Bias Modeling</a>
+    </li>
+    <li>
+      <a href="../articles/4_other_sens.html">Additional Sensitivity Analyses</a>
+    </li>
+  </ul>
+</li>
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/dhaine/episensr/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -112,7 +146,7 @@ evaluates a differential misclassification." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Probabilistic sensitivity analysis.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/dhaine/episensr/blob/master/R/probsens.R'><code>R/probsens.R</code></a></small>
     <div class="hidden name"><code>probsens.Rd</code></div>
     </div>
 
@@ -125,22 +159,22 @@ Non-differential misclassification is assumed when only the two bias parameters
 evaluates a differential misclassification.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>probsens</span>(
-  <span class='no'>case</span>,
-  <span class='no'>exposed</span>,
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"exposure"</span>, <span class='st'>"outcome"</span>),
-  <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>seca.parms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>dist</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"constant"</span>, <span class='st'>"uniform"</span>, <span class='st'>"triangular"</span>, <span class='st'>"trapezoidal"</span>,
-    <span class='st'>"logit-logistic"</span>, <span class='st'>"logit-normal"</span>), <span class='kw'>parms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>),
-  <span class='kw'>seexp.parms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>spca.parms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>dist</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"constant"</span>, <span class='st'>"uniform"</span>, <span class='st'>"triangular"</span>, <span class='st'>"trapezoidal"</span>,
-    <span class='st'>"logit-logistic"</span>, <span class='st'>"logit-normal"</span>), <span class='kw'>parms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>),
-  <span class='kw'>spexp.parms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>corr.se</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>corr.sp</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>discard</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>
-)</pre>
+    <pre class="usage"><span class='fu'>probsens</span><span class='op'>(</span>
+  <span class='va'>case</span>,
+  <span class='va'>exposed</span>,
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"exposure"</span>, <span class='st'>"outcome"</span><span class='op'>)</span>,
+  reps <span class='op'>=</span> <span class='fl'>1000</span>,
+  seca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>dist <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"constant"</span>, <span class='st'>"uniform"</span>, <span class='st'>"triangular"</span>, <span class='st'>"trapezoidal"</span>,
+    <span class='st'>"logit-logistic"</span>, <span class='st'>"logit-normal"</span>, <span class='st'>"beta"</span><span class='op'>)</span>, parms <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>,
+  seexp.parms <span class='op'>=</span> <span class='cn'>NULL</span>,
+  spca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>dist <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"constant"</span>, <span class='st'>"uniform"</span>, <span class='st'>"triangular"</span>, <span class='st'>"trapezoidal"</span>,
+    <span class='st'>"logit-logistic"</span>, <span class='st'>"logit-normal"</span>, <span class='st'>"beta"</span><span class='op'>)</span>, parms <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>,
+  spexp.parms <span class='op'>=</span> <span class='cn'>NULL</span>,
+  corr.se <span class='op'>=</span> <span class='cn'>NULL</span>,
+  corr.sp <span class='op'>=</span> <span class='cn'>NULL</span>,
+  discard <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  alpha <span class='op'>=</span> <span class='fl'>0.05</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,13 +200,14 @@ evaluates a differential misclassification.</p>
       <td><p>List defining:</p><ol>
 <li><p>The sensitivity of exposure classification among those with the outcome (when <code>type = "exposure"</code>), or</p></li>
 <li><p>The sensitivity of outcome classification among those with the exposure (when <code>type = "outcome"</code>).</p></li>
-</ol><p>The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.</p><ol>
-<li><p>Constant: constant value,</p></li>
-<li><p>Uniform: min, max,</p></li>
-<li><p>Triangular: lower limit, upper limit, mode,</p></li>
-<li><p>Trapezoidal: min, lower mode, upper mode, max,</p></li>
-<li><p>Logit-logistic: location, scale, lower bound shift, upper bound shift,</p></li>
-<li><p>Logit-normal: location, scale, lower bound shift, upper bound shift.</p></li>
+</ol><p>The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.</p><ol>
+<li><p>constant: constant value,</p></li>
+<li><p>uniform: min, max,</p></li>
+<li><p>triangular: lower limit, upper limit, mode,</p></li>
+<li><p>trapezoidal: min, lower mode, upper mode, max,</p></li>
+<li><p>logit-logistic: location, scale, lower bound shift, upper bound shift,</p></li>
+<li><p>logit-normal: location, scale, lower bound shift, upper bound shift.</p></li>
+<li><p>beta: alpha, beta.</p></li>
 </ol></td>
     </tr>
     <tr>
@@ -227,14 +262,15 @@ Bias Analysis to Epidemiologic Data</em>, pp.117--150, Springer.</p>
 <span class='co'># Greenland S., Salvan A., Wegman D.H., Hallock M.F., Smith T.J.</span>
 <span class='co'># A case-control study of cancer mortality at a transformer-assembly facility.</span>
 <span class='co'># Int Arch Occup Environ Health 1994; 66(1):49-54.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>123</span><span class='op'>)</span>
 <span class='co'># Exposure misclassification, non-differential</span>
-<span class='fu'>probsens</span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>45</span>, <span class='fl'>94</span>, <span class='fl'>257</span>, <span class='fl'>945</span>),
-<span class='kw'>dimnames</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"BC+"</span>, <span class='st'>"BC-"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Smoke+"</span>, <span class='st'>"Smoke-"</span>)), <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>byrow</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
-<span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"exposure"</span>,
-<span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>20000</span>,
-<span class='kw'>seca.parms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>.75</span>, <span class='fl'>.85</span>, <span class='fl'>.95</span>, <span class='fl'>1</span>)),
-<span class='kw'>spca.parms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>.75</span>, <span class='fl'>.85</span>, <span class='fl'>.95</span>, <span class='fl'>1</span>)))</div><div class='output co'>#&gt; <span class='message'>Chosen prior Se/Sp distributions lead to 814 negative adjusted counts which were discarded.</span></div><div class='output co'>#&gt; --Observed data-- 
+<span class='fu'>probsens</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>45</span>, <span class='fl'>94</span>, <span class='fl'>257</span>, <span class='fl'>945</span><span class='op'>)</span>,
+dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"BC+"</span>, <span class='st'>"BC-"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Smoke+"</span>, <span class='st'>"Smoke-"</span><span class='op'>)</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='fl'>2</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
+type <span class='op'>=</span> <span class='st'>"exposure"</span>,
+reps <span class='op'>=</span> <span class='fl'>20000</span>,
+seca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.75</span>, <span class='fl'>.85</span>, <span class='fl'>.95</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>,
+spca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.75</span>, <span class='fl'>.85</span>, <span class='fl'>.95</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Chosen prior Se/Sp distributions lead to 784 negative adjusted counts which were discarded.</span></div><div class='output co'>#&gt; --Observed data-- 
 #&gt;          Outcome: BC+ 
 #&gt;        Comparing: Smoke+ vs. Smoke- 
 #&gt; 
@@ -247,25 +283,27 @@ Bias Analysis to Epidemiologic Data</em>, pp.117--150, Springer.</p>
 #&gt;     Observed Odds Ratio: 1.760286 1.202457 2.576898
 #&gt; ---
 #&gt;                                                  Median 2.5th percentile
-#&gt;            Relative Risk -- systematic error:  2.187555         1.738520
-#&gt;               Odds Ratio -- systematic error:  2.470164         1.872967
-#&gt; Relative Risk -- systematic and random error:  2.255773         1.422060
-#&gt;    Odds Ratio -- systematic and random error:  2.564989         1.492476
+#&gt;            Relative Risk -- systematic error:  2.189053         1.738635
+#&gt;               Odds Ratio -- systematic error:  2.472228         1.872992
+#&gt; Relative Risk -- systematic and random error:  2.256939         1.422139
+#&gt;    Odds Ratio -- systematic and random error:  2.566966         1.492794
 #&gt;                                               97.5th percentile
-#&gt;            Relative Risk -- systematic error:          6.515802
-#&gt;               Odds Ratio -- systematic error:         13.871040
-#&gt; Relative Risk -- systematic and random error:          6.634863
-#&gt;    Odds Ratio -- systematic and random error:         14.075772</div><div class='input'><span class='co'># Exposure misclassification, differential</span>
-<span class='fu'>probsens</span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>45</span>, <span class='fl'>94</span>, <span class='fl'>257</span>, <span class='fl'>945</span>),
-<span class='kw'>dimnames</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"BC+"</span>, <span class='st'>"BC-"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Smoke+"</span>, <span class='st'>"Smoke-"</span>)), <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>byrow</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
-<span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"exposure"</span>,
-<span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>20000</span>,
-<span class='kw'>seca.parms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>.75</span>, <span class='fl'>.85</span>, <span class='fl'>.95</span>, <span class='fl'>1</span>)),
-<span class='kw'>seexp.parms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>.7</span>, <span class='fl'>.8</span>, <span class='fl'>.9</span>, <span class='fl'>.95</span>)),
-<span class='kw'>spca.parms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>.75</span>, <span class='fl'>.85</span>, <span class='fl'>.95</span>, <span class='fl'>1</span>)),
-<span class='kw'>spexp.parms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>.7</span>, <span class='fl'>.8</span>, <span class='fl'>.9</span>, <span class='fl'>.95</span>)),
-<span class='kw'>corr.se</span> <span class='kw'>=</span> <span class='fl'>.8</span>,
-<span class='kw'>corr.sp</span> <span class='kw'>=</span> <span class='fl'>.8</span>)</div><div class='output co'>#&gt; <span class='message'>Chosen prior Se/Sp distributions lead to 4350 negative adjusted counts which were discarded.</span></div><div class='output co'>#&gt; --Observed data-- 
+#&gt;            Relative Risk -- systematic error:          6.655220
+#&gt;               Odds Ratio -- systematic error:         14.674038
+#&gt; Relative Risk -- systematic and random error:          6.735689
+#&gt;    Odds Ratio -- systematic and random error:         14.740262</div><div class='input'>
+<span class='co'># Exposure misclassification, differential</span>
+<span class='fu'>probsens</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>45</span>, <span class='fl'>94</span>, <span class='fl'>257</span>, <span class='fl'>945</span><span class='op'>)</span>,
+dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"BC+"</span>, <span class='st'>"BC-"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Smoke+"</span>, <span class='st'>"Smoke-"</span><span class='op'>)</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='fl'>2</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
+type <span class='op'>=</span> <span class='st'>"exposure"</span>,
+reps <span class='op'>=</span> <span class='fl'>20000</span>,
+seca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.75</span>, <span class='fl'>.85</span>, <span class='fl'>.95</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>,
+seexp.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.7</span>, <span class='fl'>.8</span>, <span class='fl'>.9</span>, <span class='fl'>.95</span><span class='op'>)</span><span class='op'>)</span>,
+spca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.75</span>, <span class='fl'>.85</span>, <span class='fl'>.95</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>,
+spexp.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.7</span>, <span class='fl'>.8</span>, <span class='fl'>.9</span>, <span class='fl'>.95</span><span class='op'>)</span><span class='op'>)</span>,
+corr.se <span class='op'>=</span> <span class='fl'>.8</span>,
+corr.sp <span class='op'>=</span> <span class='fl'>.8</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Chosen prior Se/Sp distributions lead to 4290 negative adjusted counts which were discarded.</span></div><div class='output co'>#&gt; --Observed data-- 
 #&gt;          Outcome: BC+ 
 #&gt;        Comparing: Smoke+ vs. Smoke- 
 #&gt; 
@@ -278,21 +316,83 @@ Bias Analysis to Epidemiologic Data</em>, pp.117--150, Springer.</p>
 #&gt;     Observed Odds Ratio: 1.760286 1.202457 2.576898
 #&gt; ---
 #&gt;                                                  Median 2.5th percentile
-#&gt;            Relative Risk -- systematic error:  2.908202         1.683460
-#&gt;               Odds Ratio -- systematic error:  3.519741         1.809253
-#&gt; Relative Risk -- systematic and random error:  2.987914         1.515994
-#&gt;    Odds Ratio -- systematic and random error:  3.641237         1.606902
+#&gt;            Relative Risk -- systematic error:  2.915912         1.683775
+#&gt;               Odds Ratio -- systematic error:  3.531380         1.809583
+#&gt; Relative Risk -- systematic and random error:  2.995075         1.516361
+#&gt;    Odds Ratio -- systematic and random error:  3.650628         1.607822
 #&gt;                                               97.5th percentile
-#&gt;            Relative Risk -- systematic error:          9.889558
-#&gt;               Odds Ratio -- systematic error:         44.440281
-#&gt; Relative Risk -- systematic and random error:         10.290981
-#&gt;    Odds Ratio -- systematic and random error:         45.089822</div><div class='input'><span class='co'># Disease misclassification</span>
-<span class='fu'>probsens</span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>173</span>, <span class='fl'>602</span>, <span class='fl'>134</span>, <span class='fl'>663</span>),
-<span class='kw'>dimnames</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"BC+"</span>, <span class='st'>"BC-"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Smoke+"</span>, <span class='st'>"Smoke-"</span>)), <span class='kw'>nrow</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>byrow</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
-<span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"outcome"</span>,
-<span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>20000</span>,
-<span class='kw'>seca.parms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"uniform"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>.8</span>, <span class='fl'>1</span>)),
-<span class='kw'>spca.parms</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"uniform"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>.8</span>, <span class='fl'>1</span>)))</div><div class='output co'>#&gt; <span class='message'>Chosen prior Se/Sp distributions lead to 3074 negative adjusted counts which were discarded.</span></div><div class='output co'>#&gt; --Observed data-- 
+#&gt;            Relative Risk -- systematic error:         10.165878
+#&gt;               Odds Ratio -- systematic error:         49.256329
+#&gt; Relative Risk -- systematic and random error:         10.523872
+#&gt;    Odds Ratio -- systematic and random error:         51.193712</div><div class='input'>
+<span class='fu'>probsens</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>45</span>, <span class='fl'>94</span>, <span class='fl'>257</span>, <span class='fl'>945</span><span class='op'>)</span>,
+dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"BC+"</span>, <span class='st'>"BC-"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Smoke+"</span>, <span class='st'>"Smoke-"</span><span class='op'>)</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='fl'>2</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
+type <span class='op'>=</span> <span class='st'>"exposure"</span>,
+reps <span class='op'>=</span> <span class='fl'>20000</span>,
+seca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"beta"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>908</span>, <span class='fl'>16</span><span class='op'>)</span><span class='op'>)</span>,
+seexp.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"beta"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>156</span>, <span class='fl'>56</span><span class='op'>)</span><span class='op'>)</span>,
+spca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"beta"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>153</span>, <span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>,
+spexp.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"beta"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>205</span>, <span class='fl'>18</span><span class='op'>)</span><span class='op'>)</span>,
+corr.se <span class='op'>=</span> <span class='fl'>.8</span>,
+corr.sp <span class='op'>=</span> <span class='fl'>.8</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; --Observed data-- 
+#&gt;          Outcome: BC+ 
+#&gt;        Comparing: Smoke+ vs. Smoke- 
+#&gt; 
+#&gt;     Smoke+ Smoke-
+#&gt; BC+     45     94
+#&gt; BC-    257    945
+#&gt; 
+#&gt;                                       2.5%    97.5%
+#&gt;  Observed Relative Risk: 1.646999 1.182429 2.294094
+#&gt;     Observed Odds Ratio: 1.760286 1.202457 2.576898
+#&gt; ---
+#&gt;                                                 Median 2.5th percentile
+#&gt;            Relative Risk -- systematic error: 1.608690         1.474532
+#&gt;               Odds Ratio -- systematic error: 1.714321         1.550609
+#&gt; Relative Risk -- systematic and random error: 1.627964         1.150670
+#&gt;    Odds Ratio -- systematic and random error: 1.738616         1.165817
+#&gt;                                               97.5th percentile
+#&gt;            Relative Risk -- systematic error:          1.940020
+#&gt;               Odds Ratio -- systematic error:          2.136385
+#&gt; Relative Risk -- systematic and random error:          2.343554
+#&gt;    Odds Ratio -- systematic and random error:          2.647539</div><div class='input'>
+<span class='fu'>probsens</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>338</span>, <span class='fl'>490</span>, <span class='fl'>17984</span>, <span class='fl'>32024</span><span class='op'>)</span>,
+dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"BC+"</span>, <span class='st'>"BC-"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Smoke+"</span>, <span class='st'>"Smoke-"</span><span class='op'>)</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='fl'>2</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
+type <span class='op'>=</span> <span class='st'>"exposure"</span>,
+reps <span class='op'>=</span> <span class='fl'>1000</span>,
+seca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.8</span>, <span class='fl'>.9</span>, <span class='fl'>.9</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>,
+spca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.8</span>, <span class='fl'>.9</span>, <span class='fl'>.9</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; --Observed data-- 
+#&gt;          Outcome: BC+ 
+#&gt;        Comparing: Smoke+ vs. Smoke- 
+#&gt; 
+#&gt;     Smoke+ Smoke-
+#&gt; BC+    338    490
+#&gt; BC-  17984  32024
+#&gt; 
+#&gt;                                       2.5%    97.5%
+#&gt;  Observed Relative Risk: 1.224104 1.066961 1.404390
+#&gt;     Observed Odds Ratio: 1.228315 1.068081 1.412589
+#&gt; ---
+#&gt;                                                 Median 2.5th percentile
+#&gt;            Relative Risk -- systematic error: 1.298245         1.246925
+#&gt;               Odds Ratio -- systematic error: 1.304096         1.251625
+#&gt; Relative Risk -- systematic and random error: 1.295969         1.122475
+#&gt;    Odds Ratio -- systematic and random error: 1.301775         1.124729
+#&gt;                                               97.5th percentile
+#&gt;            Relative Risk -- systematic error:          1.382128
+#&gt;               Odds Ratio -- systematic error:          1.390072
+#&gt; Relative Risk -- systematic and random error:          1.508913
+#&gt;    Odds Ratio -- systematic and random error:          1.519908</div><div class='input'>
+<span class='co'># Disease misclassification</span>
+<span class='fu'>probsens</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>173</span>, <span class='fl'>602</span>, <span class='fl'>134</span>, <span class='fl'>663</span><span class='op'>)</span>,
+dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"BC+"</span>, <span class='st'>"BC-"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Smoke+"</span>, <span class='st'>"Smoke-"</span><span class='op'>)</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='fl'>2</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
+type <span class='op'>=</span> <span class='st'>"outcome"</span>,
+reps <span class='op'>=</span> <span class='fl'>20000</span>,
+seca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"uniform"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.8</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>,
+spca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"uniform"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.8</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; --Observed data-- 
 #&gt;          Outcome: BC+ 
 #&gt;        Comparing: Smoke+ vs. Smoke- 
 #&gt; 
@@ -305,25 +405,84 @@ Bias Analysis to Epidemiologic Data</em>, pp.117--150, Springer.</p>
 #&gt;     Observed Odds Ratio: 1.421865 1.106140 1.827708
 #&gt; ---
 #&gt;                                                 Median 2.5th percentile
-#&gt;            Relative Risk -- systematic error: 1.223783         1.186029
-#&gt;               Odds Ratio -- systematic error: 1.550028         1.444016
-#&gt; Relative Risk -- systematic and random error: 1.226308         1.083691
-#&gt;    Odds Ratio -- systematic and random error: 1.553053         1.191384
+#&gt;            Relative Risk -- systematic error: 1.232598         1.186130
+#&gt;               Odds Ratio -- systematic error: 1.566440         1.446098
+#&gt; Relative Risk -- systematic and random error: 1.237320         1.090023
+#&gt;    Odds Ratio -- systematic and random error: 1.570343         1.203445
 #&gt;                                               97.5th percentile
-#&gt;            Relative Risk -- systematic error:          1.280630
-#&gt;               Odds Ratio -- systematic error:          1.700931
-#&gt; Relative Risk -- systematic and random error:          1.388894
-#&gt;    Odds Ratio -- systematic and random error:          2.026906</div></pre>
+#&gt;            Relative Risk -- systematic error:          1.311775
+#&gt;               Odds Ratio -- systematic error:          1.735362
+#&gt; Relative Risk -- systematic and random error:          1.410672
+#&gt;    Odds Ratio -- systematic and random error:          2.060658</div><div class='input'>
+<span class='fu'>probsens</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>338</span>, <span class='fl'>490</span>, <span class='fl'>17984</span>, <span class='fl'>32024</span><span class='op'>)</span>,
+dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"BC+"</span>, <span class='st'>"BC-"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Smoke+"</span>, <span class='st'>"Smoke-"</span><span class='op'>)</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='fl'>2</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
+type <span class='op'>=</span> <span class='st'>"outcome"</span>,
+reps <span class='op'>=</span> <span class='fl'>20000</span>,
+seca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"uniform"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.2</span>, <span class='fl'>.6</span><span class='op'>)</span><span class='op'>)</span>,
+seexp.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"uniform"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.1</span>, <span class='fl'>.5</span><span class='op'>)</span><span class='op'>)</span>,
+spca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"uniform"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.99</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>,
+spexp.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"uniform"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.99</span>, <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>,
+corr.se <span class='op'>=</span> <span class='fl'>.8</span>,
+corr.sp <span class='op'>=</span> <span class='fl'>.8</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; --Observed data-- 
+#&gt;          Outcome: BC+ 
+#&gt;        Comparing: Smoke+ vs. Smoke- 
+#&gt; 
+#&gt;     Smoke+ Smoke-
+#&gt; BC+    338    490
+#&gt; BC-  17984  32024
+#&gt; 
+#&gt;                                       2.5%    97.5%
+#&gt;  Observed Relative Risk: 1.224104 1.066961 1.404390
+#&gt;     Observed Odds Ratio: 1.228315 1.068081 1.412589
+#&gt; ---
+#&gt;                                                  Median 2.5th percentile
+#&gt;            Relative Risk -- systematic error: 0.9859093        0.4831291
+#&gt;               Odds Ratio -- systematic error: 0.9853800        0.4626676
+#&gt; Relative Risk -- systematic and random error: 0.9838802        0.4758175
+#&gt;    Odds Ratio -- systematic and random error: 0.9832842        0.4575911
+#&gt;                                               97.5th percentile
+#&gt;            Relative Risk -- systematic error:         1.8899501
+#&gt;               Odds Ratio -- systematic error:         1.9287984
+#&gt; Relative Risk -- systematic and random error:         1.9211116
+#&gt;    Odds Ratio -- systematic and random error:         1.9592833</div><div class='input'>
+<span class='fu'>probsens</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>173</span>, <span class='fl'>602</span>, <span class='fl'>134</span>, <span class='fl'>663</span><span class='op'>)</span>,
+dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"BC+"</span>, <span class='st'>"BC-"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Smoke+"</span>, <span class='st'>"Smoke-"</span><span class='op'>)</span><span class='op'>)</span>, nrow <span class='op'>=</span> <span class='fl'>2</span>, byrow <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,
+type <span class='op'>=</span> <span class='st'>"outcome"</span>,
+reps <span class='op'>=</span> <span class='fl'>20000</span>,
+seca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"beta"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>100</span>, <span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>,
+seexp.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"beta"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>110</span>, <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span>,
+spca.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"beta"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>120</span>, <span class='fl'>15</span><span class='op'>)</span><span class='op'>)</span>,
+spexp.parms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"beta"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>130</span>, <span class='fl'>30</span><span class='op'>)</span><span class='op'>)</span>,
+corr.se <span class='op'>=</span> <span class='fl'>.8</span>,
+corr.sp <span class='op'>=</span> <span class='fl'>.8</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; --Observed data-- 
+#&gt;          Outcome: BC+ 
+#&gt;        Comparing: Smoke+ vs. Smoke- 
+#&gt; 
+#&gt;     Smoke+ Smoke-
+#&gt; BC+    173    602
+#&gt; BC-    134    663
+#&gt; 
+#&gt;                                       2.5%    97.5%
+#&gt;  Observed Relative Risk: 1.184136 1.056368 1.327359
+#&gt;     Observed Odds Ratio: 1.421865 1.106140 1.827708
+#&gt; ---
+#&gt;                                                 Median 2.5th percentile
+#&gt;            Relative Risk -- systematic error: 1.373792         1.313693
+#&gt;               Odds Ratio -- systematic error: 1.810032         1.679607
+#&gt; Relative Risk -- systematic and random error: 1.382525         1.217798
+#&gt;    Odds Ratio -- systematic and random error: 1.826700         1.398461
+#&gt;                                               97.5th percentile
+#&gt;            Relative Risk -- systematic error:          1.513627
+#&gt;               Odds Ratio -- systematic error:          2.080689
+#&gt; Relative Risk -- systematic and random error:          1.591369
+#&gt;    Odds Ratio -- systematic and random error:          2.411097</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#references">References</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -334,7 +493,7 @@ Bias Analysis to Epidemiologic Data</em>, pp.117--150, Springer.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

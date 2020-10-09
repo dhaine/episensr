@@ -8,25 +8,36 @@
 
 <title>Compute E-value to assess bias due to unmeasured confounder. — confounders.evalue • episensr</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -38,10 +49,10 @@
 <meta property="og:title" content="Compute E-value to assess bias due to unmeasured confounder. — confounders.evalue" />
 <meta property="og:description" content="Help to quantify the evidence strength for causality in presence of unmeasured
 confounding. The E-value is the minimum strength of association that an unmeasured
-counfounder would need to have with both the exposure and the outcome, conditional
+confounder would need to have with both the exposure and the outcome, conditional
 on the measured covariates, to fully explain away a specific exposure-outcome
 association." />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -59,10 +70,10 @@ association." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
@@ -91,12 +102,35 @@ association." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/2_probabilistic.html">Probabilistic Sensitivity Analysis</a>
+    </li>
+    <li>
+      <a href="../articles/3_multiple_bias.html">Multiple Bias Modeling</a>
+    </li>
+    <li>
+      <a href="../articles/4_other_sens.html">Additional Sensitivity Analyses</a>
+    </li>
+  </ul>
+</li>
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/dhaine/episensr/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -111,26 +145,26 @@ association." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compute E-value to assess bias due to unmeasured confounder.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/dhaine/episensr/blob/master/R/confounders.evalue.R'><code>R/confounders.evalue.R</code></a></small>
     <div class="hidden name"><code>confounders.evalue.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>Help to quantify the evidence strength for causality in presence of unmeasured
 confounding. The E-value is the minimum strength of association that an unmeasured
-counfounder would need to have with both the exposure and the outcome, conditional
+confounder would need to have with both the exposure and the outcome, conditional
 on the measured covariates, to fully explain away a specific exposure-outcome
 association.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>confounders.evalue</span>(
-  <span class='no'>est</span>,
-  <span class='kw'>lower_ci</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>upper_ci</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>sd</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"RR"</span>, <span class='st'>"ORc"</span>, <span class='st'>"HRc"</span>, <span class='st'>"diff_RR"</span>, <span class='st'>"diff_OR"</span>),
-  <span class='kw'>true_est</span> <span class='kw'>=</span> <span class='fl'>1</span>
-)</pre>
+    <pre class="usage"><span class='fu'>confounders.evalue</span><span class='op'>(</span>
+  <span class='va'>est</span>,
+  lower_ci <span class='op'>=</span> <span class='cn'>NULL</span>,
+  upper_ci <span class='op'>=</span> <span class='cn'>NULL</span>,
+  sd <span class='op'>=</span> <span class='cn'>NA</span>,
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"RR"</span>, <span class='st'>"ORc"</span>, <span class='st'>"HRc"</span>, <span class='st'>"diff_RR"</span>, <span class='st'>"diff_OR"</span><span class='op'>)</span>,
+  true_est <span class='op'>=</span> <span class='fl'>1</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -144,12 +178,12 @@ deviation).</p></td>
     <tr>
       <th>lower_ci</th>
       <td><p>Lower limit of the confidence interval for the association (relative
-risk, odds ratio, hazard ratio, incidence rate ratio, risk differece).</p></td>
+risk, odds ratio, hazard ratio, incidence rate ratio, risk difference).</p></td>
     </tr>
     <tr>
       <th>upper_ci</th>
       <td><p>Upper limit of the confidence interval for the association (relative
-risk, odds ratio, hazard ratio, incidence rate ratio, risk differece).</p></td>
+risk, odds ratio, hazard ratio, incidence rate ratio, risk difference).</p></td>
     </tr>
     <tr>
       <th>sd</th>
@@ -188,7 +222,8 @@ Introducing the E-value. Annals of Internal Medicine 2017;167:268-274.</p>
 <span class='co'># Evidence for protection by breast-feeding against infant deaths from infectious</span>
 <span class='co'># diseases in Brazil.</span>
 <span class='co'># Lancet 1987;2:319-22.</span>
-<span class='fu'>confounders.evalue</span>(<span class='kw'>est</span> <span class='kw'>=</span> <span class='fl'>3.9</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"RR"</span>)</div><div class='output co'>#&gt; 
+<span class='fu'>confounders.evalue</span><span class='op'>(</span>est <span class='op'>=</span> <span class='fl'>3.9</span>, type <span class='op'>=</span> <span class='st'>"RR"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
 #&gt; --E-value--
 #&gt;          Point estimate   CI closest to H_0
 #&gt;      RR:       3.900000                    
@@ -199,7 +234,8 @@ Introducing the E-value. Annals of Internal Medicine 2017;167:268-274.</p>
 <span class='co'># longitudinal cohort to investigate associations between exclusive breastfeeding and</span>
 <span class='co'># overweight and obesity at 20 years.</span>
 <span class='co'># Annals of Nutrition and Metabolism 2014;65:234-235.</span>
-<span class='fu'>confounders.evalue</span>(<span class='kw'>est</span> <span class='kw'>=</span> <span class='fl'>1.47</span>, <span class='kw'>lower_ci</span> <span class='kw'>=</span> <span class='fl'>1.12</span>, <span class='kw'>upper_ci</span> <span class='kw'>=</span> <span class='fl'>1.93</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"ORc"</span>)</div><div class='output co'>#&gt; 
+<span class='fu'>confounders.evalue</span><span class='op'>(</span>est <span class='op'>=</span> <span class='fl'>1.47</span>, lower_ci <span class='op'>=</span> <span class='fl'>1.12</span>, upper_ci <span class='op'>=</span> <span class='fl'>1.93</span>, type <span class='op'>=</span> <span class='st'>"ORc"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
 #&gt; --E-value--
 #&gt;          Point estimate   CI closest to H_0
 #&gt;      RR:       1.212436            1.058301
@@ -208,21 +244,17 @@ Introducing the E-value. Annals of Internal Medicine 2017;167:268-274.</p>
 <span class='co'># Reinisch J., Sanders S., Mortensen E., Rubin D.B.</span>
 <span class='co'># In-utero exposure to phenobarbital and intelligence deficits in adult men.</span>
 <span class='co'># Journal of the American Medical Association 1995;274:1518-1525</span>
-<span class='fu'>confounders.evalue</span>(<span class='kw'>est</span> <span class='kw'>=</span> -<span class='fl'>0.42</span>, <span class='kw'>sd</span> <span class='kw'>=</span> <span class='fl'>0.14</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"diff_RR"</span>)</div><div class='output co'>#&gt; 
+<span class='fu'>confounders.evalue</span><span class='op'>(</span>est <span class='op'>=</span> <span class='op'>-</span><span class='fl'>0.42</span>, sd <span class='op'>=</span> <span class='fl'>0.14</span>, type <span class='op'>=</span> <span class='st'>"diff_RR"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
 #&gt; --E-value--
 #&gt;          Point estimate   CI closest to H_0
 #&gt;      RR:      0.6823586           0.8754651
 #&gt; E-value:      2.2914593           1.5453444</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#references">References</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -233,7 +265,7 @@ Introducing the E-value. Annals of Internal Medicine 2017;167:268-274.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
