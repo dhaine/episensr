@@ -9,10 +9,10 @@ probsens.irr(
   pt = NULL,
   reps = 1000,
   seca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal"), parms = NULL),
+    "logit-logistic", "logit-normal", "beta"), parms = NULL),
   seexp.parms = NULL,
   spca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal"), parms = NULL),
+    "logit-logistic", "logit-normal", "beta"), parms = NULL),
   spexp.parms = NULL,
   corr.se = NULL,
   corr.sp = NULL,
@@ -32,14 +32,15 @@ Person-time \tab N1 \tab N0
 
 \item{reps}{Number of replications to run.}
 
-\item{seca.parms}{List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+\item{seca.parms}{List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
 \enumerate{
-\item Constant: constant value,
-\item Uniform: min, max,
-\item Triangular: lower limit, upper limit, mode,
-\item Trapezoidal: min, lower mode, upper mode, max,
-\item Logit-logistic: location, scale, lower bound shift, upper bound shift,
-\item Logit-normal: location, scale, lower bound shift, upper bound shift.
+\item constant: constant value,
+\item uniform: min, max,
+\item triangular: lower limit, upper limit, mode,
+\item trapezoidal: min, lower mode, upper mode, max,
+\item logit-logistic: location, scale, lower bound shift, upper bound shift,
+\item logit-normal: location, scale, lower bound shift, upper bound shift,
+\item beta: alpha, beta.
 }}
 
 \item{seexp.parms}{List defining the sensitivity of exposure classification among those without the outcome.}

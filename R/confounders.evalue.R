@@ -2,7 +2,7 @@
 #'
 #' Help to quantify the evidence strength for causality in presence of unmeasured
 #' confounding. The E-value is the minimum strength of association that an unmeasured
-#' counfounder would need to have with both the exposure and the outcome, conditional
+#' confounder would need to have with both the exposure and the outcome, conditional
 #' on the measured covariates, to fully explain away a specific exposure-outcome
 #' association.
 #'
@@ -10,9 +10,9 @@
 #' it is the standardized effect size (i.e. mean of the outcome divided by its standard
 #' deviation).
 #' @param lower_ci Lower limit of the confidence interval for the association (relative
-#' risk, odds ratio, hazard ratio, incidence rate ratio, risk differece).
+#' risk, odds ratio, hazard ratio, incidence rate ratio, risk difference).
 #' @param upper_ci Upper limit of the confidence interval for the association (relative
-#' risk, odds ratio, hazard ratio, incidence rate ratio, risk differece).
+#' risk, odds ratio, hazard ratio, incidence rate ratio, risk difference).
 #' @param sd For difference in continuous outcomes, the standard error of the outcome
 #' divided by its standard deviation.
 #' @param type Choice of effect measure (relative risk, and odds ratio or hazard ratio
@@ -93,13 +93,9 @@ confounders.evalue <- function(est,
     if (((type == "diff_RR" | type == "diff_OR") & !is.na(sd)) & sd < 0)
         stop("Standardized SE cannot be negative.")
 
-    .closest <- function(x, y) {
-        x[which(abs(x - y) == min(abs(x - y)))]
-    }
-
     if ((type != "diff_RR" | type != "diff_OR") &
         (!is.null(lower_ci) | !is.null(upper_ci))) {
-        closest_ci <- .closest(c(lower_ci, upper_ci), true_est)
+        closest_ci <- closest(c(lower_ci, upper_ci), true_est)
     } else {
         closest_ci <- NA
     }
@@ -108,11 +104,11 @@ confounders.evalue <- function(est,
         tab <- c(est, closest_ci)
     } else if (type == "diff_RR") {
         tab <- c(exp(0.91*est),
-                 .closest(c(exp(0.91*est - 1.78*sd), exp(0.91*est + 1.78*sd)),
+                 closest(c(exp(0.91*est - 1.78*sd), exp(0.91*est + 1.78*sd)),
                           true_est))
     } else if (type == "diff_OR") {
         tab <- c(exp(1.81*est),
-                 .closest(c(exp(1.81*est - 3.55*sd), exp(1.81*est + 3.55*sd)),
+                 closest(c(exp(1.81*est - 3.55*sd), exp(1.81*est + 3.55*sd)),
                           true_est))
     }
 

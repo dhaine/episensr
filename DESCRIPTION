@@ -6,11 +6,8 @@ Imports:
     triangle,
     trapezoid,
     actuar,
-    plyr,
-    ggplot2,
-    grid,
-    gridExtra,
-    reshape,
+    dagitty,
+    ggdag,
     boot,
     magrittr
 Date: 2020-03-05
@@ -28,14 +25,18 @@ Description: Basic sensitivity analysis of the observed relative risks adjusting
     "Applying Quantitative Bias Analysis to Epidemiologic Data",
     ('Springer', 2009).
 Depends:
-    R (>= 3.5.0)
+    R (>= 3.5.0),
+    ggplot2 (>= 3.0.0)
 License: GPL-2
 Suggests:
     testthat,
     knitr,
     rmarkdown,
     aplore3,
+    directlabels,
+    tidyverse,
+    lattice,
     covr
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Encoding: UTF-8
 VignetteBuilder: knitr

@@ -1,3 +1,9 @@
+# episensr 0.9.7
+- Provide default values for variables in `mbias`.
+- Update M-bias plot by using `ggdag` (and `dagitty`).
+- Add beta distribution to probabilistic bias analyses.
+- Review criteria to remove negative cell counts in probabilistic bias analyses.
+
 # episensr 0.9.6
 - Fix formulas in `probsens.conf`.
 

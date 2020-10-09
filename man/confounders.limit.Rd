@@ -33,7 +33,9 @@ A list with elements:
 }
 \description{
 Function to elicit the limits on measures of effect corrected for an unmeasured
-confounder when only some of the bias parameters are known.
+confounder when only some of the bias parameters are known. Crude relative
+risk between exposure and outcome has minimally to be provided. Up to 3 other
+parameters can be entered.
 }
 \examples{
 confounders.limit(OR = 1.65, crude.RR = 1.5)

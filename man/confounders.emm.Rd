@@ -63,11 +63,13 @@ dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "RR",
 bias_parms = c(.4, .7, .8, .05))
+
 confounders.emm(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "OR",
 bias_parms = c(.4, .7, .8, .05))
+
 confounders.emm(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),

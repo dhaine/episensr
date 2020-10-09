@@ -34,7 +34,7 @@
 #' # fertilisation in studies of folic acid and twinning: modelling using population
 #' # based Swedish vital records.
 #' # BMJ, doi:10.1136/bmj.38369.437789.82 (published 17 March 2004)
-#' misclassification_cov(array(c(1319, 38054, 5641, 405546,
+#' misclassification.cov(array(c(1319, 38054, 5641, 405546,
 #' 565, 3583, 781, 21958,
 #' 754, 34471, 4860, 383588),
 #' dimnames = list(c("Twins+", "Twins-"),
@@ -43,7 +43,17 @@
 #' bias_parms = c(.6, .6, .95, .95))
 #' @export
 #' @importFrom stats qnorm
-misclassification_cov <- function(case,
+misclassification_cov <- function(case, exposed, covariate,
+                                  bias_parms = NULL, alpha = 0.05) {
+    warning("Please use misclassification.cov() instead of misclassification_cov()",
+            call. = FALSE)
+    misclassification.cov(case, exposed, covariate, bias_parms = NULL, alpha = 0.05)
+}
+
+#' @export
+#' @rdname misclassification_cov
+
+misclassification.cov <- function(case,
                                   exposed,
                                   covariate,
                                   bias_parms = NULL,
@@ -83,7 +93,7 @@ misclassification_cov <- function(case,
     lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha/2) * se.log.obs.rr)
     uci.obs.rr <- exp(log(obs.rr) + qnorm(1 - alpha/2) * se.log.obs.rr)
 
-    obs.or <- (a/b) / (c/d)
+    obs.or <- (a/c) / (b/d)
     se.log.obs.or <- sqrt(1/a + 1/b + 1/c + 1/d)
     lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
     uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
@@ -170,7 +180,7 @@ misclassification_cov <- function(case,
                          "MH OR due to confounding by misclassified confounder:")
     colnames(rmatc) <- c("Observed", "Corrected")
 
-    res <- list(model = "misclassification_cov",
+    res <- list(model = "misclassification.cov",
                 obs.data = tab,
                 corr.data = c(corr.tab1, corr.tab0),
                 obs.measures = rmat, 

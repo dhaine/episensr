@@ -1,7 +1,9 @@
 #' Bounding the bias limits of unmeasured confounding.
 #'
 #' Function to elicit the limits on measures of effect corrected for an unmeasured
-#' confounder when only some of the bias parameters are known.
+#' confounder when only some of the bias parameters are known. Crude relative
+#' risk between exposure and outcome has minimally to be provided. Up to 3 other
+#' parameters can be entered.
 #'
 #' @param p Proportion with the confounder among the unexposed group.
 #' @param RR Relative risk between the confounder and the outcome.
@@ -33,7 +35,7 @@ confounders.limit <- function(p = NA,
                               print = TRUE){
     if(is.null(crude.RR))
         stop('Please provide crude relative risk.')
-    if(is.null(p) & is.null(RR) & is.null(OR))
+    if(is.na(p) & is.na(RR) & is.na(OR))
         stop('Not enough information.')
 
     q <- ifelse(is.null(p), NA, 1 - p)
