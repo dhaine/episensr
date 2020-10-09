@@ -6,7 +6,7 @@ output:
   rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{01-Quantitative Bias Analysis for Epidemiologic Data}
+  %\VignetteIndexEntry{Quantitative Bias Analysis for Epidemiologic Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

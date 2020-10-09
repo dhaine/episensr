@@ -3,3 +3,6 @@ destination: docs
 template:
   params:
     bootswatch: simplex
+
+navbar:
+  type: inverse

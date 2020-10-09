@@ -8,25 +8,36 @@
 
 <title>Sensitivity analysis to correct for selection bias caused by M bias. — mbias • episensr</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -38,7 +49,7 @@
 <meta property="og:title" content="Sensitivity analysis to correct for selection bias caused by M bias. — mbias" />
 <meta property="og:description" content="Simple sensitivity analysis to correct for selection bias caused by M bias using
 estimates of the odds ratios relating the variables." />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -56,10 +67,10 @@ estimates of the odds ratios relating the variables." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
@@ -70,7 +81,7 @@ estimates of the odds ratios relating the variables." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">episensr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.6</span>
       </span>
     </div>
 
@@ -88,12 +99,35 @@ estimates of the odds ratios relating the variables." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/2_probabilistic.html">Probabilistic Sensitivity Analysis</a>
+    </li>
+    <li>
+      <a href="../articles/3_multiple_bias.html">Multiple Bias Modeling</a>
+    </li>
+    <li>
+      <a href="../articles/4_other_sens.html">Additional Sensitivity Analyses</a>
+    </li>
+  </ul>
+</li>
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/dhaine/episensr/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -108,7 +142,7 @@ estimates of the odds ratios relating the variables." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Sensitivity analysis to correct for selection bias caused by M bias.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/dhaine/episensr/blob/master/R/mbias.R'><code>R/mbias.R</code></a></small>
     <div class="hidden name"><code>mbias.Rd</code></div>
     </div>
 
@@ -117,7 +151,7 @@ estimates of the odds ratios relating the variables." />
 estimates of the odds ratios relating the variables.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>mbias</span>(<span class='no'>or</span>, <span class='no'>var</span>)</pre>
+    <pre class="usage"><span class='fu'>mbias</span><span class='op'>(</span><span class='va'>or</span>, var <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"y"</span>, <span class='st'>"x"</span>, <span class='st'>"a"</span>, <span class='st'>"b"</span>, <span class='st'>"m"</span><span class='op'>)</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -126,8 +160,8 @@ estimates of the odds ratios relating the variables.</p>
       <th>or</th>
       <td><p>Vector defining the input bias parameters, in the following order:</p><ol>
 <li><p>Odds ratio between A and the exposure E,</p></li>
-<li><p>Odds ratio between A and the collider C,</p></li>
-<li><p>Odds ratio between B and the collider C,</p></li>
+<li><p>Odds ratio between A and the collider M,</p></li>
+<li><p>Odds ratio between B and the collider M,</p></li>
 <li><p>Odds ratio between B and the outcome D,</p></li>
 <li><p>Odds ratio observed between the exposure E and the outcome D.</p></li>
 </ol></td>
@@ -147,9 +181,14 @@ estimates of the odds ratios relating the variables.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A list with elements:</p>
-<dt>mbias.parms</dt><dd><p>Maximum bias parameters.</p></dd>
-<dt>adj.measures</dt><dd><p>Selection bias corrected measures.</p></dd>
+<dt>model</dt><dd><p>Bias analysis performed.</p></dd>
+<dt>mbias.parms</dt><dd><p>Three maximum bias parameters: in collider-exposure relationship
+created by conditioning on the collider, in collider-outcome relationship created by
+conditioning on the collider, and in exposure-outcome relationship created by
+conditioning on the collider.</p></dd>
+<dt>adj.measures</dt><dd><p>Selection bias corrected odds ratio.</p></dd>
 <dt>bias.parms</dt><dd><p>Input bias parameters.</p></dd>
+<dt>labels</dt><dd><p>Variables' labels.</p></dd>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -157,22 +196,18 @@ estimates of the odds ratios relating the variables.</p>
 confounding vs. collider-stratification bias. Epidemiology 2003;14:300-6.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>mbias</span>(<span class='kw'>or</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>5.4</span>, <span class='fl'>2.5</span>, <span class='fl'>1.5</span>, <span class='fl'>1</span>),
-<span class='kw'>var</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"HIV"</span>, <span class='st'>"Circumcision"</span>, <span class='st'>"Muslim"</span>, <span class='st'>"Low CD4"</span>, <span class='st'>"Participation"</span>))</div><div class='output co'>#&gt; Correction for selection bias: 
+    <pre class="examples"><div class='input'><span class='fu'>mbias</span><span class='op'>(</span>or <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>5.4</span>, <span class='fl'>2.5</span>, <span class='fl'>1.5</span>, <span class='fl'>1</span><span class='op'>)</span>,
+var <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"HIV"</span>, <span class='st'>"Circumcision"</span>, <span class='st'>"Muslim"</span>, <span class='st'>"Low CD4"</span>, <span class='st'>"Participation"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Correction for selection bias: 
 #&gt; ---------------------------------------- 
 #&gt; OR observed between the exposure and the outcome: 1 
-#&gt;              Maximum bias from conditioning on P: 1.006236 
+#&gt;              Maximum bias from conditioning on M: 1.006236 
 #&gt;                  OR corrected for selection bias: 0.9938024 </div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#references">References</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -183,7 +218,7 @@ confounding vs. collider-stratification bias. Epidemiology 2003;14:300-6.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
