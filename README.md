@@ -1,13 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# episensr
+# episensr <img src="man/figures/logo.png" align="right" width=120 />
 
 [![Build
 Status](https://travis-ci.org/dhaine/episensr.svg?branch=master)](https://travis-ci.org/dhaine/episensr)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/episensr)](https://cran.r-project.org/package=episensr)
 [![Codecov test
 coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](https://codecov.io/gh/dhaine/episensr?branch=master)
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Lifecycle:maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Total CRAN
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/episensr)](https://cran.r-project.org/package=episensr)
@@ -45,6 +48,7 @@ We use the function `selection` as shown below.
 
 ``` r
 library(episensr)
+#> Loading required package: ggplot2
 
 selection(matrix(c(136, 107, 297, 165),
                  dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
@@ -87,5 +91,6 @@ Or install the development version from **GitHub** with **devtools**
 package:
 
 ``` r
-devtools::install_github('dhaine/episensr', ref = "develop")
+#install.packages("remotes")
+remotes::install_github('dhaine/episensr', ref = "develop")
 ```

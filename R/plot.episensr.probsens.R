@@ -1,7 +1,8 @@
 #' Plot(s) of probabilistic bias analyses
 #'
 #' This takes a \code{probsens}-family object and produces the distribution plot of
-#' chosen bias parameters, as well as distribution of adjusted measures.
+#' chosen bias parameters, as well as distribution of adjusted measures (with confidence
+#' interval).
 #'
 #' @param x An object of class "episensr.probsens" returned from the
 #' \code{episensr probsens}, \code{probsens.sel}, \code{probsens.conf}, \code{probsens.irr},
@@ -97,21 +98,6 @@ plot.episensr.probsens <- function(x,
                                                         "prev.exp", "prev.nexp", "risk")))
         stop("Please provide parameters to plot: irr, irr_tot, prev.exp, prev.nexp, risk.")
     
-#    rr <- NULL
-#    or <- NULL
-#    rr_tot <- NULL
-#    or_tot <- NULL
-#    irr <- NULL
-#    irr_tot <- NULL
-#    seca <- NULL
-#    seexp <- NULL
-#    spca <- NULL
-#    spexp <- NULL
-#    or_sel <- NULL
-#    prev.exp <- NULL
-#    prev.nexp <- NULL
-#    risk <- NULL
-#    ..density.. <- NULL
     parms <- match.arg(parms)
 
     bins <- ceiling(x$reps/25)
@@ -120,80 +106,118 @@ plot.episensr.probsens <- function(x,
 
     if (parms == "rr" & (prob.fun %in% c("probsens", "probsens.conf"))) {
         ggplot(.data, aes(x = .data$corr.RR)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
+            geom_vline(xintercept = x$adj.measures[1, 2], size = .75,
+                       colour = "black", linetype = "dashed") +
+            geom_vline(xintercept = x$adj.measures[1, 3], size = .75,
+                       colour = "black", linetype = "dashed") +
             ggtitle("Bias adjusted relative risk") +
             xlab("Relative risk")
     } else if (parms == "or" &
                (prob.fun %in% c("probsens", "probsens.conf", "probsens.sel"))) {
         ggplot(.data, aes(x = .data$corr.OR)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
+            geom_vline(xintercept = x$adj.measures[1, 2], size = .75,
+                       colour = "black", linetype = "dashed") +
+            geom_vline(xintercept = x$adj.measures[1, 3], size = .75,
+                       colour = "black", linetype = "dashed") +
             ggtitle("Bias adjusted odds ratio") +
             xlab("Odds ratio")
     } else if (parms == "rr_tot" & (prob.fun %in% c("probsens", "probsens.conf"))) {
         ggplot(.data, aes(x = .data$tot.RR)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
+            geom_vline(xintercept = x$adj.measures[1, 2], size = .75,
+                       colour = "black", linetype = "dashed") +
+            geom_vline(xintercept = x$adj.measures[1, 3], size = .75,
+                       colour = "black", linetype = "dashed") +
             ggtitle("Bias adjusted relative risk (total error)") +
             xlab("Relative risk")
     } else if (parms == "or_tot" &
                (prob.fun %in% c("probsens", "probsens.conf", "probsens.sel"))) {
         ggplot(.data, aes(x = .data$tot.OR)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
+            geom_vline(xintercept = x$adj.measures[1, 2], size = .75,
+                       colour = "black", linetype = "dashed") +
+            geom_vline(xintercept = x$adj.measures[1, 3], size = .75,
+                       colour = "black", linetype = "dashed") +
             ggtitle("Bias adjusted odds ratio (total error)") +
             xlab("Odds ratio")
     } else if (parms == "irr") {
         ggplot(.data, aes(x = .data$corr.IRR)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
+            geom_vline(xintercept = x$adj.measures[1, 2], size = .75,
+                       colour = "black", linetype = "dashed") +
+            geom_vline(xintercept = x$adj.measures[1, 3], size = .75,
+                       colour = "black", linetype = "dashed") +
             ggtitle("Bias adjusted IRR") +
             xlab("IRR")
     } else if (parms == "irr_tot") {
         ggplot(.data, aes(x = .data$tot.IRR)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
+            geom_vline(xintercept = x$adj.measures[1, 2], size = .75,
+                       colour = "black", linetype = "dashed") +
+            geom_vline(xintercept = x$adj.measures[1, 3], size = .75,
+                       colour = "black", linetype = "dashed") +
             ggtitle("Bias adjusted IRR (total error)") +
             xlab("IRR")
     } else if (parms == "seca") {
         ggplot(.data, aes(x = .data$seca)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
             xlab("seca")
     } else if (parms == "seexp") {
         ggplot(.data, aes(x = .data$seexp)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
             xlab("seexp")
     } else if (parms == "spca") {
         ggplot(.data, aes(x = .data$spca)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
             xlab("spca")
     } else if (parms == "spexp") {
         ggplot(.data, aes(x = .data$spexp)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
             xlab("spexp")
     } else if (parms == "or_sel") {
         ggplot(.data, aes(x = .data$or.sel)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
             xlab("or_sel")
     } else if (parms == "prev.exp") {
         ggplot(.data, aes(x = .data$p1)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
             xlab("prev.exp")
     } else if (parms == "prev.nexp") {
         ggplot(.data, aes(x = .data$p0)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
             xlab("prev.nexp")
     } else if (parms == "risk") {
         ggplot(.data, aes(x = .data$RR.cd)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins) +
+            geom_histogram(aes(y = .data$..density..), bins = bins,
+                           colour = "grey", fill = "dimgrey") +
             geom_density() + 
             xlab("risk")
     }

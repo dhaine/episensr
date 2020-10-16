@@ -8,25 +8,36 @@
 
 <title>Probabilistic sensitivity analysis for unmeasured confounding of person-time data and random error. — probsens.irr.conf • episensr</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -37,7 +48,7 @@
 
 <meta property="og:title" content="Probabilistic sensitivity analysis for unmeasured confounding of person-time data and random error. — probsens.irr.conf" />
 <meta property="og:description" content="Probabilistic sensitivity analysis to correct for unmeasured confounding when person-time data has been collected." />
-<meta name="twitter:card" content="summary" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -55,10 +66,10 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
-      <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
@@ -69,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">episensr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.6</span>
       </span>
     </div>
 
@@ -87,12 +98,35 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/2_probabilistic.html">Probabilistic Sensitivity Analysis</a>
+    </li>
+    <li>
+      <a href="../articles/3_multiple_bias.html">Multiple Bias Modeling</a>
+    </li>
+    <li>
+      <a href="../articles/4_other_sens.html">Additional Sensitivity Analyses</a>
+    </li>
+  </ul>
+</li>
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/dhaine/episensr/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -107,7 +141,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Probabilistic sensitivity analysis for unmeasured confounding of person-time data and random error.</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/dhaine/episensr/blob/master/R/probsens.irr.conf.R'><code>R/probsens.irr.conf.R</code></a></small>
     <div class="hidden name"><code>probsens.irr.conf.Rd</code></div>
     </div>
 
@@ -115,19 +149,20 @@
     <p>Probabilistic sensitivity analysis to correct for unmeasured confounding when person-time data has been collected.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>probsens.irr.conf</span>(
-  <span class='no'>counts</span>,
-  <span class='kw'>pt</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>1000</span>,
-  <span class='kw'>prev.exp</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>dist</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"constant"</span>, <span class='st'>"uniform"</span>, <span class='st'>"triangular"</span>, <span class='st'>"trapezoidal"</span>,
-    <span class='st'>"logit-logistic"</span>, <span class='st'>"logit-normal"</span>), <span class='kw'>parms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>),
-  <span class='kw'>prev.nexp</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>dist</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"constant"</span>, <span class='st'>"uniform"</span>, <span class='st'>"triangular"</span>, <span class='st'>"trapezoidal"</span>,
-    <span class='st'>"logit-logistic"</span>, <span class='st'>"logit-normal"</span>), <span class='kw'>parms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>),
-  <span class='kw'>risk</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>dist</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"constant"</span>, <span class='st'>"uniform"</span>, <span class='st'>"triangular"</span>, <span class='st'>"trapezoidal"</span>,
-    <span class='st'>"log-logistic"</span>, <span class='st'>"log-normal"</span>), <span class='kw'>parms</span> <span class='kw'>=</span> <span class='kw'>NULL</span>),
-  <span class='kw'>corr.p</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>
-)</pre>
+    <pre class="usage"><span class='fu'>probsens.irr.conf</span><span class='op'>(</span>
+  <span class='va'>counts</span>,
+  pt <span class='op'>=</span> <span class='cn'>NULL</span>,
+  reps <span class='op'>=</span> <span class='fl'>1000</span>,
+  prev.exp <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>dist <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"constant"</span>, <span class='st'>"uniform"</span>, <span class='st'>"triangular"</span>, <span class='st'>"trapezoidal"</span>,
+    <span class='st'>"logit-logistic"</span>, <span class='st'>"logit-normal"</span>, <span class='st'>"beta"</span><span class='op'>)</span>, parms <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>,
+  prev.nexp <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>dist <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"constant"</span>, <span class='st'>"uniform"</span>, <span class='st'>"triangular"</span>, <span class='st'>"trapezoidal"</span>,
+    <span class='st'>"logit-logistic"</span>, <span class='st'>"logit-normal"</span>, <span class='st'>"beta"</span><span class='op'>)</span>, parms <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>,
+  risk <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>dist <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"constant"</span>, <span class='st'>"uniform"</span>, <span class='st'>"triangular"</span>, <span class='st'>"trapezoidal"</span>,
+    <span class='st'>"log-logistic"</span>, <span class='st'>"log-normal"</span><span class='op'>)</span>, parms <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span>,
+  corr.p <span class='op'>=</span> <span class='cn'>NULL</span>,
+  discard <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  alpha <span class='op'>=</span> <span class='fl'>0.05</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -151,13 +186,14 @@
     </tr>
     <tr>
       <th>prev.exp</th>
-      <td><p>List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant,uniform, triangular, trapezoidal, logit-logistic, or logit-normal) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.</p><ol>
-<li><p>Constant; value,</p></li>
-<li><p>Uniform: min, max,</p></li>
-<li><p>Triangular: lower limit, upper limit, mode,</p></li>
-<li><p>Trapezoidal: min, lower mode, upper mode, max.</p></li>
-<li><p>Logit-logistic: location, scale, lower bound shift, upper bound shift,</p></li>
-<li><p>Logit-normal: location, scale, lower bound shift, upper bound shift.</p></li>
+      <td><p>List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant,uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.</p><ol>
+<li><p>constant; value,</p></li>
+<li><p>uniform: min, max,</p></li>
+<li><p>triangular: lower limit, upper limit, mode,</p></li>
+<li><p>trapezoidal: min, lower mode, upper mode, max.</p></li>
+<li><p>logit-logistic: location, scale, lower bound shift, upper bound shift,</p></li>
+<li><p>logit-normal: location, scale, lower bound shift, upper bound shift,</p></li>
+<li><p>beta: alpha, beta.</p></li>
 </ol></td>
     </tr>
     <tr>
@@ -167,17 +203,21 @@
     <tr>
       <th>risk</th>
       <td><p>List defining the confounder-disease relative risk or the confounder-exposure odds ratio. The first argument provides the probability distribution function (constant,uniform, triangular, trapezoidal, log-logistic, or log-normal) and the second its parameters as a vector:</p><ol>
-<li><p>Constant: value,</p></li>
-<li><p>Uniform: min, max,</p></li>
-<li><p>Triangular: lower limit, upper limit, mode,</p></li>
-<li><p>Trapezoidal: min, lower mode, upper mode, max.</p></li>
-<li><p>Log-logistic: shape, rate. Must be strictly positive,</p></li>
-<li><p>Log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.</p></li>
+<li><p>constant: value,</p></li>
+<li><p>uniform: min, max,</p></li>
+<li><p>triangular: lower limit, upper limit, mode,</p></li>
+<li><p>trapezoidal: min, lower mode, upper mode, max.</p></li>
+<li><p>log-logistic: shape, rate. Must be strictly positive,</p></li>
+<li><p>log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.</p></li>
 </ol></td>
     </tr>
     <tr>
       <th>corr.p</th>
       <td><p>Correlation between the exposure-specific confounder prevalences.</p></td>
+    </tr>
+    <tr>
+      <th>discard</th>
+      <td><p>A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.</p></td>
     </tr>
     <tr>
       <th>alpha</th>
@@ -199,15 +239,16 @@
 Bias Analysis to Epidemiologic Data</em>, pp.117--150, Springer.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>123</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>123</span><span class='op'>)</span>
 <span class='co'># Unmeasured confounding</span>
-<span class='fu'>probsens.irr.conf</span>(<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>77</span>, <span class='fl'>10000</span>, <span class='fl'>87</span>, <span class='fl'>10000</span>),
-<span class='kw'>dimnames</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"D+"</span>, <span class='st'>"Person-time"</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"E+"</span>, <span class='st'>"E-"</span>)), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='fl'>2</span>),
-<span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>20000</span>,
-<span class='kw'>prev.exp</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>.01</span>, <span class='fl'>.2</span>, <span class='fl'>.3</span>, <span class='fl'>.51</span>)),
-<span class='kw'>prev.nexp</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>.09</span>, <span class='fl'>.27</span>, <span class='fl'>.35</span>, <span class='fl'>.59</span>)),
-<span class='kw'>risk</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>2.5</span>, <span class='fl'>3.5</span>, <span class='fl'>4.5</span>)),
-<span class='kw'>corr.p</span> <span class='kw'>=</span> <span class='fl'>.8</span>)</div><div class='output co'>#&gt; --Observed data-- 
+<span class='fu'>probsens.irr.conf</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>77</span>, <span class='fl'>10000</span>, <span class='fl'>87</span>, <span class='fl'>10000</span><span class='op'>)</span>,
+dimnames <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"D+"</span>, <span class='st'>"Person-time"</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"E+"</span>, <span class='st'>"E-"</span><span class='op'>)</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>,
+reps <span class='op'>=</span> <span class='fl'>20000</span>,
+prev.exp <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.01</span>, <span class='fl'>.2</span>, <span class='fl'>.3</span>, <span class='fl'>.51</span><span class='op'>)</span><span class='op'>)</span>,
+prev.nexp <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.09</span>, <span class='fl'>.27</span>, <span class='fl'>.35</span>, <span class='fl'>.59</span><span class='op'>)</span><span class='op'>)</span>,
+risk <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"trapezoidal"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>2.5</span>, <span class='fl'>3.5</span>, <span class='fl'>4.5</span><span class='op'>)</span><span class='op'>)</span>,
+corr.p <span class='op'>=</span> <span class='fl'>.8</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; --Observed data-- 
 #&gt;          Outcome: D+ 
 #&gt;        Comparing: E+ vs. E- 
 #&gt; 
@@ -225,15 +266,10 @@ Bias Analysis to Epidemiologic Data</em>, pp.117--150, Springer.</p>
 #&gt;            Incidence Rate Ratio -- systematic error:         1.2655813
 #&gt; Incidence Rate Ratio -- systematic and random error:         1.4505021</div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#references">References</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -244,7 +280,7 @@ Bias Analysis to Epidemiologic Data</em>, pp.117--150, Springer.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

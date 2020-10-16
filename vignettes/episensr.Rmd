@@ -23,10 +23,34 @@ book
 ["Applying Quantitative Bias Analysis to Epidemiologic Data"](https://www.springer.com/us/book/9780387879604).
 This package implements the various bias analyses from that book, which are also
 [available](https://sites.google.com/site/biasanalysis/) (for some) as a
-spreadsheet or a SAS macro.
+spreadsheet or a SAS macro, as well as some additional approaches.
 This vignette provides some examples on how to use the package.
 
-(_Note: A Shiny app is available for some functions, at <https://dhaine.shinyapps.io/episensr_shiny/>._)
+(_Note: A Shiny app is available for some functions, at
+<https://dhaine.shinyapps.io/apisensr/>._, using the R package `apisensr` which
+is based on `episensr`.)
+
+Functions available in `episensr` are:
+
+* `selection`: Selection bias
+* `mbias`: Selection bias caused by M bias
+* `confounders`: Unmeasured or unknown confounders
+* `confounders.poly`: Polytomous confounders
+* `confounders.emm`: Unmeasured or unknown confounders in the presence of effect modification
+* `confounders.limit`: Bounding the bias limits of unmeasured confounding
+* `confounders.array`: Bias due to unmeasured confounders based on confounding imbalance among exposed and unexposed
+* `confounders.ext`: Unmeasured confounders based on external measurement
+* `confounders.evalue`: E-value due to unmeasured confounder
+* `misclassification`: Disease or exposure misclassification
+* `misclassification_cov`: Covariate misclassification
+* `bootstrap`: Bootstrap resampling for selection and misclassification bias
+* `multidimBias`: Multidimensional bias analysis
+* `probsens.sel`: Probabilistic analysis for selection bias
+* `probsens.conf`: Probabilistic analysis for unmeasured confounding
+* `probsens`: Probabilistic analysis for misclassification
+* `probsens.irr.conf`: Probabilistic analysis for unmeasured confounding of person-time data
+* `probsens.irr`: Probabilistic analysis for exposure misclassification of person-time data
+* `multiple bias`: Multiple bias modeling
 
 ## Selection Bias
 
@@ -69,6 +93,119 @@ unexposed.
 The output shows the observed 2X2 table and the observed odds ratio (and relative
 risk), followed by the corrected ones.
 
+## Misclassification Bias
+
+Misclassification bias can be assessed with the function `misclassification`.
+Confidence intervals for corrected association due to exposure misclassification
+are also directly available, or the estimates can also be bootstrapped (see below).
+The confidence intervals from the variance of the corrected odds ratio estimator in the
+`misclassification` function are computed as in [Greenland et
+al.](http://onlinelibrary.wiley.com/doi/10.1002/sim.4780070704/full#abstract) and [Chu et
+al.](http://www.sciencedirect.com/science/article/pii/S1047279706000688).
+Using the example in Chu et al. of a case-control study of cigarette smoking and
+invasive pneumococcal disease, the unadjusted odds ratio is 4.32, with a 95%
+confidence interval of 2.96 to 6.31.
+Let's say the sensitivity of self-reported smoking is 94% and specificity is
+97%, for both the case and control groups:
+
+```{r misclass}
+misclassification(matrix(c(126, 92, 71, 224),
+                         dimnames = list(c("Case", "Control"),
+                                         c("Smoking +", "Smoking - ")),
+                         nrow = 2, byrow = TRUE),
+                  type = "exposure",
+                  bias_parms = c(0.94, 0.94, 0.97, 0.97))
+```
+
+The corrected odds ratio is now 5.02, with a widened 95% confidence interval
+(3.28 to 7.69).
+Note the bias despite the large sensitivity and specificity.
+
+You can even reproduce the contour plots in Chu et al. paper!
+
+```{r, warning=FALSE,fig.cap='Contour plot of point estimates of corrected odds ratio (OR)',fig.width=6,fig.height=4}
+dat <- expand.grid(Se = seq(0.582, 1, 0.02),
+                   Sp = seq(0.762, 1, 0.02))
+
+dat$OR_c <- apply(dat, 1,
+                  function(x) misclassification(matrix(c(126, 92, 71, 224),
+                                                       nrow = 2, byrow = TRUE),
+                                                type = "exposure",
+                                                bias_parms = c(x[1], x[1], x[2], x[2]))$adj.measures[2, 1])
+dat$OR_c <- round(dat$OR_c, 2)
+
+library(ggplot2)
+library(directlabels)
+p1 <- ggplot(dat, aes(x = Se, y = Sp, z = OR_c)) +
+    geom_contour(aes(colour = ..level..), breaks = c(4.32, 6.96, 8.56, 12.79, 23.41, 432.1)) +
+    annotate("text", x = 1, y = 1, label = "4.32", size = 3) +
+    scale_fill_gradient(limits = range(dat$OR_c), high = 'red', low = 'green') +
+    scale_x_continuous(breaks = seq(0.5, 1, .1), expand = c(0,0)) +
+    scale_y_continuous(breaks = seq(0.5, 1, .1), expand = c(0,0)) +
+    coord_fixed(ylim = c(0.5, 1.025), xlim = c(0.5, 1.025)) +
+    scale_colour_gradient(guide = 'none') +
+    xlab("Sensitivity") +
+    ylab("Specificity") +
+    ggtitle("Estimates of Corrected OR")
+direct.label(p1, list("far.from.others.borders", "calc.boxes", "enlarge.box", 
+                      hjust = 1, vjust = -.5, box.color = NA, cex = .6,
+                      fill = "transparent", "draw.rects"))
+```
+
+```{r, warning=FALSE,fig.cap='Contour plot of 95% lower confidence limit of corrected OR',warning=FALSE,fig.width=6,fig.height=4}
+dat$ORc_lci <- apply(dat, 1,
+                     function(x) misclassification(matrix(c(126, 92, 71, 224),
+                                                          nrow = 2, byrow = TRUE),
+                                                   type = "exposure",
+                                                   bias_parms = c(x[1], x[1], x[2], x[2]))$adj.measures[2, 2])
+dat$ORc_lci <- round(dat$ORc_lci, 2)
+
+p3 <- ggplot(dat, aes(x = Se, y = Sp, z = ORc_lci)) +
+    geom_contour(aes(colour = ..level..),
+                 breaks = c(4.05, 4.64, 5.68, 7.00, 9.60)) +
+    annotate("text", x = 1, y = 1, label = "2.96", size = 3) +
+    scale_fill_gradient(limits = range(dat$ORc_lci), high = 'red', low = 'green') +
+    scale_x_continuous(breaks = seq(0.5, 1, .1), expand = c(0,0)) +
+    scale_y_continuous(breaks = seq(0.5, 1, .1), expand = c(0,0)) +
+    coord_fixed(ylim = c(0.5, 1.025), xlim = c(0.5, 1.025)) +
+    scale_colour_gradient(guide = 'none') +
+    xlab("Sensitivity") +
+    ylab("Specificity") +
+    ggtitle("95% LCI of Corrected OR")
+direct.label(p3, list("far.from.others.borders", "calc.boxes", "enlarge.box", 
+                           hjust = 1, vjust = -.5, box.color = NA, cex = .6,
+                           fill = "transparent", "draw.rects"))
+```
+
+Covariate misclassification is available via the function `misclassification.cov`.
+For example, the paper by [Berry et
+al.](http://www.bmj.com/content/330/7495/815) looked if misclassification of the
+confounding variable _in vitro fertilization_ (IVF), a confounder, resulted
+wrongly on an association between increase folic acid and having twins.
+IVF increases the risk of twins, and women undergoing IVF might be more likely
+to take folic acid supplements, i.e. IVF would be a confounder between vitamins
+and twins.
+Data on IVF were not available and a proxy for it was used, _period of
+involuntary childlessness_.
+However, it was a poor proxy for IVF, with a sensitivity of 60% and a
+specificity of 95%.
+These bias parameters were assumed to be nondifferential.
+Here's the code with `episensr`:
+
+```{r cov_misclass}
+misclassification.cov(array(c(1319, 38054, 5641, 405546, 565, 3583,
+                              781, 21958, 754, 34471, 4860, 383588),
+                            dimnames = list(c("Twins+", "Twins-"),
+                                            c("Folic acid+", "Folic acid-"),
+                                            c("Total", "IVF+", "IVF-")),
+                            dim = c(2, 2, 3)),
+                      bias_parms = c(.6, .6, .95, .95))
+```
+
+While the non-adjusted analysis showed that women taking folic acid were 2.44
+times more likely to have twins, after correcting for the misclassification of
+IVF, risk ratio is now null (= 1.0).
+
 ## Uncontrolled Confounders
 
 We will use data from a cross-sectional study by
@@ -82,11 +219,12 @@ associating the confounder with the disease, and the prevalence of the
 confounder, religion, among the exposed and the unexposed.
 
 ```{r confounders}
-confounders(matrix(c(105, 85, 527, 93),
-                   dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
-                   nrow = 2, byrow = TRUE),
-            type = "RR",
-            bias_parms = c(.63, .8, .05))
+tyndall <- confounders(matrix(c(105, 85, 527, 93),
+                              dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+                              nrow = 2, byrow = TRUE),
+                       type = "RR",
+                       bias_parms = c(.63, .8, .05))
+tyndall
 ```
 
 The output gives the crude 2X2 table, the crude relative risk and confounder specific measures of
@@ -94,164 +232,16 @@ association between exposure and outcome, and the relationship adjusted for the
 unknown confounder, using a standardized morbidity ratio (SMR) or a
 Mantel-Haenszel (MH) estimate of the risk ratio.
 
-## Unmeasured confounding and E-value
+Additional information are also available, like the 2X2 tables by levels of the
+confounder.
 
-E-value, introduced by [VanderWeele et
-al.](https://annals.org/aim/article-abstract/2643434/sensitivity-analysis-observational-research-introducing-e-value),
-is the minimum strength of association on the risk ratio scale that an
-unmeasured confounder would need to have with both the exposure and the outcome,
-conditional on the measured covariates, to fully explain away a specific
-exposure-outcome association.
+```{r confounders_add}
+## Confounder +
+tyndall$cfder.data
 
-For example, a study by [Victoria et
-al.](https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(87)90902-0/fulltext)
-found an association between formula-fed babies compared to breast-fed and
-respiratory death, RR = 3.9. What would be the strength of association for an
-unmeasured confounder needed to explain away this association? The E-value
-express the magnitude of the confounder associations that can produce
-confounding bias equal to the observed exposure-outcome association. This E-value is:
-
-```{r e-value-1}
-confounders.evalue(est = 3.9, lower_ci = 1.8, upper_ci = 8.7, type = "RR")
+## Confounder -
+tyndall$nocfder.data
 ```
-
-The E-value is 7.26, i.e. an unmeasured confounder must have a risk ratio of at
-least 7.26 with both the exposure and the outcome, and above and beyond the
-measured confounders, to explain away the observed risk ratio of 3.9. A weaker
-unmeasured confounder could not explain this RR. E-value for the CI closest to
-the null (i.e. 1) can also be reported.
-
-Similarly, the minimum magnitude of both confounder associations to move away
-the observed association can be assessed for a non-null hypothesis. For example, the
-effect of anti-depressant use during pregnancy on infant cardiac defects was
-1.06 [0.93--1.22] ([Huybrechts et
-al.](https://www.nejm.org/doi/full/10.1056/NEJMoa1312828)). The confidence
-interval includes 1 so no further unmeasured confounding is needed to shift the
-confidence interval to include 1, i.e. the E-value = 1. But what would be the
-strength of a confounder needed to shift RR to 1.2?
-
-```{r e-value-2}
-confounders.evalue(est = 1.06, lower_ci = 0.93, upper_ci = 1.22,
-                   type = "RR", true_est = 1.2)
-```
-
-We need an unmeasured confounder with a RR of 1.5 each with the outcome, cardiac
-defect, and the exposure, anti-depressant use, to move the risk ratio to 1.2. A
-weaker confounder could not shift the observed RR.
-
-E-value can also be computed when the effect measure is:
-
-* OR or HR for rare outcomes (i.e. < 15%), rate ratio for count and continuous
-  outcomes: `RR`,
-* OR for common outcomes (i.e. > 15%): `ORc`,
-* HR for common outcomes (i.e. > 15%): `HRc`,
-* Difference in continuous outcomes, with standardized effect size *d* (mean of
-  the outcome variable divided by the SD of the outcome) and an SE for this
-  standardized effect size *s_d*, either with RR approximation or OR
-  approximation (meta-analysis): `diff_RR` and `diff_OR`.
-
-## Probabilistic Sensitivity Analysis for Exposure Misclassification
-
-We use a study on the effect of smoking during pregnancy on breast cancer risk
-by [Fink & Lash](http://www.ncbi.nlm.nih.gov/pubmed/12946045), where we assume
-nondifferential misclassification of the exposure, smoking, with probability
-density functions for sensitivities (Se) and specificities (Sp) among cases and
-noncases equal to uniform distributions with a minimum of 0.7 and a maximum of
-0.95 for sensitivities (0.9 and 0.99 respectively for specificities).
-We choose to correct for exposure misclassification with the argument `type =
-exposure`.
-We ask for 50000 replications (default is 1000).
-Don't be shy with the number of iterations, episensr is fast.
-
-The Se and Sp for cases (`seca`, `spca`) are given as a list with its first
-element referring to the type of distribution (choice between constant, uniform,
-triangular, trapezoidal, logit-logistic, and logit-normal) and the second
-element giving the distribution parameters (min and max for uniform
-distribution).
-By avoiding to provide information on the noncases (`seexp`, `spexp`), we are
-referring to a nondifferential misclassification.
-
-```{r probsens}
-set.seed(123)
-smoke.nd <- probsens(matrix(c(215, 1449, 668, 4296),
-                            dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")),
-                            nrow = 2, byrow = TRUE),
-                     type = "exposure",
-                     reps = 50000,
-                     seca.parms = list("uniform", c(.7, .95)),
-                     spca.parms = list("uniform", c(.9, .99)))
-smoke.nd
-```
-
-The output gives the 2X2 table, the observed measures of association, and the
-corrected measures of association.
-
-We saved the `probsens` analysis in a new object `smoke.nd`.
-We can see its elements with the function `str()`:
-
-```{r str}
-str(smoke.nd)
-```
-
-`smoke.nd` is a list of 4 elements where different information on the analysis
-done are saved.
-We have `smoke.nd$obs.data` where we have the observed 2X2 table,
-`smoke.nd$obs.measures` (the observed measures of association),
-`smoke.nd$adj.measures` (the adjusted measures of association), and
-`smoke.nd$sim.df`, a data frame with the simulated variables from each
-replication, like the Se and Sp, the 4 cells of the adjusted 2X2 table, and the
-adjusted measures.
-We can plot the Se prior distribution.
-
-```{r plot, fig.cap = "Sensibility prior distribution."}
-plot(smoke.nd, "seca")
-```
-
-There are combinations of Se, Sp, and disease (or exposure) prevalence that
-can produce negative cells in the corrected 2-by-2 table.
-For outcome   misclassification, this happen when the frequency of observed
-exposed cases is less than the total number of diseased individuals multiplied
-by the false-positive proportion.
-Negative cell counts occur when the false-positive proportion is greater than
-the proportion of cases that are exposed.
-When providing values for Se and Sp that are more or less like random
-classification (i.e. Se ~50% and Sp ~50%), you can obtain negative cell values.
-
-## Probabilistic Sensitivity Analysis for Uncontrolled Confounding
-
-Let's illustrate this function with this example from [Modern Epidemiology by
-Rothman, Greenland &
-Lash](https://shop.lww.com/Modern-Epidemiology/p/9781451190052), where the
-association between occupational resins exposure and lung cancer mortality is
-studied, together with the presence of an unmeasured potential confounder,
-smoking ([Greenland et al., 1994](https://www.ncbi.nlm.nih.gov/pubmed/7927843)).
-
-|          | Resins exposed | Resins unexposed |
-|---------:|:--------------:|:----------------:|
-|    Cases | 45             | 94               |
-| Controls | 257            | 945              |
-
-Prior probability distributions are given to each bias parameters.
-Prevalences of smoking in those exposed to resins, and of smoking in those
-unexposed to resins receive prior distributions that are uniform between 0.40
-and 0.70. 
-Prior distribution for the odds ratio associating smoking with lung cancer
-mortality is log-normal with 95% limits of 5 and 15.
-The mean of this distribution is [ln(15) + ln(5)] / 2 = 2.159, and its standard
-deviation is [ln(15) - ln(5)] / 3.92 = 0.28.
-
-```{r probsens-conf}
-set.seed(123)
-probsens.conf(matrix(c(45, 94, 257, 945),
-                     dimnames = list(c("Cases+", "Cases-"), c("Res+", "Res-")),
-                     nrow = 2, byrow = TRUE),
-              reps = 50000,
-              prev.exp = list("uniform", c(.4, .7)),
-              prev.nexp = list("uniform", c(.4, .7)),
-              risk = list("log-normal", c(2.159, .28)))
-```
-
-The median adjusted OR is 1.84 [1.21,2.81].
 
 ## Bootstrapping
 
@@ -291,167 +281,3 @@ dotted lines.
 plot(misclass_boot, "rr")
 ```
 
-## Multiple bias modeling
-
-Epidemiologic studies can suffer from more than one bias.
-Bias functions in `episensr` can be applied sequentially to quantify bias
-resulting from multiple biases.
-
-Following the example in [Lash et
-al.](https://www.springer.com/us/book/9780387879604), we can use the study by [Chien et
-al.](https://link.springer.com/article/10.1007%2Fs10549-005-9056-0).
-It is a case-control study looking at the association between antidepressant use and the
-occurrence of breast cancer. The observed OR was 1.2 [0.9--1.6].
-
-```{r chien}
-chien <- matrix(c(118, 832, 103, 884),
-                dimnames = list(c("BC+", "BC-"), c("AD+", "AD-")),
-                nrow = 2, byrow = TRUE)
-```
-
-```{r chien-tab, echo=FALSE}
-knitr::kable(chien)
-```
-
-Records on medication use differed between participants, from pharmacy records
-and self-reported use, leading to misclassification:
-
-```{r}
-chien %>%
-    misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97))
-```
-
-Controls and cases also enrolled into the study at different rates.
-We can combine the misclassification bias with a selection bias thanks to the
-function `multiple.bias`:
-
-```{r}
-chien %>% 
-    misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) %>%
-    multiple.bias(., bias_function = "selection", bias_parms = c(.73, .61, .82, .76))
-```
-
-The association between antidepressant use and breast cancer was adjusted for
-various confounders (race/ethnicity, income, etc.).
-None of these confounders were found to change the association by more than 10%.
-However, for illustration, we can add the effect of a potential confounder (e.g.
-physical activity):
-
-```{r}
-chien %>%
-    misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) %>%
-    multiple.bias(., bias_function = "selection",
-                  bias_parms = c(.73, .61, .82, .76)) %>%
-    multiple.bias(., bias_function = "confounders",
-                  type = "OR", bias_parms = c(.92, .3, .44))
-```
-
-We can do the same in a probabilistic framework:
-
-* Misclassification bias
-
-```{r}
-mod1 <- chien %>%
-    probsens(., type = "exposure", reps = 100000,
-             seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
-             seexp.parms = list("trapezoidal", c(.4, .48, .58, .63)),
-             spca.parms = list("trapezoidal", c(.95, .97, .99, 1)),
-             spexp.parms = list("trapezoidal", c(.96, .98, .99, 1)),
-             corr.se = .8, corr.sp = .8)
-mod1
-```
-```{r plot2, message=FALSE}
-plot(mod1, "or")
-```
-
-* Selection bias
-
-```{r}
-mod2 <- chien %>%
-    probsens.sel(., reps = 100000,
-                 case.exp = list("logit-normal", c(-1.1, 0, 0, 1)),
-                 case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
-                 ncase.exp = list("logit-normal", c(-1.2, 0, 0, 1)),
-                 ncase.nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1)))
-mod2
-```
-
-```{r plot3, message=FALSE}
-plot(mod2, "or")
-```
-
-* Confounding
-
-```{r}
-mod3 <- chien %>%
-    probsens.conf(., reps = 100000,
-                  prev.exp = list("logit-normal", c(-0.75, 0.8, 0, 1)),
-                  prev.nexp = list("logit-normal", c(-0.4, 0.8, 0, 1)),
-                  risk = list("trapezoidal", c(.2, .58, 1.01, 1.24)))
-mod3
-```
-
-```{r plot4, message=FALSE, warning=FALSE}
-plot(mod3, "or") + coord_cartesian(xlim = c(0, 3))
-ggplot(mod3$sim.df, aes(x = corr.OR)) + 
-    geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
-    geom_density(alpha = .2, fill = "#FF6666") +
-    labs(title = "3. Confounding bias", x = "OR without random error incorporated") +
-    coord_cartesian(xlim = c(0, 3))
-```
-
-* Misclassification then selection
-
-```{r}
-chien %>%
-    probsens(., type = "exposure", reps = 100000,
-             seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
-             seexp.parms = list("trapezoidal", c(.4, .48, .58, .63)),
-             spca.parms = list("trapezoidal", c(.95, .97, .99, 1)),
-             spexp.parms = list("trapezoidal", c(.96, .98, .99, 1)),
-             corr.se = .8, corr.sp = .8) %>%
-    multiple.bias(., bias_function = "probsens.sel",
-                  case.exp = list("logit-normal", c(-1.1, 0, 0, 1)),
-                  case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
-                  ncase.exp = list("logit-normal", c(-1.2, 0, 0, 1)),
-                  ncase.nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1)))
-```
-
-* Misclassification, selection, and confounding
-
-```{r}
-mod6 <- chien %>%
-    probsens(., type = "exposure", reps = 100000,
-             seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
-             seexp.parms = list("trapezoidal", c(.4, .48, .58, .63)),
-             spca.parms = list("trapezoidal", c(.95, .97, .99, 1)),
-             spexp.parms = list("trapezoidal", c(.96, .98, .99, 1)),
-             corr.se = .8, corr.sp = .8) %>%
-    multiple.bias(., bias_function = "probsens.sel",
-                  case.exp = list("logit-normal", c(-1.1, 0, 0, 1)),
-                  case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
-                  ncase.exp = list("logit-normal", c(-1.2, 0, 0, 1)),
-                  ncase.nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1))) %>% 
-    multiple.bias(., bias_function = "probsens.conf",
-                  prev.exp = list("logit-normal", c(-0.75, 0.8, 0, 1)),
-                  prev.nexp = list("logit-normal", c(-0.4, 0.8, 0, 1)),
-                  risk = list("trapezoidal", c(.2, .58, 1.01, 1.24)))
-mod6
-```
-
-```{r plot5, message=FALSE, warning=FALSE}
-plot(mod6, "or")
-ggplot(mod6$sim.df, aes(x = corr.OR)) + 
-    geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
-    geom_density(alpha = .2, fill = "#FF6666") +
-    labs(title = "6. Misclassification, then\nselection, then confounding",
-         x = "OR without random error incorporated") +
-    coord_cartesian(xlim = c(0, 3))
-plot(mod6, "or_tot")
-ggplot(mod6$sim.df, aes(x = tot.OR)) + 
-    geom_histogram(aes(y = ..density..), colour = "black", fill = "white") +
-    geom_density(alpha = .2, fill = "#FF6666") +
-    labs(title = "6. Misclassification, then\nselection, then confounding",
-         x = "OR with random error incorporated") +
-    coord_cartesian(xlim = c(0, 3))
-```

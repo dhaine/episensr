@@ -30,3 +30,14 @@ logitnorm.dstr <- function(sesp) {
     p <- sesp[[4]] + (sesp[[5]] - sesp[[4]]) * exp(w) / (1 + exp(w))
     return(p)
 }
+
+# Find closest value
+#
+# @param x First value
+# @param y Reference
+# @keywords internal
+closest <- function(x, y) {
+    x[which(abs(x - y) == min(abs(x - y)))]
+}
+
+
