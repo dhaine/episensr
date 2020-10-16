@@ -239,10 +239,12 @@ probsens.conf <- function(case,
     lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
     uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
 
-    draws <- matrix(NA, nrow = reps, ncol = 14)
+    draws <- matrix(NA, nrow = reps, ncol = 16)
     colnames(draws) <- c("p1", "p0", "RR.cd",
                          "A_11",
                          "B_11",
+                         "C_11",
+                         "D_11",
                          "corr.RR", 
                          "corr.OR", 
                          "reps",
@@ -405,77 +407,89 @@ probsens.conf <- function(case,
         draws[, 3] <- do.call(rlnorm, as.list(rr.cd))
     }
     
-    draws[, 8] <- runif(reps)
+    draws[, 10] <- runif(reps)
 
     draws[, 4] <- (draws[, 3] * ((a + c) * draws[, 1]) * a) /
         (draws[, 3] * ((a + c) * draws[, 1]) + (a + c) - ((a + c) * draws[, 1]))  # A_11
     draws[, 5] <- (draws[, 3] * b * (draws[, 2] * (b + d))) /
-        (draws[, 3] * (draws[, 2] * (b + d)) + (b + d) - (draws[, 2] * (b + d)))  # B_01
-    draws[, 6] <- a / ((((a + c) * draws[, 1]) * draws[, 5] / ((b + d) * draws[, 2])) +
+        (draws[, 3] * (draws[, 2] * (b + d)) + (b + d) - (draws[, 2] * (b + d)))  # B_11
+    draws[, 6] <- ((a + c) * draws[, 1]) - draws[, 4]  # C_11
+    draws[, 7] <- ((b + d) * draws[, 2]) - draws[, 5]  # D_11
+    draws[, 8] <- a / ((((a + c) * draws[, 1]) * draws[, 5] / ((b + d) * draws[, 2])) +
                        (((a + c) - ((a + c) * draws[, 1])) * (b - draws[, 5]) /
-                        ((b +d) - ((b + d) * draws[, 2]))))  # RR.SMR.rr
-    draws[, 7] <- a / (((((a + c) * draws[, 1]) - draws[, 4]) * draws[, 5] /
-                        (((b + d) * draws[, 2]) - draws[, 5])) +
-                       ((c - (((a + c) * draws[, 1]) - draws[, 4])) * (b - draws[, 5]) /
-                        (d - (((b + d) * draws[, 2]) - draws[, 5]))))  # OR.SMR.or
-    draws[, 6] <- ifelse(draws[, 4] < 0 |
-                               draws[, 5] < 0, NA, draws[, 6])
-    draws[, 7] <- ifelse(draws[, 4] < 0 |
-                               draws[, 5] < 0, NA, draws[, 7])
-    if(all(is.na(draws[, 6])) | all(is.na(draws[, 7]))) {
+                        ((b + d) - ((b + d) * draws[, 2]))))  # RR.SMR.rr
+    draws[, 9] <- a / ((draws[, 6] * draws[, 5] / draws[, 7]) +
+                       ((c - draws[, 6]) * (b - draws[, 5]) / (d - draws[, 7])))  # OR.SMR.or
+    draws[, 8] <- ifelse(draws[, 4] < 0 |
+                         draws[, 5] < 0 |
+                         draws[, 6] < 0 |
+                         draws[, 7] < 0 |
+                         (a - draws[, 4]) < 0 |
+                         (b - draws[, 5]) < 0 |
+                         (c- draws[, 6]) < 0 |
+                         (d - draws[, 7]) < 0, NA, draws[, 8])
+    draws[, 9] <- ifelse(draws[, 4] < 0 |
+                         draws[, 5] < 0 |
+                         draws[, 6] < 0 |
+                         draws[, 7] < 0 |
+                         (a - draws[, 4]) < 0 |
+                         (b - draws[, 5]) < 0 |
+                         (c- draws[, 6]) < 0 |
+                         (d - draws[, 7]) < 0, NA, draws[, 9])
+    if(all(is.na(draws[, 8])) | all(is.na(draws[, 9]))) {
         warning('Prior Prevalence distributions lead to all negative adjusted counts.')
         neg_warn <- "Prior Se/Sp distributions lead to all negative adjusted counts."
     } else {
             neg_warn <- NULL
         }
     if (discard) {
-        if(sum(is.na(draws[, 6])) > 0) {
+        if(sum(is.na(draws[, 8])) > 0) {
             message('Chosen prior Prevalence distributions lead to ',
-                    sum(is.na(draws[, 6])),
+                    sum(is.na(draws[, 8])),
                     ' negative adjusted counts which were discarded.')
                 discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
-                                        sum(is.na(draws[, 9])),
+                                        sum(is.na(draws[, 8])),
                                         ' negative adjusted counts which were discarded.'))
         } else discard_mess <- NULL
     }
     else {
-        if(sum(is.na(draws[, 6])) > 0) {
+        if(sum(is.na(draws[, 8])) > 0) {
             message('Chosen prior Prevalence distributions lead to ',
-                    sum(is.na(draws[, 6])),
+                    sum(is.na(draws[, 8])),
                     ' negative adjusted counts which were set to zero.')
                 discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
-                                        sum(is.na(draws[, 9])),
+                                        sum(is.na(draws[, 8])),
                                         ' negative adjusted counts which were set to zero.'))
-            draws[, 6] <- ifelse(is.na(draws[, 6]), 0, draws[, 6])
-            draws[, 7] <- ifelse(is.na(draws[, 7]), 0, draws[, 7])
+            draws[, 8] <- ifelse(is.na(draws[, 8]), 0, draws[, 8])
+            draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
         } else discard_mess <- NULL
     }
 
-    draws[, 9] <- exp(log(draws[, 6]) -
-                               qnorm(draws[, 8]) *
+    draws[, 11] <- exp(log(draws[, 8]) -
+                               qnorm(draws[, 10]) *
                                          ((log(uci.obs.rr) - log(lci.obs.rr)) /
                                               (qnorm(.975) * 2)))
-    draws[, 10] <- exp(log(draws[, 7]) -
-                               qnorm(draws[, 8]) *
+    draws[, 12] <- exp(log(draws[, 9]) -
+                               qnorm(draws[, 10]) *
                                          ((log(uci.obs.or) - log(lci.obs.or)) /
                                           (qnorm(.975) * 2)))
-    draws[, 11] <- a
-    draws[, 12] <- b
-    draws[, 13] <- c
-    draws[, 14] <- d
+    draws[, 13] <- a
+    draws[, 14] <- b
+    draws[, 15] <- c
+    draws[, 16] <- d
 
-    corr.RR <- c(median(draws[, 6], na.rm = TRUE),
-                 quantile(draws[, 6], probs = .025, na.rm = TRUE),
-                 quantile(draws[, 6], probs = .975, na.rm = TRUE))
-    corr.OR <- c(median(draws[, 7], na.rm = TRUE),
-                 quantile(draws[, 7], probs = .025, na.rm = TRUE),
-                 quantile(draws[, 7], probs = .975, na.rm = TRUE))
-    tot.RR <- c(median(draws[, 9], na.rm = TRUE),
-                quantile(draws[, 9], probs = .025, na.rm = TRUE),
-                quantile(draws[, 9], probs = .975, na.rm = TRUE))
-    tot.OR <- c(median(draws[, 10], na.rm = TRUE),
-                quantile(draws[, 10], probs = .025, na.rm = TRUE),
-                quantile(draws[, 10], probs = .975, na.rm = TRUE))
+    corr.RR <- c(median(draws[, 8], na.rm = TRUE),
+                 quantile(draws[, 8], probs = .025, na.rm = TRUE),
+                 quantile(draws[, 8], probs = .975, na.rm = TRUE))
+    corr.OR <- c(median(draws[, 9], na.rm = TRUE),
+                 quantile(draws[, 9], probs = .025, na.rm = TRUE),
+                 quantile(draws[, 9], probs = .975, na.rm = TRUE))
+    tot.RR <- c(median(draws[, 11], na.rm = TRUE),
+                quantile(draws[, 11], probs = .025, na.rm = TRUE),
+                quantile(draws[, 11], probs = .975, na.rm = TRUE))
+    tot.OR <- c(median(draws[, 12], na.rm = TRUE),
+                quantile(draws[, 12], probs = .025, na.rm = TRUE),
+                quantile(draws[, 12], probs = .975, na.rm = TRUE))
 
     if(!inherits(case, "episensr.probsens")){
         tab <- tab
@@ -503,7 +517,7 @@ probsens.conf <- function(case,
     res <- list(obs.data = tab,
                 obs.measures = rmat, 
                 adj.measures = rmatc, 
-                sim.df = as.data.frame(draws[, -8]),
+                sim.df = as.data.frame(draws[, -10]),
                 reps = reps,
                 fun = "probsens.conf",
                 warnings = neg_warn,

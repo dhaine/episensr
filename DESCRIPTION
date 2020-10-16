@@ -1,7 +1,7 @@
 Package: episensr
 Type: Package
 Title: Basic Sensitivity Analysis of Epidemiological Results
-Version: 0.9.6
+Version: 0.9.999
 Imports:
     triangle,
     trapezoid,
