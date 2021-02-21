@@ -25,7 +25,7 @@ Description: Basic sensitivity analysis of the observed relative risks adjusting
     "Applying Quantitative Bias Analysis to Epidemiologic Data",
     ('Springer', 2009).
 Depends:
-    R (>= 4.0.0),
+    R (>= 3.6.0),
     ggplot2 (>= 3.3.3)
 License: GPL-2
 Suggests:
