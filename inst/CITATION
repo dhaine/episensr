@@ -1,0 +1,16 @@
+citHeader("To cite episensr in publications use:")
+
+citEntry(
+  entry    = "Misc",
+  title    = "The episensr package: basic sensitivity analysis of epidemiological results",
+  author   = "Denis Haine",
+  year     = "2021",
+  note     = "R package version 1.0.0",
+  doi      = "XX.XXXX/zenodo.XXXXXXXX",
+  url      = "https://dhaine.github.io/episensr/",
+  textVersion = paste("Haine, Denis (2021).",
+                      "The episensr package: basic sensitivity analysis of epidemiological results",
+                      "R package version 1.0.0",
+                      "https://doi.org/XX.XXXXX/zenodo.XXXXX"
+                      )
+)
