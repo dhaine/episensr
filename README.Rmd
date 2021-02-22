@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 [![Build Status](https://travis-ci.org/dhaine/episensr.svg?branch=master)](https://travis-ci.org/dhaine/episensr)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/episensr)](https://cran.r-project.org/package=episensr)
-[![DOI](https://zenodo.org/badge/DOI/XX.XXXX/zenodo.XXXXXXXX.svg)](https://doi.org/XX.XXXXX/zenodo.XXXXXXXXX)
+[![DOI](https://zenodo.org/badge/33018836.svg)](https://doi.org/10.5281/zenodo.4554554)
 [![Codecov test
 coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](https://codecov.io/gh/dhaine/episensr?branch=master)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)

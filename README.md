@@ -3,9 +3,12 @@
 
 # episensr <img src="man/figures/logo.png" align="right" width=120 />
 
+<!-- badges: start -->
+
 [![Build
 Status](https://travis-ci.org/dhaine/episensr.svg?branch=master)](https://travis-ci.org/dhaine/episensr)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/episensr)](https://cran.r-project.org/package=episensr)
+[![DOI](https://zenodo.org/badge/33018836.svg)](https://doi.org/10.5281/zenodo.4554554)
 [![Codecov test
 coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](https://codecov.io/gh/dhaine/episensr?branch=master)
 [![Project Status: Active – The project has reached a stable, usable
@@ -14,6 +17,8 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 [![Lifecycle:maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 [![Total CRAN
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/episensr)](https://cran.r-project.org/package=episensr)
+
+<!-- badges: end -->
 
 The R package **episensr** allows to do basic sensitivity analysis of
 epidemiological results as described in **Applying Quantitative Bias
@@ -27,12 +32,37 @@ function is available in Stata
 
 This package is free and open source software, licensed under GPL2.
 
+## Citation
+
+To cite **episensr**, please use:
+
+``` r
+citation("episensr")
+#> 
+#> To cite episensr in publications use:
+#> 
+#>   Haine, Denis (2021). The episensr package: basic sensitivity analysis
+#>   of epidemiological results. R package version 1.0.0.
+#>   https://dhaine.github.io/episensr/. doi: 10.5281/zenodo.4554554.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Misc{,
+#>     title = {The episensr package: basic sensitivity analysis of epidemiological results},
+#>     author = {Denis Haine},
+#>     year = {2021},
+#>     note = {R package version 1.0.0},
+#>     doi = {10.5281/zenodo.4554554},
+#>     url = {https://dhaine.github.io/episensr/},
+#>   }
+```
+
 ## Example
 
 We will use a case-control study by [Stang et
 al.](http://www.ncbi.nlm.nih.gov/pubmed/16523014) on the relation
 between mobile phone use and uveal melanoma. The observed odds ratio for
-the association between regular mobile phone use vs. no mobile phone use
+the association between regular mobile phone use vs. no mobile phone use
 with uveal melanoma incidence is 0.71 \[95% CI 0.51-0.97\]. But there
 was a substantial difference in participation rates between cases and
 controls (94% vs 55%, respectively) and so selection bias could have an
@@ -48,7 +78,6 @@ We use the function `selection` as shown below.
 
 ``` r
 library(episensr)
-#> Loading required package: ggplot2
 
 selection(matrix(c(136, 107, 297, 165),
                  dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
