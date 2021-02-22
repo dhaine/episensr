@@ -87,7 +87,7 @@ We have `smoke.nd$obs.data` where we have the observed 2X2 table,
 replication, like the Se and Sp, the 4 cells of the adjusted 2X2 table, and the
 adjusted measures.
 `episensr` offers some plot functions to allow plotting directly these saved
-infromation, for example the Se prior distribution:
+information, for example the Se prior distribution:
 
 ```{r plot, fig.cap = "Sensibility prior distribution.",fig.width=6,fig.height=4}
 plot(smoke.nd, "seca")

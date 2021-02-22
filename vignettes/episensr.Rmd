@@ -26,10 +26,6 @@ This package implements the various bias analyses from that book, which are also
 spreadsheet or a SAS macro, as well as some additional approaches.
 This vignette provides some examples on how to use the package.
 
-(_Note: A Shiny app is available for some functions, at
-<https://dhaine.shinyapps.io/apisensr/>._, using the R package `apisensr` which
-is based on `episensr`.)
-
 Functions available in `episensr` are:
 
 * `selection`: Selection bias
