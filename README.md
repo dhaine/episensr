@@ -26,7 +26,7 @@ Analysis to Epidemiological Data** by Timothy L. Lash, Matthew P. Fox,
 and Aliza K. Fink (ISBN: 978-0-387-87960-4,
 [bias.analysis](https://sites.google.com/site/biasanalysis/)). A similar
 function is available in Stata
-([episens](http://ideas.repec.org/c/boc/bocode/s456792.html)).
+([episens](https://ideas.repec.org/c/boc/bocode/s456792.html)).
 
 ## License
 

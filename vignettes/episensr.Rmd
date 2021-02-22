@@ -96,8 +96,8 @@ Confidence intervals for corrected association due to exposure misclassification
 are also directly available, or the estimates can also be bootstrapped (see below).
 The confidence intervals from the variance of the corrected odds ratio estimator in the
 `misclassification` function are computed as in [Greenland et
-al.](http://onlinelibrary.wiley.com/doi/10.1002/sim.4780070704/full#abstract) and [Chu et
-al.](http://www.sciencedirect.com/science/article/pii/S1047279706000688).
+al.]( https://doi.org/10.1002/sim.4780070704) and [Chu et
+al.](https://doi.org/10.1016/j.annepidem.2006.04.001).
 Using the example in Chu et al. of a case-control study of cigarette smoking and
 invasive pneumococcal disease, the unadjusted odds ratio is 4.32, with a 95%
 confidence interval of 2.96 to 6.31.
@@ -175,8 +175,8 @@ direct.label(p3, list("far.from.others.borders", "calc.boxes", "enlarge.box",
 
 Covariate misclassification is available via the function `misclassification.cov`.
 For example, the paper by [Berry et
-al.](http://www.bmj.com/content/330/7495/815) looked if misclassification of the
-confounding variable _in vitro fertilization_ (IVF), a confounder, resulted
+al.](https://doi.org/10.1136/bmj.38369.437789.82) looked if misclassification of
+the confounding variable _in vitro fertilization_ (IVF), a confounder, resulted
 wrongly on an association between increase folic acid and having twins.
 IVF increases the risk of twins, and women undergoing IVF might be more likely
 to take folic acid supplements, i.e. IVF would be a confounder between vitamins
