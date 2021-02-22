@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">episensr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.999</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -81,7 +81,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/dhaine/episensr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -101,7 +101,7 @@
       <h1 data-toc-skip>Additional Sensitivity Analyses</h1>
                         <h4 class="author">Denis Haine</h4>
             
-            <h4 class="date">2020-10-16</h4>
+            <h4 class="date">2021-02-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dhaine/episensr/blob/master/vignettes/d_other_sens.Rmd"><code>vignettes/d_other_sens.Rmd</code></a></small>
       <div class="hidden name"><code>d_other_sens.Rmd</code></div>
@@ -126,21 +126,21 @@
 <p>Even after controlling for confounding (in the design or analysis of a study), some residual confounding can still be present, because:</p>
 <ol style="list-style-type: decimal">
 <li>some confounding factors were not taken into account (not looked at, not adjusted for, or no data collected about them),</li>
-<li>you only losely took into account that confounding (still presence of differences between groups after control by matching for example, or you lost precision on a confounding variable e.g. by categorizing a continuous variable),</li>
+<li>you only loosely took into account that confounding (still presence of differences between groups after control by matching for example, or you lost precision on a confounding variable e.g. by categorizing a continuous variable),</li>
 <li>subjects were not correctly classified to confounding variables.</li>
 </ol>
 <div id="simple-sensitivity-analyses-in-the-absence-of-external-information-array-approach" class="section level3">
 <h3 class="hasAnchor">
 <a href="#simple-sensitivity-analyses-in-the-absence-of-external-information-array-approach" class="anchor"></a>Simple Sensitivity Analyses in the Absence of External Information: Array Approach</h3>
-<p>The <em>array approach</em> by Schneeweis provides a corrected RR based on the apparent, confounded, RR, the prevalence of the confounding factor among the exposed and unexposed, and the association between the confounder and the outcome.</p>
+<p>The <em>array approach</em> by Schneeweiss provides a corrected RR based on the apparent, confounded, RR, the prevalence of the confounding factor among the exposed and unexposed, and the association between the confounder and the outcome.</p>
 <p>Schneeweiss provides the (made-up) example of the association between TNF<span class="math inline">\(_\alpha\)</span> blocking agents and Non-Hodgkin (NH) Lymphoma in rheumatoid arthritis (RA) patients. Assuming an observed relative risk of 2, that 50% of RA patients have a more progressive immunologic disease, and that more progressive disease is more likely to lead to NH lymphoma:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">episensr</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">episensr</span><span class="op">)</span></code></pre></div>
 <pre><code>## Loading required package: ggplot2</code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="../reference/confounders.array.html">confounders.array</a></span><span class="op">(</span>crude.risk <span class="op">=</span> <span class="fl">2</span>,
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/confounders.array.html">confounders.array</a></span><span class="op">(</span>crude.risk <span class="op">=</span> <span class="fl">2</span>,
                   type <span class="op">=</span> <span class="st">"binary"</span>,
-                  bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2.5</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></pre></div>
+                  bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2.5</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## Adjusted RR: 3.04 
 ## 
@@ -153,19 +153,19 @@
 ##   p(Confounder+|Exposure+): 0.1 
 ##   p(Confounder+|Exposure-): 0.5</code></pre>
 <p>The function takes values of the observed risk (2.0); if the covariates are binary, continuous, or on a risk difference scale; the association between confounder and outcome (let’s say here 2.5); the prevalence of the confounder among the exposed (let’s say 0.1); and the prevalence of the confounder among the unexposed. The adjusted RR is 3.04.</p>
-<p>However, it is more interesting if we could keep some factors constant in our analysis (the crude risk of 2.0, the prevalence among the unexposed, 0.5), and vary the imbalance of the hypothetical unoberved confounder (association confounder-outcome from 1 to 5.5; prevalence among exposed, from 0 to 1):</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>RR_CD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5.5</span>, <span class="fl">0.5</span><span class="op">)</span>, P_C1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>
+<p>However, it is more interesting if we could keep some factors constant in our analysis (the crude risk of 2.0, the prevalence among the unexposed, 0.5), and vary the imbalance of the hypothetical unobserved confounder (association confounder-outcome from 1 to 5.5; prevalence among exposed, from 0 to 1):</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>RR_CD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5.5</span>, <span class="fl">0.5</span><span class="op">)</span>, P_C1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>
 <span class="va">dat</span><span class="op">$</span><span class="va">RR_adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
                     <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.array.html">confounders.array</a></span><span class="op">(</span><span class="fl">2</span>,
                                                   type <span class="op">=</span> <span class="st">"binary"</span>,
                                                   bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
                                                                  <span class="va">x</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,
                                                                  <span class="fl">0.5</span><span class="op">)</span>,
-                                                  print <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></pre></div>
+                                                  print <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></code></pre></div>
 <p>Then adding fun with 3-d plots!</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://lattice.r-forge.r-project.org/">lattice</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://lattice.r-forge.r-project.org/">lattice</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">grid</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/cloud.html">wireframe</a></span><span class="op">(</span><span class="va">RR_adj</span> <span class="op">~</span> <span class="va">RR_CD</span> <span class="op">*</span> <span class="va">P_C1</span>,
           data <span class="op">=</span> <span class="va">dat</span>,
@@ -186,7 +186,7 @@
               <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/panel.cloud.html">panel.wireframe</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
               <span class="fu"><a href="https://rdrr.io/r/grid/grid.text.html">grid.text</a></span><span class="op">(</span><span class="st">"Observed RR = 1\nPrevalence confounder\namong unexposed = 0.5"</span>,
                         <span class="fl">0.125</span>, <span class="fl">0.175</span>, default.units <span class="op">=</span> <span class="st">"native"</span><span class="op">)</span>
-          <span class="op">}</span><span class="op">)</span></pre></div>
+          <span class="op">}</span><span class="op">)</span></code></pre></div>
 <p><img src="d_other_sens_files/figure-html/array_3d-1.png" width="768"></p>
 </div>
 <div id="using-additional-information-external-adjustment" class="section level3">
@@ -196,8 +196,8 @@
 <p>We can use the example of Schneeweiss regarding the association between selective COX-2 inhibitor use and the incidence of MI.</p>
 <p>Say we assume an exposure-disease association of 1 (null hypothesis). The more the truth is away from the null, the more bias in our estimate. However the less relevant unmeasured confounders become.</p>
 <p>Let’s try:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span>RR <span class="op">=</span> <span class="fl">1</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1.6</span>, <span class="fl">0.1</span>, <span class="fl">0.51</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span>RR <span class="op">=</span> <span class="fl">1</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1.6</span>, <span class="fl">0.1</span>, <span class="fl">0.51</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ##     Crude RR: 0.96 
 ## 
@@ -211,24 +211,24 @@
 ##                    p(Confounder): 0.1 
 ##                      p(Exposure): 0.51</code></pre>
 <p>Same here, the interest lies in using the function over a range of values, while keeping some other constant. And we can extend to several confounders:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>RR_CD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>RR_CD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>
 <span class="va">dat</span><span class="op">$</span><span class="va">nsaid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
-                   <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>, 
+                   <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,
                                                bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>, <span class="fl">0.4</span><span class="op">)</span>,
                                                print <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span><span class="op">)</span>
 <span class="va">dat</span><span class="op">$</span><span class="va">non_user</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
-                      <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>, 
+                      <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,
                                                   bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1.03</span>, <span class="fl">0.09</span>,
                                                                  <span class="fl">0.12</span><span class="op">)</span>,
                                                   print <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span><span class="op">)</span>
 <span class="va">dat</span><span class="op">$</span><span class="va">naproxen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
-                      <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>, 
+                      <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,
                                                   bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1.15</span>, <span class="fl">0.09</span>,
                                                                  <span class="fl">0.79</span><span class="op">)</span>,
                                                print <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span><span class="op">)</span>
 <span class="va">dat</span><span class="op">$</span><span class="va">rof_napro</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
-                       <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>, 
+                       <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,
                                                bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1.6</span>, <span class="fl">0.1</span>, <span class="fl">0.51</span><span class="op">)</span>,
                                                print <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
@@ -247,17 +247,17 @@
     <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Bias as a function of misspecification of the "</span>, <span class="va">RR</span><span class="op">[</span><span class="va">CD</span><span class="op">]</span>, <span class="st">" from the literature"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.85</span>, <span class="fl">.3</span><span class="op">)</span>,
           legend.title <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Literature estimate "</span>, <span class="va">RR</span><span class="op">[</span><span class="va">CD</span><span class="op">]</span>, <span class="st">" = 0.7"</span><span class="op">)</span><span class="op">)</span>, x <span class="op">=</span> <span class="fl">0.6</span>, y <span class="op">=</span> <span class="op">-</span><span class="fl">3.75</span><span class="op">)</span></pre></div>
+    <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Literature estimate "</span>, <span class="va">RR</span><span class="op">[</span><span class="va">CD</span><span class="op">]</span>, <span class="st">" = 0.7"</span><span class="op">)</span><span class="op">)</span>, x <span class="op">=</span> <span class="fl">0.6</span>, y <span class="op">=</span> <span class="op">-</span><span class="fl">3.75</span><span class="op">)</span></code></pre></div>
 <p><img src="d_other_sens_files/figure-html/conf_ext_apply-1.png" width="768"></p>
 </div>
 </div>
 <div id="unmeasured-confounding-and-e-value" class="section level2">
 <h2 class="hasAnchor">
 <a href="#unmeasured-confounding-and-e-value" class="anchor"></a>Unmeasured Confounding and E-value</h2>
-<p>E-value, introduced by <a href="https://annals.org/aim/article-abstract/2643434/sensitivity-analysis-observational-research-introducing-e-value">VanderWeele et al.</a>, is the minimum strength of association on the risk ratio scale that an unmeasured confounder would need to have with both the exposure and the outcome, conditional on the measured covariates, to fully explain away a specific exposure-outcome association.</p>
+<p>E-value, introduced by <a href="https://doi.org/10.7326/M16-2607">VanderWeele et al.</a>, is the minimum strength of association on the risk ratio scale that an unmeasured confounder would need to have with both the exposure and the outcome, conditional on the measured covariates, to fully explain away a specific exposure-outcome association.</p>
 <p>For example, a study by <a href="https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(87)90902-0/fulltext">Victoria et al.</a> found an association between formula-fed babies compared to breast-fed and respiratory death, RR = 3.9. What would be the strength of association for an unmeasured confounder needed to explain away this association? The E-value express the magnitude of the confounder associations that can produce confounding bias equal to the observed exposure-outcome association. This E-value is:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="fu"><a href="../reference/confounders.evalue.html">confounders.evalue</a></span><span class="op">(</span>est <span class="op">=</span> <span class="fl">3.9</span>, lower_ci <span class="op">=</span> <span class="fl">1.8</span>, upper_ci <span class="op">=</span> <span class="fl">8.7</span>, type <span class="op">=</span> <span class="st">"RR"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/confounders.evalue.html">confounders.evalue</a></span><span class="op">(</span>est <span class="op">=</span> <span class="fl">3.9</span>, lower_ci <span class="op">=</span> <span class="fl">1.8</span>, upper_ci <span class="op">=</span> <span class="fl">8.7</span>, type <span class="op">=</span> <span class="st">"RR"</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## --E-value--
 ##          Point estimate   CI closest to H_0
@@ -265,9 +265,9 @@
 ## E-value:       7.263034            3.000000</code></pre>
 <p>The E-value is 7.26, i.e. an unmeasured confounder must have a risk ratio of at least 7.26 with both the exposure and the outcome, and above and beyond the measured confounders, to explain away the observed risk ratio of 3.9. A weaker unmeasured confounder could not explain this RR. E-value for the CI closest to the null (i.e. 1) can also be reported.</p>
 <p>Similarly, the minimum magnitude of both confounder associations to move away the observed association can be assessed for a non-null hypothesis. For example, the effect of anti-depressant use during pregnancy on infant cardiac defects was 1.06 [0.93–1.22] (<a href="https://www.nejm.org/doi/full/10.1056/NEJMoa1312828">Huybrechts et al.</a>). The confidence interval includes 1 so no further unmeasured confounding is needed to shift the confidence interval to include 1, i.e. the E-value = 1. But what would be the strength of a confounder needed to shift RR to 1.2?</p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="fu"><a href="../reference/confounders.evalue.html">confounders.evalue</a></span><span class="op">(</span>est <span class="op">=</span> <span class="fl">1.06</span>, lower_ci <span class="op">=</span> <span class="fl">0.93</span>, upper_ci <span class="op">=</span> <span class="fl">1.22</span>,
-                   type <span class="op">=</span> <span class="st">"RR"</span>, true_est <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/confounders.evalue.html">confounders.evalue</a></span><span class="op">(</span>est <span class="op">=</span> <span class="fl">1.06</span>, lower_ci <span class="op">=</span> <span class="fl">0.93</span>, upper_ci <span class="op">=</span> <span class="fl">1.22</span>,
+                   type <span class="op">=</span> <span class="st">"RR"</span>, true_est <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## --E-value--
 ##          Point estimate   CI closest to H_0
