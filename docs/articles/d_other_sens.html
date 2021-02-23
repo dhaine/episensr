@@ -101,7 +101,7 @@
       <h1 data-toc-skip>Additional Sensitivity Analyses</h1>
                         <h4 class="author">Denis Haine</h4>
             
-            <h4 class="date">2021-02-22</h4>
+            <h4 class="date">2021-02-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dhaine/episensr/blob/master/vignettes/d_other_sens.Rmd"><code>vignettes/d_other_sens.Rmd</code></a></small>
       <div class="hidden name"><code>d_other_sens.Rmd</code></div>
@@ -254,7 +254,7 @@
 <div id="unmeasured-confounding-and-e-value" class="section level2">
 <h2 class="hasAnchor">
 <a href="#unmeasured-confounding-and-e-value" class="anchor"></a>Unmeasured Confounding and E-value</h2>
-<p>E-value, introduced by <a href="https://doi.org/10.7326/M16-2607">VanderWeele et al.</a>, is the minimum strength of association on the risk ratio scale that an unmeasured confounder would need to have with both the exposure and the outcome, conditional on the measured covariates, to fully explain away a specific exposure-outcome association.</p>
+<p>E-value, introduced by <a href="https://pubmed.ncbi.nlm.nih.gov/28693043/">VanderWeele et al.</a>, is the minimum strength of association on the risk ratio scale that an unmeasured confounder would need to have with both the exposure and the outcome, conditional on the measured covariates, to fully explain away a specific exposure-outcome association.</p>
 <p>For example, a study by <a href="https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(87)90902-0/fulltext">Victoria et al.</a> found an association between formula-fed babies compared to breast-fed and respiratory death, RR = 3.9. What would be the strength of association for an unmeasured confounder needed to explain away this association? The E-value express the magnitude of the confounder associations that can produce confounding bias equal to the observed exposure-outcome association. This E-value is:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/confounders.evalue.html">confounders.evalue</a></span><span class="op">(</span>est <span class="op">=</span> <span class="fl">3.9</span>, lower_ci <span class="op">=</span> <span class="fl">1.8</span>, upper_ci <span class="op">=</span> <span class="fl">8.7</span>, type <span class="op">=</span> <span class="st">"RR"</span><span class="op">)</span></code></pre></div>

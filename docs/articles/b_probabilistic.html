@@ -101,7 +101,7 @@
       <h1 data-toc-skip>Probabilistic Sensitivity Analysis</h1>
                         <h4 class="author">Denis Haine</h4>
             
-            <h4 class="date">2021-02-22</h4>
+            <h4 class="date">2021-02-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dhaine/episensr/blob/master/vignettes/b_probabilistic.Rmd"><code>vignettes/b_probabilistic.Rmd</code></a></small>
       <div class="hidden name"><code>b_probabilistic.Rmd</code></div>
@@ -136,7 +136,7 @@
 <div id="probabilistic-sensitivity-analysis-for-exposure-misclassification" class="section level2">
 <h2 class="hasAnchor">
 <a href="#probabilistic-sensitivity-analysis-for-exposure-misclassification" class="anchor"></a>Probabilistic Sensitivity Analysis for Exposure Misclassification</h2>
-<p>We use a study on the effect of smoking during pregnancy on breast cancer risk by <a href="http://www.ncbi.nlm.nih.gov/pubmed/12946045">Fink &amp; Lash</a>, where we assume nondifferential misclassification of the exposure, smoking, with probability density functions for sensitivities (Se) and specificities (Sp) among cases and noncases equal to uniform distributions with a minimum of 0.7 and a maximum of 0.95 for sensitivities (0.9 and 0.99 respectively for specificities). We choose to correct for exposure misclassification with the argument <code>type = exposure</code>. We ask for 50000 replications (default is 1000). Don’t be shy with the number of iterations, episensr is fast.</p>
+<p>We use a study on the effect of smoking during pregnancy on breast cancer risk by <a href="https://pubmed.ncbi.nlm.nih.gov/12946045/">Fink &amp; Lash</a>, where we assume nondifferential misclassification of the exposure, smoking, with probability density functions for sensitivities (Se) and specificities (Sp) among cases and noncases equal to uniform distributions with a minimum of 0.7 and a maximum of 0.95 for sensitivities (0.9 and 0.99 respectively for specificities). We choose to correct for exposure misclassification with the argument <code>type = exposure</code>. We ask for 50000 replications (default is 1000). Don’t be shy with the number of iterations, episensr is fast.</p>
 <p>The Se and Sp for cases (<code>seca</code>, <code>spca</code>) are given as a list with its first element referring to the type of distribution (choice between constant, uniform, triangular, trapezoidal, logit-logistic, and logit-normal) and the second element giving the distribution parameters (min and max for uniform distribution). By avoiding to provide information on the noncases (<code>seexp</code>, <code>spexp</code>), we are referring to a nondifferential misclassification.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">episensr</span><span class="op">)</span></code></pre></div>
@@ -222,7 +222,7 @@ Sensibility prior distribution.
 <div id="probabilistic-sensitivity-analysis-for-uncontrolled-confounding" class="section level2">
 <h2 class="hasAnchor">
 <a href="#probabilistic-sensitivity-analysis-for-uncontrolled-confounding" class="anchor"></a>Probabilistic Sensitivity Analysis for Uncontrolled Confounding</h2>
-<p>Let’s illustrate this function with this example where the association between occupational resins exposure and lung cancer mortality is studied, together with the presence of an unmeasured potential confounder, smoking (<a href="https://www.ncbi.nlm.nih.gov/pubmed/7927843">Greenland et al., 1994</a>).</p>
+<p>Let’s illustrate this function with this example where the association between occupational resins exposure and lung cancer mortality is studied, together with the presence of an unmeasured potential confounder, smoking (<a href="https://pubmed.ncbi.nlm.nih.gov/7927843/">Greenland et al., 1994</a>).</p>
 <table class="table">
 <thead><tr class="header">
 <th align="right"></th>
