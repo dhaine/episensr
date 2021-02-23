@@ -37,7 +37,7 @@ functions are:
 ## Probabilistic Sensitivity Analysis for Exposure Misclassification
 
 We use a study on the effect of smoking during pregnancy on breast cancer risk
-by [Fink & Lash](http://www.ncbi.nlm.nih.gov/pubmed/12946045), where we assume
+by [Fink & Lash](https://www.ncbi.nlm.nih.gov/pubmed/12946045/), where we assume
 nondifferential misclassification of the exposure, smoking, with probability
 density functions for sensitivities (Se) and specificities (Sp) among cases and
 noncases equal to uniform distributions with a minimum of 0.7 and a maximum of
@@ -116,7 +116,7 @@ iterations are deleted ([Fox et al., 2005](https://doi.org/10.1093/ije/dyi184)).
 Let's illustrate this function with this example where the association between
 occupational resins exposure and lung cancer mortality is studied, together with
 the presence of an unmeasured potential confounder, smoking ([Greenland et al.,
-1994](https://www.ncbi.nlm.nih.gov/pubmed/7927843)).
+1994](https://www.ncbi.nlm.nih.gov/pubmed/7927843/)).
 
 |          | Resins exposed | Resins unexposed |
 |---------:|:--------------:|:----------------:|

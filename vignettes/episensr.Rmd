@@ -51,7 +51,7 @@ Functions available in `episensr` are:
 ## Selection Bias
 
 We will use a case-control study by
-[Stang et al.](http://www.ncbi.nlm.nih.gov/pubmed/16523014) on the relation
+[Stang et al.](https://www.ncbi.nlm.nih.gov/pubmed/16523014/) on the relation
 between mobile phone use and uveal melanoma.
 The observed odds ratio for the association between regular mobile phone use vs.
 no mobile phone use with uveal melanoma incidence is 0.71 [95% CI 0.51-0.97].
@@ -175,7 +175,7 @@ direct.label(p3, list("far.from.others.borders", "calc.boxes", "enlarge.box",
 
 Covariate misclassification is available via the function `misclassification.cov`.
 For example, the paper by [Berry et
-al.](https://doi.org/10.1136/bmj.38369.437789.82) looked if misclassification of
+al.](https://doi.org/10.1136/bmj.38369.437789.82/) looked if misclassification of
 the confounding variable _in vitro fertilization_ (IVF), a confounder, resulted
 wrongly on an association between increase folic acid and having twins.
 IVF increases the risk of twins, and women undergoing IVF might be more likely
@@ -205,7 +205,7 @@ IVF, risk ratio is now null (= 1.0).
 ## Uncontrolled Confounders
 
 We will use data from a cross-sectional study by
-[Tyndall et al.](http://www.ncbi.nlm.nih.gov/pubmed/8879763) on the association
+[Tyndall et al.](https://www.ncbi.nlm.nih.gov/pubmed/8879763/) on the association
 between male circumcision and the risk of acquiring HIV, which might be
 confounded by religion.
 The code to account for unmeasured or unknown confounders is the following,
@@ -356,9 +356,9 @@ thromb %>% confounders(., type = "OR", bias_parms = c(OR_no, p1, p2))
 Selection and misclassification bias models can be bootstrapped in order to get
 confidence interval on the adjusted association parameter.
 We can use the ICU dataset from Hosmer and
-Lemeshow
-[Applied Logistic Regression](http://ca.wiley.com/WileyCDA/WileyTitle/productCd-0470582472.html) textbook
-as an example.
+Lemeshow [Applied Logistic
+Regression](https://ca.wiley.com/WileyCDA/WileyTitle/productCd-0470582472.html)
+textbook as an example.
 The replicates that give negative cells in the adjusted 2X2 table are silently
 ignored and the number of effective bootstrap replicates is provided in the
 output.
