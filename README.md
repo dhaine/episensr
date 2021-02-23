@@ -59,9 +59,9 @@ citation("episensr")
 ## Example
 
 We will use a case-control study by [Stang et
-al.](http://www.ncbi.nlm.nih.gov/pubmed/16523014) on the relation
-between mobile phone use and uveal melanoma. The observed odds ratio for
-the association between regular mobile phone use vs. no mobile phone use
+al.](https://pubmed.ncbi.nlm.nih.gov/16523014/) on the relation between
+mobile phone use and uveal melanoma. The observed odds ratio for the
+association between regular mobile phone use vs. no mobile phone use
 with uveal melanoma incidence is 0.71 \[95% CI 0.51-0.97\]. But there
 was a substantial difference in participation rates between cases and
 controls (94% vs 55%, respectively) and so selection bias could have an
