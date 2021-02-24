@@ -50,10 +50,11 @@ without effect modification. Implementation for ratio measures (relative risk
 }
 \details{
 The analytic approach uses the "relative risk due to confounding" as defined by
-Miettinen (1972), i.e. \eqn{RR_adj} = \frac{RR_crude}{RR_conf} where RR_adj is the
-standardized (adjusted) risk ratio, RR_crude is the crude risk ratio, and RR_conf
-is the relative risk component attributable to confounding by the stratification
-factors. The output provides both RR_adj (SMR or Mantel-Haenszel) and the RR_conf.
+Miettinen (1972), i.e. \eqn{RR_{adj} = \frac{RR_{crude}}{RR_{conf}}} where RR_adj
+is the standardized (adjusted) risk ratio, RR_crude is the crude risk ratio, and
+RR_conf is the relative risk component attributable to confounding by the
+stratification factors. The output provides both RR_adj (SMR or Mantel-Haenszel)
+and the RR_conf.
 }
 \examples{
 # The data for this example come from:
