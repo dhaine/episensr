@@ -175,7 +175,7 @@ direct.label(p3, list("far.from.others.borders", "calc.boxes", "enlarge.box",
 
 Covariate misclassification is available via the function `misclassification.cov`.
 For example, the paper by [Berry et
-al.](https://www.bmj.com/content/330/7495/815) looked if misclassification of
+al.](https://www.bmj.com/content/330/7495/815/) looked if misclassification of
 the confounding variable _in vitro fertilization_ (IVF), a confounder, resulted
 wrongly on an association between increase folic acid and having twins.
 IVF increases the risk of twins, and women undergoing IVF might be more likely
