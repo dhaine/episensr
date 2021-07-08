@@ -18,56 +18,59 @@
 #'
 #' @examples
 #' set.seed(123)
-#' plot(probsens(matrix(c(45, 94, 257, 945),
+#' risk <- probsens(matrix(c(45, 94, 257, 945),
 #' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
-#' type = "exposure",
-#' reps = 20000,
+#' type = "exposure", reps = 20000,
 #' seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
-#' spca.parms = list("trapezoidal", c(.75, .85, .95, 1))), "rr")
+#' spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
+#' plot(risk, "rr")
 #'
 #' set.seed(123)
-#' plot(probsens(matrix(c(45, 94, 257, 945),
+#' odds <- probsens(matrix(c(45, 94, 257, 945),
 #' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
-#' type = "exposure",
-#' reps = 20000,
+#' type = "exposure", reps = 20000,
 #' seca.parms = list("beta", c(908, 16)),
 #' seexp.parms = list("beta", c(156, 56)),
 #' spca.parms = list("beta", c(153, 6)),
 #' spexp.parms = list("beta", c(205, 18)),
 #' corr.se = .8,
-#' corr.sp = .8), "seca")
+#' corr.sp = .8)
+#' plot(odds, "seca")
 #'
 #' set.seed(123)
-#' plot(probsens.sel(matrix(c(136, 107, 297, 165),
+#' select <- probsens.sel(matrix(c(136, 107, 297, 165),
 #' dimnames = list(c("Melanoma+", "Melanoma-"), c("Mobile+", "Mobile-")),
-#' nrow = 2, byrow = TRUE),
-#' reps = 20000,
-#' or.parms = list("triangular", c(.35, 1.1, .43))), "or_sel")
+#' nrow = 2, byrow = TRUE), reps = 20000,
+#' or.parms = list("triangular", c(.35, 1.1, .43)))
+#' plot(select, "or_sel")
 #'
 #' set.seed(123)
-#' plot(probsens.conf(matrix(c(105, 85, 527, 93),
+#' conf <- probsens.conf(matrix(c(105, 85, 527, 93),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")), nrow = 2, byrow = TRUE),
 #' reps = 20000,
 #' prev.exp = list("triangular", c(.7, .9, .8)),
 #' prev.nexp = list("trapezoidal", c(.03, .04, .05, .06)),
 #' risk = list("triangular", c(.6, .7, .63)),
-#' corr.p = .8), "prev.exp")
+#' corr.p = .8)
+#' plot(conf, "prev.exp")
 #'
 #' set.seed(123)
-#' plot(probsens.irr(matrix(c(2, 67232, 58, 10539000),
+#' inc1 <- probsens.irr(matrix(c(2, 67232, 58, 10539000),
 #' dimnames = list(c("GBS+", "Person-time"), c("HPV+", "HPV-")), ncol = 2),
 #' reps = 20000,
 #' seca.parms = list("trapezoidal", c(.4, .45, .55, .6)),
-#' spca.parms = list("constant", 1)), "irr")
+#' spca.parms = list("constant", 1))
+#' plot(inc, "irr")
 #'
 #' set.seed(123)
-#' plot(probsens.irr.conf(matrix(c(77, 10000, 87, 10000),
+#' inc2 <- probsens.irr.conf(matrix(c(77, 10000, 87, 10000),
 #' dimnames = list(c("D+", "Person-time"), c("E+", "E-")), ncol = 2),
 #' reps = 20000,
 #' prev.exp = list("trapezoidal", c(.01, .2, .3, .51)),
 #' prev.nexp = list("trapezoidal", c(.09, .27, .35, .59)),
 #' risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
-#' corr.p = .8), "risk")
+#' corr.p = .8)
+#' plot(inc2, "risk")
 #' @export
 #' @importFrom ggplot2 ggplot geom_histogram aes geom_density geom_vline ggtitle xlab
 plot.episensr.probsens <- function(x,
