@@ -2,7 +2,7 @@
 title: "Quantitative Bias Analysis for Epidemiologic Data"
 author: "Denis Haine"
 date: "`r Sys.Date()`"
-output: 
+output:
   rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
@@ -25,10 +25,6 @@ This package implements the various bias analyses from that book, which are also
 [available](https://sites.google.com/site/biasanalysis/) (for some) as a
 spreadsheet or a SAS macro, as well as some additional approaches.
 This vignette provides some examples on how to use the package.
-
-(_Note: A Shiny app is available for some functions, at
-<https://dhaine.shinyapps.io/apisensr/>._, using the R package `apisensr` which
-is based on `episensr`.)
 
 Functions available in `episensr` are:
 
@@ -55,7 +51,7 @@ Functions available in `episensr` are:
 ## Selection Bias
 
 We will use a case-control study by
-[Stang et al.](http://www.ncbi.nlm.nih.gov/pubmed/16523014) on the relation
+[Stang et al.](https://pubmed.ncbi.nlm.nih.gov/16523014/) on the relation
 between mobile phone use and uveal melanoma.
 The observed odds ratio for the association between regular mobile phone use vs.
 no mobile phone use with uveal melanoma incidence is 0.71 [95% CI 0.51-0.97].
@@ -100,8 +96,8 @@ Confidence intervals for corrected association due to exposure misclassification
 are also directly available, or the estimates can also be bootstrapped (see below).
 The confidence intervals from the variance of the corrected odds ratio estimator in the
 `misclassification` function are computed as in [Greenland et
-al.](http://onlinelibrary.wiley.com/doi/10.1002/sim.4780070704/full#abstract) and [Chu et
-al.](http://www.sciencedirect.com/science/article/pii/S1047279706000688).
+al.]( https://doi.org/10.1002/sim.4780070704) and [Chu et
+al.](https://doi.org/10.1016/j.annepidem.2006.04.001).
 Using the example in Chu et al. of a case-control study of cigarette smoking and
 invasive pneumococcal disease, the unadjusted odds ratio is 4.32, with a 95%
 confidence interval of 2.96 to 6.31.
@@ -147,7 +143,7 @@ p1 <- ggplot(dat, aes(x = Se, y = Sp, z = OR_c)) +
     xlab("Sensitivity") +
     ylab("Specificity") +
     ggtitle("Estimates of Corrected OR")
-direct.label(p1, list("far.from.others.borders", "calc.boxes", "enlarge.box", 
+direct.label(p1, list("far.from.others.borders", "calc.boxes", "enlarge.box",
                       hjust = 1, vjust = -.5, box.color = NA, cex = .6,
                       fill = "transparent", "draw.rects"))
 ```
@@ -172,15 +168,15 @@ p3 <- ggplot(dat, aes(x = Se, y = Sp, z = ORc_lci)) +
     xlab("Sensitivity") +
     ylab("Specificity") +
     ggtitle("95% LCI of Corrected OR")
-direct.label(p3, list("far.from.others.borders", "calc.boxes", "enlarge.box", 
+direct.label(p3, list("far.from.others.borders", "calc.boxes", "enlarge.box",
                            hjust = 1, vjust = -.5, box.color = NA, cex = .6,
                            fill = "transparent", "draw.rects"))
 ```
 
 Covariate misclassification is available via the function `misclassification.cov`.
 For example, the paper by [Berry et
-al.](http://www.bmj.com/content/330/7495/815) looked if misclassification of the
-confounding variable _in vitro fertilization_ (IVF), a confounder, resulted
+al.](https://www.bmj.com/content/330/7495/815/) looked if misclassification of
+the confounding variable _in vitro fertilization_ (IVF), a confounder, resulted
 wrongly on an association between increase folic acid and having twins.
 IVF increases the risk of twins, and women undergoing IVF might be more likely
 to take folic acid supplements, i.e. IVF would be a confounder between vitamins
@@ -209,7 +205,7 @@ IVF, risk ratio is now null (= 1.0).
 ## Uncontrolled Confounders
 
 We will use data from a cross-sectional study by
-[Tyndall et al.](http://www.ncbi.nlm.nih.gov/pubmed/8879763) on the association
+[Tyndall et al.](https://pubmed.ncbi.nlm.nih.gov/8879763/) on the association
 between male circumcision and the risk of acquiring HIV, which might be
 confounded by religion.
 The code to account for unmeasured or unknown confounders is the following,
@@ -243,14 +239,126 @@ tyndall$cfder.data
 tyndall$nocfder.data
 ```
 
+As described in this function's help file, the bias correction used is the
+"relative risk due to confounding" as proposed by Miettinen (Components of the
+crude risk ratio, Am J Epidemiol 1972, 96(2):168-172).
+The two examples shown in that paper are the following.
+
+The first one is about drug surveillance data analyzed as a cohort study, with
+the frequency of drug-attributed rash in relation to allopurinol exposure among
+recipients of ampicillin, with sex treated as a potential confounding factor.
+
+```{r miettinen1}
+rash <- matrix(c(15, 94, 52, 1163),
+               dimnames = list(c("Rash +", "Rash -"),
+                               c("Allopurinol +", "Allopurinol -")),
+               nrow = 2, byrow = TRUE)
+```
+
+```{r miettinen1-tab, echo=FALSE}
+knitr::kable(rash)
+```
+
+We can decompose these numbers by confounders:
+
+```{r miettinen1-conf}
+## Outcome by confounders
+rash_conf <- matrix(c(36, 58, 645, 518),
+                    dimnames = list(c("Rash +", "Rash -"),
+                                    c("Males", "Females")),
+                    nrow = 2, byrow = TRUE)
+## By confounders: among males
+rash_males <- matrix(c(5, 36, 33, 645),
+                     dimnames = list(c("Rash +", "Rash -"),
+                                     c("Allopurinol +", "Allopurinol -")),
+                     nrow = 2, byrow = TRUE)
+## By confounders: among females
+rash_females <- matrix(c(10, 58, 19, 518),
+                       dimnames = list(c("Rash +", "Rash -"),
+                                       c("Allopurinol +", "Allopurinol -")),
+                       nrow = 2, byrow = TRUE)
+```
+
+```{r miettinen1-conftab, echo=FALSE}
+knitr::kable(rash_conf, caption = "Outcome by confounders")
+knitr::kable(rash_males, caption = "Among males")
+knitr::kable(rash_females, caption = "Among females")
+```
+
+And then get the bias parameters:
+
+```{r miettinen1_parms}
+(RR_no <- (36/(36+645))/(58/(58+518))) # RR between confounder and outcome among non-exposed
+(p1 <- (5+33)/(15+52)) # prevalence of confounder among exposed
+(p2 <- (36+645)/(94+1163)) # prevalence of confounder among unexposed
+```
+
+With the following results:
+
+```{r miettinen1_res}
+rash %>% confounders(., type = "RR", bias_parms = c(RR_no, p1, p2))
+```
+
+For the second example, data are from a case-control study of the relationship
+of oral contraceptive use to venous thrombosis with age as a confounding factor.
+
+```{r miettinen2}
+thromb <- matrix(c(12, 30, 53, 347),
+                 dimnames = list(c("Thrombosis +", "Thrombosis -"),
+                                 c("OC +", "OC -")),
+                 nrow = 2, byrow = TRUE)
+```
+
+```{r miettinen2-tab, echo=FALSE}
+knitr::kable(thromb)
+```
+
+```{r miettinen2-conf}
+## Outcome by confounders
+thromb_conf <- matrix(c(18, 12, 158, 189),
+                      dimnames = list(c("Thrombosis +", "Thrombosis -"),
+                                      c("20-29 years old", "30-39 years old")),
+                      nrow = 2, byrow = TRUE)
+## By confounders: among 20-29 years old
+thromb_younger <- matrix(c(10, 18, 39, 158),
+                       dimnames = list(c("Thrombosis +", "Thrombosis -"),
+                                       c("OC +", "OC -")),
+                       nrow = 2, byrow = TRUE)
+## By confounders: among 30-39 years old
+thromb_older <- matrix(c(2, 12, 14, 189),
+                     dimnames = list(c("Thrombosis +", "Thrombosis -"),
+                                     c("OC +", "OC -")),
+                     nrow = 2, byrow = TRUE)
+```
+
+```{r miettinen2-conftab, echo=FALSE}
+knitr::kable(thromb_conf, caption = "Outcome by confounders")
+knitr::kable(thromb_younger, caption = "Among 20-29 years old")
+knitr::kable(thromb_older, caption = "Among 30-39 years old")
+```
+
+And then the bias parameters:
+
+```{r miettinen2_parms}
+(OR_no <- (18/12)/(158/189)) # OR between confounder and outcome among non-exposed
+(p1 <- (10+39)/(12+53)) # prevalence of confounder among exposed
+(p2 <- (18+158)/(30+347)) # prevalence of confounder among unexposed
+```
+
+With the following results:
+
+```{r miettinen2_res}
+thromb %>% confounders(., type = "OR", bias_parms = c(OR_no, p1, p2))
+```
+
 ## Bootstrapping
 
 Selection and misclassification bias models can be bootstrapped in order to get
 confidence interval on the adjusted association parameter.
 We can use the ICU dataset from Hosmer and
-Lemeshow
-[Applied Logistic Regression](http://ca.wiley.com/WileyCDA/WileyTitle/productCd-0470582472.html) textbook
-as an example.
+Lemeshow [Applied Logistic
+Regression](https://ca.wiley.com/WileyCDA/WileyTitle/productCd-0470582472.html)
+textbook as an example.
 The replicates that give negative cells in the adjusted 2X2 table are silently
 ignored and the number of effective bootstrap replicates is provided in the
 output.
@@ -280,4 +388,3 @@ dotted lines.
 ```{r, boot_fig, fig.cap = "Bootstrap replicates and confidence interval.", warning=F}
 plot(misclass_boot, "rr")
 ```
-

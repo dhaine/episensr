@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">episensr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -64,13 +64,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/2_probabilistic.html">Probabilistic Sensitivity Analysis</a>
+      <a href="../articles/b_probabilistic.html">Probabilistic Sensitivity Analysis</a>
     </li>
     <li>
-      <a href="../articles/3_multiple_bias.html">Multiple Bias Modeling</a>
+      <a href="../articles/c_multiple_bias.html">Multiple Bias Modeling</a>
     </li>
     <li>
-      <a href="../articles/4_other_sens.html">Additional Sensitivity Analyses</a>
+      <a href="../articles/d_other_sens.html">Additional Sensitivity Analyses</a>
     </li>
   </ul>
 </li>
@@ -81,7 +81,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/dhaine/episensr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -101,7 +101,7 @@
       <h1 data-toc-skip>Quantitative Bias Analysis for Epidemiologic Data</h1>
                         <h4 class="author">Denis Haine</h4>
             
-            <h4 class="date">2020-10-08</h4>
+            <h4 class="date">2021-02-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dhaine/episensr/blob/master/vignettes/episensr.Rmd"><code>vignettes/episensr.Rmd</code></a></small>
       <div class="hidden name"><code>episensr.Rmd</code></div>
@@ -111,7 +111,6 @@
     
     
 <p>Quantitative bias analysis allows to estimate nonrandom errors in epidemiologic studies, assessing the magnitude and direction of biases, and quantifying their uncertainties. Every study has some random error due to its limited sample size, and is susceptible to systematic errors as well, from selection bias to the presence of (un)known confounders or information bias (measurement error, including misclassification). Bias analysis methods were compiled by Lash et al. in their book <a href="https://www.springer.com/us/book/9780387879604">“Applying Quantitative Bias Analysis to Epidemiologic Data”</a>. This package implements the various bias analyses from that book, which are also <a href="https://sites.google.com/site/biasanalysis/">available</a> (for some) as a spreadsheet or a SAS macro, as well as some additional approaches. This vignette provides some examples on how to use the package.</p>
-<p>(<em>Note: A Shiny app is available for some functions, at <a href="https://dhaine.shinyapps.io/apisensr/" class="uri">https://dhaine.shinyapps.io/apisensr/</a>.</em>, using the R package <code>apisensr</code> which is based on <code>episensr</code>.)</p>
 <p>Functions available in <code>episensr</code> are:</p>
 <ul>
 <li>
@@ -156,7 +155,7 @@
 <div id="selection-bias" class="section level2">
 <h2 class="hasAnchor">
 <a href="#selection-bias" class="anchor"></a>Selection Bias</h2>
-<p>We will use a case-control study by <a href="http://www.ncbi.nlm.nih.gov/pubmed/16523014">Stang et al.</a> on the relation between mobile phone use and uveal melanoma. The observed odds ratio for the association between regular mobile phone use vs. no mobile phone use with uveal melanoma incidence is 0.71 [95% CI 0.51-0.97]. But there was a substantial difference in participation rates between cases and controls (94% vs 55%, respectively) and so selection bias could have an impact on the association estimate. The 2X2 table for this study is the following:</p>
+<p>We will use a case-control study by <a href="https://pubmed.ncbi.nlm.nih.gov/16523014/">Stang et al.</a> on the relation between mobile phone use and uveal melanoma. The observed odds ratio for the association between regular mobile phone use vs. no mobile phone use with uveal melanoma incidence is 0.71 [95% CI 0.51-0.97]. But there was a substantial difference in participation rates between cases and controls (94% vs 55%, respectively) and so selection bias could have an impact on the association estimate. The 2X2 table for this study is the following:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="right"></th>
@@ -177,15 +176,15 @@
 </tbody>
 </table>
 <p>We use the function <code>selection</code> as shown below.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">episensr</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">episensr</span><span class="op">)</span></code></pre></div>
 <pre><code>## Loading required package: ggplot2</code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="va">stang</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selection.html">selection</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">136</span>, <span class="fl">107</span>, <span class="fl">297</span>, <span class="fl">165</span><span class="op">)</span>,
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">stang</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selection.html">selection</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">136</span>, <span class="fl">107</span>, <span class="fl">297</span>, <span class="fl">165</span><span class="op">)</span>,
                           dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"UM+"</span>, <span class="st">"UM-"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Mobile+"</span>, <span class="st">"Mobile-"</span><span class="op">)</span><span class="op">)</span>,
                           nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
                    bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.94</span>, <span class="fl">.85</span>, <span class="fl">.64</span>, <span class="fl">.25</span><span class="op">)</span><span class="op">)</span>
-<span class="va">stang</span></pre></div>
+<span class="va">stang</span></code></pre></div>
 <pre><code>## --Observed data-- 
 ##          Outcome: UM+ 
 ##        Comparing: Mobile+ vs. Mobile- 
@@ -207,14 +206,14 @@
 <div id="misclassification-bias" class="section level2">
 <h2 class="hasAnchor">
 <a href="#misclassification-bias" class="anchor"></a>Misclassification Bias</h2>
-<p>Misclassification bias can be assessed with the function <code>misclassification</code>. Confidence intervals for corrected association due to exposure misclassification are also directly available, or the estimates can also be bootstrapped (see below). The confidence intervals from the variance of the corrected odds ratio estimator in the <code>misclassification</code> function are computed as in <a href="http://onlinelibrary.wiley.com/doi/10.1002/sim.4780070704/full#abstract">Greenland et al.</a> and <a href="http://www.sciencedirect.com/science/article/pii/S1047279706000688">Chu et al.</a>. Using the example in Chu et al. of a case-control study of cigarette smoking and invasive pneumococcal disease, the unadjusted odds ratio is 4.32, with a 95% confidence interval of 2.96 to 6.31. Let’s say the sensitivity of self-reported smoking is 94% and specificity is 97%, for both the case and control groups:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu"><a href="../reference/misclassification.html">misclassification</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">126</span>, <span class="fl">92</span>, <span class="fl">71</span>, <span class="fl">224</span><span class="op">)</span>,
+<p>Misclassification bias can be assessed with the function <code>misclassification</code>. Confidence intervals for corrected association due to exposure misclassification are also directly available, or the estimates can also be bootstrapped (see below). The confidence intervals from the variance of the corrected odds ratio estimator in the <code>misclassification</code> function are computed as in <a href="https://doi.org/10.1002/sim.4780070704">Greenland et al.</a> and <a href="https://doi.org/10.1016/j.annepidem.2006.04.001">Chu et al.</a>. Using the example in Chu et al. of a case-control study of cigarette smoking and invasive pneumococcal disease, the unadjusted odds ratio is 4.32, with a 95% confidence interval of 2.96 to 6.31. Let’s say the sensitivity of self-reported smoking is 94% and specificity is 97%, for both the case and control groups:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/misclassification.html">misclassification</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">126</span>, <span class="fl">92</span>, <span class="fl">71</span>, <span class="fl">224</span><span class="op">)</span>,
                          dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Case"</span>, <span class="st">"Control"</span><span class="op">)</span>,
                                          <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Smoking +"</span>, <span class="st">"Smoking - "</span><span class="op">)</span><span class="op">)</span>,
                          nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
                   type <span class="op">=</span> <span class="st">"exposure"</span>,
-                  bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.94</span>, <span class="fl">0.94</span>, <span class="fl">0.97</span>, <span class="fl">0.97</span><span class="op">)</span><span class="op">)</span></pre></div>
+                  bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.94</span>, <span class="fl">0.94</span>, <span class="fl">0.97</span>, <span class="fl">0.97</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## --Observed data-- 
 ##          Outcome: Case 
 ##        Comparing: Smoking + vs. Smoking -  
@@ -232,8 +231,8 @@
 ##    Misclassification Bias Corrected Odds Ratio: 5.024508 3.282534 7.690912</code></pre>
 <p>The corrected odds ratio is now 5.02, with a widened 95% confidence interval (3.28 to 7.69). Note the bias despite the large sensitivity and specificity.</p>
 <p>You can even reproduce the contour plots in Chu et al. paper!</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>Se <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0.582</span>, <span class="fl">1</span>, <span class="fl">0.02</span><span class="op">)</span>,
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>Se <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0.582</span>, <span class="fl">1</span>, <span class="fl">0.02</span><span class="op">)</span>,
                    Sp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0.762</span>, <span class="fl">1</span>, <span class="fl">0.02</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">dat</span><span class="op">$</span><span class="va">OR_c</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
@@ -243,7 +242,7 @@
                                                 bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">x</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="va">x</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">adj.measures</span><span class="op">[</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span>
 <span class="va">dat</span><span class="op">$</span><span class="va">OR_c</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">OR_c</span>, <span class="fl">2</span><span class="op">)</span>
 
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tdhock/directlabels">directlabels</a></span><span class="op">)</span>
 <span class="va">p1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Se</span>, y <span class="op">=</span> <span class="va">Sp</span>, z <span class="op">=</span> <span class="va">OR_c</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_contour.html">geom_contour</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="va">..level..</span><span class="op">)</span>, breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">4.32</span>, <span class="fl">6.96</span>, <span class="fl">8.56</span>, <span class="fl">12.79</span>, <span class="fl">23.41</span>, <span class="fl">432.1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -256,16 +255,16 @@
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Sensitivity"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Specificity"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Estimates of Corrected OR"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/directlabels/man/direct.label.html">direct.label</a></span><span class="op">(</span><span class="va">p1</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"far.from.others.borders"</span>, <span class="st">"calc.boxes"</span>, <span class="st">"enlarge.box"</span>, 
+<span class="fu"><a href="https://rdrr.io/pkg/directlabels/man/direct.label.html">direct.label</a></span><span class="op">(</span><span class="va">p1</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"far.from.others.borders"</span>, <span class="st">"calc.boxes"</span>, <span class="st">"enlarge.box"</span>,
                       hjust <span class="op">=</span> <span class="fl">1</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">.5</span>, box.color <span class="op">=</span> <span class="cn">NA</span>, cex <span class="op">=</span> <span class="fl">.6</span>,
-                      fill <span class="op">=</span> <span class="st">"transparent"</span>, <span class="st">"draw.rects"</span><span class="op">)</span><span class="op">)</span></pre></div>
+                      fill <span class="op">=</span> <span class="st">"transparent"</span>, <span class="st">"draw.rects"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="episensr_files/figure-html/unnamed-chunk-1-1.png" alt="Contour plot of point estimates of corrected odds ratio (OR)" width="576"><p class="caption">
 Contour plot of point estimates of corrected odds ratio (OR)
 </p>
 </div>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="va">dat</span><span class="op">$</span><span class="va">ORc_lci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span><span class="op">$</span><span class="va">ORc_lci</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
                      <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/misclassification.html">misclassification</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">126</span>, <span class="fl">92</span>, <span class="fl">71</span>, <span class="fl">224</span><span class="op">)</span>,
                                                           nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
                                                    type <span class="op">=</span> <span class="st">"exposure"</span>,
@@ -284,23 +283,23 @@ Contour plot of point estimates of corrected odds ratio (OR)
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Sensitivity"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Specificity"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"95% LCI of Corrected OR"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/directlabels/man/direct.label.html">direct.label</a></span><span class="op">(</span><span class="va">p3</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"far.from.others.borders"</span>, <span class="st">"calc.boxes"</span>, <span class="st">"enlarge.box"</span>, 
+<span class="fu"><a href="https://rdrr.io/pkg/directlabels/man/direct.label.html">direct.label</a></span><span class="op">(</span><span class="va">p3</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"far.from.others.borders"</span>, <span class="st">"calc.boxes"</span>, <span class="st">"enlarge.box"</span>,
                            hjust <span class="op">=</span> <span class="fl">1</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">.5</span>, box.color <span class="op">=</span> <span class="cn">NA</span>, cex <span class="op">=</span> <span class="fl">.6</span>,
-                           fill <span class="op">=</span> <span class="st">"transparent"</span>, <span class="st">"draw.rects"</span><span class="op">)</span><span class="op">)</span></pre></div>
+                           fill <span class="op">=</span> <span class="st">"transparent"</span>, <span class="st">"draw.rects"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="episensr_files/figure-html/unnamed-chunk-2-1.png" alt="Contour plot of 95% lower confidence limit of corrected OR" width="576"><p class="caption">
 Contour plot of 95% lower confidence limit of corrected OR
 </p>
 </div>
-<p>Covariate misclassification is available via the function <code>misclassification.cov</code>. For example, the paper by <a href="http://www.bmj.com/content/330/7495/815">Berry et al.</a> looked if misclassification of the confounding variable <em>in vitro fertilization</em> (IVF), a confounder, resulted wrongly on an association between increase folic acid and having twins. IVF increases the risk of twins, and women undergoing IVF might be more likely to take folic acid supplements, i.e. IVF would be a confounder between vitamins and twins. Data on IVF were not available and a proxy for it was used, <em>period of involuntary childlessness</em>. However, it was a poor proxy for IVF, with a sensitivity of 60% and a specificity of 95%. These bias parameters were assumed to be nondifferential. Here’s the code with <code>episensr</code>:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="fu"><a href="../reference/misclassification_cov.html">misclassification.cov</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/array.html">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1319</span>, <span class="fl">38054</span>, <span class="fl">5641</span>, <span class="fl">405546</span>, <span class="fl">565</span>, <span class="fl">3583</span>,
+<p>Covariate misclassification is available via the function <code>misclassification.cov</code>. For example, the paper by <a href="https://www.bmj.com/content/330/7495/815/">Berry et al.</a> looked if misclassification of the confounding variable <em>in vitro fertilization</em> (IVF), a confounder, resulted wrongly on an association between increase folic acid and having twins. IVF increases the risk of twins, and women undergoing IVF might be more likely to take folic acid supplements, i.e. IVF would be a confounder between vitamins and twins. Data on IVF were not available and a proxy for it was used, <em>period of involuntary childlessness</em>. However, it was a poor proxy for IVF, with a sensitivity of 60% and a specificity of 95%. These bias parameters were assumed to be nondifferential. Here’s the code with <code>episensr</code>:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/misclassification_cov.html">misclassification.cov</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/array.html">array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1319</span>, <span class="fl">38054</span>, <span class="fl">5641</span>, <span class="fl">405546</span>, <span class="fl">565</span>, <span class="fl">3583</span>,
                               <span class="fl">781</span>, <span class="fl">21958</span>, <span class="fl">754</span>, <span class="fl">34471</span>, <span class="fl">4860</span>, <span class="fl">383588</span><span class="op">)</span>,
                             dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Twins+"</span>, <span class="st">"Twins-"</span><span class="op">)</span>,
                                             <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Folic acid+"</span>, <span class="st">"Folic acid-"</span><span class="op">)</span>,
                                             <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Total"</span>, <span class="st">"IVF+"</span>, <span class="st">"IVF-"</span><span class="op">)</span><span class="op">)</span>,
                             dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,
-                      bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.6</span>, <span class="fl">.6</span>, <span class="fl">.95</span>, <span class="fl">.95</span><span class="op">)</span><span class="op">)</span></pre></div>
+                      bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.6</span>, <span class="fl">.6</span>, <span class="fl">.95</span>, <span class="fl">.95</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## --Observed data-- 
 ##          Outcome: Twins+ 
 ##        Comparing: Folic acid+ vs. Folic acid- 
@@ -342,14 +341,14 @@ Contour plot of 95% lower confidence limit of corrected OR
 <div id="uncontrolled-confounders" class="section level2">
 <h2 class="hasAnchor">
 <a href="#uncontrolled-confounders" class="anchor"></a>Uncontrolled Confounders</h2>
-<p>We will use data from a cross-sectional study by <a href="http://www.ncbi.nlm.nih.gov/pubmed/8879763">Tyndall et al.</a> on the association between male circumcision and the risk of acquiring HIV, which might be confounded by religion. The code to account for unmeasured or unknown confounders is the following, where the 2X2 table is given as a matrix. We choose a risk ratio implementation, provide a vector defining the risk ratio associating the confounder with the disease, and the prevalence of the confounder, religion, among the exposed and the unexposed.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="va">tyndall</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/confounders.html">confounders</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">105</span>, <span class="fl">85</span>, <span class="fl">527</span>, <span class="fl">93</span><span class="op">)</span>,
+<p>We will use data from a cross-sectional study by <a href="https://pubmed.ncbi.nlm.nih.gov/8879763/">Tyndall et al.</a> on the association between male circumcision and the risk of acquiring HIV, which might be confounded by religion. The code to account for unmeasured or unknown confounders is the following, where the 2X2 table is given as a matrix. We choose a risk ratio implementation, provide a vector defining the risk ratio associating the confounder with the disease, and the prevalence of the confounder, religion, among the exposed and the unexposed.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tyndall</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/confounders.html">confounders</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">105</span>, <span class="fl">85</span>, <span class="fl">527</span>, <span class="fl">93</span><span class="op">)</span>,
                               dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"HIV+"</span>, <span class="st">"HIV-"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Circ+"</span>, <span class="st">"Circ-"</span><span class="op">)</span><span class="op">)</span>,
                               nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
                        type <span class="op">=</span> <span class="st">"RR"</span>,
                        bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.63</span>, <span class="fl">.8</span>, <span class="fl">.05</span><span class="op">)</span><span class="op">)</span>
-<span class="va">tyndall</span></pre></div>
+<span class="va">tyndall</span></code></pre></div>
 <pre><code>## --Observed data-- 
 ##          Outcome: HIV+ 
 ##        Comparing: Circ+ vs. Circ- 
@@ -363,37 +362,299 @@ Contour plot of 95% lower confidence limit of corrected OR
 ## Relative Risk, Confounder +: 0.4850550                    
 ## Relative Risk, Confounder -: 0.4850550                    
 ## ---
-##                                         Adjusted RR
-## Standardized Morbidity Ratio: 0.4850550   0.7172695
-##              Mantel-Haenszel: 0.4850550   0.7172695</code></pre>
+##                                           RR_conf
+## Standardized Morbidity Ratio: 0.4850550 0.7172695
+##              Mantel-Haenszel: 0.4850550 0.7172695</code></pre>
 <p>The output gives the crude 2X2 table, the crude relative risk and confounder specific measures of association between exposure and outcome, and the relationship adjusted for the unknown confounder, using a standardized morbidity ratio (SMR) or a Mantel-Haenszel (MH) estimate of the risk ratio.</p>
 <p>Additional information are also available, like the 2X2 tables by levels of the confounder.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="co">## Confounder +</span>
-<span class="va">tyndall</span><span class="op">$</span><span class="va">cfder.data</span></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Confounder +</span>
+<span class="va">tyndall</span><span class="op">$</span><span class="va">cfder.data</span></code></pre></div>
 <pre><code>##          Circ+    Circ-
 ## HIV+  75.17045 2.727967
 ## HIV- 430.42955 6.172033</code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="co">## Confounder -</span>
-<span class="va">tyndall</span><span class="op">$</span><span class="va">nocfder.data</span></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Confounder -</span>
+<span class="va">tyndall</span><span class="op">$</span><span class="va">nocfder.data</span></code></pre></div>
 <pre><code>##         Circ+    Circ-
 ## HIV+ 29.82955 82.27203
 ## HIV- 96.57045 86.82797</code></pre>
+<p>As described in this function’s help file, the bias correction used is the “relative risk due to confounding” as proposed by Miettinen (Components of the crude risk ratio, Am J Epidemiol 1972, 96(2):168-172). The two examples shown in that paper are the following.</p>
+<p>The first one is about drug surveillance data analyzed as a cohort study, with the frequency of drug-attributed rash in relation to allopurinol exposure among recipients of ampicillin, with sex treated as a potential confounding factor.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">rash</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">94</span>, <span class="fl">52</span>, <span class="fl">1163</span><span class="op">)</span>,
+               dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Rash +"</span>, <span class="st">"Rash -"</span><span class="op">)</span>,
+                               <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Allopurinol +"</span>, <span class="st">"Allopurinol -"</span><span class="op">)</span><span class="op">)</span>,
+               nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left"></th>
+<th align="right">Allopurinol +</th>
+<th align="right">Allopurinol -</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Rash +</td>
+<td align="right">15</td>
+<td align="right">94</td>
+</tr>
+<tr class="even">
+<td align="left">Rash -</td>
+<td align="right">52</td>
+<td align="right">1163</td>
+</tr>
+</tbody>
+</table>
+<p>We can decompose these numbers by confounders:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Outcome by confounders</span>
+<span class="va">rash_conf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">36</span>, <span class="fl">58</span>, <span class="fl">645</span>, <span class="fl">518</span><span class="op">)</span>,
+                    dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Rash +"</span>, <span class="st">"Rash -"</span><span class="op">)</span>,
+                                    <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Males"</span>, <span class="st">"Females"</span><span class="op">)</span><span class="op">)</span>,
+                    nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">## By confounders: among males</span>
+<span class="va">rash_males</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">36</span>, <span class="fl">33</span>, <span class="fl">645</span><span class="op">)</span>,
+                     dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Rash +"</span>, <span class="st">"Rash -"</span><span class="op">)</span>,
+                                     <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Allopurinol +"</span>, <span class="st">"Allopurinol -"</span><span class="op">)</span><span class="op">)</span>,
+                     nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">## By confounders: among females</span>
+<span class="va">rash_females</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">58</span>, <span class="fl">19</span>, <span class="fl">518</span><span class="op">)</span>,
+                       dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Rash +"</span>, <span class="st">"Rash -"</span><span class="op">)</span>,
+                                       <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Allopurinol +"</span>, <span class="st">"Allopurinol -"</span><span class="op">)</span><span class="op">)</span>,
+                       nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<caption>Outcome by confounders</caption>
+<thead><tr class="header">
+<th align="left"></th>
+<th align="right">Males</th>
+<th align="right">Females</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Rash +</td>
+<td align="right">36</td>
+<td align="right">58</td>
+</tr>
+<tr class="even">
+<td align="left">Rash -</td>
+<td align="right">645</td>
+<td align="right">518</td>
+</tr>
+</tbody>
+</table>
+<table class="table">
+<caption>Among males</caption>
+<thead><tr class="header">
+<th align="left"></th>
+<th align="right">Allopurinol +</th>
+<th align="right">Allopurinol -</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Rash +</td>
+<td align="right">5</td>
+<td align="right">36</td>
+</tr>
+<tr class="even">
+<td align="left">Rash -</td>
+<td align="right">33</td>
+<td align="right">645</td>
+</tr>
+</tbody>
+</table>
+<table class="table">
+<caption>Among females</caption>
+<thead><tr class="header">
+<th align="left"></th>
+<th align="right">Allopurinol +</th>
+<th align="right">Allopurinol -</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Rash +</td>
+<td align="right">10</td>
+<td align="right">58</td>
+</tr>
+<tr class="even">
+<td align="left">Rash -</td>
+<td align="right">19</td>
+<td align="right">518</td>
+</tr>
+</tbody>
+</table>
+<p>And then get the bias parameters:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="op">(</span><span class="va">RR_no</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fl">36</span><span class="op">/</span><span class="op">(</span><span class="fl">36</span><span class="op">+</span><span class="fl">645</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">58</span><span class="op">/</span><span class="op">(</span><span class="fl">58</span><span class="op">+</span><span class="fl">518</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="co"># RR between confounder and outcome among non-exposed</span></code></pre></div>
+<pre><code>## [1] 0.5249886</code></pre>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="op">(</span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fl">5</span><span class="op">+</span><span class="fl">33</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">15</span><span class="op">+</span><span class="fl">52</span><span class="op">)</span><span class="op">)</span> <span class="co"># prevalence of confounder among exposed</span></code></pre></div>
+<pre><code>## [1] 0.5671642</code></pre>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="op">(</span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fl">36</span><span class="op">+</span><span class="fl">645</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">94</span><span class="op">+</span><span class="fl">1163</span><span class="op">)</span><span class="op">)</span> <span class="co"># prevalence of confounder among unexposed</span></code></pre></div>
+<pre><code>## [1] 0.5417661</code></pre>
+<p>With the following results:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">rash</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/confounders.html">confounders</a></span><span class="op">(</span><span class="va">.</span>, type <span class="op">=</span> <span class="st">"RR"</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">RR_no</span>, <span class="va">p1</span>, <span class="va">p2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## --Observed data-- 
+##          Outcome: Rash + 
+##        Comparing: Allopurinol + vs. Allopurinol - 
+## 
+##        Allopurinol + Allopurinol -
+## Rash +            15            94
+## Rash -            52          1163
+## 
+##                                           2.5%    97.5%
+##         Crude Relative Risk: 2.993808 1.840724 4.869218
+## Relative Risk, Confounder +: 3.043245                  
+## Relative Risk, Confounder -: 3.043245                  
+## ---
+##                                           RR_conf
+## Standardized Morbidity Ratio: 3.0432448 0.9837551
+##              Mantel-Haenszel: 3.0432448 0.9837551</code></pre>
+<p>For the second example, data are from a case-control study of the relationship of oral contraceptive use to venous thrombosis with age as a confounding factor.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">thromb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">30</span>, <span class="fl">53</span>, <span class="fl">347</span><span class="op">)</span>,
+                 dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Thrombosis +"</span>, <span class="st">"Thrombosis -"</span><span class="op">)</span>,
+                                 <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"OC +"</span>, <span class="st">"OC -"</span><span class="op">)</span><span class="op">)</span>,
+                 nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left"></th>
+<th align="right">OC +</th>
+<th align="right">OC -</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Thrombosis +</td>
+<td align="right">12</td>
+<td align="right">30</td>
+</tr>
+<tr class="even">
+<td align="left">Thrombosis -</td>
+<td align="right">53</td>
+<td align="right">347</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Outcome by confounders</span>
+<span class="va">thromb_conf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">18</span>, <span class="fl">12</span>, <span class="fl">158</span>, <span class="fl">189</span><span class="op">)</span>,
+                      dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Thrombosis +"</span>, <span class="st">"Thrombosis -"</span><span class="op">)</span>,
+                                      <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"20-29 years old"</span>, <span class="st">"30-39 years old"</span><span class="op">)</span><span class="op">)</span>,
+                      nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">## By confounders: among 20-29 years old</span>
+<span class="va">thromb_younger</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">18</span>, <span class="fl">39</span>, <span class="fl">158</span><span class="op">)</span>,
+                       dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Thrombosis +"</span>, <span class="st">"Thrombosis -"</span><span class="op">)</span>,
+                                       <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"OC +"</span>, <span class="st">"OC -"</span><span class="op">)</span><span class="op">)</span>,
+                       nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">## By confounders: among 30-39 years old</span>
+<span class="va">thromb_older</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">12</span>, <span class="fl">14</span>, <span class="fl">189</span><span class="op">)</span>,
+                     dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Thrombosis +"</span>, <span class="st">"Thrombosis -"</span><span class="op">)</span>,
+                                     <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"OC +"</span>, <span class="st">"OC -"</span><span class="op">)</span><span class="op">)</span>,
+                     nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<caption>Outcome by confounders</caption>
+<thead><tr class="header">
+<th align="left"></th>
+<th align="right">20-29 years old</th>
+<th align="right">30-39 years old</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Thrombosis +</td>
+<td align="right">18</td>
+<td align="right">12</td>
+</tr>
+<tr class="even">
+<td align="left">Thrombosis -</td>
+<td align="right">158</td>
+<td align="right">189</td>
+</tr>
+</tbody>
+</table>
+<table class="table">
+<caption>Among 20-29 years old</caption>
+<thead><tr class="header">
+<th align="left"></th>
+<th align="right">OC +</th>
+<th align="right">OC -</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Thrombosis +</td>
+<td align="right">10</td>
+<td align="right">18</td>
+</tr>
+<tr class="even">
+<td align="left">Thrombosis -</td>
+<td align="right">39</td>
+<td align="right">158</td>
+</tr>
+</tbody>
+</table>
+<table class="table">
+<caption>Among 30-39 years old</caption>
+<thead><tr class="header">
+<th align="left"></th>
+<th align="right">OC +</th>
+<th align="right">OC -</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Thrombosis +</td>
+<td align="right">2</td>
+<td align="right">12</td>
+</tr>
+<tr class="even">
+<td align="left">Thrombosis -</td>
+<td align="right">14</td>
+<td align="right">189</td>
+</tr>
+</tbody>
+</table>
+<p>And then the bias parameters:</p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="op">(</span><span class="va">OR_no</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fl">18</span><span class="op">/</span><span class="fl">12</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">158</span><span class="op">/</span><span class="fl">189</span><span class="op">)</span><span class="op">)</span> <span class="co"># OR between confounder and outcome among non-exposed</span></code></pre></div>
+<pre><code>## [1] 1.794304</code></pre>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="op">(</span><span class="va">p1</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fl">10</span><span class="op">+</span><span class="fl">39</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">12</span><span class="op">+</span><span class="fl">53</span><span class="op">)</span><span class="op">)</span> <span class="co"># prevalence of confounder among exposed</span></code></pre></div>
+<pre><code>## [1] 0.7538462</code></pre>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="op">(</span><span class="va">p2</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fl">18</span><span class="op">+</span><span class="fl">158</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">30</span><span class="op">+</span><span class="fl">347</span><span class="op">)</span><span class="op">)</span> <span class="co"># prevalence of confounder among unexposed</span></code></pre></div>
+<pre><code>## [1] 0.4668435</code></pre>
+<p>With the following results:</p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">thromb</span> <span class="op">%&gt;%</span> <span class="fu"><a href="../reference/confounders.html">confounders</a></span><span class="op">(</span><span class="va">.</span>, type <span class="op">=</span> <span class="st">"OR"</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">OR_no</span>, <span class="va">p1</span>, <span class="va">p2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<pre><code>## --Observed data-- 
+##          Outcome: Thrombosis + 
+##        Comparing: OC + vs. OC - 
+## 
+##              OC + OC -
+## Thrombosis +   12   30
+## Thrombosis -   53  347
+## 
+##                                        2.5%    97.5%
+##         Crude Odds Ratio: 2.618868 1.263076 5.429973
+## Odds Ratio, Confounder +: 2.245449                  
+## Odds Ratio, Confounder -: 2.245449                  
+## ---
+##                                         OR_conf
+## Standardized Morbidity Ratio: 2.245449 1.166300
+##              Mantel-Haenszel: 2.245449 1.166300</code></pre>
 </div>
 <div id="bootstrapping" class="section level2">
 <h2 class="hasAnchor">
 <a href="#bootstrapping" class="anchor"></a>Bootstrapping</h2>
-<p>Selection and misclassification bias models can be bootstrapped in order to get confidence interval on the adjusted association parameter. We can use the ICU dataset from Hosmer and Lemeshow <a href="http://ca.wiley.com/WileyCDA/WileyTitle/productCd-0470582472.html">Applied Logistic Regression</a> textbook as an example. The replicates that give negative cells in the adjusted 2X2 table are silently ignored and the number of effective bootstrap replicates is provided in the output. Ten thousands bootstrap samples are a good number for testing everything runs smoothly. But again, don’t be afraid of running more, like 100,000 bootstrap samples.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lbraglia/aplore3">aplore3</a></span><span class="op">)</span>  <span class="co"># to get ICU data</span>
+<p>Selection and misclassification bias models can be bootstrapped in order to get confidence interval on the adjusted association parameter. We can use the ICU dataset from Hosmer and Lemeshow <a href="https://ca.wiley.com/WileyCDA/WileyTitle/productCd-0470582472.html">Applied Logistic Regression</a> textbook as an example. The replicates that give negative cells in the adjusted 2X2 table are silently ignored and the number of effective bootstrap replicates is provided in the output. Ten thousands bootstrap samples are a good number for testing everything runs smoothly. But again, don’t be afraid of running more, like 100,000 bootstrap samples.</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/lbraglia/aplore3">aplore3</a></span><span class="op">)</span>  <span class="co"># to get ICU data</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">icu</span><span class="op">)</span>
 
 <span class="co">## First run the model</span>
 <span class="va">misclass_eval</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/misclassification.html">misclassification</a></span><span class="op">(</span><span class="va">icu</span><span class="op">$</span><span class="va">sta</span>, <span class="va">icu</span><span class="op">$</span><span class="va">inf</span>,
                                    type <span class="op">=</span> <span class="st">"exposure"</span>,
                                    bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.75</span>, <span class="fl">.85</span>, <span class="fl">.9</span>, <span class="fl">.95</span><span class="op">)</span><span class="op">)</span>
-<span class="va">misclass_eval</span></pre></div>
+<span class="va">misclass_eval</span></code></pre></div>
 <pre><code>## --Observed data-- 
 ##          Outcome: Died 
 ##        Comparing: Yes vs. No 
@@ -410,19 +671,19 @@ Contour plot of 95% lower confidence limit of corrected OR
 ##                                                                2.5%     97.5%
 ## Misclassification Bias Corrected Relative Risk:  3.627845                    
 ##    Misclassification Bias Corrected Odds Ratio:  4.871795  1.235506 19.210258</code></pre>
-<div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="co">## Then bootstrap it</span>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## Then bootstrap it</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">misclass_boot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/boot.bias.html">boot.bias</a></span><span class="op">(</span><span class="va">misclass_eval</span>, R <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span>
-<span class="va">misclass_boot</span></pre></div>
+<span class="va">misclass_boot</span></code></pre></div>
 <pre><code>## 95 % confidence interval of the bias adjusted measures: 
 ##    RR: 0.9595117 11.96789 
 ##    OR: 1.075386 19.44271 
 ## ---
 ##  Based on 9562 bootstrap replicates</code></pre>
 <p>Bootstrap replicates can also be plotted, with the confidence interval shown as dotted lines.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">misclass_boot</span>, <span class="st">"rr"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">misclass_boot</span>, <span class="st">"rr"</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="episensr_files/figure-html/boot_fig-1.png" alt="Bootstrap replicates and confidence interval." width="700"><p class="caption">
 Bootstrap replicates and confidence interval.

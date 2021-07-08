@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">episensr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -64,13 +64,13 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/2_probabilistic.html">Probabilistic Sensitivity Analysis</a>
+      <a href="../articles/b_probabilistic.html">Probabilistic Sensitivity Analysis</a>
     </li>
     <li>
-      <a href="../articles/3_multiple_bias.html">Multiple Bias Modeling</a>
+      <a href="../articles/c_multiple_bias.html">Multiple Bias Modeling</a>
     </li>
     <li>
-      <a href="../articles/4_other_sens.html">Additional Sensitivity Analyses</a>
+      <a href="../articles/d_other_sens.html">Additional Sensitivity Analyses</a>
     </li>
   </ul>
 </li>
@@ -81,7 +81,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/dhaine/episensr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -101,10 +101,10 @@
       <h1 data-toc-skip>Multiple Bias Modeling</h1>
                         <h4 class="author">Denis Haine</h4>
             
-            <h4 class="date">2020-10-08</h4>
+            <h4 class="date">2021-02-23</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/dhaine/episensr/blob/master/vignettes/3_multiple_bias.Rmd"><code>vignettes/3_multiple_bias.Rmd</code></a></small>
-      <div class="hidden name"><code>3_multiple_bias.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/dhaine/episensr/blob/master/vignettes/c_multiple_bias.Rmd"><code>vignettes/c_multiple_bias.Rmd</code></a></small>
+      <div class="hidden name"><code>c_multiple_bias.Rmd</code></div>
 
     </div>
 
@@ -112,10 +112,10 @@
     
 <p>Epidemiologic studies can suffer from more than one bias. Bias functions in <code>episensr</code> can be applied sequentially to quantify bias resulting from multiple biases.</p>
 <p>Following the example in <a href="https://www.springer.com/us/book/9780387879604">Lash et al.</a>, we can use the study by <a href="https://link.springer.com/article/10.1007%2Fs10549-005-9056-0">Chien et al.</a>. It is a case-control study looking at the association between antidepressant use and the occurrence of breast cancer. The observed OR was 1.2 [0.9–1.6].</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="va">chien</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">118</span>, <span class="fl">832</span>, <span class="fl">103</span>, <span class="fl">884</span><span class="op">)</span>,
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">chien</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">118</span>, <span class="fl">832</span>, <span class="fl">103</span>, <span class="fl">884</span><span class="op">)</span>,
                 dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"BC+"</span>, <span class="st">"BC-"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"AD+"</span>, <span class="st">"AD-"</span><span class="op">)</span><span class="op">)</span>,
-                nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+                nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left"></th>
@@ -136,12 +136,12 @@
 </tbody>
 </table>
 <p>Records on medication use differed between participants, from pharmacy records and self-reported use, leading to misclassification:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">episensr</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">episensr</span><span class="op">)</span></code></pre></div>
 <pre><code>## Loading required package: ggplot2</code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="va">chien</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="../reference/misclassification.html">misclassification</a></span><span class="op">(</span><span class="va">.</span>, type <span class="op">=</span> <span class="st">"exposure"</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.56</span>, <span class="fl">.58</span>, <span class="fl">.99</span>, <span class="fl">.97</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">chien</span> <span class="op">%&gt;%</span>
+    <span class="fu"><a href="../reference/misclassification.html">misclassification</a></span><span class="op">(</span><span class="va">.</span>, type <span class="op">=</span> <span class="st">"exposure"</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.56</span>, <span class="fl">.58</span>, <span class="fl">.99</span>, <span class="fl">.97</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## --Observed data-- 
 ##          Outcome: BC+ 
 ##        Comparing: AD+ vs. AD- 
@@ -158,36 +158,36 @@
 ## Misclassification Bias Corrected Relative Risk: 1.272939                  
 ##    Misclassification Bias Corrected Odds Ratio: 1.676452 1.150577 2.442679</code></pre>
 <p>Controls and cases also enrolled into the study at different rates. We can combine the misclassification bias with a selection bias thanks to the function <code>multiple.bias</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="va">chien</span> <span class="op">%&gt;%</span> 
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">chien</span> <span class="op">%&gt;%</span> 
     <span class="fu"><a href="../reference/misclassification.html">misclassification</a></span><span class="op">(</span><span class="va">.</span>, type <span class="op">=</span> <span class="st">"exposure"</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.56</span>, <span class="fl">.58</span>, <span class="fl">.99</span>, <span class="fl">.97</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    <span class="fu"><a href="../reference/multiple.bias.html">multiple.bias</a></span><span class="op">(</span><span class="va">.</span>, bias_function <span class="op">=</span> <span class="st">"selection"</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.73</span>, <span class="fl">.61</span>, <span class="fl">.82</span>, <span class="fl">.76</span><span class="op">)</span><span class="op">)</span></pre></div>
+    <span class="fu"><a href="../reference/multiple.bias.html">multiple.bias</a></span><span class="op">(</span><span class="va">.</span>, bias_function <span class="op">=</span> <span class="st">"selection"</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.73</span>, <span class="fl">.61</span>, <span class="fl">.82</span>, <span class="fl">.76</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## Multiple bias analysis
 ## ---
 ##                                                 
 ## Selection Bias Corrected Relative Risk: 1.192461
 ##    Selection Bias Corrected Odds Ratio: 1.512206</code></pre>
-<p>The association between antidepressant use and breast cancer was adjusted for various confounders (race/ethnicity, income, etc.). None of these confounders were found to change the association by more than 10%. However, for illustration, we can add the effect of a potential confounder ( e.g. physical activity):</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="va">chien</span> <span class="op">%&gt;%</span>
+<p>The association between antidepressant use and breast cancer was adjusted for various confounders (race/ethnicity, income, etc.). None of these confounders were found to change the association by more than 10%. However, for illustration, we can add the effect of a potential confounder (e.g. physical activity):</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">chien</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="../reference/misclassification.html">misclassification</a></span><span class="op">(</span><span class="va">.</span>, type <span class="op">=</span> <span class="st">"exposure"</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.56</span>, <span class="fl">.58</span>, <span class="fl">.99</span>, <span class="fl">.97</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="../reference/multiple.bias.html">multiple.bias</a></span><span class="op">(</span><span class="va">.</span>, bias_function <span class="op">=</span> <span class="st">"selection"</span>,
                   bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.73</span>, <span class="fl">.61</span>, <span class="fl">.82</span>, <span class="fl">.76</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="../reference/multiple.bias.html">multiple.bias</a></span><span class="op">(</span><span class="va">.</span>, bias_function <span class="op">=</span> <span class="st">"confounders"</span>,
-                  type <span class="op">=</span> <span class="st">"OR"</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.92</span>, <span class="fl">.3</span>, <span class="fl">.44</span><span class="op">)</span><span class="op">)</span></pre></div>
+                  type <span class="op">=</span> <span class="st">"OR"</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.92</span>, <span class="fl">.3</span>, <span class="fl">.44</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## Multiple bias analysis
 ## ---
-##                                        Adjusted OR
-## Standardized Morbidity Ratio: 1.494938    1.011609
-##              Mantel-Haenszel: 1.494938    1.011609</code></pre>
+##                                         OR_conf
+## Standardized Morbidity Ratio: 1.494938 1.011609
+##              Mantel-Haenszel: 1.494938 1.011609</code></pre>
 <p>We can do the same in a probabilistic framework:</p>
 <ul>
 <li>Misclassification bias</li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">mod1</span> <span class="op">&lt;-</span> <span class="va">chien</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="../reference/probsens.html">probsens</a></span><span class="op">(</span><span class="va">.</span>, type <span class="op">=</span> <span class="st">"exposure"</span>, reps <span class="op">=</span> <span class="fl">100000</span>,
              seca.parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"trapezoidal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.45</span>, <span class="fl">.5</span>, <span class="fl">.6</span>, <span class="fl">.65</span><span class="op">)</span><span class="op">)</span>,
@@ -195,7 +195,7 @@
              spca.parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"trapezoidal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.95</span>, <span class="fl">.97</span>, <span class="fl">.99</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
              spexp.parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"trapezoidal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.96</span>, <span class="fl">.98</span>, <span class="fl">.99</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
              corr.se <span class="op">=</span> <span class="fl">.8</span>, corr.sp <span class="op">=</span> <span class="fl">.8</span><span class="op">)</span>
-<span class="va">mod1</span></pre></div>
+<span class="va">mod1</span></code></pre></div>
 <pre><code>## --Observed data-- 
 ##          Outcome: BC+ 
 ##        Comparing: AD+ vs. AD- 
@@ -218,21 +218,21 @@
 ##               Odds Ratio -- systematic error:         1.4344889
 ## Relative Risk -- systematic and random error:         1.2667664
 ##    Odds Ratio -- systematic and random error:         1.6374497</code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mod1</span>, <span class="st">"or"</span><span class="op">)</span></pre></div>
-<p><img src="3_multiple_bias_files/figure-html/plot2-1.png" width="576"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mod1</span>, <span class="st">"or"</span><span class="op">)</span></code></pre></div>
+<p><img src="c_multiple_bias_files/figure-html/plot2-1.png" width="576"></p>
 <ul>
 <li>Selection bias</li>
 </ul>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">mod2</span> <span class="op">&lt;-</span> <span class="va">chien</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="../reference/probsens.sel.html">probsens.sel</a></span><span class="op">(</span><span class="va">.</span>, reps <span class="op">=</span> <span class="fl">100000</span>,
                  case.exp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"beta"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">8.08</span>, <span class="fl">24.25</span><span class="op">)</span><span class="op">)</span>,
                  case.nexp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"trapezoidal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.75</span>, <span class="fl">.85</span>, <span class="fl">.95</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
                  ncase.exp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"beta"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">12.6</span>, <span class="fl">50.4</span><span class="op">)</span><span class="op">)</span>,
                  ncase.nexp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"trapezoidal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.7</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">mod2</span></pre></div>
+<span class="va">mod2</span></code></pre></div>
 <pre><code>## --Observed data-- 
 ##          Outcome: BC+ 
 ##        Comparing: AD+ vs. AD- 
@@ -250,20 +250,20 @@
 ##                                            97.5th percentile
 ##            Odds Ratio -- systematic error:         2.4217989
 ## Odds Ratio -- systematic and random error:         2.5253069</code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mod2</span>, <span class="st">"or"</span><span class="op">)</span></pre></div>
-<p><img src="3_multiple_bias_files/figure-html/plot3-1.png" width="576"></p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mod2</span>, <span class="st">"or"</span><span class="op">)</span></code></pre></div>
+<p><img src="c_multiple_bias_files/figure-html/plot3-1.png" width="576"></p>
 <ul>
 <li>Confounding</li>
 </ul>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">mod3</span> <span class="op">&lt;-</span> <span class="va">chien</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="../reference/probsens.conf.html">probsens.conf</a></span><span class="op">(</span><span class="va">.</span>, reps <span class="op">=</span> <span class="fl">100000</span>,
                   prev.exp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"beta"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">24.9</span>, <span class="fl">58.1</span><span class="op">)</span><span class="op">)</span>,
                   prev.nexp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"beta"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">42.9</span>, <span class="fl">54.6</span><span class="op">)</span><span class="op">)</span>,
                   risk <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"trapezoidal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.2</span>, <span class="fl">.58</span>, <span class="fl">1.01</span>, <span class="fl">1.24</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">mod3</span></pre></div>
+<span class="va">mod3</span></code></pre></div>
 <pre><code>## --Observed data-- 
 ##          Outcome: BC+ 
 ##        Comparing: AD+ vs. AD- 
@@ -286,14 +286,14 @@
 ## RR (SMR) -- systematic and random error:         1.2329113
 ##            OR (SMR) -- systematic error:         1.2774908
 ## OR (SMR) -- systematic and random error:         1.5561690</code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mod3</span>, <span class="st">"or"</span><span class="op">)</span></pre></div>
-<p><img src="3_multiple_bias_files/figure-html/plot4-1.png" width="576"></p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mod3</span>, <span class="st">"or"</span><span class="op">)</span></code></pre></div>
+<p><img src="c_multiple_bias_files/figure-html/plot4-1.png" width="576"></p>
 <ul>
 <li>Misclassification then selection</li>
 </ul>
-<div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">chien</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="../reference/probsens.html">probsens</a></span><span class="op">(</span><span class="va">.</span>, type <span class="op">=</span> <span class="st">"exposure"</span>, reps <span class="op">=</span> <span class="fl">100000</span>,
              seca.parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"trapezoidal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.45</span>, <span class="fl">.5</span>, <span class="fl">.6</span>, <span class="fl">.65</span><span class="op">)</span><span class="op">)</span>,
@@ -305,7 +305,7 @@
                   case.exp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"beta"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">8.08</span>, <span class="fl">24.25</span><span class="op">)</span><span class="op">)</span>,
                   case.nexp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"trapezoidal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.75</span>, <span class="fl">.85</span>, <span class="fl">.95</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,
                   ncase.exp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"beta"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">12.6</span>, <span class="fl">50.4</span><span class="op">)</span><span class="op">)</span>,
-                  ncase.nexp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"trapezoidal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.7</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></pre></div>
+                  ncase.nexp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"trapezoidal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.7</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## Multiple bias analysis
 ## ---
@@ -318,8 +318,8 @@
 <ul>
 <li>Misclassification, selection, and confounding</li>
 </ul>
-<div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">mod6</span> <span class="op">&lt;-</span> <span class="va">chien</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="../reference/probsens.html">probsens</a></span><span class="op">(</span><span class="va">.</span>, type <span class="op">=</span> <span class="st">"exposure"</span>, reps <span class="op">=</span> <span class="fl">100000</span>,
              seca.parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"trapezoidal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.45</span>, <span class="fl">.5</span>, <span class="fl">.6</span>, <span class="fl">.65</span><span class="op">)</span><span class="op">)</span>,
@@ -336,7 +336,7 @@
                   prev.exp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"beta"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">24.9</span>, <span class="fl">58.1</span><span class="op">)</span><span class="op">)</span>,
                   prev.nexp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"beta"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">42.9</span>, <span class="fl">54.6</span><span class="op">)</span><span class="op">)</span>,
                   risk <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"trapezoidal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.2</span>, <span class="fl">.58</span>, <span class="fl">1.01</span>, <span class="fl">1.24</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">mod6</span></pre></div>
+<span class="va">mod6</span></code></pre></div>
 <pre><code>## 
 ## Multiple bias analysis
 ## ---
@@ -350,12 +350,12 @@
 ## RR (SMR) -- systematic and random error:         1.1996913
 ##            OR (SMR) -- systematic error:         1.2164556
 ## OR (SMR) -- systematic and random error:         1.4492568</code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mod6</span>, <span class="st">"or"</span><span class="op">)</span></pre></div>
-<p><img src="3_multiple_bias_files/figure-html/plot5-1.png" width="576"></p>
-<div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mod6</span>, <span class="st">"or_tot"</span><span class="op">)</span></pre></div>
-<p><img src="3_multiple_bias_files/figure-html/plot5-2.png" width="576"></p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mod6</span>, <span class="st">"or"</span><span class="op">)</span></code></pre></div>
+<p><img src="c_multiple_bias_files/figure-html/plot5-1.png" width="576"></p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">mod6</span>, <span class="st">"or_tot"</span><span class="op">)</span></code></pre></div>
+<p><img src="c_multiple_bias_files/figure-html/plot5-2.png" width="576"></p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -48,6 +48,14 @@ Simple sensitivity analysis to correct for unknown or unmeasured confounding
 without effect modification. Implementation for ratio measures (relative risk
 -- RR, or odds ratio -- OR) and difference measures (risk difference -- RD).
 }
+\details{
+The analytic approach uses the "relative risk due to confounding" as defined by
+Miettinen (1972), i.e. \eqn{RR_{adj} = \frac{RR_{crude}}{RR_{conf}}} where RR_adj
+is the standardized (adjusted) risk ratio, RR_crude is the crude risk ratio, and
+RR_conf is the relative risk component attributable to confounding by the
+stratification factors. The output provides both RR_adj (SMR or Mantel-Haenszel)
+and the RR_conf.
+}
 \examples{
 # The data for this example come from:
 # Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O.
@@ -76,4 +84,7 @@ bias_parms = c(-.37, .8, .05))
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.
+
+Miettinen, 1971. Components of the Crude Risk Ratio. \emph{Am J Epidemiol}
+96(2):168-172.
 }
