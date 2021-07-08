@@ -1,3 +1,6 @@
+# episensr 1.0.1
+- Fix confidence interval values in plotting output of `probsens`.
+
 # episensr 1.0.0
 - Provide default values for variables in `mbias`.
 - Update M-bias plot by using `ggdag` (and `dagitty`).
