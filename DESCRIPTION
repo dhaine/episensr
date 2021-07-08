@@ -1,7 +1,7 @@
 Package: episensr
 Type: Package
 Title: Basic Sensitivity Analysis of Epidemiological Results
-Version: 0.9.999
+Version: 1.0.0
 Imports:
     triangle,
     trapezoid,
@@ -10,8 +10,8 @@ Imports:
     ggdag,
     boot,
     magrittr
-Date: 2020-03-05
-Authors@R: 
+Date: 2021-02-20
+Authors@R:
     person(given = "Denis",
            family = "Haine",
            role = c("aut", "cre"),
@@ -25,8 +25,8 @@ Description: Basic sensitivity analysis of the observed relative risks adjusting
     "Applying Quantitative Bias Analysis to Epidemiologic Data",
     ('Springer', 2009).
 Depends:
-    R (>= 3.5.0),
-    ggplot2 (>= 3.0.0)
+    R (>= 3.6.0),
+    ggplot2 (>= 3.3.3)
 License: GPL-2
 Suggests:
     testthat,

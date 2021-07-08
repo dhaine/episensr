@@ -2,7 +2,7 @@
 title: "Probabilistic Sensitivity Analysis"
 author: "Denis Haine"
 date: "`r Sys.Date()`"
-output: 
+output:
   rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
@@ -37,7 +37,7 @@ functions are:
 ## Probabilistic Sensitivity Analysis for Exposure Misclassification
 
 We use a study on the effect of smoking during pregnancy on breast cancer risk
-by [Fink & Lash](http://www.ncbi.nlm.nih.gov/pubmed/12946045), where we assume
+by [Fink & Lash](https://pubmed.ncbi.nlm.nih.gov/12946045/), where we assume
 nondifferential misclassification of the exposure, smoking, with probability
 density functions for sensitivities (Se) and specificities (Sp) among cases and
 noncases equal to uniform distributions with a minimum of 0.7 and a maximum of
@@ -87,7 +87,7 @@ We have `smoke.nd$obs.data` where we have the observed 2X2 table,
 replication, like the Se and Sp, the 4 cells of the adjusted 2X2 table, and the
 adjusted measures.
 `episensr` offers some plot functions to allow plotting directly these saved
-infromation, for example the Se prior distribution:
+information, for example the Se prior distribution:
 
 ```{r plot, fig.cap = "Sensibility prior distribution.",fig.width=6,fig.height=4}
 plot(smoke.nd, "seca")
@@ -113,12 +113,10 @@ iterations are deleted ([Fox et al., 2005](https://doi.org/10.1093/ije/dyi184)).
 
 ## Probabilistic Sensitivity Analysis for Uncontrolled Confounding
 
-Let's illustrate this function with this example from [Modern Epidemiology by
-Rothman, Greenland &
-Lash](https://shop.lww.com/Modern-Epidemiology/p/9781451190052), where the
-association between occupational resins exposure and lung cancer mortality is
-studied, together with the presence of an unmeasured potential confounder,
-smoking ([Greenland et al., 1994](https://www.ncbi.nlm.nih.gov/pubmed/7927843)).
+Let's illustrate this function with this example where the association between
+occupational resins exposure and lung cancer mortality is studied, together with
+the presence of an unmeasured potential confounder, smoking ([Greenland et al.,
+1994](https://pubmed.ncbi.nlm.nih.gov/7927843/)).
 
 |          | Resins exposed | Resins unexposed |
 |---------:|:--------------:|:----------------:|
@@ -138,7 +136,7 @@ the prevalence of smoking in those exposed to resins.
 Prior probability distributions are given to each bias parameters.
 Prevalences of smoking in those exposed to resins, and of smoking in those
 unexposed to resins receive prior distributions that are uniform between 0.40
-and 0.70. 
+and 0.70.
 Prior distribution for the odds ratio associating smoking with lung cancer
 mortality is log-normal with 95% limits of 5 and 15.
 The mean of this distribution is [ln(15) + ln(5)] / 2 = 2.159, and its standard

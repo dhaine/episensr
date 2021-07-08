@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">episensr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.999</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -81,7 +81,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/dhaine/episensr/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -101,7 +101,7 @@
       <h1 data-toc-skip>Probabilistic Sensitivity Analysis</h1>
                         <h4 class="author">Denis Haine</h4>
             
-            <h4 class="date">2020-10-16</h4>
+            <h4 class="date">2021-02-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dhaine/episensr/blob/master/vignettes/b_probabilistic.Rmd"><code>vignettes/b_probabilistic.Rmd</code></a></small>
       <div class="hidden name"><code>b_probabilistic.Rmd</code></div>
@@ -136,13 +136,13 @@
 <div id="probabilistic-sensitivity-analysis-for-exposure-misclassification" class="section level2">
 <h2 class="hasAnchor">
 <a href="#probabilistic-sensitivity-analysis-for-exposure-misclassification" class="anchor"></a>Probabilistic Sensitivity Analysis for Exposure Misclassification</h2>
-<p>We use a study on the effect of smoking during pregnancy on breast cancer risk by <a href="http://www.ncbi.nlm.nih.gov/pubmed/12946045">Fink &amp; Lash</a>, where we assume nondifferential misclassification of the exposure, smoking, with probability density functions for sensitivities (Se) and specificities (Sp) among cases and noncases equal to uniform distributions with a minimum of 0.7 and a maximum of 0.95 for sensitivities (0.9 and 0.99 respectively for specificities). We choose to correct for exposure misclassification with the argument <code>type = exposure</code>. We ask for 50000 replications (default is 1000). Don’t be shy with the number of iterations, episensr is fast.</p>
+<p>We use a study on the effect of smoking during pregnancy on breast cancer risk by <a href="https://pubmed.ncbi.nlm.nih.gov/12946045/">Fink &amp; Lash</a>, where we assume nondifferential misclassification of the exposure, smoking, with probability density functions for sensitivities (Se) and specificities (Sp) among cases and noncases equal to uniform distributions with a minimum of 0.7 and a maximum of 0.95 for sensitivities (0.9 and 0.99 respectively for specificities). We choose to correct for exposure misclassification with the argument <code>type = exposure</code>. We ask for 50000 replications (default is 1000). Don’t be shy with the number of iterations, episensr is fast.</p>
 <p>The Se and Sp for cases (<code>seca</code>, <code>spca</code>) are given as a list with its first element referring to the type of distribution (choice between constant, uniform, triangular, trapezoidal, logit-logistic, and logit-normal) and the second element giving the distribution parameters (min and max for uniform distribution). By avoiding to provide information on the noncases (<code>seexp</code>, <code>spexp</code>), we are referring to a nondifferential misclassification.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">episensr</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">episensr</span><span class="op">)</span></code></pre></div>
 <pre><code>## Loading required package: ggplot2</code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">smoke.nd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/probsens.html">probsens</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">215</span>, <span class="fl">1449</span>, <span class="fl">668</span>, <span class="fl">4296</span><span class="op">)</span>,
                             dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"BC+"</span>, <span class="st">"BC-"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Smoke+"</span>, <span class="st">"Smoke-"</span><span class="op">)</span><span class="op">)</span>,
                             nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
@@ -150,7 +150,7 @@
                      reps <span class="op">=</span> <span class="fl">50000</span>,
                      seca.parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"uniform"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.7</span>, <span class="fl">.95</span><span class="op">)</span><span class="op">)</span>,
                      spca.parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"uniform"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.9</span>, <span class="fl">.99</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">smoke.nd</span></pre></div>
+<span class="va">smoke.nd</span></code></pre></div>
 <pre><code>## --Observed data-- 
 ##          Outcome: BC+ 
 ##        Comparing: Smoke+ vs. Smoke- 
@@ -175,8 +175,8 @@
 ##    Odds Ratio -- systematic and random error:         1.0923026</code></pre>
 <p>The output gives the 2X2 table, the observed measures of association, and the corrected measures of association.</p>
 <p>We saved the <code>probsens</code> analysis in a new object <code>smoke.nd</code>. We can see its elements with the function <code><a href="https://rdrr.io/r/utils/str.html">str()</a></code>:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">smoke.nd</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">smoke.nd</span><span class="op">)</span></code></pre></div>
 <pre><code>## List of 8
 ##  $ obs.data    : num [1:2, 1:2] 215 668 1449 4296
 ##   ..- attr(*, "dimnames")=List of 2
@@ -208,9 +208,9 @@
 ##  $ warnings    : NULL
 ##  $ message     : NULL
 ##  - attr(*, "class")= chr [1:3] "episensr" "episensr.probsens" "list"</code></pre>
-<p><code>smoke.nd</code> is a list of 8 elements where different information on the analysis done are saved. We have <code>smoke.nd$obs.data</code> where we have the observed 2X2 table, <code>smoke.nd$obs.measures</code> (the observed measures of association), <code>smoke.nd$adj.measures</code> (the adjusted measures of association), and <code>smoke.nd$sim.df</code>, a data frame with the simulated variables from each replication, like the Se and Sp, the 4 cells of the adjusted 2X2 table, and the adjusted measures. <code>episensr</code> offers some plot functions to allow plotting directly these saved infromation, for example the Se prior distribution:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">smoke.nd</span>, <span class="st">"seca"</span><span class="op">)</span></pre></div>
+<p><code>smoke.nd</code> is a list of 8 elements where different information on the analysis done are saved. We have <code>smoke.nd$obs.data</code> where we have the observed 2X2 table, <code>smoke.nd$obs.measures</code> (the observed measures of association), <code>smoke.nd$adj.measures</code> (the adjusted measures of association), and <code>smoke.nd$sim.df</code>, a data frame with the simulated variables from each replication, like the Se and Sp, the 4 cells of the adjusted 2X2 table, and the adjusted measures. <code>episensr</code> offers some plot functions to allow plotting directly these saved information, for example the Se prior distribution:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">smoke.nd</span>, <span class="st">"seca"</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="b_probabilistic_files/figure-html/plot-1.png" alt="Sensibility prior distribution." width="576"><p class="caption">
 Sensibility prior distribution.
@@ -222,7 +222,7 @@ Sensibility prior distribution.
 <div id="probabilistic-sensitivity-analysis-for-uncontrolled-confounding" class="section level2">
 <h2 class="hasAnchor">
 <a href="#probabilistic-sensitivity-analysis-for-uncontrolled-confounding" class="anchor"></a>Probabilistic Sensitivity Analysis for Uncontrolled Confounding</h2>
-<p>Let’s illustrate this function with this example from <a href="https://shop.lww.com/Modern-Epidemiology/p/9781451190052">Modern Epidemiology by Rothman, Greenland &amp; Lash</a>, where the association between occupational resins exposure and lung cancer mortality is studied, together with the presence of an unmeasured potential confounder, smoking (<a href="https://www.ncbi.nlm.nih.gov/pubmed/7927843">Greenland et al., 1994</a>).</p>
+<p>Let’s illustrate this function with this example where the association between occupational resins exposure and lung cancer mortality is studied, together with the presence of an unmeasured potential confounder, smoking (<a href="https://pubmed.ncbi.nlm.nih.gov/7927843/">Greenland et al., 1994</a>).</p>
 <table class="table">
 <thead><tr class="header">
 <th align="right"></th>
@@ -244,22 +244,22 @@ Sensibility prior distribution.
 </table>
 <p>After adjustment for age and year at death, Greenland et al. found an OR of 1.77 (95% CI from 1.18 to 2.64). Is smoking, for which they had no data about, had an effect on this association? How large the association between resins and smoking had to be to remove the association between resins and lung cancer association after adjustment for smoking? For this, you have to know 3 bias parameters: the association between smoking and lung cancer, the prevalence of smoking among those unexposed to resins, and the prevalence of smoking in those exposed to resins.</p>
 <p>Prior probability distributions are given to each bias parameters. Prevalences of smoking in those exposed to resins, and of smoking in those unexposed to resins receive prior distributions that are uniform between 0.40 and 0.70. Prior distribution for the odds ratio associating smoking with lung cancer mortality is log-normal with 95% limits of 5 and 15. The mean of this distribution is [ln(15) + ln(5)] / 2 = 2.159, and its standard deviation is [ln(15) - ln(5)] / 3.92 = 0.28. It looks like this:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Lognormal.html">rlnorm</a></span><span class="op">(</span><span class="fl">10000</span>, meanlog <span class="op">=</span> <span class="fl">2.159</span>, sdlog <span class="op">=</span> <span class="fl">0.28</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.025</span>, <span class="fl">0.975</span><span class="op">)</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.025</span>, <span class="fl">0.975</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>##      2.5%     97.5% 
 ##  4.979672 14.959055</code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/density.html">density</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/density.html">density</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="b_probabilistic_files/figure-html/unnamed-chunk-1-1.png" alt="Log-normal distribution with meanlog = 2.159 and sdlog = 0.28." width="576"><p class="caption">
 Log-normal distribution with meanlog = 2.159 and sdlog = 0.28.
 </p>
 </div>
 <p>Now, let’s run <code>probsens.conf</code> with 50,000 iterations:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">greenland</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/probsens.conf.html">probsens.conf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">45</span>, <span class="fl">94</span>, <span class="fl">257</span>, <span class="fl">945</span><span class="op">)</span>,
                                   dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Cases+"</span>, <span class="st">"Cases-"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Res+"</span>, <span class="st">"Res-"</span><span class="op">)</span><span class="op">)</span>,
                                   nrow <span class="op">=</span> <span class="fl">2</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
@@ -267,7 +267,7 @@ Log-normal distribution with meanlog = 2.159 and sdlog = 0.28.
                            prev.exp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"uniform"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.4</span>, <span class="fl">.7</span><span class="op">)</span><span class="op">)</span>,
                            prev.nexp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"uniform"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.4</span>, <span class="fl">.7</span><span class="op">)</span><span class="op">)</span>,
                            risk <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="st">"log-normal"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2.159</span>, <span class="fl">.28</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="va">greenland</span></pre></div>
+<span class="va">greenland</span></code></pre></div>
 <pre><code>## --Observed data-- 
 ##          Outcome: Cases+ 
 ##        Comparing: Res+ vs. Res- 
@@ -292,8 +292,8 @@ Log-normal distribution with meanlog = 2.159 and sdlog = 0.28.
 ## OR (SMR) -- systematic and random error:          3.278307</code></pre>
 <p>The median adjusted OR is 1.84 [1.21,2.82]. The ratio of the two 95% CI bounds is 2.82/1.21 = 2.33. The ratio from the conventional 95% confidence limits was 2.57/1.20 = 2.14. These 2 ratios are pretty close, and therefore our uncertainty about confounding is similar to our uncertainty about random error.</p>
 <p>You can plot the bias-adjusted OR including both systematic and random error:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">greenland</span>, <span class="st">"or_tot"</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">greenland</span>, <span class="st">"or_tot"</span><span class="op">)</span></code></pre></div>
 <div class="figure">
 <img src="b_probabilistic_files/figure-html/probsens_conf_plot-1.png" alt="Distribution of the 50,000 confounder-adjusted odds ratios." width="576"><p class="caption">
 Distribution of the 50,000 confounder-adjusted odds ratios.

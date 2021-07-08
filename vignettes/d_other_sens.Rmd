@@ -2,7 +2,7 @@
 title: "Additional Sensitivity Analyses"
 author: "Denis Haine"
 date: "`r Sys.Date()`"
-output: 
+output:
   rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
@@ -31,7 +31,7 @@ some residual confounding  can still be present, because:
 
 1. some confounding factors were not taken into account (not looked at, not
     adjusted for, or no data collected about them),
-2. you only losely took into account that confounding (still presence of
+2. you only loosely took into account that confounding (still presence of
     differences between groups after control by matching for example, or you
     lost precision on a confounding variable e.g. by categorizing a continuous
     variable),
@@ -39,7 +39,7 @@ some residual confounding  can still be present, because:
 
 ### Simple Sensitivity Analyses in the Absence of External Information: Array Approach
 
-The *array approach* by Schneeweis provides a corrected RR based on the
+The *array approach* by Schneeweiss provides a corrected RR based on the
 apparent, confounded, RR, the prevalence of the confounding factor among the
 exposed and unexposed, and the association between the confounder and the outcome.
 
@@ -66,7 +66,7 @@ The adjusted RR is 3.04.
 
 However, it is more interesting if we could keep some factors constant in our
 analysis (the crude risk of 2.0, the prevalence among the unexposed, 0.5), and
-vary the imbalance of the hypothetical unoberved confounder (association
+vary the imbalance of the hypothetical unobserved confounder (association
 confounder-outcome from 1 to 5.5; prevalence among exposed, from 0 to 1):
 
 ```{r conf_array_apply,warning=FALSE,message=FALSE,fig.width=6,fig.height=4}
@@ -136,21 +136,21 @@ And we can extend to several confounders:
 ```{r conf_ext_apply,warning=FALSE,message=FALSE,fig.width=8,fig.height=6}
 dat <- expand.grid(RR_CD = seq(0.1, 1, 0.1))
 dat$nsaid <- apply(dat, 1,
-                   function(x) confounders.ext(1, 
+                   function(x) confounders.ext(1,
                                                bias_parms = c(x[1], 0.9, 0.1, 0.4),
                                                print = FALSE)[7])
 dat$non_user <- apply(dat, 1,
-                      function(x) confounders.ext(1, 
+                      function(x) confounders.ext(1,
                                                   bias_parms = c(x[1], 1.03, 0.09,
                                                                  0.12),
                                                   print = FALSE)[7])
 dat$naproxen <- apply(dat, 1,
-                      function(x) confounders.ext(1, 
+                      function(x) confounders.ext(1,
                                                   bias_parms = c(x[1], 1.15, 0.09,
                                                                  0.79),
                                                print = FALSE)[7])
 dat$rof_napro <- apply(dat, 1,
-                       function(x) confounders.ext(1, 
+                       function(x) confounders.ext(1,
                                                bias_parms = c(x[1], 1.6, 0.1, 0.51),
                                                print = FALSE)[7])
 library(tidyverse)
@@ -175,11 +175,10 @@ ggplot(dat2, aes(x = RR_CD, y = bias_perc, group = COX2, colour = COX2)) +
 ## Unmeasured Confounding and E-value
 
 E-value, introduced by [VanderWeele et
-al.](https://annals.org/aim/article-abstract/2643434/sensitivity-analysis-observational-research-introducing-e-value),
-is the minimum strength of association on the risk ratio scale that an
-unmeasured confounder would need to have with both the exposure and the outcome,
-conditional on the measured covariates, to fully explain away a specific
-exposure-outcome association.
+al.](https://pubmed.ncbi.nlm.nih.gov/28693043/), is the minimum strength
+of association on the risk ratio scale that an unmeasured confounder would need
+to have with both the exposure and the outcome, conditional on the measured
+covariates, to fully explain away a specific exposure-outcome association.
 
 For example, a study by [Victoria et
 al.](https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(87)90902-0/fulltext)
@@ -227,4 +226,3 @@ E-value can also be computed when the effect measure is:
   the outcome variable divided by the SD of the outcome) and an SE for this
   standardized effect size *s_d*, either with RR approximation or OR
   approximation (meta-analysis): `diff_RR` and `diff_OR`.
-
