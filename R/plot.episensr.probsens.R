@@ -60,7 +60,7 @@
 #' reps = 20000,
 #' seca.parms = list("trapezoidal", c(.4, .45, .55, .6)),
 #' spca.parms = list("constant", 1))
-#' plot(inc, "irr")
+#' plot(inc1, "irr")
 #'
 #' set.seed(123)
 #' inc2 <- probsens.irr.conf(matrix(c(77, 10000, 87, 10000),
