@@ -94,10 +94,10 @@ confounders <- function(case,
         tab <- tab.df[2:1, 2:1]
     }
 
-    a <- tab[1, 1]
-    b <- tab[1, 2]
-    c <- tab[2, 1]
-    d <- tab[2, 2]
+    a <- as.numeric(tab[1, 1])
+    b <- as.numeric(tab[1, 2])
+    c <- as.numeric(tab[2, 1])
+    d <- as.numeric(tab[2, 2])
 
     type <- match.arg(type)
     if (type == "RR") {

@@ -6,7 +6,7 @@
 #' \code{seca.parms} and \code{spca.parms} are provided. Adding the 2 parameters
 #' \code{seexp.parms} and \code{spexp.parms} (i.e. providing the 4 bias parameters)
 #' evaluates a differential misclassification.
-#' 
+#'
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
 #' @param type Choice of correction for exposure or outcome misclassification.
@@ -60,7 +60,7 @@
 #' reps = 20000,
 #' seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
 #' spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
-#' 
+#'
 #' # Exposure misclassification, differential
 #' probsens(matrix(c(45, 94, 257, 945),
 #' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
@@ -90,7 +90,7 @@
 #' reps = 1000,
 #' seca.parms = list("trapezoidal", c(.8, .9, .9, 1)),
 #' spca.parms = list("trapezoidal", c(.8, .9, .9, 1)))
-#' 
+#'
 #' # Disease misclassification
 #' probsens(matrix(c(173, 602, 134, 663),
 #' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
@@ -142,7 +142,7 @@ probsens <- function(case,
                      alpha = 0.05){
     if(reps < 1)
         stop(paste("Invalid argument: reps =", reps))
-    
+
     if(is.null(seca.parms) | is.null(spca.parms))
         stop('At least one Se and one Sp should be provided through outcome parameters.')
     if(!is.list(seca.parms))
@@ -199,7 +199,7 @@ probsens <- function(case,
         stop('For beta distribution, please provide alpha and beta.')
     if(seca.parms[[1]] == "beta" & (seca.parms[[2]][1] < 0 | seca.parms[[2]][2] < 0))
         stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
-    
+
     if(!is.null(seexp.parms) & !is.list(seexp.parms))
         stop('Sensitivity of exposure classification among those without the outcome should be a list.')
     else seexp.parms <- seexp.parms
@@ -246,7 +246,7 @@ probsens <- function(case,
     if(!is.null(seexp.parms) && seexp.parms[[1]] == "beta" &&
        (seexp.parms[[2]][1] < 0 | seexp.parms[[2]][2] < 0))
         stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
-    
+
     if(!is.list(spca.parms))
         stop('Specificity of exposure classification among those with the outcome should be a list.')
     else spca.parms <- spca.parms
@@ -266,7 +266,7 @@ probsens <- function(case,
     if(spca.parms[[1]] == "trapezoidal" & ((spca.parms[[2]][1] > spca.parms[[2]][2]) |
                                          (spca.parms[[2]][2] > spca.parms[[2]][3]) |
                                          (spca.parms[[2]][3] > spca.parms[[2]][4])))
-        stop('Wrong arguments for your trapezoidal distribution.')    
+        stop('Wrong arguments for your trapezoidal distribution.')
     if(spca.parms[[1]] == "logit-logistic" & (length(spca.parms[[2]]) < 2 | length(spca.parms[[2]]) == 3 | length(spca.parms[[2]]) > 4))
         stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
     if(spca.parms[[1]] == "logit-logistic" & length(spca.parms[[2]]) == 4 &
@@ -287,7 +287,7 @@ probsens <- function(case,
         stop('For beta distribution, please provide alpha and beta.')
     if(spca.parms[[1]] == "beta" & (spca.parms[[2]][1] < 0 | spca.parms[[2]][2] < 0))
         stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
-    
+
     if(!is.null(spexp.parms) & !is.list(spexp.parms))
         stop('Specificity of exposure classification among those without the outcome should be a list.')
     else spexp.parms <- spexp.parms
@@ -314,7 +314,7 @@ probsens <- function(case,
        ((spexp.parms[[2]][1] > spexp.parms[[2]][2]) |
             (spexp.parms[[2]][2] > spexp.parms[[2]][3]) |
                 (spexp.parms[[2]][3] > spexp.parms[[2]][4])))
-        stop('Wrong arguments for your trapezoidal distribution.')    
+        stop('Wrong arguments for your trapezoidal distribution.')
     if(!is.null(spexp.parms) && spexp.parms[[1]] == "logit-logistic" & (length(spexp.parms[[2]]) < 2 | length(spexp.parms[[2]]) == 3 | length(spexp.parms[[2]]) > 4))
         stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
     if(!is.null(spexp.parms) && spexp.parms[[1]] == "logit-logistic" & length(spexp.parms[[2]]) == 4 && ((spexp.parms[[2]][3] >= spexp.parms[[2]][4]) | (!all(spexp.parms[[2]][3:4] >= 0 & spexp.parms[[2]][3:4] <= 1))))
@@ -334,7 +334,7 @@ probsens <- function(case,
     if(!is.null(spexp.parms) && spexp.parms[[1]] == "beta" &&
        (spexp.parms[[2]][1] < 0 | spexp.parms[[2]][2] < 0))
         stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
-    
+
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
                                 is.null(corr.se) | is.null(corr.sp)))
         stop('For differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations.')
@@ -351,15 +351,15 @@ probsens <- function(case,
             tab <- tab.df[2:1, 2:1]
         }
 
-        a <- tab[1, 1]
-        b <- tab[1, 2]
-        c <- tab[2, 1]
-        d <- tab[2, 2]
+        a <- as.numeric(tab[1, 1])
+        b <- as.numeric(tab[1, 2])
+        c <- as.numeric(tab[2, 1])
+        d <- as.numeric(tab[2, 2])
     } else {
-        a <- case[[3]][, 1]
-        b <- case[[3]][, 2]
-        c <- case[[3]][, 3]
-        d <- case[[3]][, 4]
+        a <- as.numeric(case[[3]][, 1])
+        b <- as.numeric(case[[3]][, 2])
+        c <- as.numeric(case[[3]][, 3])
+        d <- as.numeric(case[[3]][, 4])
 
         reps <- case[[4]]
     }
@@ -368,12 +368,12 @@ probsens <- function(case,
     se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
     lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha/2) * se.log.obs.rr)
     uci.obs.rr <- exp(log(obs.rr) + qnorm(1 - alpha/2) * se.log.obs.rr)
-    
+
     obs.or <- (a/b) / (c/d)
     se.log.obs.or <- sqrt(1/a + 1/b + 1/c + 1/d)
     lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
     uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
-    
+
     draws <- matrix(NA, nrow = reps, ncol = 13)
     colnames(draws) <- c("seca", "seexp", "spca", "spexp",
                          "A1", "B1", "C1", "D1",
@@ -486,7 +486,7 @@ probsens <- function(case,
                                 seca.parms[[2]][1],
                                 seca.parms[[2]][2])
     }
-        
+
     if (seexp.parms[[1]] == "uniform") {
         draws[, 2] <- seexp.parms[[2]][2] -
             (seexp.parms[[2]][2] - seexp.parms[[2]][1]) * corr.draws[, 8]
@@ -674,7 +674,7 @@ probsens <- function(case,
                      quantile(draws[, 12], probs = .975, na.rm = TRUE))
         tot.or <- c(median(draws[, 13], na.rm = TRUE),
                      quantile(draws[, 13], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 13], probs = .975, na.rm = TRUE))        
+                     quantile(draws[, 13], probs = .975, na.rm = TRUE))
 
         if(!inherits(case, "episensr.probsens")){
             tab <- tab
@@ -745,7 +745,7 @@ probsens <- function(case,
                                         sum(is.na(draws[, 9])),
                                         ' negative adjusted counts which were set to zero.'))
                 draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
-                draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])               
+                draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])
             } else discard_mess <- NULL
         }
 
@@ -769,7 +769,7 @@ probsens <- function(case,
                      quantile(draws[, 12], probs = .975, na.rm = TRUE))
         tot.or <- c(median(draws[, 13], na.rm = TRUE),
                      quantile(draws[, 13], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 13], probs = .975, na.rm = TRUE))        
+                     quantile(draws[, 13], probs = .975, na.rm = TRUE))
 
         if(!inherits(case, "episensr.probsens")){
             tab <- tab
@@ -796,7 +796,7 @@ probsens <- function(case,
         colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
         }
     res <- list(obs.data = tab,
-                obs.measures = rmat, 
+                obs.measures = rmat,
                 adj.measures = rmatc,
                 sim.df = as.data.frame(draws[, -11]),
                 reps = reps,

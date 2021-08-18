@@ -69,7 +69,7 @@ probsens.irr <- function(counts,
                          alpha = 0.05){
     if(reps < 1)
         stop(paste("Invalid argument: reps = ", reps))
-    
+
     if(is.null(seca.parms) | is.null(spca.parms))
         stop('At least one Se and one Sp should be provided through outcome parameters.')
     if(!is.list(seca.parms))
@@ -126,7 +126,7 @@ probsens.irr <- function(counts,
         stop('For beta distribution, please provide alpha and beta.')
     if(seca.parms[[1]] == "beta" & (seca.parms[[2]][1] < 0 | seca.parms[[2]][2] < 0))
         stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
-    
+
     if(!is.null(seexp.parms) & !is.list(seexp.parms))
         stop('Sensitivity of exposure classification among those without the outcome should be a list.')
     else seexp.parms <- seexp.parms
@@ -173,7 +173,7 @@ probsens.irr <- function(counts,
     if(!is.null(seexp.parms) && seexp.parms[[1]] == "beta" &&
        (seexp.parms[[2]][1] < 0 | seexp.parms[[2]][2] < 0))
         stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
-    
+
     if(!is.list(spca.parms))
         stop('Specificity of exposure classification among those with the outcome should be a list.')
     else spca.parms <- spca.parms
@@ -193,7 +193,7 @@ probsens.irr <- function(counts,
     if(spca.parms[[1]] == "trapezoidal" & ((spca.parms[[2]][1] > spca.parms[[2]][2]) |
                                          (spca.parms[[2]][2] > spca.parms[[2]][3]) |
                                          (spca.parms[[2]][3] > spca.parms[[2]][4])))
-        stop('Wrong arguments for your trapezoidal distribution.')    
+        stop('Wrong arguments for your trapezoidal distribution.')
     if(spca.parms[[1]] == "logit-logistic" & (length(spca.parms[[2]]) < 2 | length(spca.parms[[2]]) == 3 | length(spca.parms[[2]]) > 4))
         stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
     if(spca.parms[[1]] == "logit-logistic" & length(spca.parms[[2]]) == 4 &
@@ -214,7 +214,7 @@ probsens.irr <- function(counts,
         stop('For beta distribution, please provide alpha and beta.')
     if(spca.parms[[1]] == "beta" & (spca.parms[[2]][1] < 0 | spca.parms[[2]][2] < 0))
         stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
-    
+
     if(!is.null(spexp.parms) & !is.list(spexp.parms))
         stop('Specificity of exposure classification among those without the outcome should be a list.')
     else spexp.parms <- spexp.parms
@@ -241,7 +241,7 @@ probsens.irr <- function(counts,
        ((spexp.parms[[2]][1] > spexp.parms[[2]][2]) |
             (spexp.parms[[2]][2] > spexp.parms[[2]][3]) |
                 (spexp.parms[[2]][3] > spexp.parms[[2]][4])))
-        stop('Wrong arguments for your trapezoidal distribution.')    
+        stop('Wrong arguments for your trapezoidal distribution.')
     if(!is.null(spexp.parms) && spexp.parms[[1]] == "logit-logistic" & (length(spexp.parms[[2]]) < 2 | length(spexp.parms[[2]]) == 3 | length(spexp.parms[[2]]) > 4))
         stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
     if(!is.null(spexp.parms) && spexp.parms[[1]] == "logit-logistic" & length(spexp.parms[[2]]) == 4 && ((spexp.parms[[2]][3] >= spexp.parms[[2]][4]) | (!all(spexp.parms[[2]][3:4] >= 0 & spexp.parms[[2]][3:4] <= 1))))
@@ -261,7 +261,7 @@ probsens.irr <- function(counts,
     if(!is.null(spexp.parms) && spexp.parms[[1]] == "beta" &&
        (spexp.parms[[2]][1] < 0 | spexp.parms[[2]][2] < 0))
         stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
-    
+
     if(!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) |
                                 is.null(corr.se) | is.null(corr.sp)))
         stop('For differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations.')
@@ -278,10 +278,10 @@ probsens.irr <- function(counts,
     if(is.null(pt) && inherits(counts, c("table", "matrix")))
         tab <- counts
     else tab <- rbind(counts, pt)
-    a <- tab[1, 1]
-    b <- tab[1, 2]
-    c <- tab[2, 1]
-    d <- tab[2, 2]
+    a <- as.numeric(tab[1, 1])
+    b <- as.numeric(tab[1, 2])
+    c <- as.numeric(tab[2, 1])
+    d <- as.numeric(tab[2, 2])
 
     draws <- matrix(NA, nrow = reps, ncol = 11)
     colnames(draws) <- c("seca", "seexp", "spca", "spexp",
@@ -399,7 +399,7 @@ probsens.irr <- function(counts,
                             seca.parms[[2]][1],
                             seca.parms[[2]][2])
     }
-    
+
     if (seexp.parms[[1]] == "uniform") {
         draws[, 2] <- seexp.parms[[2]][2] -
             (seexp.parms[[2]][2] - seexp.parms[[2]][1]) * corr.draws[, 8]
@@ -437,7 +437,7 @@ probsens.irr <- function(counts,
                             seexp.parms[[2]][1],
                             seexp.parms[[2]][2])
     }
-    
+
     if (spca.parms[[1]] == "uniform") {
         draws[, 3] <- spca.parms[[2]][2] -
             (spca.parms[[2]][2] - spca.parms[[2]][1]) * corr.draws[, 9]
@@ -475,7 +475,7 @@ probsens.irr <- function(counts,
                             spca.parms[[2]][1],
                             spca.parms[[2]][2])
     }
-    
+
     if (spexp.parms[[1]] == "uniform") {
         draws[, 4] <- spexp.parms[[2]][2] -
             (spexp.parms[[2]][2] - spexp.parms[[2]][1]) * corr.draws[, 10]
@@ -514,7 +514,7 @@ probsens.irr <- function(counts,
                             spexp.parms[[2]][2])
     }
     }
-    
+
     draws[, 11] <- runif(reps)
 
     draws[, 5] <- (a - (1 - draws[, 3]) * (a + b)) /
@@ -523,10 +523,10 @@ probsens.irr <- function(counts,
     draws[, 7] <- (c - (1 - draws[, 4]) * (c + d)) /
         (draws[, 2] - (1 - draws[, 4]))
     draws[, 8] <- (c + d) - draws[, 7]
-    
+
     draws[, 9] <- (draws[, 5]/(draws[, 5] + draws[, 7])) /
         (draws[, 6]/(draws[, 6] + draws[, 8]))
-    
+
     draws[, 9] <- ifelse(draws[, 5] < 0 |
                              draws[, 6] < 0 |
                                  draws[, 7] < 0 |
@@ -553,7 +553,7 @@ probsens.irr <- function(counts,
                 discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
                                         sum(is.na(draws[, 9])),
                                         ' negative adjusted counts which were set to zero.'))
-            draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])            
+            draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
         } else discard_mess <- NULL
     }
 
@@ -561,7 +561,7 @@ probsens.irr <- function(counts,
                            qnorm(draws[, 11]) *
                                ((log(uci.obs.irr) - log(lci.obs.irr)) /
                                     (qnorm(.975) * 2)))
-    
+
     corr.irr <- c(median(draws[, 9], na.rm = TRUE),
                  quantile(draws[, 9], probs = .025, na.rm = TRUE),
                  quantile(draws[, 9], probs = .975, na.rm = TRUE))
@@ -583,7 +583,7 @@ probsens.irr <- function(counts,
                          "Incidence Rate Ratio -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
     res <- list(obs.data = tab,
-                obs.measures = rmat, 
+                obs.measures = rmat,
                 adj.measures = rmatc,
                 sim.df = as.data.frame(draws[, -11]),
                 reps = reps,

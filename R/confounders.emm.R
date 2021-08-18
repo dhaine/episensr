@@ -21,7 +21,7 @@
 #' \item the prevalence of the confounder among the unexposed (between 0 and 1).
 #' }
 #' @param alpha Significance level.
-#' 
+#'
 #' @return A list with elements:
 #' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 #' \item{cfder.data}{The same table for Confounder +.}
@@ -34,7 +34,7 @@
 #'
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 #' Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.
-#' 
+#'
 #' @examples
 #' # The data for this example come from:
 #' # Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O.
@@ -47,13 +47,13 @@
 #' nrow = 2, byrow = TRUE),
 #' type = "RR",
 #' bias_parms = c(.4, .7, .8, .05))
-#' 
+#'
 #' confounders.emm(matrix(c(105, 85, 527, 93),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "OR",
 #' bias_parms = c(.4, .7, .8, .05))
-#' 
+#'
 #' confounders.emm(matrix(c(105, 85, 527, 93),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
@@ -68,7 +68,7 @@ confounders.emm <- function(case,
                             alpha = 0.05){
     if(length(type) > 1)
         stop('Choose between RR, OR, or RD implementation.')
-    
+
     if(is.null(bias_parms))
         bias_parms <- c(1, 1, 0, 0)
     else bias_parms <- bias_parms
@@ -78,7 +78,7 @@ confounders.emm <- function(case,
         stop('Prevalences should be between 0 and 1.')
     if(!all(bias_parms[1:2] > 0) & type != "RD")
         stop('Association between the confounder and the outcome should be greater than 0.')
-    
+
     if(inherits(case, c("table", "matrix")))
         tab <- case
     else {
@@ -86,10 +86,10 @@ confounders.emm <- function(case,
         tab <- tab.df[2:1, 2:1]
     }
 
-    a <- tab[1, 1]
-    b <- tab[1, 2]
-    c <- tab[2, 1]
-    d <- tab[2, 2]
+    a <- as.numeric(tab[1, 1])
+    b <- as.numeric(tab[1, 2])
+    c <- as.numeric(tab[2, 1])
+    d <- as.numeric(tab[2, 2])
 
     type <- match.arg(type)
     if (type == "RR") {
@@ -114,13 +114,13 @@ confounders.emm <- function(case,
         if(A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
             stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
-        
+
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
 
         SMRrr <- a / ((M1 * B1/N1) + (M0 * B0/N0))
         MHrr <- (A1 * N1/(M1 + N1) + A0 * N0/(M0 + N0)) /
-            (B1 * M1/(M1 + N1) + B0 * M0/(M0 + N0)) 
+            (B1 * M1/(M1 + N1) + B0 * M0/(M0 + N0))
         cfder.rr <- (A1/(A1 + C1)) / (B1/(B1 + D1))
         nocfder.rr <- (A0/(A0 + C0)) / (B0/(B0 + D0))
         RRadj.smr <- crude.rr / SMRrr
@@ -145,7 +145,7 @@ confounders.emm <- function(case,
         } else {
             rownames(tab.nocfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.nocfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.nocfder) <- colnames(tab)
@@ -163,7 +163,7 @@ confounders.emm <- function(case,
                             "Relative Risk, Confounder +:",
                             "Relative Risk, Confounder -:")
     }
-    
+
     if (type == "OR"){
         crude.or <- (a/b) / (c/d)
         se.log.crude.or <- sqrt(1/a + 1/b + 1/c + 1/d)
@@ -186,13 +186,13 @@ confounders.emm <- function(case,
         if(A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
             stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
-        
+
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
 
         SMRor <- a / ((C1 * B1/D1) + (C0 * B0/D0))
         MHor <- (A1 * D1/(M1 + N1) + A0 * D0/(M0 + N0)) /
-            (B1 * C1/(M1 + N1) + B0 * C0/(M0 + N0)) 
+            (B1 * C1/(M1 + N1) + B0 * C0/(M0 + N0))
         cfder.or <- (A1 / C1) / (B1 / D1)
         nocfder.or <- (A0 / C0) / (B0 / D0)
         ORadj.smr <- crude.or / SMRor
@@ -207,7 +207,7 @@ confounders.emm <- function(case,
         } else {
             rownames(tab.cfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.cfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.cfder) <- colnames(tab)
@@ -217,7 +217,7 @@ confounders.emm <- function(case,
         } else {
             rownames(tab.nocfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.nocfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.nocfder) <- colnames(tab)
@@ -235,7 +235,7 @@ confounders.emm <- function(case,
                             "Odds Ratio, Confounder +:",
                             "Odds Ratio, Confounder -:")
     }
-    
+
     if (type == "RD"){
         crude.rd <- (a / (a + c)) - (b / (b + d))
         se.log.crude.rd <- sqrt((a * c) / (a + c)^3 + (b * d) / (b + d)^3)
@@ -258,7 +258,7 @@ confounders.emm <- function(case,
         if(A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
             stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
-        
+
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
 
@@ -279,7 +279,7 @@ confounders.emm <- function(case,
         } else {
             rownames(tab.cfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.cfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.cfder) <- colnames(tab)
@@ -289,7 +289,7 @@ confounders.emm <- function(case,
         } else {
             rownames(tab.nocfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.nocfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.nocfder) <- colnames(tab)

@@ -19,7 +19,7 @@
 #' versus unexposed selection probabilities comparing cases and noncases [(1*4)/(2*3)
 #' from above].
 #' @param alpha Significance level.
-#' 
+#'
 #' @return A list with elements:
 #' \item{model}{Bias analysis performed.}
 #' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
@@ -70,10 +70,10 @@ selection <- function(case,
           tab <- tab.df[2:1, 2:1]}
     tab <- tab[1:2, 1:2]
 
-    a <- tab[1, 1]
-    b <- tab[1, 2]
-    c <- tab[2, 1]
-    d <- tab[2, 2]
+    a <- as.numeric(tab[1, 1])
+    b <- as.numeric(tab[1, 2])
+    c <- as.numeric(tab[2, 1])
+    d <- as.numeric(tab[2, 2])
 
     rr <- (a/(a + c)) / (b/(b + d))
     se.log.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
@@ -99,8 +99,8 @@ selection <- function(case,
         rr.corr <- rr / bias_parms
         or.corr <- or / bias_parms
     }
-    
-   
+
+
     if (is.null(rownames(tab)))
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
@@ -110,7 +110,7 @@ selection <- function(case,
         } else {
         rownames(tab.corr) <- row.names(tab)
     }
-    if (is.null(colnames(tab))){ 
+    if (is.null(colnames(tab))){
         colnames(tab.corr) <- paste("Col", 1:2)
         } else {
         colnames(tab.corr) <- colnames(tab)

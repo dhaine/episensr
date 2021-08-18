@@ -78,7 +78,7 @@ probsens.sel <- function(case,
                          alpha = 0.05){
     if(reps < 1)
         stop(paste("Invalid argument: reps =", reps))
-    
+
     if(is.null(or.parms) & (is.null(case.exp) | is.null(case.nexp) | is.null(ncase.exp) | is.null(ncase.nexp)))
         stop('Please provide selection probabilities.')
     if(!is.null(or.parms[[2]]) & (!is.null(case.exp[[2]]) | !is.null(case.nexp[[2]]) | !is.null(ncase.exp[[2]]) | !is.null(ncase.nexp[[2]])))
@@ -106,7 +106,7 @@ probsens.sel <- function(case,
         if(or.parms[[1]] == "trapezoidal" & ((or.parms[[2]][1] > or.parms[[2]][2]) |
                                              (or.parms[[2]][2] > or.parms[[2]][3]) |
                                              (or.parms[[2]][3] > or.parms[[2]][4])))
-            stop('Wrong arguments for your trapezoidal distribution.')    
+            stop('Wrong arguments for your trapezoidal distribution.')
         if(or.parms[[1]] == "logit-logistic" & length(or.parms[[2]]) != 2)
             stop('For log-logistic distribution, please provide vector of location and scale.')
         if(or.parms[[1]] == "log-normal" & length(or.parms[[2]]) != 2)
@@ -274,29 +274,29 @@ probsens.sel <- function(case,
         if(ncase.nexp[[1]] == "beta" & length(ncase.nexp[[2]]) != 2)
             stop('Wrong arguments for your beta distribution.')
     }
-    
-    
+
+
     if(!inherits(case, "episensr.probsens")){
         if(inherits(case, c("table", "matrix")))
             tab <- case
         else {tab.df <- table(case, exposed)
             tab <- tab.df[2:1, 2:1]
         }
-    
-        a <- tab[1, 1]
-        b <- tab[1, 2]
-        c <- tab[2, 1]
-        d <- tab[2, 2]
+
+        a <- as.numeric(tab[1, 1])
+        b <- as.numeric(tab[1, 2])
+        c <- as.numeric(tab[2, 1])
+        d <- as.numeric(tab[2, 2])
 
         obs.or <- (a/b) / (c/d)
         se.log.obs.or <- sqrt(1/a + 1/b + 1/c + 1/d)
         lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
         uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
     } else {
-        a <- case[[3]][, 1]
-        b <- case[[3]][, 2]
-        c <- case[[3]][, 3]
-        d <- case[[3]][, 4]
+        a <- as.numeric(case[[3]][, 1])
+        b <- as.numeric(case[[3]][, 2])
+        c <- as.numeric(case[[3]][, 3])
+        d <- as.numeric(case[[3]][, 4])
 
         obs.or <- (a/b) / (c/d)
         se.log.obs.or <- sqrt(1/a + 1/b + 1/c + 1/d)
@@ -305,7 +305,7 @@ probsens.sel <- function(case,
 
         reps <- case[[4]]
     }
-    
+
     draws <- matrix(NA, nrow = reps, ncol = 8)
     colnames(draws) <- c("or.sel", "corr.OR", "reps", "tot.OR",
                          "A1", "B1", "C1", "D1")
@@ -338,7 +338,7 @@ probsens.sel <- function(case,
         case_nexp <- c(reps, case.nexp[[2]])
         ncase_exp <- c(reps, ncase.exp[[2]])
         ncase_nexp <- c(reps, ncase.nexp[[2]])
-        
+
         if (case.exp[[1]] == "constant") {
             bias_factor[, 1] <- case.exp[[2]]
         }
@@ -430,7 +430,7 @@ probsens.sel <- function(case,
         draws[, 1] <- (bias_factor[, 1]*bias_factor[, 4]) /
             (bias_factor[, 2]*bias_factor[, 3])
     }
-    
+
     draws[, 3] <- runif(reps)
 
     draws[, 2] <- obs.or / draws[, 1]
@@ -450,7 +450,7 @@ probsens.sel <- function(case,
                  quantile(draws[, 2], probs = .975, na.rm = TRUE))
     tot.OR <- c(median(draws[, 4], na.rm = TRUE),
                 quantile(draws[, 4], probs = .025, na.rm = TRUE),
-                quantile(draws[, 4], probs = .975, na.rm = TRUE))        
+                quantile(draws[, 4], probs = .975, na.rm = TRUE))
 
     if(!inherits(case, "episensr.probsens")){
         tab <- tab
@@ -472,8 +472,8 @@ probsens.sel <- function(case,
                          "Odds Ratio -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
     res <- list(obs.data = tab,
-                obs.measures = rmat, 
-                adj.measures = rmatc, 
+                obs.measures = rmat,
+                adj.measures = rmatc,
                 sim.df = as.data.frame(draws[, -3]),
                 reps = reps,
                 fun = "probsens.sel")

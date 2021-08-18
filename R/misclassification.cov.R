@@ -15,7 +15,7 @@
 #' \item Specificity of confounder classification among those without the outcome.
 #' }
 #' @param alpha Significance level.
-#' 
+#'
 #' @return A list with elements:
 #' \item{obs.data}{The analyzed stratified 2 x 2 tables from the observed data.}
 #' \item{corr.data}{The expected stratified observed data given the true data assuming
@@ -27,7 +27,7 @@
 #'
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 #' Bias Analysis to Epidemiologic Data}, pp.79--108, Springer.
-#' 
+#'
 #' @examples
 #' # The data for this example come from:
 #' # Berry, R.J., Kihlberg, R., and Devine, O. Impact of misclassification of in vitro
@@ -72,21 +72,21 @@ misclassification.cov <- function(case,
         tab.df <- table(case, exposed, covariate)
         tab <- tab.df[2:1, 2:1, ]
         }
-    
-    a <- tab[1, 1, 1]
-    b <- tab[1, 2, 1]
-    c <- tab[2, 1, 1]
-    d <- tab[2, 2, 1]
 
-    Ac1 <- tab[1, 1, 2]
-    Bc1 <- tab[1, 2, 2]
-    Cc1 <- tab[2, 1, 2]
-    Dc1 <- tab[2, 2, 2]
+    a <- as.numeric(tab[1, 1, 1])
+    b <- as.numeric(tab[1, 2, 1])
+    c <- as.numeric(tab[2, 1, 1])
+    d <- as.numeric(tab[2, 2, 1])
 
-    Ac0 <- tab[1, 1, 3]
-    Bc0 <- tab[1, 2, 3]
-    Cc0 <- tab[2, 1, 3]
-    Dc0 <- tab[2, 2, 3]
+    Ac1 <- as.numeric(tab[1, 1, 2])
+    Bc1 <- as.numeric(tab[1, 2, 2])
+    Cc1 <- as.numeric(tab[2, 1, 2])
+    Dc1 <- as.numeric(tab[2, 2, 2])
+
+    Ac0 <- as.numeric(tab[1, 1, 3])
+    Bc0 <- as.numeric(tab[1, 2, 3])
+    Cc0 <- as.numeric(tab[2, 1, 3])
+    Dc0 <- as.numeric(tab[2, 2, 3])
 
     obs.rr <- (a/(a + c)) / (b/(b + d))
     se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
@@ -118,7 +118,7 @@ misclassification.cov <- function(case,
     Bc0_Cr <- b - Bc1_Cr
     Cc0_Cr <- c - Cc1_Cr
     Dc0_Cr <- d - Dc1_Cr
-    
+
     if(Ac1_Cr < 1 | Ac0_Cr < 1 | Bc1_Cr < 1 | Bc0_Cr < 1 | Cc1_Cr < 1 | Cc0_Cr < 1 |
        Dc1_Cr < 1 | Dc0_Cr < 1)
         stop('Parameters chosen lead to negative cell(s) in adjusted stratified 2x2 table.')
@@ -183,7 +183,7 @@ misclassification.cov <- function(case,
     res <- list(model = "misclassification.cov",
                 obs.data = tab,
                 corr.data = c(corr.tab1, corr.tab0),
-                obs.measures = rmat, 
+                obs.measures = rmat,
                 adj.measures = rmatc,
                 bias.parms = bias_parms)
     class(res) <- c("episensr", "list")

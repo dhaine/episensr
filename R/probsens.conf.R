@@ -35,7 +35,7 @@
 #' \item{adj.measures}{A table of corrected relative risks and odds ratios.}
 #' \item{sim.df}{Data frame of random parameters and computed values.}
 #' \item{reps}{Number of replications.}
-#' 
+#'
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
 #'
 #' @examples
@@ -215,16 +215,16 @@ probsens.conf <- function(case,
         else {tab.df <- table(case, exposed)
             tab <- tab.df[2:1, 2:1]
         }
-        
-        a <- tab[1, 1]
-        b <- tab[1, 2]
-        c <- tab[2, 1]
-        d <- tab[2, 2]
+
+        a <- as.numeric(tab[1, 1])
+        b <- as.numeric(tab[1, 2])
+        c <- as.numeric(tab[2, 1])
+        d <- as.numeric(tab[2, 2])
     } else {
-        a <- case[[3]][, 1]
-        b <- case[[3]][, 2]
-        c <- case[[3]][, 3]
-        d <- case[[3]][, 4]
+        a <- as.numeric(case[[3]][, 1])
+        b <- as.numeric(case[[3]][, 2])
+        c <- as.numeric(case[[3]][, 3])
+        d <- as.numeric(case[[3]][, 4])
 
         reps <- case[[4]]
 }
@@ -245,10 +245,10 @@ probsens.conf <- function(case,
                          "B_11",
                          "C_11",
                          "D_11",
-                         "corr.RR", 
-                         "corr.OR", 
+                         "corr.RR",
+                         "corr.OR",
                          "reps",
-                         "tot.RR", 
+                         "tot.RR",
                          "tot.OR",
                          "A1", "B1", "C1", "D1")
     corr.draws <- matrix(NA, nrow = reps, ncol = 5)
@@ -256,7 +256,7 @@ probsens.conf <- function(case,
     p1 <- c(reps, prev.exp[[2]])
     p0 <- c(reps, prev.nexp[[2]])
     rr.cd <- c(reps, risk[[2]])
-    
+
     if (is.null(corr.p)) {
         if (prev.exp[[1]] == "constant") {
             draws[, 1] <- prev.exp[[2]]
@@ -406,7 +406,7 @@ probsens.conf <- function(case,
     if (risk[[1]] == "log-normal") {
         draws[, 3] <- do.call(rlnorm, as.list(rr.cd))
     }
-    
+
     draws[, 10] <- runif(reps)
 
     draws[, 4] <- (draws[, 3] * ((a + c) * draws[, 1]) * a) /
@@ -499,7 +499,7 @@ probsens.conf <- function(case,
                             "   Observed Odds Ratio:")
         colnames(rmat) <- c(" ",
                             paste(100 * (alpha/2), "%", sep = ""),
-                            paste(100 * (1 - alpha/2), "%", sep = ""))        
+                            paste(100 * (1 - alpha/2), "%", sep = ""))
     } else {
         tab <- case[[1]]
         rmat <- case[[2]]
@@ -515,8 +515,8 @@ probsens.conf <- function(case,
                          "OR (SMR) -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
     res <- list(obs.data = tab,
-                obs.measures = rmat, 
-                adj.measures = rmatc, 
+                obs.measures = rmat,
+                adj.measures = rmatc,
                 sim.df = as.data.frame(draws[, -10]),
                 reps = reps,
                 fun = "probsens.conf",
@@ -525,4 +525,3 @@ probsens.conf <- function(case,
     class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }
-

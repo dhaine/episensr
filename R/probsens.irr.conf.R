@@ -74,12 +74,12 @@ probsens.irr.conf <- function(counts,
                          alpha = 0.05){
     if(reps < 1)
         stop(paste("Invalid argument: reps = ", reps))
-    
+
     if(is.null(prev.exp) | is.null(prev.nexp))
         stop('Please provide prevalences among the exposed and unexposed.')
     if(is.null(risk))
         stop('Please provide risk of acquiring outcome.')
-    
+
     if(!is.list(prev.exp))
         stop('Prevalence of exposure among the exposed should be a list.')
     else prev.exp <- prev.exp
@@ -128,7 +128,7 @@ probsens.irr.conf <- function(counts,
     if(!is.null(prev.exp) && prev.exp[[1]] == "beta" &&
        (prev.exp[[2]][1] < 0 | prev.exp[[2]][2] < 0))
         stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
-    
+
     if(!is.list(prev.nexp))
         stop('Prevalence of exposure among the non-exposed should be a list.')
     else prev.nexp <- prev.nexp
@@ -148,7 +148,7 @@ probsens.irr.conf <- function(counts,
     if(prev.nexp[[1]] == "trapezoidal" & ((prev.nexp[[2]][1] > prev.nexp[[2]][2]) |
                                          (prev.nexp[[2]][2] > prev.nexp[[2]][3]) |
                                          (prev.nexp[[2]][3] > prev.nexp[[2]][4])))
-        stop('Wrong arguments for your trapezoidal distribution.')    
+        stop('Wrong arguments for your trapezoidal distribution.')
     if(prev.nexp[[1]] == "logit-logistic" & (length(prev.nexp[[2]]) < 2 | length(prev.nexp[[2]]) == 3 | length(prev.nexp[[2]]) > 4))
         stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
     if(prev.nexp[[1]] == "logit-logistic" & length(prev.nexp[[2]]) == 4 &
@@ -170,7 +170,7 @@ probsens.irr.conf <- function(counts,
     if(!is.null(prev.nexp) && prev.nexp[[1]] == "beta" &&
        (prev.nexp[[2]][1] < 0 | prev.nexp[[2]][2] < 0))
         stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
-    
+
     if(!is.list(risk))
         stop('Risk should be a list.')
     else risk <- risk
@@ -190,7 +190,7 @@ probsens.irr.conf <- function(counts,
     if(risk[[1]] == "trapezoidal" & ((risk[[2]][1] > risk[[2]][2]) |
                                          (risk[[2]][2] > risk[[2]][3]) |
                                          (risk[[2]][3] > risk[[2]][4])))
-        stop('Wrong arguments for your trapezoidal distribution.')    
+        stop('Wrong arguments for your trapezoidal distribution.')
     if(risk[[1]] == "log-logistic" & length(risk[[2]]) != 2)
         stop('For log-logistic distribution, please provide vector of location and scale.')
     if(risk[[1]] == "log-normal" & length(risk[[2]]) != 2)
@@ -206,10 +206,10 @@ probsens.irr.conf <- function(counts,
     if(is.null(pt) && inherits(counts, c("table", "matrix")))
         tab <- counts
     else tab <- rbind(counts, pt)
-    a <- tab[1, 1]
-    b <- tab[1, 2]
-    c <- tab[2, 1]
-    d <- tab[2, 2]
+    a <- as.numeric(tab[1, 1])
+    b <- as.numeric(tab[1, 2])
+    c <- as.numeric(tab[2, 1])
+    d <- as.numeric(tab[2, 2])
 
     draws <- matrix(NA, nrow = reps, ncol = 14)
     colnames(draws) <- c("p1", "p0", "RR.cd",
@@ -320,7 +320,7 @@ probsens.irr.conf <- function(counts,
                             prev.exp[[2]][1],
                             prev.exp[[2]][2])
     }
-    
+
     if (prev.nexp[[1]] == "uniform") {
         draws[, 2] <- prev.nexp[[2]][2] -
             (prev.nexp[[2]][2] - prev.nexp[[2]][1]) * corr.draws[, 5]
@@ -359,7 +359,7 @@ probsens.irr.conf <- function(counts,
                             prev.nexp[[2]][2])
     }
     }
-        
+
     if(risk[[1]] == "constant") {
         draws[, 3] <- risk[[2]]
     }
@@ -378,7 +378,7 @@ probsens.irr.conf <- function(counts,
     if (risk[[1]] == "log-normal") {
         draws[, 3] <- do.call(rlnorm, as.list(rr.cd))
     }
-    
+
     draws[, 13] <- runif(reps)
 
     draws[, 4] <- c * draws[, 1]
@@ -391,11 +391,11 @@ probsens.irr.conf <- function(counts,
     draws[, 8] <- c - draws[, 4]
     draws[, 11] <- b - draws[, 7]
     draws[, 9] <- d - draws[, 5]
-    
+
     draws[, 12] <- a /
         ((draws[, 4] * draws[, 7] / draws[, 5]) +
              (draws[, 8] * draws[, 11] / draws[, 9]))
-    
+
     draws[, 12] <- ifelse(draws[, 4] < 0 |
                              draws[, 5] < 0 |
                                  draws[, 7] < 0 |
@@ -424,7 +424,7 @@ probsens.irr.conf <- function(counts,
                 discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
                                         sum(is.na(draws[, 12])),
                                         ' negative adjusted counts which were set to zero.'))
-            draws[, 12] <- ifelse(is.na(draws[, 12]), 0, draws[, 12])            
+            draws[, 12] <- ifelse(is.na(draws[, 12]), 0, draws[, 12])
         } else discard_mess <- NULL
     }
 
@@ -432,7 +432,7 @@ probsens.irr.conf <- function(counts,
                            qnorm(draws[, 13]) *
                                ((log(uci.obs.irr) - log(lci.obs.irr)) /
                                     (qnorm(.975) * 2)))
-    
+
     corr.irr <- c(median(draws[, 12], na.rm = TRUE),
                  quantile(draws[, 12], probs = .025, na.rm = TRUE),
                  quantile(draws[, 12], probs = .975, na.rm = TRUE))
@@ -454,7 +454,7 @@ probsens.irr.conf <- function(counts,
                          "Incidence Rate Ratio -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
     res <- list(obs.data = tab,
-                obs.measures = rmat, 
+                obs.measures = rmat,
                 adj.measures = rmatc,
                 sim.df = as.data.frame(draws[, -13]),
                 reps = reps,

@@ -25,7 +25,7 @@
 #' @param alpha Significance level.
 #' @param dec Number of decimals in the printout.
 #' @param print A logical scalar. Should the results be printed?
-#' 
+#'
 #' @return A list with elements:
 #' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 #' \item{obs.measures}{A table of odds ratios and relative risk with confidence
@@ -80,14 +80,14 @@ multidimBias <- function(case,
                 call. = FALSE)
         OR_sel <- OR.sel
     }
-    
+
     if(type %in% c("exposure", "outcome") && (!is.null(bias_parms) | !is.null(OR_sel)))
         stop('Please provide adequate bias parameters (se and sp).')
     if(type == "confounder" && (!is.null(se) | !is.null(sp) | !is.null(OR_sel)))
         stop('Please provide adequate bias parameters (bias_parms).')
     if(type == "selection" && (!is.null(se) | !is.null(sp) | !is.null(bias_parms)))
         stop('Please provide adequate bias parameters (OR_sel).')
-    
+
     if(is.null(se))
         se <- c(1, 1)
     else se <- se
@@ -124,17 +124,17 @@ multidimBias <- function(case,
         stop('Selection odds ratios should be a vector.')
     if(!all(OR_sel > 0))
         stop('Selection odds ratios should be positive.')
-    
+
     if(inherits(case, c("table", "matrix")))
         tab <- case
     else {tab.df <- table(case, exposed)
           tab <- tab.df[2:1, 2:1]
          }
 
-    a <- tab[1, 1]
-    b <- tab[1, 2]
-    c <- tab[2, 1]
-    d <- tab[2, 2]
+    a <- as.numeric(tab[1, 1])
+    b <- as.numeric(tab[1, 2])
+    c <- as.numeric(tab[2, 1])
+    d <- as.numeric(tab[2, 2])
 
     rr <- (a/(a + c)) / (b/(b + d))
     se.log.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
@@ -150,7 +150,7 @@ multidimBias <- function(case,
     or.mat <- matrix(NA, nrow = length(se), ncol = length(se))
     rrc.mat <- matrix(NA, nrow = length(bias_parms[[1]]), ncol = length(bias_parms[[1]]))
     ors.mat <- matrix(NA, nrow = length(OR_sel), ncol = 2)
-    
+
     type <- match.arg(type)
     if (type == "exposure") {
         for (i in 1:nrow(rr.mat)) {
@@ -179,7 +179,7 @@ multidimBias <- function(case,
                                       ((c + d) - ((c - (1 - sp[i]) * (c + d)) /
                                                       (se[i] - (1 - sp[i])))))
             }
-        }    
+        }
 
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)
@@ -189,22 +189,22 @@ multidimBias <- function(case,
         colnames(rr.mat) <- paste("Se:", se, "Sp:", sp)
         rownames(or.mat) <- paste("Se:", se, "Sp:", sp)
         colnames(or.mat) <- paste("Se:", se, "Sp:", sp)
-        if (print) 
+        if (print)
             cat("Multidimensional Exposure Misclassification\n",
-                "Observed Data:", "\n---------------------------------------------------", 
+                "Observed Data:", "\n---------------------------------------------------",
                 "\nOutcome   :", rownames(tab)[1],
                 "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        if (print) 
+        if (print)
             print(round(tab, dec))
-        if (print) 
+        if (print)
             cat("\n")
         rmat <- rbind(c(rr, lci.rr, uci.rr), c(or, lci.or, uci.or))
         rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
-        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
+        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.",
                                            sep = ""), "interval")
         rmatc <- list("Multidimensional Corrected Relative Risk Data" = rr.mat,
                       "Multidimensional Corrected Odds Ratio Data" = or.mat)
-        if (print) 
+        if (print)
             print(round(rmat, dec))
         if (print)
             cat("\nMultidimensional Corrected Relative Risk Data:",
@@ -250,7 +250,7 @@ multidimBias <- function(case,
                                  ((b + d) - ((b - (1 - sp[i]) * (b + d)) /
                                              (se[i] - (1 - sp[i])))))
             }
-        }    
+        }
 
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)
@@ -260,22 +260,22 @@ multidimBias <- function(case,
         colnames(rr.mat) <- paste("Se:", se, "Sp:", sp)
         rownames(or.mat) <- paste("Se:", se, "Sp:", sp)
         colnames(or.mat) <- paste("Se:", se, "Sp:", sp)
-        if (print) 
+        if (print)
             cat("Multidimensional Outcome Misclassification\n",
-                "\nObserved Data:", "\n---------------------------------------------------", 
+                "\nObserved Data:", "\n---------------------------------------------------",
                 "\nOutcome   :", rownames(tab)[1],
                 "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        if (print) 
+        if (print)
             print(round(tab, dec))
-        if (print) 
+        if (print)
             cat("\n")
         rmat <- rbind(c(rr, lci.rr, uci.rr), c(or, lci.or, uci.or))
         rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
-        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
+        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.",
                                            sep = ""), "interval")
         rmatc <- list("Multidimensional Corrected Relative Risk Data" = rr.mat,
                       "Multidimensional Corrected Odds Ratio Data" = or.mat)
-        if (print) 
+        if (print)
             print(round(rmat, dec))
         if (print)
             cat("\nMultidimensional Corrected Relative Risk Data:",
@@ -317,21 +317,21 @@ multidimBias <- function(case,
         rownames(rrc.mat) <- paste("p(Conf+|Exp+):", bias_parms[[1]],
                                    "p(Conf+|Exp-):", bias_parms[[2]])
         colnames(rrc.mat) <- paste("RR(Conf-Outc):", bias_parms[[3]])
-        if (print) 
+        if (print)
             cat("Multidimensional Unmeasured Confounding\n",
-                "Observed Data:", "\n---------------------------------------------------", 
+                "Observed Data:", "\n---------------------------------------------------",
                 "\nOutcome   :", rownames(tab)[1],
                 "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        if (print) 
+        if (print)
             print(round(tab, dec))
-        if (print) 
+        if (print)
             cat("\n")
         rmat <- rbind(c(rr, lci.rr, uci.rr), c(or, lci.or, uci.or))
         rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
-        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
+        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.",
                                            sep = ""), "interval")
         rmatc <- rrc.mat
-        if (print) 
+        if (print)
             print(round(rmat, dec))
         if (print)
             cat("\nMultidimensional Relative Risk Exposure-Data Relationship Adjusted for Confounder:",
@@ -364,21 +364,21 @@ multidimBias <- function(case,
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
         colnames(ors.mat) <- paste(c("OR selection:", "OR corrected:"))
-        if (print) 
+        if (print)
             cat("Multidimensional Selection Bias\n",
-                "Observed Data:", "\n---------------------------------------------------", 
+                "Observed Data:", "\n---------------------------------------------------",
                 "\nOutcome   :", rownames(tab)[1],
                 "\nComparing :", colnames(tab)[1], "vs.", colnames(tab)[2], "\n\n")
-        if (print) 
+        if (print)
             print(round(tab, dec))
-        if (print) 
+        if (print)
             cat("\n")
         rmat <- rbind(c(rr, lci.rr, uci.rr), c(or, lci.or, uci.or))
         rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
-        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.", 
+        colnames(rmat) <- c("     ", paste(100 * (1 - alpha), "% conf.",
                                            sep = ""), "interval")
         rmatc <- ors.mat
-        if (print) 
+        if (print)
             print(round(rmat, dec))
         if (print)
             cat("\nObserved and Selection Bias Corrected Measures:",

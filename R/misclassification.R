@@ -21,7 +21,7 @@
 #' \item Specificity of exposure (or outcome) classification among those without the outcome (or exposure).
 #' }
 #' @param alpha Significance level.
-#' 
+#'
 #' @return A list with elements:
 #' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 #' \item{corr.data}{The expected observed data given the true data assuming
@@ -38,7 +38,7 @@
 #' Chu, H., Zhaojie, W., Cole, S.R., Greenland, S., \emph{Sensitivity analysis of
 #' misclassification: A graphical and a Bayesian approach},
 #' Annals of Epidemiology 2006;16:834-841.
-#' 
+#'
 #' @examples
 #' # The data for this example come from:
 #' # Fink, A.K., Lash,  T.L. A null association between smoking during pregnancy
@@ -50,14 +50,14 @@
 #' nrow = 2, byrow = TRUE),
 #' type = "exposure",
 #' bias_parms = c(.78, .78, .99, .99))
-#' 
+#'
 #' misclassification(matrix(c(4558, 3428, 46305, 46085),
 #' dimnames = list(c("AMI death+", "AMI death-"),
 #' c("Male+", "Male-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "outcome",
 #' bias_parms = c(.53, .53, .99, .99))
-#' 
+#'
 #' # The following example comes from Chu et al. Sensitivity analysis of
 #' # misclassification: A graphical and a Bayesian approach.
 #' # Annals of Epidemiology 2006;16:834-841.
@@ -87,11 +87,11 @@ misclassification <- function(case,
         tab.df <- table(case, exposed)
         tab <- tab.df[2:1, 2:1]
         }
-    
-    a <- tab[1, 1]
-    b <- tab[1, 2]
-    c <- tab[2, 1]
-    d <- tab[2, 2]
+
+    a <- as.numeric(tab[1, 1])
+    b <- as.numeric(tab[1, 2])
+    c <- as.numeric(tab[2, 1])
+    d <- as.numeric(tab[2, 2])
 
     type <- match.arg(type)
     if (type == "exposure") {
@@ -112,7 +112,7 @@ misclassification <- function(case,
 
         if(A < 1 | B < 1 | C < 1 | D < 1)
             stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table.')
-        
+
         corr.tab <- matrix(c(A, B, C, D), nrow = 2, byrow = TRUE)
 
         corr.rr <- (A/(A + C)) / (B/(B + D))
@@ -141,7 +141,7 @@ misclassification <- function(case,
         )
         lci.corr.or <- exp(log(mle.corr.or) - qnorm(1 - alpha/2) * se.corr.or)
         uci.corr.or <- exp(log(mle.corr.or) + qnorm(1 - alpha/2) * se.corr.or)
-        
+
 
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)
@@ -169,13 +169,13 @@ misclassification <- function(case,
                             paste(100 * (alpha/2), "%", sep = ""),
                             paste(100 * (1 - alpha/2), "%", sep = ""))
     }
-    
+
     if (type == "outcome"){
         obs.rr <- (a/(a + c)) / (b/(b + d))
         se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
         lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha/2) * se.log.obs.rr)
         uci.obs.rr <- exp(log(obs.rr) + qnorm(1 - alpha/2) * se.log.obs.rr)
-        
+
         obs.or <- (a/b) / (c/d)
         se.log.obs.or <- sqrt(1/a + 1/b + 1/c + 1/d)
         lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
@@ -188,7 +188,7 @@ misclassification <- function(case,
 
         if(A < 1 | B < 1 | C < 1 | D < 1)
             stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table.')
-        
+
         corr.tab <- matrix(c(A, B, C, D), nrow = 2, byrow = TRUE)
 
         corr.rr <- (A/(A + C)) / (B/(B + D))
@@ -203,7 +203,7 @@ misclassification <- function(case,
         } else {
             rownames(corr.tab) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(corr.tab) <- paste("Col", 1:2)
         } else {
             colnames(corr.tab) <- colnames(tab)
@@ -223,7 +223,7 @@ misclassification <- function(case,
                 type = type,
                 obs.data = tab,
                 corr.data = corr.tab,
-                obs.measures = rmat, 
+                obs.measures = rmat,
                 adj.measures = rmatc,
                 bias.parms = bias_parms)
     class(res) <- c("episensr", "episensr.boot", "list")

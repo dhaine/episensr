@@ -21,7 +21,7 @@
 #' \item the prevalence of the mid-level confounder among the unexposed (between 0 and 1).
 #' }
 #' @param alpha Significance level.
-#' 
+#'
 #' @return A list with elements:
 #' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 #' \item{cfder1.data}{The same table for Mid-level Confounder +.}
@@ -35,7 +35,7 @@
 #'
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 #' Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.
-#' 
+#'
 #' @examples
 #' # The data for this example come from:
 #' # Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O.
@@ -48,13 +48,13 @@
 #' nrow = 2, byrow = TRUE),
 #' type = "RR",
 #' bias_parms = c(.4, .8, .6, .05, .2, .2))
-#' 
+#'
 #' confounders.poly(matrix(c(105, 85, 527, 93),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "OR",
 #' bias_parms = c(.4, .8, .6, .05, .2, .2))
-#' 
+#'
 #' confounders.poly(matrix(c(105, 85, 527, 93),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
@@ -69,7 +69,7 @@ confounders.poly <- function(case,
                              alpha = 0.05){
     if(length(type) != 1)
         stop('Choose between RR, OR, or RD implementation.')
-    
+
     if(is.null(bias_parms))
         bias_parms <- c(1, 1, 0, 0, 0, 0)
     else bias_parms <- bias_parms
@@ -93,10 +93,10 @@ confounders.poly <- function(case,
         tab <- tab.df[2:1, 2:1]
     }
 
-    a <- tab[1, 1]
-    b <- tab[1, 2]
-    c <- tab[2, 1]
-    d <- tab[2, 2]
+    a <- as.numeric(tab[1, 1])
+    b <- as.numeric(tab[1, 2])
+    c <- as.numeric(tab[2, 1])
+    d <- as.numeric(tab[2, 2])
 
     type <- match.arg(type)
     if (type == "RR") {
@@ -128,7 +128,7 @@ confounders.poly <- function(case,
            A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
             stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
-        
+
         tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
         tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
@@ -151,7 +151,7 @@ confounders.poly <- function(case,
         } else {
             rownames(tab.cfder2) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.cfder2) <- paste("Col", 1:2)
         } else {
             colnames(tab.cfder2) <- colnames(tab)
@@ -161,7 +161,7 @@ confounders.poly <- function(case,
         } else {
             rownames(tab.cfder1) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.cfder1) <- paste("Col", 1:2)
         } else {
             colnames(tab.cfder1) <- colnames(tab)
@@ -171,7 +171,7 @@ confounders.poly <- function(case,
         } else {
             rownames(tab.nocfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.nocfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.nocfder) <- colnames(tab)
@@ -221,7 +221,7 @@ confounders.poly <- function(case,
            A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
             stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
-        
+
         tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
         tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
@@ -244,7 +244,7 @@ confounders.poly <- function(case,
         } else {
             rownames(tab.cfder2) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.cfder2) <- paste("Col", 1:2)
         } else {
             colnames(tab.cfder2) <- colnames(tab)
@@ -254,7 +254,7 @@ confounders.poly <- function(case,
         } else {
             rownames(tab.cfder1) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.cfder1) <- paste("Col", 1:2)
         } else {
             colnames(tab.cfder1) <- colnames(tab)
@@ -264,7 +264,7 @@ confounders.poly <- function(case,
         } else {
             rownames(tab.nocfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.nocfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.nocfder) <- colnames(tab)
@@ -314,7 +314,7 @@ confounders.poly <- function(case,
            A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
            A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
             stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
-        
+
         tab.cfder2 <- matrix(c(A2, B2, C2, D2), nrow = 2, byrow = TRUE)
         tab.cfder1 <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
@@ -338,7 +338,7 @@ confounders.poly <- function(case,
         } else {
             rownames(tab.cfder2) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.cfder2) <- paste("Col", 1:2)
         } else {
             colnames(tab.cfder2) <- colnames(tab)
@@ -348,7 +348,7 @@ confounders.poly <- function(case,
         } else {
             rownames(tab.cfder1) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.cfder1) <- paste("Col", 1:2)
         } else {
             colnames(tab.cfder1) <- colnames(tab)
@@ -358,7 +358,7 @@ confounders.poly <- function(case,
         } else {
             rownames(tab.nocfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))){
             colnames(tab.nocfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.nocfder) <- colnames(tab)
@@ -382,7 +382,7 @@ confounders.poly <- function(case,
                 cfder2.data = tab.cfder2,
                 nocfder.data = tab.nocfder,
                 obs.measures = rmat,
-                adj.measures = rmatc, 
+                adj.measures = rmatc,
                 bias.parms = bias_parms)
     class(res) <- c("episensr", "list")
     res
