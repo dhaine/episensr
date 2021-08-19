@@ -1,5 +1,8 @@
-# episensr 1.0.1
+# episensr 1.1.0
 - Fix confidence interval values in plotting output of `probsens`.
+- Fix bug that created integer overflow in rare cases when 2-by-2 table cells
+  were very large.
+- Update documentation.
 
 # episensr 1.0.0
 - Provide default values for variables in `mbias`.
