@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 
 [![Build Status](https://travis-ci.org/dhaine/episensr.svg?branch=master)](https://travis-ci.org/dhaine/episensr)
+[![R-CMD-check](https://github.com/dhaine/episensr/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/dhaine/episensr/actions/workflows/check-standard.yaml)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/episensr)](https://cran.r-project.org/package=episensr)
 [![DOI](https://zenodo.org/badge/33018836.svg)](https://doi.org/10.5281/zenodo.4554554)
 [![Codecov test
