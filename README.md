@@ -9,7 +9,7 @@ episensr <img src="man/figures/logo.png" align="right" width=120 />
 Status](https://travis-ci.org/dhaine/episensr.svg?branch=master)](https://travis-ci.org/dhaine/episensr)
 [![R-CMD-check](https://github.com/dhaine/episensr/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/dhaine/episensr/actions/workflows/check-standard.yaml)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/episensr)](https://cran.r-project.org/package=episensr)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4554554.svg)](https://doi.org/10.5281/zenodo.4554554)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4554553.svg)](https://doi.org/10.5281/zenodo.4554553)
 [![Codecov test
 coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](https://codecov.io/gh/dhaine/episensr?branch=master)
 [![Project Status: Active – The project has reached a stable, usable
@@ -37,15 +37,15 @@ Citation
 To cite **episensr**, please use:
 
     citation("episensr")
-    #> 
+    #>
     #> To cite episensr in publications use:
-    #> 
+    #>
     #>   Haine, Denis (2021). The episensr package: basic sensitivity analysis
     #>   of epidemiological results. R package version 1.0.0.
     #>   https://dhaine.github.io/episensr/. doi: 10.5281/zenodo.4554554.
-    #> 
+    #>
     #> A BibTeX entry for LaTeX users is
-    #> 
+    #>
     #>   @Misc{,
     #>     title = {The episensr package: basic sensitivity analysis of epidemiological results},
     #>     author = {Denis Haine},
@@ -99,19 +99,19 @@ We use the function `selection` as shown below.
                      dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
                      nrow = 2, byrow = TRUE),
               bias_parms = c(.94, .85, .64, .25))
-    #> --Observed data-- 
-    #>          Outcome: UM+ 
-    #>        Comparing: Mobile+ vs. Mobile- 
-    #> 
+    #> --Observed data--
+    #>          Outcome: UM+
+    #>        Comparing: Mobile+ vs. Mobile-
+    #>
     #>     Mobile+ Mobile-
     #> UM+     136     107
     #> UM-     297     165
-    #> 
+    #>
     #>                                        2.5%     97.5%
     #> Observed Relative Risk: 0.7984287 0.6518303 0.9779975
     #>    Observed Odds Ratio: 0.7061267 0.5143958 0.9693215
     #> ---
-    #>                                                 
+    #>
     #> Selection Bias Corrected Relative Risk: 1.483780
     #>    Selection Bias Corrected Odds Ratio: 1.634608
 
