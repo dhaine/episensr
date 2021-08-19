@@ -34,9 +34,6 @@
 #' data.}
 #' \item{bias.parms}{Bias parameters.}
 #'
-#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
-#' Bias Analysis to Epidemiologic Data}, pp.109--116, Springer.
-#'
 #' @examples
 #' multidimBias(matrix(c(45, 94, 257, 945),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),

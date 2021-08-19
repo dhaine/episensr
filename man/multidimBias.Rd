@@ -91,7 +91,3 @@ nrow = 2, byrow = TRUE),
 type = "selection",
 OR_sel = seq(1.5, 6.5, by = .5))
 }
-\references{
-Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
-Bias Analysis to Epidemiologic Data}, pp.109--116, Springer.
-}
