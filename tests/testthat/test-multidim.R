@@ -69,7 +69,7 @@ test_that("Adjusted measures are correct for confounder misclassification", {
 test_that("Observed measures are correct for selection misclassification", {
     model <- multidimBias(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
              type = "selection",
-             OR.sel = seq(1.5, 6.5, by = .5), print = FALSE)
+             OR_sel = seq(1.5, 6.5, by = .5), print = FALSE)
     expect_equal(model$obs.measures[1, 1], 0.7984, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 2], 0.6518, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 3], 0.9780, tolerance = 1e-4, scale = 1)
@@ -81,7 +81,7 @@ test_that("Observed measures are correct for selection misclassification", {
 test_that("Adjusted measures are correct for selection misclassification", {
     model <- multidimBias(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
              type = "selection",
-             OR.sel = seq(1.5, 6.5, by = .5), print = FALSE)
+             OR_sel = seq(1.5, 6.5, by = .5), print = FALSE)
     expect_equal(model$adj.measures[1, 2], 0.4708, tolerance = 1e-1, scale = 1,
                  check.attributes = FALSE)
     expect_equal(model$adj.measures[2, 2], 0.3531, tolerance = 1e-1, scale = 1,
