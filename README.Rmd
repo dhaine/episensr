@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![Build Status](https://travis-ci.org/dhaine/episensr.svg?branch=master)](https://travis-ci.org/dhaine/episensr)
 [![R-CMD-check](https://github.com/dhaine/episensr/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/dhaine/episensr/actions/workflows/check-standard.yaml)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/episensr)](https://cran.r-project.org/package=episensr)
-[![DOI](https://zenodo.org/badge/33018836.svg)](https://doi.org/10.5281/zenodo.4554554)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4554554.svg)](https://doi.org/10.5281/zenodo.4554554)
 [![Codecov test
 coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](https://codecov.io/gh/dhaine/episensr?branch=master)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
@@ -32,9 +32,7 @@ The R package **episensr** allows to do basic sensitivity analysis of
 epidemiological results as described in **Applying Quantitative Bias Analysis to
 Epidemiological Data** by Timothy L. Lash, Matthew P. Fox, and Aliza K. Fink
 (ISBN: 978-0-387-87960-4,
-[bias.analysis](https://sites.google.com/site/biasanalysis/)). A similar
-function is available in Stata
-([episens](https://ideas.repec.org/c/boc/bocode/s456792.html)).
+[bias.analysis](https://sites.google.com/site/biasanalysis/)).
 
 ## License
 
