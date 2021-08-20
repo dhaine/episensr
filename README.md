@@ -37,21 +37,21 @@ Citation
 To cite **episensr**, please use:
 
     citation("episensr")
-    #>
+    #> 
     #> To cite episensr in publications use:
-    #>
+    #> 
     #>   Haine, Denis (2021). The episensr package: basic sensitivity analysis
-    #>   of epidemiological results. R package version 1.0.0.
-    #>   https://dhaine.github.io/episensr/. doi: 10.5281/zenodo.4554554.
-    #>
+    #>   of epidemiological results. R package version 1.1.0.
+    #>   https://dhaine.github.io/episensr/. doi: 10.5281/zenodo.4554553.
+    #> 
     #> A BibTeX entry for LaTeX users is
-    #>
+    #> 
     #>   @Misc{,
     #>     title = {The episensr package: basic sensitivity analysis of epidemiological results},
     #>     author = {Denis Haine},
     #>     year = {2021},
-    #>     note = {R package version 1.0.0},
-    #>     doi = {10.5281/zenodo.4554554},
+    #>     note = {R package version 1.1.0},
+    #>     doi = {10.5281/zenodo.4554553},
     #>     url = {https://dhaine.github.io/episensr/},
     #>   }
 
@@ -93,25 +93,24 @@ following:
 We use the function `selection` as shown below.
 
     library(episensr)
-    #> Loading required package: ggplot2
 
     selection(matrix(c(136, 107, 297, 165),
                      dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
                      nrow = 2, byrow = TRUE),
               bias_parms = c(.94, .85, .64, .25))
-    #> --Observed data--
-    #>          Outcome: UM+
-    #>        Comparing: Mobile+ vs. Mobile-
-    #>
+    #> --Observed data-- 
+    #>          Outcome: UM+ 
+    #>        Comparing: Mobile+ vs. Mobile- 
+    #> 
     #>     Mobile+ Mobile-
     #> UM+     136     107
     #> UM-     297     165
-    #>
+    #> 
     #>                                        2.5%     97.5%
     #> Observed Relative Risk: 0.7984287 0.6518303 0.9779975
     #>    Observed Odds Ratio: 0.7061267 0.5143958 0.9693215
     #> ---
-    #>
+    #>                                                 
     #> Selection Bias Corrected Relative Risk: 1.483780
     #>    Selection Bias Corrected Odds Ratio: 1.634608
 
