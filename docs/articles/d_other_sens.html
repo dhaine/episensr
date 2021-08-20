@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">episensr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
       <h1 data-toc-skip>Additional Sensitivity Analyses</h1>
                         <h4 class="author">Denis Haine</h4>
             
-            <h4 class="date">2021-02-23</h4>
+            <h4 class="date">2021-08-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dhaine/episensr/blob/master/vignettes/d_other_sens.Rmd"><code>vignettes/d_other_sens.Rmd</code></a></small>
       <div class="hidden name"><code>d_other_sens.Rmd</code></div>
@@ -135,7 +135,7 @@
 <p>The <em>array approach</em> by Schneeweiss provides a corrected RR based on the apparent, confounded, RR, the prevalence of the confounding factor among the exposed and unexposed, and the association between the confounder and the outcome.</p>
 <p>Schneeweiss provides the (made-up) example of the association between TNF<span class="math inline">\(_\alpha\)</span> blocking agents and Non-Hodgkin (NH) Lymphoma in rheumatoid arthritis (RA) patients. Assuming an observed relative risk of 2, that 50% of RA patients have a more progressive immunologic disease, and that more progressive disease is more likely to lead to NH lymphoma:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">episensr</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dhaine/episensr">episensr</a></span><span class="op">)</span></code></pre></div>
 <pre><code>## Loading required package: ggplot2</code></pre>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/confounders.array.html">confounders.array</a></span><span class="op">(</span>crude.risk <span class="op">=</span> <span class="fl">2</span>,
@@ -231,7 +231,7 @@
                        <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,
                                                bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1.6</span>, <span class="fl">0.1</span>, <span class="fl">0.51</span><span class="op">)</span>,
                                                print <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
 <span class="va">dat2</span> <span class="op">&lt;-</span> <span class="va">dat</span> <span class="op">%&gt;%</span> <span class="fu">gather</span><span class="op">(</span><span class="va">nsaid</span>, <span class="va">non_user</span>, <span class="va">naproxen</span>, <span class="va">rof_napro</span>,
                        key <span class="op">=</span> <span class="st">"COX2"</span>, value <span class="op">=</span> <span class="st">"bias_perc"</span><span class="op">)</span>
 
