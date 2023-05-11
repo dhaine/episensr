@@ -48,9 +48,9 @@ plot.episensr.booted <- function(x,
             geom_histogram(aes(y = .data$..density..), bins = bins,
                            colour = "grey", fill = "dimgrey") +
             geom_density() +
-            geom_vline(xintercept = x$ci[1, 1], size = .75,
+            geom_vline(xintercept = x$ci[2, 1], size = .75,
                        colour = "black", linetype = "dashed") +
-            geom_vline(xintercept = x$ci[1, 2], size = .75,
+            geom_vline(xintercept = x$ci[2, 2], size = .75,
                        colour = "black", linetype = "dashed") +
             ggtitle("Bias adjusted odds ratio") +
             xlab("Odds ratio")
