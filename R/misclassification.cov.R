@@ -43,16 +43,6 @@
 #' bias_parms = c(.6, .6, .95, .95))
 #' @export
 #' @importFrom stats qnorm
-misclassification_cov <- function(case, exposed, covariate,
-                                  bias_parms = NULL, alpha = 0.05) {
-    warning("Please use misclassification.cov() instead of misclassification_cov()",
-            call. = FALSE)
-    misclassification.cov(case, exposed, covariate, bias_parms = NULL, alpha = 0.05)
-}
-
-#' @export
-#' @rdname misclassification_cov
-
 misclassification.cov <- function(case,
                                   exposed,
                                   covariate,
