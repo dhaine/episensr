@@ -148,7 +148,7 @@ dat$naproxen <- apply(dat, 1,
 dat$rof_napro <- apply(dat, 1,
                        function(x) confounders.ext(1,
                                                bias_parms = c(x[1], 1.6, 0.1, 0.51))[[3]][2])
-library(tidyverse)
+library(tidyr)
 dat2 <- dat %>% gather(nsaid, non_user, naproxen, rof_napro,
                        key = "COX2", value = "bias_perc")
 

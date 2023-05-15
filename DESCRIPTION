@@ -34,7 +34,7 @@ Suggests:
     rmarkdown,
     aplore3,
     directlabels,
-    tidyverse,
+    tidyr,
     lattice,
     covr
 RoxygenNote: 7.2.3
