@@ -1,3 +1,6 @@
+# episensr 1.2.0
+- Fix CI for OR in plot.booted (@codiewood, #2)
+
 # episensr 1.1.0
 - Fix confidence interval values in plotting output of `probsens`.
 - Fix bug that created integer overflow in rare cases when 2-by-2 table cells
