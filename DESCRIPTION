@@ -37,7 +37,7 @@ Suggests:
     tidyverse,
     lattice,
     covr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Encoding: UTF-8
 VignetteBuilder: knitr
 URL: https://github.com/dhaine/episensr
