@@ -14,22 +14,16 @@
 #' \item the prevalence of the confounder (between 0 and 1), and
 #' \item the prevalence of the exposure (between 0 and 1).
 #' }
-#' @param dec Number of decimals in the printout.
-#' @param print A logical scalar. Should the results be printed?
-#' 
-#' @return A vector with elements:
-#' \item{RR}{True (adjusted) exposure relative risk.}
-#' \item{RR_CD}{The association between the confounder and the outcome.}
-#' \item{OR_EC}{The association between exposure category and the confounder.}
-#' \item{P_C}{The prevalence of the confounder.}
-#' \item{P_E}{The prevalence of the exposure.}
-#' \item{crude.RR}{Crude (observed) exposure relative risk.}
-#' \item{bias_perc}{The bias as a percentage: (crude.RR - RR)/RR * 100.}
+#'
+#' @return A list with elements:
+#' \item{model}{Bias analysis performed.}
+#' \item{bias.parms}{Input bias parameters.}
+#' \item{adj.measures}{Output results, with bias as a percentage: (crude.RR - RR)/RR * 100.}
 #'
 #' @references Schneeweiss, S., 2006. Sensitivity analysis and external adjustment for
 #' unmeasured confounders in epidemiologic database studies of therapeutics.
 #' \emph{Pharmacoepidemiol Drug Safety} 15: 291-303.
-#' 
+#'
 #' @examples
 #' # Schneeweiss, S, Glynn, R.J., Tsai, E.H., Avorn, J., Solomon, D.H. Adjusting for
 #' # unmeasured confounders in pharmacoepidemiologic claims data using external
@@ -37,9 +31,7 @@
 #' confounders.ext(RR = 1, bias_parms = c(0.1, 0.9, 0.1, 0.4))
 #' @export
 confounders.ext <- function(RR,
-                            bias_parms = NULL,
-                            dec = 2,
-                            print = TRUE){
+                            bias_parms = NULL) {
     if (is.null(bias_parms))
         bias_parms <- c(1, 1, 1, 1)
     else bias_parms <- bias_parms
@@ -59,26 +51,27 @@ confounders.ext <- function(RR,
         bias_parms[4] + bias_parms[3] - 1
     c <- bias_parms[3] * bias_parms[2] * bias_parms[4]
     P_C1 <- (-b - (sqrt(b^2 - (4 * a * c)))) / (2 * a)
-    
+
     crude_RR <- ((P_C1 * (bias_parms[1] - 1) + bias_parms[4]) /
                  (((bias_parms[3] - P_C1) * (bias_parms[1] - 1)) -
                   bias_parms[4] + 1)) *
         ((1 - bias_parms[4]) / bias_parms[4])
     bias_perc <- (crude_RR - RR) / RR * 100
 
-    if (print)
-        cat("\n    Crude RR:", round(crude_RR, dec), "\n")
-    if (print)
-        cat("\nPercent bias:", round(bias_perc, dec), "\n")
-    if (print)
-        cat("\nInput Bias Parameters:",
-            "\n----------------------\n\n")
-    if (print)
-        cat("          RR(Confounder-Disease):", bias_parms[1],
-            "\nOR(Exposure category-Confounder):", bias_parms[2],
-            "\n                   p(Confounder):", bias_parms[3],
-            "\n                     p(Exposure):", bias_parms[4], "\n")
-    invisible(c(RR = RR, RR_CD = bias_parms[1], OR_EC = bias_parms[2],
-                P_C = bias_parms[3], P_E = bias_parms[4], crude_RR = crude_RR,
-                bias_perc = bias_perc))
+    rmatc <- rbind(crude_RR, bias_perc)
+    rownames(rmatc) <- c("Crude RR", "Percent bias")
+    colnames(rmatc) <- " "
+
+    bias.parms <- matrix(bias_parms)
+    colnames(bias.parms) <- " "
+    rownames(bias.parms) <- c("RR(Confounder-Disease):",
+                              "OR(Exposure category-Confounder):",
+                              "p(Confounder):",
+                              "p(Exposure):")
+
+    res <- list(model = "confounder",
+                bias.parms = bias.parms,
+                adj.measures = rmatc)
+    class(res) <- c("episensr.confounder", "episensr", "list")
+    res
 }

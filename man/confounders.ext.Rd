@@ -4,7 +4,7 @@
 \alias{confounders.ext}
 \title{Sensitivity analysis for unmeasured confounders based on external adjustment}
 \usage{
-confounders.ext(RR, bias_parms = NULL, dec = 2, print = TRUE)
+confounders.ext(RR, bias_parms = NULL)
 }
 \arguments{
 \item{RR}{"True" or fully adjusted exposure relative risk.}
@@ -17,20 +17,12 @@ vector has 4 elements, in the following order:
 \item the prevalence of the confounder (between 0 and 1), and
 \item the prevalence of the exposure (between 0 and 1).
 }}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
-A vector with elements:
-\item{RR}{True (adjusted) exposure relative risk.}
-\item{RR_CD}{The association between the confounder and the outcome.}
-\item{OR_EC}{The association between exposure category and the confounder.}
-\item{P_C}{The prevalence of the confounder.}
-\item{P_E}{The prevalence of the exposure.}
-\item{crude.RR}{Crude (observed) exposure relative risk.}
-\item{bias_perc}{The bias as a percentage: (crude.RR - RR)/RR * 100.}
+A list with elements:
+\item{model}{Bias analysis performed.}
+\item{bias.parms}{Input bias parameters.}
+\item{adj.measures}{Output results, with bias as a percentage: (crude.RR - RR)/RR * 100.}
 }
 \description{
 Sensitivity analysis to explore effect of residual confounding using simple
