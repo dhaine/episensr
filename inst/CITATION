@@ -4,8 +4,8 @@ bibentry(
   author = "Denis Haine",
   year = 2023,
   note = "R package version 1.2.0",
-  doi = "10.5281/zenodo.4554553",
+  doi = "10.5281/zenodo.7942249",
   url = "https://dhaine.github.io/episensr/",
-  textVersion = paste("Haine, Denis (2023). The episensr package: basic sensitivity analysis of epidemiological results. R package version 1.2.0. https://dhaine.github.io/episensr/. doi: 10.5281/zenodo.4554553."
+  textVersion = paste("Haine, Denis (2023). The episensr package: basic sensitivity analysis of epidemiological results. R package version 1.2.0. https://dhaine.github.io/episensr/. doi: 10.5281/zenodo.7942249."
                       )
 )

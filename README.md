@@ -7,7 +7,7 @@
 
 [![R-CMD-check](https://github.com/dhaine/episensr/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/dhaine/episensr/actions/workflows/check-standard.yaml)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/episensr)](https://cran.r-project.org/package=episensr)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4554553.svg)](https://doi.org/10.5281/zenodo.4554553)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7942249.svg)](https://doi.org/10.5281/zenodo.7942249)
 [![Codecov test
 coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](https://app.codecov.io/gh/dhaine/episensr/tree/master)
 [![Project Status: Active – The project has reached a stable, usable
@@ -38,7 +38,7 @@ citation("episensr")
 #> 
 #>   Haine, Denis (2023). The episensr package: basic sensitivity analysis
 #>   of epidemiological results. R package version 1.2.0.
-#>   https://dhaine.github.io/episensr/. doi: 10.5281/zenodo.4554553.
+#>   https://dhaine.github.io/episensr/. doi: 10.5281/zenodo.7942249.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
@@ -47,7 +47,7 @@ citation("episensr")
 #>     author = {Denis Haine},
 #>     year = {2023},
 #>     note = {R package version 1.2.0},
-#>     doi = {10.5281/zenodo.4554553},
+#>     doi = {10.5281/zenodo.7942249},
 #>     url = {https://dhaine.github.io/episensr/},
 #>   }
 ```
