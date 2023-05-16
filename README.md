@@ -1,7 +1,7 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# episensr <img src="man/figures/logo.png" align="right" width=120 />
+episensr <img src="man/figures/logo.png" align="right" width=120 />
+===================================================================
 
 <!-- badges: start -->
 
@@ -9,7 +9,7 @@
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/episensr)](https://cran.r-project.org/package=episensr)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4554553.svg)](https://doi.org/10.5281/zenodo.4554553)
 [![Codecov test
-coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](https://codecov.io/gh/dhaine/episensr?branch=master)
+coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](https://app.codecov.io/gh/dhaine/episensr/tree/master)
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
@@ -24,35 +24,36 @@ Analysis to Epidemiological Data** by Timothy L. Lash, Matthew P. Fox,
 and Aliza K. Fink (ISBN: 978-0-387-87960-4,
 [bias.analysis](https://sites.google.com/site/biasanalysis/)).
 
-## License
+License
+-------
 
 This package is free and open source software, licensed under GPL2.
 
-## Citation
+Citation
+--------
 
 To cite **episensr**, please use:
 
-``` r
-citation("episensr")
-#> To cite package 'episensr' in publications use:
-#> 
-#>   Haine, Denis (2023). The episensr package: basic sensitivity analysis
-#>   of epidemiological results. R package version 1.2.0.
-#>   https://dhaine.github.io/episensr/. doi: 10.5281/zenodo.4554553.
-#> 
-#> A BibTeX entry for LaTeX users is
-#> 
-#>   @Misc{,
-#>     title = {The episensr package: basic sensitivity analysis of epidemiological results},
-#>     author = {Denis Haine},
-#>     year = {2023},
-#>     note = {R package version 1.2.0},
-#>     doi = {10.5281/zenodo.4554553},
-#>     url = {https://dhaine.github.io/episensr/},
-#>   }
-```
+    citation("episensr")
+    #> To cite episensr in publications use:
+    #> 
+    #>   Haine, Denis (2021). The episensr package: basic sensitivity analysis
+    #>   of epidemiological results. R package version 1.1.0.
+    #>   https://dhaine.github.io/episensr/. doi: 10.5281/zenodo.4554553.
+    #> 
+    #> A BibTeX entry for LaTeX users is
+    #> 
+    #>   @Misc{,
+    #>     title = {The episensr package: basic sensitivity analysis of epidemiological results},
+    #>     author = {Denis Haine},
+    #>     year = {2021},
+    #>     note = {R package version 1.1.0},
+    #>     doi = {10.5281/zenodo.4554553},
+    #>     url = {https://dhaine.github.io/episensr/},
+    #>   }
 
-## Example
+Example
+-------
 
 We will use a case-control study by [Stang et
 al.](https://pubmed.ncbi.nlm.nih.gov/16523014/) on the relation between
@@ -64,36 +65,53 @@ controls (94% vs 55%, respectively) and so selection bias could have an
 impact on the association estimate. The 2X2 table for this study is the
 following:
 
-|          | regular use | no use |
-| -------- | ----------- | ------ |
-| cases    | 136         | 107    |
-| controls | 297         | 165    |
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>regular use</th>
+<th>no use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>cases</td>
+<td>136</td>
+<td>107</td>
+</tr>
+<tr class="even">
+<td>controls</td>
+<td>297</td>
+<td>165</td>
+</tr>
+</tbody>
+</table>
 
 We use the function `selection` as shown below.
 
-``` r
-library(episensr)
+    library(episensr)
+    #> Loading required package: ggplot2
+    #> Need help? Try Stackoverflow: https://stackoverflow.com/tags/ggplot2
 
-selection(matrix(c(136, 107, 297, 165),
-                 dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
-                 nrow = 2, byrow = TRUE),
-          bias_parms = c(.94, .85, .64, .25))
-#> --Observed data-- 
-#>          Outcome: UM+ 
-#>        Comparing: Mobile+ vs. Mobile- 
-#> 
-#>     Mobile+ Mobile-
-#> UM+     136     107
-#> UM-     297     165
-#> 
-#>                                        2.5%     97.5%
-#> Observed Relative Risk: 0.7984287 0.6518303 0.9779975
-#>    Observed Odds Ratio: 0.7061267 0.5143958 0.9693215
-#> ---
-#>                                                 
-#> Selection Bias Corrected Relative Risk: 1.483780
-#>    Selection Bias Corrected Odds Ratio: 1.634608
-```
+    selection(matrix(c(136, 107, 297, 165),
+                     dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
+                     nrow = 2, byrow = TRUE),
+              bias_parms = c(.94, .85, .64, .25))
+    #> --Observed data-- 
+    #>          Outcome: UM+ 
+    #>        Comparing: Mobile+ vs. Mobile- 
+    #> 
+    #>     Mobile+ Mobile-
+    #> UM+     136     107
+    #> UM-     297     165
+    #> 
+    #>                                        2.5%     97.5%
+    #> Observed Relative Risk: 0.7984287 0.6518303 0.9779975
+    #>    Observed Odds Ratio: 0.7061267 0.5143958 0.9693215
+    #> ---
+    #>                                                 
+    #> Selection Bias Corrected Relative Risk: 1.483780
+    #>    Selection Bias Corrected Odds Ratio: 1.634608
 
 The 2X2 table is provided as a matrix and selection probabilities given
 with the argument `bias_parms`, a vector with the 4 probabilities
@@ -103,18 +121,15 @@ noncases exposed, and among noncases unexposed. The output shows the
 observed 2X2 table, the observed odds ratio (and relative risk) followed
 by the corrected ones.
 
-## Installation
+Installation
+------------
 
 You can get the latest release from **CRAN**:
 
-``` r
-install.packages('episensr')
-```
+    install.packages('episensr')
 
 Or install the development version from **GitHub** with **devtools**
 package:
 
-``` r
-#install.packages("remotes")
-remotes::install_github('dhaine/episensr', ref = "develop")
-```
+    #install.packages("remotes")
+    remotes::install_github('dhaine/episensr', ref = "develop")
