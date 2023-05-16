@@ -20,7 +20,7 @@ susceptible to systematic errors as well, from selection bias to the presence of
 misclassification).
 Bias analysis methods were compiled by Lash et al. in their
 book
-["Applying Quantitative Bias Analysis to Epidemiologic Data"](https://www.springer.com/us/book/9780387879604).
+["Applying Quantitative Bias Analysis to Epidemiologic Data"](https://link.springer.com/book/10.1007/978-3-030-82673-4).
 This package implements the various bias analyses from that book, which are also
 [available](https://sites.google.com/site/biasanalysis/) (for some) as a
 spreadsheet or a SAS macro, as well as some additional approaches.
