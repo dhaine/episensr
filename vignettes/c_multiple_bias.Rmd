@@ -17,7 +17,7 @@ resulting from multiple biases.
 
 Following the example in [Lash et
 al.](https://link.springer.com/book/10.1007/978-3-030-82673-4), we can use the study by [Chien et
-al.](https://link.springer.com/article/10.1007%2Fs10549-005-9056-0).
+al.](https://link.springer.com/article/10.1007/s10549-005-9056-0).
 It is a case-control study looking at the association between antidepressant use and the
 occurrence of breast cancer. The observed OR was 1.2 [0.9--1.6].
 
