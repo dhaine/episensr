@@ -1,8 +1,8 @@
 destination: docs
 
 template:
-  params:
-    bootswatch: simplex
+  bootstrap: 5
+  bootswatch: simplex
 
 navbar:
   type: inverse
