@@ -1,5 +1,4 @@
-destination: docs
-
+url: ~
 template:
   bootstrap: 5
   bootswatch: simplex
