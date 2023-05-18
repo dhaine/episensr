@@ -1,11 +1,9 @@
 url: https://dhaine.github.io/episensr/
-
 template:
   bootstrap: 5
   bootswatch: simplex
-
 development:
   mode: release
-
 navbar:
   type: inverse
+

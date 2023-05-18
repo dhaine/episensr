@@ -40,4 +40,5 @@ Suggests:
 RoxygenNote: 7.2.3
 Encoding: UTF-8
 VignetteBuilder: knitr
-URL: https://github.com/dhaine/episensr
+URL: https://github.com/dhaine/episensr,
+    https://dhaine.github.io/episensr/
