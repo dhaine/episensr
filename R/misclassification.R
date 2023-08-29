@@ -79,9 +79,9 @@
 #' type = "exposure",
 #' bias_parms = c(.94, .94, .97, .97))
 #'
-#' The example for using PPV/NPV comes from Bodnar et al. Validity of birth certificate-derived
-#' maternal weight data.
-#' Paediatric and Perinatal Epidemiology 2014;28:203-212.
+#' # The next example, using PPV/NPV, comes from Bodnar et al. Validity of birth
+#' # certificate-derived maternal weight data.
+#' # Paediatric and Perinatal Epidemiology 2014;28:203-212.
 #' misclassification(matrix(c(599, 4978, 31175, 391851),
 #' dimnames = list(c("Preterm", "Term"), c("Underweight", "Normal weight")),
 #' nrow = 2, byrow = TRUE),

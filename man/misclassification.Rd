@@ -7,7 +7,7 @@
 misclassification(
   case,
   exposed,
-  type = c("exposure", "outcome"),
+  type = c("exposure", "exposure_pv", "outcome"),
   bias_parms = NULL,
   alpha = 0.05
 )
@@ -21,6 +21,8 @@ misclassification(
 \enumerate{
 \item exposure: bias analysis for exposure misclassification; corrections using
 sensitivity and specificity: nondifferential and independent errors,
+\item exposure_pv: bias analysis for exposure misclassification; corrections using
+PPV/NPV: nondifferential and independent errors,
 \item outcome: bias analysis for outcome misclassification.
 }}
 
@@ -31,6 +33,13 @@ between 0 and 1, in the following order:
 \item Sensitivity of exposure (or outcome) classification among those without the outcome (or exposure),
 \item Specificity of exposure (or outcome) classification among those with the outcome (or exposure), and
 \item Specificity of exposure (or outcome) classification among those without the outcome (or exposure).
+}
+If PPV/NPV is chosen in case of exposure misclassification, this vector is the following:
+\enumerate{
+\item Positive predictive value among those with the outcome,
+\item Positive predictive value among those without the outcome,
+\item Negative predictive value among those with the outcome,
+\item Negative predictive value among those without the outcome.
 }}
 
 \item{alpha}{Significance level.}
@@ -48,8 +57,12 @@ interval for odds ratio.}
 }
 \description{
 Simple sensitivity analysis for disease or exposure misclassification.
-Confidence interval for odds ratio is computed as in Chu et al. (2006),
-for exposure misclassification.
+Confidence interval for odds ratio adjusted using sensitivity and specificity is
+computed as in Chu et al. (2006), for exposure misclassification.
+}
+\details{
+For exposure misclassification, bias-adjusted measures are available using sensitivity
+and specificity, or using predictive values.
 }
 \examples{
 # The data for this example come from:
@@ -78,6 +91,15 @@ dimnames = list(c("Case", "Control"), c("Smoker +", "Smoker -")),
 nrow = 2, byrow = TRUE),
 type = "exposure",
 bias_parms = c(.94, .94, .97, .97))
+
+# The next example, using PPV/NPV, comes from Bodnar et al. Validity of birth
+# certificate-derived maternal weight data.
+# Paediatric and Perinatal Epidemiology 2014;28:203-212.
+misclassification(matrix(c(599, 4978, 31175, 391851),
+dimnames = list(c("Preterm", "Term"), c("Underweight", "Normal weight")),
+nrow = 2, byrow = TRUE),
+type = "exposure_pv",
+bias_parms = c(0.65, 0.74, 1, 0.98))
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
