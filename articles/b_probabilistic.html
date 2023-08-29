@@ -33,7 +33,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">episensr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,7 +87,7 @@
                         <h4 data-toc-skip class="author">Denis
 Haine</h4>
             
-            <h4 data-toc-skip class="date">2023-05-18</h4>
+            <h4 data-toc-skip class="date">2023-08-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/dhaine/episensr/blob/HEAD/vignettes/b_probabilistic.Rmd" class="external-link"><code>vignettes/b_probabilistic.Rmd</code></a></small>
       <div class="d-none name"><code>b_probabilistic.Rmd</code></div>
@@ -154,7 +154,10 @@ misclassification.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dhaine/episensr" class="external-link">episensr</a></span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Loading required package: ggplot2</span></span></code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<pre><code><span><span class="co">## Thank you for using episensr!</span></span></code></pre>
+<pre><code><span><span class="co">## This is version 1.3.0 of episensr</span></span></code></pre>
+<pre><code><span><span class="co">## Type 'citation("episensr")' for citing this R package in publications.</span></span></code></pre>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">smoke.nd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/probsens.html">probsens</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">215</span>, <span class="fl">1449</span>, <span class="fl">668</span>, <span class="fl">4296</span><span class="op">)</span>,</span>
 <span>                            dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"BC+"</span>, <span class="st">"BC-"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Smoke+"</span>, <span class="st">"Smoke-"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -191,7 +194,7 @@ and the corrected measures of association.</p>
 <p>We saved the <code>probsens</code> analysis in a new object
 <code>smoke.nd</code>. We can see its elements with the function
 <code><a href="https://rdrr.io/r/utils/str.html" class="external-link">str()</a></code>:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">smoke.nd</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## List of 8</span></span>
 <span><span class="co">##  $ obs.data    : num [1:2, 1:2] 215 668 1449 4296</span></span>
@@ -235,7 +238,7 @@ cells of the adjusted 2X2 table, and the adjusted measures.
 <code>episensr</code> offers some plot functions to allow plotting
 directly these saved information, for example the Se prior
 distribution:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">smoke.nd</span>, <span class="st">"seca"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="b_probabilistic_files/figure-html/plot-1.png" alt="Sensibility prior distribution." width="576"><p class="caption">
@@ -301,13 +304,13 @@ smoking with lung cancer mortality is log-normal with 95% limits of 5
 and 15. The mean of this distribution is [ln(15) + ln(5)] / 2 = 2.159,
 and its standard deviation is [ln(15) - ln(5)] / 3.92 = 0.28. It looks
 like this:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Lognormal.html" class="external-link">rlnorm</a></span><span class="op">(</span><span class="fl">10000</span>, meanlog <span class="op">=</span> <span class="fl">2.159</span>, sdlog <span class="op">=</span> <span class="fl">0.28</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.025</span>, <span class="fl">0.975</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##      2.5%     97.5% </span></span>
 <span><span class="co">##  4.979672 14.959055</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/density.html" class="external-link">density</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="b_probabilistic_files/figure-html/unnamed-chunk-1-1.png" alt="Log-normal distribution with meanlog = 2.159 and sdlog = 0.28." width="576"><p class="caption">
@@ -315,7 +318,7 @@ Log-normal distribution with meanlog = 2.159 and sdlog = 0.28.
 </p>
 </div>
 <p>Now, let’s run <code>probsens.conf</code> with 50,000 iterations:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">greenland</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/probsens.conf.html">probsens.conf</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">45</span>, <span class="fl">94</span>, <span class="fl">257</span>, <span class="fl">945</span><span class="op">)</span>,</span>
 <span>                                  dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Cases+"</span>, <span class="st">"Cases-"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Res+"</span>, <span class="st">"Res-"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -354,7 +357,7 @@ and therefore our uncertainty about confounding is similar to our
 uncertainty about random error.</p>
 <p>You can plot the bias-adjusted OR including both systematic and
 random error:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">greenland</span>, <span class="st">"or_tot"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="b_probabilistic_files/figure-html/probsens_conf_plot-1.png" alt="Distribution of the 50,000 confounder-adjusted odds ratios." width="576"><p class="caption">
