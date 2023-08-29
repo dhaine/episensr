@@ -49,6 +49,15 @@ test_that("Adjusted measures are correct for exposure misclassification", {
     expect_equal(model$adj.measures[2], 237.0529, tolerance = 1e-4, scale = 1)
 })
 
+test_that("Adjusted measures are correct for exposure misclassification using PPV/NPV", {
+    model <- misclassification(matrix(c(599, 4978, 31175, 391851),
+                                         nrow = 2, byrow = TRUE),
+                                  type = "exposure_pv",
+                                  bias_parms = c(.65, .74, 1, .98))
+    expect_equal(model$adj.measures[1], 0.9528, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2], 0.9522, tolerance = 1e-4, scale = 1)
+})
+
 test_that("Observed measures are correct for outcome misclassification", {
     model <- misclassification(matrix(c(4558, 3428, 46305, 46085),
                                          nrow = 2, byrow = TRUE),
