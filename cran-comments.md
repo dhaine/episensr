@@ -2,7 +2,7 @@
 * Local machine
   * Running under: Ubuntu 22.04.2 LTS
   * Platform: x86_64-pc-linux-gnu (64-bit)
-  * R version 4.3.0 (2023-04-21)
+  * R version 4.3.1 (2023-06-16)
 * Github Actions:
   * Windows-latest (R release)
   * MacOS-latest (R release)
