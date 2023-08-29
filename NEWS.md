@@ -1,3 +1,5 @@
+# episensr 1.3.0
+
 # episensr 1.2.0
 - Fix CI for OR in `plot.booted` (@codiewood, #2)
 - Replaced dot-dot notation by after_stat(density) in `plot.probsens` and `plot.booted`
