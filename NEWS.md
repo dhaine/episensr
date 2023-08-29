@@ -1,4 +1,6 @@
 # episensr 1.3.0
+- Adding bias-adjusting for exposure misclassification using predictive values.
+- Adding start-up message.
 
 # episensr 1.2.0
 - Fix CI for OR in `plot.booted` (@codiewood, #2)
