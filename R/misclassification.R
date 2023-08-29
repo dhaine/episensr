@@ -1,8 +1,11 @@
 #' Sensitivity analysis for disease or exposure misclassification.
 #'
 #' Simple sensitivity analysis for disease or exposure misclassification.
-#' Confidence interval for odds ratio is computed as in Chu et al. (2006),
-#' for exposure misclassification.
+#' Confidence interval for odds ratio adjusted using sensitivity and specificity is
+#' computed as in Chu et al. (2006), for exposure misclassification.
+#'
+#' For exposure misclassification, bias-adjusted measures are available using sensitivity
+#' and specificity, or using predictive values.
 #'
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
@@ -10,6 +13,8 @@
 #' \enumerate{
 #' \item exposure: bias analysis for exposure misclassification; corrections using
 #' sensitivity and specificity: nondifferential and independent errors,
+#' \item exposure_pv: bias analysis for exposure misclassification; corrections using
+#' PPV/NPV: nondifferential and independent errors,
 #' \item outcome: bias analysis for outcome misclassification.
 #' }
 #' @param bias_parms Vector defining the bias parameters. This vector has 4 elements
@@ -19,6 +24,13 @@
 #' \item Sensitivity of exposure (or outcome) classification among those without the outcome (or exposure),
 #' \item Specificity of exposure (or outcome) classification among those with the outcome (or exposure), and
 #' \item Specificity of exposure (or outcome) classification among those without the outcome (or exposure).
+#' }
+#' If PPV/NPV is chosen in case of exposure misclassification, this vector is the following:
+#' \enumerate{
+#' \item Positive predictive value among those with the outcome,
+#' \item Positive predictive value among those without the outcome,
+#' \item Negative predictive value among those with the outcome,
+#' \item Negative predictive value among those without the outcome.
 #' }
 #' @param alpha Significance level.
 #'
@@ -66,16 +78,25 @@
 #' nrow = 2, byrow = TRUE),
 #' type = "exposure",
 #' bias_parms = c(.94, .94, .97, .97))
+#'
+#' The example for using PPV/NPV comes from Bodnar et al. Validity of birth certificate-derived
+#' maternal weight data.
+#' Paediatric and Perinatal Epidemiology 2014;28:203-212.
+#' misclassification(matrix(c(599, 4978, 31175, 391851),
+#' dimnames = list(c("Preterm", "Term"), c("Underweight", "Normal weight")),
+#' nrow = 2, byrow = TRUE),
+#' type = "exposure_pv",
+#' bias_parms = c(0.65, 0.74, 1, 0.98))
 #' @export
 #' @importFrom stats qnorm
 misclassification <- function(case,
                               exposed,
-                              type = c("exposure", "outcome"),
+                              type = c("exposure", "exposure_pv", "outcome"),
                               bias_parms = NULL,
-                              alpha = 0.05){
+                              alpha = 0.05) {
     if(is.null(bias_parms))
         bias_parms <- c(1, 1, 1, 1)
-    else bias_parms <- bias_parms
+   else bias_parms <- bias_parms
     if(length(bias_parms) != 4)
         stop('The argument bias_parms should be made of the following components: (1) Sensitivity of classification among those with the outcome, (2) Sensitivity of classification among those without the outcome, (3) Specificity of classification among those with the outcome, and (4) Specificity of classification among those without the outcome.')
     if(!all(bias_parms >= 0 & bias_parms <=1))
@@ -122,37 +143,90 @@ misclassification <- function(case,
             ((c+((c+d)*(bias_parms[4]-1))) * (((a+b)*bias_parms[1])-a))
 
         se.corr.or <- sqrt(
-        (
-            (
-                (a+b)*a*b*((bias_parms[1]+bias_parms[3]-1)^2)
-            ) /
-            (
-                ((((a+b)*bias_parms[1])-a)^2) * ((((a+b)*bias_parms[3])-b)^2)
-            )
-        ) +
-        (
-            (
-                (c+d)*c*d*((bias_parms[2]+bias_parms[4]-1)^2)
-            ) /
-            (
-                ((((c+d)*bias_parms[2])-c)^2) * ((((c+d)*bias_parms[4])-d)^2)
-            )
-        )
+                           (
+                               (
+                                   (a+b)*a*b*((bias_parms[1]+bias_parms[3]-1)^2)
+                               ) /
+                               (
+                                   ((((a+b)*bias_parms[1])-a)^2) * ((((a+b)*bias_parms[3])-b)^2)
+                               )
+                           ) +
+                           (
+                               (
+                                   (c+d)*c*d*((bias_parms[2]+bias_parms[4]-1)^2)
+                               ) /
+                               (
+                                   ((((c+d)*bias_parms[2])-c)^2) * ((((c+d)*bias_parms[4])-d)^2)
+                               )
+                           )
         )
         lci.corr.or <- exp(log(mle.corr.or) - qnorm(1 - alpha/2) * se.corr.or)
         uci.corr.or <- exp(log(mle.corr.or) + qnorm(1 - alpha/2) * se.corr.or)
-
 
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
-        if (is.null(rownames(tab))){
+        if (is.null(rownames(tab))) {
             rownames(corr.tab) <- paste("Row", 1:2)
         } else {
             rownames(corr.tab) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){
+        if (is.null(colnames(tab))) {
+            colnames(corr.tab) <- paste("Col", 1:2)
+        } else {
+           colnames(corr.tab) <- colnames(tab)
+        }
+        rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr), c(obs.or, lci.obs.or, uci.obs.or))
+        rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
+        colnames(rmat) <- c(" ",
+                            paste(100 * (alpha/2), "%", sep = ""),
+                            paste(100 * (1 - alpha/2), "%", sep = ""))
+        rmatc <- rbind(c(corr.rr, NA, NA), c(corr.or, lci.corr.or, uci.corr.or))
+        rownames(rmatc) <- c("Misclassification Bias Corrected Relative Risk:",
+                             "   Misclassification Bias Corrected Odds Ratio:")
+        colnames(rmatc) <- c(" ",
+                            paste(100 * (alpha/2), "%", sep = ""),
+                            paste(100 * (1 - alpha/2), "%", sep = ""))
+    }
+
+        if (type == "exposure_pv") {
+        obs.rr <- (a/(a + c)) / (b/(b + d))
+        se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
+        lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha/2) * se.log.obs.rr)
+        uci.obs.rr <- exp(log(obs.rr) + qnorm(1 - alpha/2) * se.log.obs.rr)
+
+        obs.or <- (a/b) / (c/d)
+        se.log.obs.or <- sqrt(1/a + 1/b + 1/c + 1/d)
+        lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
+        uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
+
+        A <- ((a * bias_parms[1]) + (b * (1 - bias_parms[3])))
+        B <- a + b - A
+        C <- ((c * bias_parms[2]) + (d * (1 - bias_parms[4])))
+        D <- c + d - C
+
+        if(A < 1 | B < 1 | C < 1 | D < 1)
+            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table.')
+
+        corr.tab <- matrix(c(A, B, C, D), nrow = 2, byrow = TRUE)
+
+        corr.rr <- (A/(A + C)) / (B/(B + D))
+        corr.or <- (A/B) / (C/D)
+
+        lci.corr.or <- NA
+        uci.corr.or <- NA
+
+        if (is.null(rownames(tab)))
+            rownames(tab) <- paste("Row", 1:2)
+        if (is.null(colnames(tab)))
+            colnames(tab) <- paste("Col", 1:2)
+        if (is.null(rownames(tab))) {
+            rownames(corr.tab) <- paste("Row", 1:2)
+        } else {
+            rownames(corr.tab) <- row.names(tab)
+        }
+        if (is.null(colnames(tab))) {
             colnames(corr.tab) <- paste("Col", 1:2)
         } else {
             colnames(corr.tab) <- colnames(tab)
@@ -170,7 +244,7 @@ misclassification <- function(case,
                             paste(100 * (1 - alpha/2), "%", sep = ""))
     }
 
-    if (type == "outcome"){
+    if (type == "outcome") {
         obs.rr <- (a/(a + c)) / (b/(b + d))
         se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
         lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha/2) * se.log.obs.rr)
@@ -198,12 +272,12 @@ misclassification <- function(case,
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
-        if (is.null(rownames(tab))){
+        if (is.null(rownames(tab))) {
             rownames(corr.tab) <- paste("Row", 1:2)
         } else {
             rownames(corr.tab) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){
+        if (is.null(colnames(tab))) {
             colnames(corr.tab) <- paste("Col", 1:2)
         } else {
             colnames(corr.tab) <- colnames(tab)
