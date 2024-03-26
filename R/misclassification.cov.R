@@ -47,7 +47,7 @@ misclassification.cov <- function(case,
                                   exposed,
                                   covariate,
                                   bias_parms = NULL,
-                                  alpha = 0.05){
+                                  alpha = 0.05) {
     if(is.null(bias_parms))
         bias_parms <- c(1, 1, 1, 1)
     else bias_parms <- bias_parms
@@ -134,14 +134,14 @@ misclassification.cov <- function(case,
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    if (is.null(rownames(tab))){
+    if (is.null(rownames(tab))) {
         rownames(corr.tab1) <- paste("Row", 1:2)
         rownames(corr.tab0) <- paste("Row", 1:2)
         } else {
             rownames(corr.tab1) <- row.names(tab)
             rownames(corr.tab0) <- row.names(tab)
         }
-    if (is.null(colnames(tab))){
+    if (is.null(colnames(tab))) {
         colnames(corr.tab1) <- paste("Col", 1:2)
         colnames(corr.tab0) <- paste("Col", 1:2)
         } else {
