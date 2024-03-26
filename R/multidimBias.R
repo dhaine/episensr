@@ -20,7 +20,6 @@
 #' \item Prevalence of Confounder in Exposure- population, and
 #' \item Relative risk between Confounder and Outcome.
 #' }
-#' @param OR.sel Deprecated; please use OR_sel instead.
 #' @param OR_sel Selection odds ratios, for selection bias implementation.
 #' @param alpha Significance level.
 #' @param dec Number of decimals in the printout.
@@ -67,17 +66,10 @@ multidimBias <- function(case,
                          se = NULL,
                          sp = NULL,
                          bias_parms = NULL,
-                         OR.sel = NULL,
                          OR_sel = NULL,
                          alpha = 0.05,
                          dec = 4,
                          print = TRUE) {
-    if (!missing(OR.sel)) {
-        warning("Argument OR.sel is deprecated; please use OR_sel instead",
-                call. = FALSE)
-        OR_sel <- OR.sel
-    }
-
     if(type %in% c("exposure", "outcome") && (!is.null(bias_parms) | !is.null(OR_sel)))
         stop('Please provide adequate bias parameters (se and sp).')
     if(type == "confounder" && (!is.null(se) | !is.null(sp) | !is.null(OR_sel)))
