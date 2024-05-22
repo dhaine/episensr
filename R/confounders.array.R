@@ -52,21 +52,21 @@ confounders.array <- function(crude.risk,
                               type = c("binary", "continuous", "RD"),
                               bias_parms = NULL) {
     if (length(type) > 1)
-        stop('Choose between binary, continuous, or RD implementation.')
+        stop("Choose between binary, continuous, or RD implementation.")
 
     if (is.null(bias_parms))
         bias_parms <- c(1, 1, 1)
     else bias_parms <- bias_parms
     if (length(bias_parms) != 3)
-        stop('The argument bias_parms should be made of the following components: (1) Association between the confounder and the outcome, (2) Prevalence of the confounder among the exposed, and (3) Prevalence of the confounder among the unexposed.')
+        stop("The argument bias_parms should be made of the following components: (1) Association between the confounder and the outcome, (2) Prevalence of the confounder among the exposed, and (3) Prevalence of the confounder among the unexposed.")
     if (!all(bias_parms[-1] >= 0 & bias_parms[-1] <= 1) & type == "binary")
-        stop('Prevalences should be between 0 and 1.')
+        stop("Prevalences should be between 0 and 1.")
     if (bias_parms[1] < 0)
-        stop('Association between the confounder and the outcome should be >= 0.')
+        stop("Association between the confounder and the outcome should be >= 0.")
     if (crude.risk < 0 & type != "RD")
-        stop('Crude risk should be greater than 0.')
+        stop("Crude risk should be greater than 0.")
     if ((crude.risk > 1 | crude.risk < -1) & type == "RD")
-        stop('Crude risk should be between -1 and 1.')
+        stop("Crude risk should be between -1 and 1.")
 
     type <- match.arg(type)
     if (type == "binary") {
@@ -79,8 +79,7 @@ confounders.array <- function(crude.risk,
     }
 
     if (type == "continuous") {
-        risk_adj <- exp(log(crude.risk) - (log(bias_parms[1]) *
-                                           (bias_parms[2] - bias_parms[3])))
+        risk_adj <- exp(log(crude.risk) - (log(bias_parms[1]) * (bias_parms[2] - bias_parms[3])))
         bias_perc <- (crude.risk - risk_adj) / risk_adj * 100
     }
 
