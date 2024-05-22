@@ -30,14 +30,13 @@ confounders.limit <- function(p = NA,
                               RR = NA,
                               OR = NA,
                               crude.RR = NULL) {
-    if(is.null(crude.RR))
-        stop('Please provide crude relative risk.')
+    if (is.null(crude.RR))
+        stop("Please provide crude relative risk.")
     if(is.na(p) & is.na(RR) & is.na(OR))
-        stop('Not enough information.')
+        stop("Not enough information.")
 
     q <- ifelse(is.null(p), NA, 1 - p)
-    lower.bound <- crude.RR /
-        min(RR, OR, 1/p, RR/(q+RR*p), OR/(q+OR*p), na.rm = TRUE)
+    lower.bound <- crude.RR / min(RR, OR, 1 / p, RR / (q + RR * p), OR / (q + OR * p), na.rm = TRUE)
     upper.bound <- crude.RR
 
     rmatc <- cbind(lower.bound, upper.bound)
