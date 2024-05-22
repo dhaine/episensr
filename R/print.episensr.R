@@ -10,7 +10,7 @@
 #'
 #' @export
 print.episensr <- function(x, digits = getOption("digits"), ...) {
-    if(class(x)[1] == "episensr") {
+    if (class(x)[1] == "episensr") {
         cat("--Observed data--",
             "\n         Outcome:", rownames(x$obs.data)[1],
             "\n       Comparing:", colnames(x$obs.data)[1], "vs.",
@@ -21,7 +21,7 @@ print.episensr <- function(x, digits = getOption("digits"), ...) {
         cat("---\n")
         print.table(x$adj.measures, digits = digits, ...)
         invisible(NULL)
-    } else if(class(x)[1] == "episensr.multiple") {
+    } else if (class(x)[1] == "episensr.multiple") {
         cat("\nMultiple bias analysis\n")
         cat("---\n")
         print.table(x$adj.measures, digits = digits, ...)
