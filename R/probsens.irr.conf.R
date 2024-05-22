@@ -58,152 +58,155 @@ probsens.irr.conf <- function(counts,
                          pt = NULL,
                          reps = 1000,
                          prev.exp = list(dist = c("constant", "uniform",
-                                               "triangular", "trapezoidal",
-                                               "logit-logistic", "logit-normal", "beta"),
-                             parms = NULL),
+                                                  "triangular", "trapezoidal",
+                                                  "logit-logistic", "logit-normal", "beta"),
+                                         parms = NULL),
                          prev.nexp = list(dist = c("constant", "uniform",
-                                               "triangular", "trapezoidal",
-                                               "logit-logistic", "logit-normal", "beta"),
-                             parms = NULL),
+                                                   "triangular", "trapezoidal",
+                                                   "logit-logistic", "logit-normal", "beta"),
+                                          parms = NULL),
                          risk = list(dist = c("constant", "uniform", "triangular",
-                                          "trapezoidal", "log-logistic",
-                                               "log-normal"),
-                              parms = NULL),
+                                              "trapezoidal", "log-logistic", "log-normal"),
+                                     parms = NULL),
                          corr.p = NULL,
                          discard = TRUE,
-                         alpha = 0.05){
-    if(reps < 1)
+                         alpha = 0.05) {
+    if (reps < 1)
         stop(paste("Invalid argument: reps = ", reps))
 
-    if(is.null(prev.exp) | is.null(prev.nexp))
-        stop('Please provide prevalences among the exposed and unexposed.')
-    if(is.null(risk))
-        stop('Please provide risk of acquiring outcome.')
+    if (is.null(prev.exp) | is.null(prev.nexp))
+        stop("Please provide prevalences among the exposed and unexposed.")
+    if (is.null(risk))
+        stop("Please provide risk of acquiring outcome.")
 
-    if(!is.list(prev.exp))
-        stop('Prevalence of exposure among the exposed should be a list.')
+    if (!is.list(prev.exp))
+        stop("Prevalence of exposure among the exposed should be a list.")
     else prev.exp <- prev.exp
-    if((length(prev.exp) != 2) | (length(prev.nexp) != 2) | (length(risk) != 2))
-        stop('Check distribution parameters.')
-    if((length(prev.exp[[1]]) != 1) | (length(prev.nexp[[1]]) != 1) |
-       (length(risk[[1]]) != 1))
-        stop('Which distribution?')
-    if(!is.null(corr.p) && (prev.exp[[1]] == "constant" | prev.nexp[[1]] == "constant"))
-        stop('No correlated distributions with constant values.')
-    if(prev.exp[[1]] == "constant" & length(prev.exp[[2]]) != 1)
-        stop('For constant value, please provide a single value.')
-    if(prev.exp[[1]] == "uniform" & length(prev.exp[[2]]) != 2)
-        stop('For uniform distribution, please provide vector of lower and upper limits.')
-    if(prev.exp[[1]] == "uniform" & prev.exp[[2]][1] >= prev.exp[[2]][2])
-        stop('Lower limit of your uniform distribution is greater than upper limit.')
-    if(prev.exp[[1]] == "triangular" & length(prev.exp[[2]]) != 3)
-        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
-    if(prev.exp[[1]] == "triangular" & ((prev.exp[[2]][1] > prev.exp[[2]][3]) |
-                                        (prev.exp[[2]][2] < prev.exp[[2]][3])))
-        stop('Wrong arguments for your triangular distribution.')
-    if(prev.exp[[1]] == "trapezoidal" & length(prev.exp[[2]]) != 4)
-        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
-    if(prev.exp[[1]] == "trapezoidal" & ((prev.exp[[2]][1] > prev.exp[[2]][2]) |
-                                         (prev.exp[[2]][2] > prev.exp[[2]][3]) |
-                                         (prev.exp[[2]][3] > prev.exp[[2]][4])))
-        stop('Wrong arguments for your trapezoidal distribution.')
-    if(prev.exp[[1]] == "logit-logistic" & (length(prev.exp[[2]]) < 2 | length(prev.exp[[2]]) == 3 | length(prev.exp[[2]]) > 4))
-        stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
-    if(prev.exp[[1]] == "logit-logistic" & length(prev.exp[[2]]) == 4 &
-       ((prev.exp[[2]][3] >= prev.exp[[2]][4]) | (!all(prev.exp[[2]][3:4] >= 0 & prev.exp[[2]][3:4] <= 1))))
-        stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
-    if(prev.exp[[1]] == "logit-logistic" & length(prev.exp[[2]]) == 2)
+    if ((length(prev.exp) != 2) | (length(prev.nexp) != 2) | (length(risk) != 2))
+        stop("Check distribution parameters.")
+    if ((length(prev.exp[[1]]) != 1) | (length(prev.nexp[[1]]) != 1) | (length(risk[[1]]) != 1))
+        stop("Which distribution?")
+    if (!is.null(corr.p) && (prev.exp[[1]] == "constant" | prev.nexp[[1]] == "constant"))
+        stop("No correlated distributions with constant values.")
+    if (prev.exp[[1]] == "constant" & length(prev.exp[[2]]) != 1)
+        stop("For constant value, please provide a single value.")
+    if (prev.exp[[1]] == "uniform" & length(prev.exp[[2]]) != 2)
+        stop("For uniform distribution, please provide vector of lower and upper limits.")
+    if (prev.exp[[1]] == "uniform" & prev.exp[[2]][1] >= prev.exp[[2]][2])
+        stop("Lower limit of your uniform distribution is greater than upper limit.")
+    if (prev.exp[[1]] == "triangular" & length(prev.exp[[2]]) != 3)
+        stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
+    if (prev.exp[[1]] == "triangular" & ((prev.exp[[2]][1] > prev.exp[[2]][3]) |
+                                         (prev.exp[[2]][2] < prev.exp[[2]][3])))
+        stop("Wrong arguments for your triangular distribution.")
+    if (prev.exp[[1]] == "trapezoidal" & length(prev.exp[[2]]) != 4)
+        stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
+    if (prev.exp[[1]] == "trapezoidal" & ((prev.exp[[2]][1] > prev.exp[[2]][2]) |
+                                          (prev.exp[[2]][2] > prev.exp[[2]][3]) |
+                                          (prev.exp[[2]][3] > prev.exp[[2]][4])))
+        stop("Wrong arguments for your trapezoidal distribution.")
+    if (prev.exp[[1]] == "logit-logistic" & (length(prev.exp[[2]]) < 2 | length(prev.exp[[2]]) == 3 |
+                                             length(prev.exp[[2]]) > 4))
+        stop("For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
+    if (prev.exp[[1]] == "logit-logistic" & length(prev.exp[[2]]) == 4 &
+        ((prev.exp[[2]][3] >= prev.exp[[2]][4]) | (!all(prev.exp[[2]][3:4] >= 0 & prev.exp[[2]][3:4] <= 1))))
+        stop("For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
+    if (prev.exp[[1]] == "logit-logistic" & length(prev.exp[[2]]) == 2)
         prev.exp <- list(prev.exp[[1]], c(prev.exp[[2]], c(0, 1)))
-    if(prev.exp[[1]] == "logit-normal" & (length(prev.exp[[2]]) < 2 | length(prev.exp[[2]]) == 3 | length(prev.exp[[2]]) > 4))
-        stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
-    if(prev.exp[[1]] == "logit-normal" & length(prev.exp[[2]]) == 4 &
-       ((prev.exp[[2]][3] >= prev.exp[[2]][4]) | (!all(prev.exp[[2]][3:4] >= 0 & prev.exp[[2]][3:4] <= 1))))
-        stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
-    if(prev.exp[[1]] == "logit-normal" & length(prev.exp[[2]]) == 2)
+    if (prev.exp[[1]] == "logit-normal" & (length(prev.exp[[2]]) < 2 |
+                                           length(prev.exp[[2]]) == 3 | length(prev.exp[[2]]) > 4))
+        stop("For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
+    if (prev.exp[[1]] == "logit-normal" & length(prev.exp[[2]]) == 4 &
+        ((prev.exp[[2]][3] >= prev.exp[[2]][4]) | (!all(prev.exp[[2]][3:4] >= 0 & prev.exp[[2]][3:4] <= 1))))
+        stop("For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
+    if (prev.exp[[1]] == "logit-normal" & length(prev.exp[[2]]) == 2)
         prev.exp <- list(prev.exp[[1]], c(prev.exp[[2]], c(0, 1)))
-    if((prev.exp[[1]] == "constant" | prev.exp[[1]] == "uniform" | prev.exp[[1]] == "triangular" | prev.exp[[1]] == "trapezoidal") & !all(prev.exp[[2]] >= 0 & prev.exp[[2]] <= 1))
-        stop('Prevalence should be between 0 and 1.')
-    if(!is.null(prev.exp) && prev.exp[[1]] == "beta" && length(prev.exp[[2]]) != 2)
-        stop('For beta distribution, please provide alpha and beta.')
-    if(!is.null(prev.exp) && prev.exp[[1]] == "beta" &&
-       (prev.exp[[2]][1] < 0 | prev.exp[[2]][2] < 0))
-        stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
+    if ((prev.exp[[1]] == "constant" | prev.exp[[1]] == "uniform" |
+         prev.exp[[1]] == "triangular" | prev.exp[[1]] == "trapezoidal") &
+        !all(prev.exp[[2]] >= 0 & prev.exp[[2]] <= 1))
+        stop("Prevalence should be between 0 and 1.")
+    if (!is.null(prev.exp) && prev.exp[[1]] == "beta" && length(prev.exp[[2]]) != 2)
+        stop("For beta distribution, please provide alpha and beta.")
+    if (!is.null(prev.exp) && prev.exp[[1]] == "beta" && (prev.exp[[2]][1] < 0 | prev.exp[[2]][2] < 0))
+        stop("Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")
 
-    if(!is.list(prev.nexp))
-        stop('Prevalence of exposure among the non-exposed should be a list.')
+    if (!is.list(prev.nexp))
+        stop("Prevalence of exposure among the non-exposed should be a list.")
     else prev.nexp <- prev.nexp
-    if(prev.nexp[[1]] == "constant" & length(prev.nexp[[2]]) != 1)
-        stop('For constant value, please provide a single value.')
-    if(prev.nexp[[1]] == "uniform" & length(prev.nexp[[2]]) != 2)
-        stop('For uniform distribution, please provide vector of lower and upper limits.')
-    if(prev.nexp[[1]] == "uniform" & prev.nexp[[2]][1] >= prev.nexp[[2]][2])
-        stop('Lower limit of your uniform distribution is greater than upper limit.')
-    if(prev.nexp[[1]] == "triangular" & length(prev.nexp[[2]]) != 3)
-        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
-    if(prev.nexp[[1]] == "triangular" & ((prev.nexp[[2]][1] > prev.nexp[[2]][3]) |
-                                        (prev.nexp[[2]][2] < prev.nexp[[2]][3])))
-        stop('Wrong arguments for your triangular distribution.')
-    if(prev.nexp[[1]] == "trapezoidal" & length(prev.nexp[[2]]) != 4)
-        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
-    if(prev.nexp[[1]] == "trapezoidal" & ((prev.nexp[[2]][1] > prev.nexp[[2]][2]) |
-                                         (prev.nexp[[2]][2] > prev.nexp[[2]][3]) |
-                                         (prev.nexp[[2]][3] > prev.nexp[[2]][4])))
-        stop('Wrong arguments for your trapezoidal distribution.')
-    if(prev.nexp[[1]] == "logit-logistic" & (length(prev.nexp[[2]]) < 2 | length(prev.nexp[[2]]) == 3 | length(prev.nexp[[2]]) > 4))
-        stop('For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
-    if(prev.nexp[[1]] == "logit-logistic" & length(prev.nexp[[2]]) == 4 &
+    if (prev.nexp[[1]] == "constant" & length(prev.nexp[[2]]) != 1)
+        stop("For constant value, please provide a single value.")
+    if (prev.nexp[[1]] == "uniform" & length(prev.nexp[[2]]) != 2)
+        stop("For uniform distribution, please provide vector of lower and upper limits.")
+    if (prev.nexp[[1]] == "uniform" & prev.nexp[[2]][1] >= prev.nexp[[2]][2])
+        stop("Lower limit of your uniform distribution is greater than upper limit.")
+    if (prev.nexp[[1]] == "triangular" & length(prev.nexp[[2]]) != 3)
+        stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
+    if (prev.nexp[[1]] == "triangular" & ((prev.nexp[[2]][1] > prev.nexp[[2]][3]) |
+                                          (prev.nexp[[2]][2] < prev.nexp[[2]][3])))
+        stop("Wrong arguments for your triangular distribution.")
+    if (prev.nexp[[1]] == "trapezoidal" & length(prev.nexp[[2]]) != 4)
+        stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
+    if (prev.nexp[[1]] == "trapezoidal" & ((prev.nexp[[2]][1] > prev.nexp[[2]][2]) |
+                                           (prev.nexp[[2]][2] > prev.nexp[[2]][3]) |
+                                           (prev.nexp[[2]][3] > prev.nexp[[2]][4])))
+        stop("Wrong arguments for your trapezoidal distribution.")
+    if (prev.nexp[[1]] == "logit-logistic" & (length(prev.nexp[[2]]) < 2 |
+                                              length(prev.nexp[[2]]) == 3 | length(prev.nexp[[2]]) > 4))
+        stop("For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
+    if (prev.nexp[[1]] == "logit-logistic" & length(prev.nexp[[2]]) == 4 &
        ((prev.nexp[[2]][3] >= prev.nexp[[2]][4]) | (!all(prev.nexp[[2]][3:4] >= 0 & prev.nexp[[2]][3:4] <= 1))))
-        stop('For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
-    if(prev.nexp[[1]] == "logit-logistic" & length(prev.nexp[[2]]) == 2)
+        stop("For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
+    if (prev.nexp[[1]] == "logit-logistic" & length(prev.nexp[[2]]) == 2)
         prev.nexp <- list(prev.nexp[[1]], c(prev.nexp[[2]], c(0, 1)))
-    if(prev.nexp[[1]] == "logit-normal" & (length(prev.nexp[[2]]) < 2 | length(prev.nexp[[2]]) == 3 | length(prev.nexp[[2]]) > 4))
-        stop('For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.')
-    if(prev.nexp[[1]] == "logit-normal" & length(prev.nexp[[2]]) == 4 &
-       ((prev.nexp[[2]][3] >= prev.nexp[[2]][4]) | (!all(prev.nexp[[2]][3:4] >= 0 & prev.nexp[[2]][3:4] <= 1))))
-        stop('For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).')
-    if(prev.nexp[[1]] == "logit-normal" & length(prev.nexp[[2]]) == 2)
+    if (prev.nexp[[1]] == "logit-normal" & (length(prev.nexp[[2]]) < 2 |
+                                            length(prev.nexp[[2]]) == 3 | length(prev.nexp[[2]]) > 4))
+        stop("For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
+    if (prev.nexp[[1]] == "logit-normal" & length(prev.nexp[[2]]) == 4 &
+        ((prev.nexp[[2]][3] >= prev.nexp[[2]][4]) | (!all(prev.nexp[[2]][3:4] >= 0 & prev.nexp[[2]][3:4] <= 1))))
+        stop("For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
+    if (prev.nexp[[1]] == "logit-normal" & length(prev.nexp[[2]]) == 2)
         prev.nexp <- list(prev.nexp[[1]], c(prev.nexp[[2]], c(0, 1)))
-    if((prev.nexp[[1]] == "constant" | prev.nexp[[1]] == "uniform" | prev.nexp[[1]] == "triangular" | prev.nexp[[1]] == "trapezoidal") & !all(prev.nexp[[2]] >= 0 & prev.nexp[[2]] <= 1))
-        stop('Prevalence should be between 0 and 1.')
-    if(!is.null(prev.nexp) && prev.nexp[[1]] == "beta" && length(prev.nexp[[2]]) != 2)
-        stop('For beta distribution, please provide alpha and beta.')
-    if(!is.null(prev.nexp) && prev.nexp[[1]] == "beta" &&
-       (prev.nexp[[2]][1] < 0 | prev.nexp[[2]][2] < 0))
-        stop('Wrong arguments for your beta distribution. Alpha and Beta should be > 0.')
+    if ((prev.nexp[[1]] == "constant" | prev.nexp[[1]] == "uniform" |
+         prev.nexp[[1]] == "triangular" | prev.nexp[[1]] == "trapezoidal") &
+        !all(prev.nexp[[2]] >= 0 & prev.nexp[[2]] <= 1))
+        stop("Prevalence should be between 0 and 1.")
+    if (!is.null(prev.nexp) && prev.nexp[[1]] == "beta" && length(prev.nexp[[2]]) != 2)
+        stop("For beta distribution, please provide alpha and beta.")
+    if (!is.null(prev.nexp) && prev.nexp[[1]] == "beta" && (prev.nexp[[2]][1] < 0 | prev.nexp[[2]][2] < 0))
+        stop("Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")
 
-    if(!is.list(risk))
-        stop('Risk should be a list.')
+    if (!is.list(risk))
+        stop("Risk should be a list.")
     else risk <- risk
-    if(risk[[1]] == "constant" & length(risk[[2]]) != 1)
-        stop('For constant value, please provide a single value.')
-    if(risk[[1]] == "uniform" & length(risk[[2]]) != 2)
-        stop('For uniform distribution, please provide vector of lower and upper limits.')
-    if(risk[[1]] == "uniform" & risk[[2]][1] >= risk[[2]][2])
-        stop('Lower limit of your uniform distribution is greater than upper limit.')
-    if(risk[[1]] == "triangular" & length(risk[[2]]) != 3)
-        stop('For triangular distribution, please provide vector of lower, upper limits, and mode.')
-    if(risk[[1]] == "triangular" & ((risk[[2]][1] > risk[[2]][3]) |
-                                        (risk[[2]][2] < risk[[2]][3])))
-        stop('Wrong arguments for your triangular distribution.')
-    if(risk[[1]] == "trapezoidal" & length(risk[[2]]) != 4)
-        stop('For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.')
-    if(risk[[1]] == "trapezoidal" & ((risk[[2]][1] > risk[[2]][2]) |
-                                         (risk[[2]][2] > risk[[2]][3]) |
-                                         (risk[[2]][3] > risk[[2]][4])))
-        stop('Wrong arguments for your trapezoidal distribution.')
-    if(risk[[1]] == "log-logistic" & length(risk[[2]]) != 2)
-        stop('For log-logistic distribution, please provide vector of location and scale.')
-    if(risk[[1]] == "log-normal" & length(risk[[2]]) != 2)
-        stop('For log-logistic distribution, please provide vector of meanlog and sdlog.')
+    if (risk[[1]] == "constant" & length(risk[[2]]) != 1)
+        stop("For constant value, please provide a single value.")
+    if (risk[[1]] == "uniform" & length(risk[[2]]) != 2)
+        stop("For uniform distribution, please provide vector of lower and upper limits.")
+    if (risk[[1]] == "uniform" & risk[[2]][1] >= risk[[2]][2])
+        stop("Lower limit of your uniform distribution is greater than upper limit.")
+    if (risk[[1]] == "triangular" & length(risk[[2]]) != 3)
+        stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
+    if (risk[[1]] == "triangular" & ((risk[[2]][1] > risk[[2]][3]) | (risk[[2]][2] < risk[[2]][3])))
+        stop("Wrong arguments for your triangular distribution.")
+    if (risk[[1]] == "trapezoidal" & length(risk[[2]]) != 4)
+        stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
+    if (risk[[1]] == "trapezoidal" & ((risk[[2]][1] > risk[[2]][2]) |
+                                      (risk[[2]][2] > risk[[2]][3]) |
+                                      (risk[[2]][3] > risk[[2]][4])))
+        stop("Wrong arguments for your trapezoidal distribution.")
+    if (risk[[1]] == "log-logistic" & length(risk[[2]]) != 2)
+        stop("For log-logistic distribution, please provide vector of location and scale.")
+    if (risk[[1]] == "log-normal" & length(risk[[2]]) != 2)
+        stop("For log-logistic distribution, please provide vector of meanlog and sdlog.")
 
-    if(!is.null(corr.p) && (corr.p == 0 | corr.p == 1))
-        stop('Correlations should be > 0 and < 1.')
+    if (!is.null(corr.p) && (corr.p == 0 | corr.p == 1))
+        stop("Correlations should be > 0 and < 1.")
 
-    if(!is.null(pt) && inherits(counts, c("table", "matrix")))
+    if (!is.null(pt) && inherits(counts, c("table", "matrix")))
         stop("pt argument should be NULL.")
-    if(!inherits(counts, c("vector", "table", "matrix")))
+    if (!inherits(counts, c("vector", "table", "matrix")))
         stop("counts argument should be a vector, a table, or a matrix.")
-    if(is.null(pt) && inherits(counts, c("table", "matrix")))
+    if (is.null(pt) && inherits(counts, c("table", "matrix")))
         tab <- counts
     else tab <- rbind(counts, pt)
     a <- as.numeric(tab[1, 1])
@@ -234,43 +237,43 @@ probsens.irr.conf <- function(counts,
         }
         if (prev.exp[[1]] == "uniform") {
             draws[, 1] <- do.call(runif, as.list(p1))
-            }
+        }
         if (prev.exp[[1]] == "triangular") {
             draws[, 1] <- do.call(triangle::rtriangle, as.list(p1))
-            }
+        }
         if (prev.exp[[1]] == "trapezoidal") {
             draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(p1))
-            }
+        }
         if (prev.exp[[1]] == "logit-logistic") {
             draws[, 1] <- logitlog.dstr(p1)
-            }
+        }
         if (prev.exp[[1]] == "logit-normal") {
             draws[, 1] <- logitnorm.dstr(p1)
-            }
+        }
         if (prev.exp[[1]] == "beta") {
             draws[, 1] <- do.call(rbeta, as.list(p1))
-            }
+        }
         if (prev.nexp[[1]] == "constant") {
             draws[, 2] <- prev.nexp[[2]]
         }
         if (prev.nexp[[1]] == "uniform") {
             draws[, 2] <- do.call(runif, as.list(p0))
-            }
+        }
         if (prev.nexp[[1]] == "triangular") {
             draws[, 2] <- do.call(triangle::rtriangle, as.list(p0))
-            }
+        }
         if (prev.nexp[[1]] == "trapezoidal") {
             draws[, 2] <- do.call(trapezoid::rtrapezoid, as.list(p0))
-            }
+        }
         if (prev.nexp[[1]] == "logit-logistic") {
             draws[, 2] <- logitlog.dstr(p0)
-            }
+        }
         if (prev.nexp[[1]] == "logit-normal") {
             draws[, 2] <- logitnorm.dstr(p0)
-            }
+        }
         if (prev.nexp[[1]] == "beta") {
             draws[, 2] <- do.call(rbeta, as.list(p0))
-           }
+        }
     } else {
         corr.draws[, 1:3] <- apply(corr.draws[, 1:3],
                                    2,
@@ -283,84 +286,92 @@ probsens.irr.conf <- function(counts,
         corr.draws[, 5] <- exp(sqrt(corr.p) * corr.draws[, 1] + sqrt(1 - corr.p) * corr.draws[, 3]) /
             (1 + (exp(sqrt(corr.p) * corr.draws[, 1] + sqrt(1 - corr.p) * corr.draws[, 3])))
 
-    if (prev.exp[[1]] == "uniform") {
-        draws[, 1] <- prev.exp[[2]][2] -
-            (prev.exp[[2]][2] - prev.exp[[2]][1]) * corr.draws[, 4]
-    }
-    if (prev.exp[[1]] == "triangular") {
-        draws[, 1] <- (corr.draws[, 4] *
-            (prev.exp[[2]][2] - prev.exp[[2]][1]) + (prev.exp[[2]][1] + prev.exp[[2]][3])) / 2
-        draws[, 1] <- ifelse(draws[, 1] < prev.exp[[2]][3],
-                             prev.exp[[2]][1] + sqrt(abs((prev.exp[[2]][3] - prev.exp[[2]][1]) * (2 * draws[, 1] - prev.exp[[2]][1] - prev.exp[[2]][3]))),
-                             draws[, 1])
-        draws[, 1] <- ifelse(draws[, 1] > prev.exp[[2]][3],
-                             prev.exp[[2]][2] - sqrt(abs(2 * (prev.exp[[2]][2] - prev.exp[[2]][3]) * (draws[, 1] - prev.exp[[2]][3]))),
-                             draws[, 1])
-    }
-    if (prev.exp[[1]] == "trapezoidal") {
-        draws[, 1] <- (corr.draws[, 4] *
-            (prev.exp[[2]][4] + prev.exp[[2]][3] - prev.exp[[2]][1] - prev.exp[[2]][2]) + (prev.exp[[2]][1] + prev.exp[[2]][2])) / 2
-        draws[, 1] <- ifelse(draws[, 1] < prev.exp[[2]][2],
-                             prev.exp[[2]][1] + sqrt(abs((prev.exp[[2]][2] - prev.exp[[2]][1]) * (2 * draws[, 1] - prev.exp[[2]][1] - prev.exp[[2]][2]))),
-                             draws[, 1])
-        draws[, 1] <- ifelse(draws[, 1] > prev.exp[[2]][3],
-                             prev.exp[[2]][4] - sqrt(abs(2 * (prev.exp[[2]][4] - prev.exp[[2]][3]) * (draws[, 1] - prev.exp[[2]][3]))),
-                             draws[, 1])
-    }
-    if (prev.exp[[1]] == "logit-logistic") {
-        pexp.w <- prev.exp[[2]][1] + (prev.exp[[2]][2] * log(corr.draws[, 4] / (1 - corr.draws[, 4])))
-        draws[, 1] <- prev.exp[[2]][3] + (prev.exp[[2]][4] - prev.exp[[2]][3]) * exp(pexp.w) / (1 + exp(pexp.w))
-    }
-    if (prev.exp[[1]] == "logit-normal") {
-        pexp.w <- prev.exp[[2]][1] + (prev.exp[[2]][2] * qnorm(corr.draws[, 4]))
-        draws[, 1] <- prev.exp[[2]][3] + (prev.exp[[2]][4] - prev.exp[[2]][3]) * exp(pexp.w) / (1 + exp(pexp.w))
-    }
-    if (prev.exp[[1]] == "beta") {
-        draws[, 1] <- qbeta(corr.draws[, 4]/(1 + corr.draws[, 4]),
-                            prev.exp[[2]][1],
-                            prev.exp[[2]][2])
-    }
+        if (prev.exp[[1]] == "uniform") {
+            draws[, 1] <- prev.exp[[2]][2] - (prev.exp[[2]][2] - prev.exp[[2]][1]) * corr.draws[, 4]
+        }
+        if (prev.exp[[1]] == "triangular") {
+            draws[, 1] <- (corr.draws[, 4] *
+                           (prev.exp[[2]][2] - prev.exp[[2]][1]) + (prev.exp[[2]][1] + prev.exp[[2]][3])) / 2
+            draws[, 1] <- ifelse(draws[, 1] < prev.exp[[2]][3],
+                                 prev.exp[[2]][1] + sqrt(abs((prev.exp[[2]][3] - prev.exp[[2]][1]) *
+                                                             (2 * draws[, 1] - prev.exp[[2]][1] -
+                                                              prev.exp[[2]][3]))), draws[, 1])
+            draws[, 1] <- ifelse(draws[, 1] > prev.exp[[2]][3],
+                                 prev.exp[[2]][2] - sqrt(abs(2 * (prev.exp[[2]][2] - prev.exp[[2]][3]) *
+                                                             (draws[, 1] - prev.exp[[2]][3]))), draws[, 1])
+        }
+        if (prev.exp[[1]] == "trapezoidal") {
+            draws[, 1] <- (corr.draws[, 4] *
+                           (prev.exp[[2]][4] + prev.exp[[2]][3] - prev.exp[[2]][1] - prev.exp[[2]][2]) +
+                           (prev.exp[[2]][1] + prev.exp[[2]][2])) / 2
+            draws[, 1] <- ifelse(draws[, 1] < prev.exp[[2]][2],
+                                 prev.exp[[2]][1] + sqrt(abs((prev.exp[[2]][2] - prev.exp[[2]][1]) *
+                                                             (2 * draws[, 1] - prev.exp[[2]][1] -
+                                                              prev.exp[[2]][2]))), draws[, 1])
+            draws[, 1] <- ifelse(draws[, 1] > prev.exp[[2]][3],
+                                 prev.exp[[2]][4] - sqrt(abs(2 * (prev.exp[[2]][4] - prev.exp[[2]][3]) *
+                                                             (draws[, 1] - prev.exp[[2]][3]))), draws[, 1])
+        }
+        if (prev.exp[[1]] == "logit-logistic") {
+            pexp.w <- prev.exp[[2]][1] + (prev.exp[[2]][2] * log(corr.draws[, 4] / (1 - corr.draws[, 4])))
+            draws[, 1] <- prev.exp[[2]][3] + (prev.exp[[2]][4] - prev.exp[[2]][3]) * exp(pexp.w) /
+                (1 + exp(pexp.w))
+        }
+        if (prev.exp[[1]] == "logit-normal") {
+            pexp.w <- prev.exp[[2]][1] + (prev.exp[[2]][2] * qnorm(corr.draws[, 4]))
+            draws[, 1] <- prev.exp[[2]][3] + (prev.exp[[2]][4] - prev.exp[[2]][3]) * exp(pexp.w) / (1 + exp(pexp.w))
+        }
+        if (prev.exp[[1]] == "beta") {
+            draws[, 1] <- qbeta(corr.draws[, 4] / (1 + corr.draws[, 4]),
+                                prev.exp[[2]][1],
+                                prev.exp[[2]][2])
+        }
 
-    if (prev.nexp[[1]] == "uniform") {
-        draws[, 2] <- prev.nexp[[2]][2] -
-            (prev.nexp[[2]][2] - prev.nexp[[2]][1]) * corr.draws[, 5]
-    }
-    if (prev.nexp[[1]] == "triangular") {
-        draws[, 2] <- (corr.draws[, 5] *
+        if (prev.nexp[[1]] == "uniform") {
+            draws[, 2] <- prev.nexp[[2]][2] -
+                (prev.nexp[[2]][2] - prev.nexp[[2]][1]) * corr.draws[, 5]
+        }
+        if (prev.nexp[[1]] == "triangular") {
+            draws[, 2] <- (corr.draws[, 5] *
                            (prev.nexp[[2]][2] - prev.nexp[[2]][1]) + (prev.nexp[[2]][1] + prev.nexp[[2]][3])) / 2
-        draws[, 2] <- ifelse(draws[, 2] < prev.nexp[[2]][3],
-                             prev.nexp[[2]][1] + sqrt(abs((prev.nexp[[2]][3] - prev.nexp[[2]][1]) * (2 * draws[, 2] - prev.nexp[[2]][1] - prev.nexp[[2]][3]))),
-                             draws[, 2])
-        draws[, 2] <- ifelse(draws[, 2] > prev.nexp[[2]][3],
-                             prev.nexp[[2]][2] - sqrt(abs(2 * (prev.nexp[[2]][2] - prev.nexp[[2]][3]) * (draws[, 2] - prev.nexp[[2]][3]))),
-                             draws[, 2])
-    }
-    if (prev.nexp[[1]] == "trapezoidal") {
-        draws[, 2] <- (corr.draws[, 5] *
-                           (prev.nexp[[2]][4] + prev.nexp[[2]][3] - prev.nexp[[2]][1] - prev.nexp[[2]][2]) + (prev.nexp[[2]][1] + prev.nexp[[2]][2])) / 2
-        draws[, 2] <- ifelse(draws[, 2] < prev.nexp[[2]][2],
-                             prev.nexp[[2]][1] + sqrt(abs((prev.nexp[[2]][2] - prev.nexp[[2]][1]) * (2 * draws[, 2] - prev.nexp[[2]][1] - prev.nexp[[2]][2]))),
-                             draws[, 2])
-        draws[, 2] <- ifelse(draws[, 2] > prev.nexp[[2]][3],
-                             prev.nexp[[2]][4] - sqrt(abs(2 * (prev.nexp[[2]][4] - prev.nexp[[2]][3]) * (draws[, 2] - prev.nexp[[2]][3]))),
-                             draws[, 2])
-    }
-    if (prev.nexp[[1]] == "logit-logistic") {
-        punexp.w <- prev.nexp[[2]][1] + (prev.nexp[[2]][2] * log(corr.draws[, 5] / (1 - corr.draws[, 5])))
-        draws[, 2] <- prev.nexp[[2]][3] + (prev.nexp[[2]][4] - prev.nexp[[2]][3]) * exp(punexp.w) / (1 + exp(punexp.w))
-    }
-    if (prev.nexp[[1]] == "logit-normal") {
-        punexp.w <- prev.nexp[[2]][1] + (prev.nexp[[2]][2] * qnorm(corr.draws[, 5]))
-        draws[, 2] <- prev.nexp[[2]][3] + (prev.nexp[[2]][4] - prev.nexp[[2]][3]) * exp(punexp.w) / (1 + exp(punexp.w))
-    }
-    if (prev.nexp[[1]] == "beta") {
-        draws[, 2] <- qbeta(corr.draws[, 5]/(1 + corr.draws[, 5]),
-                            prev.nexp[[2]][1],
-                            prev.nexp[[2]][2])
-    }
+            draws[, 2] <- ifelse(draws[, 2] < prev.nexp[[2]][3],
+                                 prev.nexp[[2]][1] + sqrt(abs((prev.nexp[[2]][3] - prev.nexp[[2]][1]) *
+                                                              (2 * draws[, 2] - prev.nexp[[2]][1] -
+                                                               prev.nexp[[2]][3]))), draws[, 2])
+            draws[, 2] <- ifelse(draws[, 2] > prev.nexp[[2]][3],
+                                 prev.nexp[[2]][2] - sqrt(abs(2 * (prev.nexp[[2]][2] - prev.nexp[[2]][3]) *
+                                                              (draws[, 2] - prev.nexp[[2]][3]))), draws[, 2])
+        }
+        if (prev.nexp[[1]] == "trapezoidal") {
+            draws[, 2] <- (corr.draws[, 5] *
+                           (prev.nexp[[2]][4] + prev.nexp[[2]][3] - prev.nexp[[2]][1] - prev.nexp[[2]][2]) +
+                           (prev.nexp[[2]][1] + prev.nexp[[2]][2])) / 2
+            draws[, 2] <- ifelse(draws[, 2] < prev.nexp[[2]][2],
+                                 prev.nexp[[2]][1] + sqrt(abs((prev.nexp[[2]][2] - prev.nexp[[2]][1]) *
+                                                              (2 * draws[, 2] - prev.nexp[[2]][1] -
+                                                               prev.nexp[[2]][2]))), draws[, 2])
+            draws[, 2] <- ifelse(draws[, 2] > prev.nexp[[2]][3],
+                                 prev.nexp[[2]][4] - sqrt(abs(2 * (prev.nexp[[2]][4] - prev.nexp[[2]][3]) *
+                                                              (draws[, 2] - prev.nexp[[2]][3]))), draws[, 2])
+        }
+        if (prev.nexp[[1]] == "logit-logistic") {
+            punexp.w <- prev.nexp[[2]][1] + (prev.nexp[[2]][2] * log(corr.draws[, 5] / (1 - corr.draws[, 5])))
+            draws[, 2] <- prev.nexp[[2]][3] + (prev.nexp[[2]][4] - prev.nexp[[2]][3]) * exp(punexp.w) /
+                (1 + exp(punexp.w))
+        }
+        if (prev.nexp[[1]] == "logit-normal") {
+            punexp.w <- prev.nexp[[2]][1] + (prev.nexp[[2]][2] * qnorm(corr.draws[, 5]))
+            draws[, 2] <- prev.nexp[[2]][3] + (prev.nexp[[2]][4] - prev.nexp[[2]][3]) * exp(punexp.w) /
+                (1 + exp(punexp.w))
+        }
+        if (prev.nexp[[1]] == "beta") {
+            draws[, 2] <- qbeta(corr.draws[, 5] / (1 + corr.draws[, 5]),
+                                prev.nexp[[2]][1],
+                                prev.nexp[[2]][2])
+        }
     }
 
-    if(risk[[1]] == "constant") {
+    if (risk[[1]] == "constant") {
         draws[, 3] <- risk[[2]]
     }
     if (risk[[1]] == "uniform") {
@@ -382,11 +393,9 @@ probsens.irr.conf <- function(counts,
     draws[, 13] <- runif(reps)
 
     draws[, 4] <- c * draws[, 1]
-    draws[, 6] <- (draws[, 3] * draws[, 4] * a) /
-        ((draws[, 3] * draws[, 6]) + c - draws[, 6])
+    draws[, 6] <- (draws[, 3] * draws[, 4] * a) / ((draws[, 3] * draws[, 6]) + c - draws[, 6])
     draws[, 5] <- d * draws[, 2]
-    draws[, 7] <- (draws[, 3] * draws[, 5] * b) /
-        ((draws[, 3] * draws[, 5]) + d - draws[, 5])
+    draws[, 7] <- (draws[, 3] * draws[, 5] * b) / ((draws[, 3] * draws[, 5]) + d - draws[, 5])
     draws[, 10] <- a - draws[, 6]
     draws[, 8] <- c - draws[, 4]
     draws[, 11] <- b - draws[, 7]
@@ -397,33 +406,32 @@ probsens.irr.conf <- function(counts,
              (draws[, 8] * draws[, 11] / draws[, 9]))
 
     draws[, 12] <- ifelse(draws[, 4] < 0 |
-                             draws[, 5] < 0 |
-                                 draws[, 7] < 0 |
-                                     draws[, 8] < 0 |
-                                         draws[, 11] < 0, NA, draws[, 12])
+                          draws[, 5] < 0 |
+                          draws[, 7] < 0 |
+                          draws[, 8] < 0 |
+                          draws[, 11] < 0, NA, draws[, 12])
 
-    if(all(is.na(draws[, 12]))) {
-        warning('Prior prevalence distributions lead to all negative adjusted values.')
+    if (all(is.na(draws[, 12]))) {
+        warning("Prior prevalence distributions lead to all negative adjusted values.")
         neg_warn <- "Prior Se/Sp distributions lead to all negative adjusted counts."
     } else neg_warn <- NULL
     if (discard) {
-        if(sum(is.na(draws[, 12])) > 0) {
-            message('Chosen prior prevalence distributions lead to ',
+        if (sum(is.na(draws[, 12])) > 0) {
+            message("Chosen prior prevalence distributions lead to ",
                     sum(is.na(draws[, 12])),
-                    ' negative adjusted values which were discarded.')
-            discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
+                    " negative adjusted values which were discarded.")
+            discard_mess <- c(paste("Chosen prior Se/Sp distributions lead to ",
                                     sum(is.na(draws[, 12])),
-                                    ' negative adjusted counts which were discarded.'))
+                                    " negative adjusted counts which were discarded."))
         } else discard_mess <- NULL
-    }
-    else {
-        if(sum(is.na(draws[, 12])) > 0) {
-            message('Chosen prior Se/Sp distributions lead to ',
+    } else {
+        if (sum(is.na(draws[, 12])) > 0) {
+            message("Chosen prior Se/Sp distributions lead to ",
                     sum(is.na(draws[, 12])),
-                    ' negative adjusted counts which were set to zero.')
-                discard_mess <- c(paste('Chosen prior Se/Sp distributions lead to ',
-                                        sum(is.na(draws[, 12])),
-                                        ' negative adjusted counts which were set to zero.'))
+                    " negative adjusted counts which were set to zero.")
+            discard_mess <- c(paste("Chosen prior Se/Sp distributions lead to ",
+                                    sum(is.na(draws[, 12])),
+                                    " negative adjusted counts which were set to zero."))
             draws[, 12] <- ifelse(is.na(draws[, 12]), 0, draws[, 12])
         } else discard_mess <- NULL
     }
@@ -434,11 +442,11 @@ probsens.irr.conf <- function(counts,
                                     (qnorm(.975) * 2)))
 
     corr.irr <- c(median(draws[, 12], na.rm = TRUE),
-                 quantile(draws[, 12], probs = .025, na.rm = TRUE),
-                 quantile(draws[, 12], probs = .975, na.rm = TRUE))
+                  quantile(draws[, 12], probs = .025, na.rm = TRUE),
+                  quantile(draws[, 12], probs = .975, na.rm = TRUE))
     tot.irr <- c(median(draws[, 14], na.rm = TRUE),
-                quantile(draws[, 14], probs = .025, na.rm = TRUE),
-                quantile(draws[, 14], probs = .975, na.rm = TRUE))
+                 quantile(draws[, 14], probs = .025, na.rm = TRUE),
+                 quantile(draws[, 14], probs = .975, na.rm = TRUE))
 
     if (is.null(rownames(tab)))
         rownames(tab) <- c("Cases", "Person-time")
@@ -447,8 +455,8 @@ probsens.irr.conf <- function(counts,
     rmat <- matrix(c(obs.irr, lci.obs.irr, uci.obs.irr), nrow = 1)
     rownames(rmat) <- " Observed Incidence Rate ratio:"
     colnames(rmat) <- c(" ",
-                        paste(100 * (alpha/2), "%", sep = ""),
-                        paste(100 * (1 - alpha/2), "%", sep = ""))
+                        paste(100 * (alpha / 2), "%", sep = ""),
+                        paste(100 * (1 - alpha / 2), "%", sep = ""))
     rmatc <- rbind(corr.irr, tot.irr)
     rownames(rmatc) <- c("           Incidence Rate Ratio -- systematic error:",
                          "Incidence Rate Ratio -- systematic and random error:")
