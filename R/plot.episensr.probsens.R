@@ -87,18 +87,18 @@ plot.episensr.probsens <- function(x,
         stop("Please provide one parameter to plot.")
 
     if (prob.fun == "probsens" & !(parms %in% c("rr", "or", "rr_tot", "or_tot",
-                                               "seca", "seexp", "spca", "spexp")))
+                                                "seca", "seexp", "spca", "spexp")))
         stop("Please provide parameters to plot: rr, or, rr_tot, or_tot, seca, seexp, spca, spexp.")
     if (prob.fun == "probsens.sel" & !(parms %in% c("or", "or_tot", "or_sel")))
         stop("Please provide parameters to plot: or, or_tot, or or_sel")
     if (prob.fun == "probsens.conf" & !(parms %in% c("rr", "or", "rr_tot", "or_tot",
-                                                    "prev.exp", "prev.nexp", "risk")))
+                                                     "prev.exp", "prev.nexp", "risk")))
         stop("Please provide parameters to plot: rr, or, rr_tot, or_tot, prev.exp, prev.nexp, risk.")
     if (prob.fun == "probsens.irr" & !(parms %in% c("irr", "irr_tot",
-                                                   "seca", "seexp", "spca", "spexp")))
+                                                    "seca", "seexp", "spca", "spexp")))
         stop("Please provide parameters to plot: irr, irr_tot, seca, seexp, spca, spexp")
     if (prob.fun == "probsens.irr.conf" & !(parms %in% c("irr", "irr_tot",
-                                                        "prev.exp", "prev.nexp", "risk")))
+                                                         "prev.exp", "prev.nexp", "risk")))
         stop("Please provide parameters to plot: irr, irr_tot, prev.exp, prev.nexp, risk.")
 
     parms <- match.arg(parms)
