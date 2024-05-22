@@ -36,25 +36,23 @@ confounders.ext <- function(RR,
         bias_parms <- c(1, 1, 1, 1)
     else bias_parms <- bias_parms
     if (length(bias_parms) != 4)
-        stop('The argument bias_parms should be made of the following components: (1) Association between the confounder and the outcome, (2) Association between exposure category and confounder, (3) Prevalence of the confounder, and (4) Prevalence of the exposure.')
+        stop("The argument bias_parms should be made of the following components: (1) Association between the confounder and the outcome, (2) Association between exposure category and confounder, (3) Prevalence of the confounder, and (4) Prevalence of the exposure.")
     if (!all(bias_parms[-c(1, 2)] >= 0 & bias_parms[-c(1, 2)] <= 1))
-        stop('Prevalences should be between 0 and 1.')
+        stop("Prevalences should be between 0 and 1.")
     if (bias_parms[1] < 0)
-        stop('Association between the confounder and the outcome should be >= 0.')
+        stop("Association between the confounder and the outcome should be >= 0.")
     if (bias_parms[2] < 0)
-        stop('Association between exposure category and confounder should be >= 0.')
+        stop("Association between exposure category and confounder should be >= 0.")
     if (RR < 0)
-        stop('True relative risk should be greater than 0.')
+        stop("True relative risk should be greater than 0.")
 
     a <- bias_parms[2] - 1
-    b <- (-bias_parms[3] * bias_parms[2]) - (bias_parms[4] * bias_parms[2]) +
-        bias_parms[4] + bias_parms[3] - 1
+    b <- (-bias_parms[3] * bias_parms[2]) - (bias_parms[4] * bias_parms[2]) + bias_parms[4] + bias_parms[3] - 1
     c <- bias_parms[3] * bias_parms[2] * bias_parms[4]
     P_C1 <- (-b - (sqrt(b^2 - (4 * a * c)))) / (2 * a)
 
     crude_RR <- ((P_C1 * (bias_parms[1] - 1) + bias_parms[4]) /
-                 (((bias_parms[3] - P_C1) * (bias_parms[1] - 1)) -
-                  bias_parms[4] + 1)) *
+                 (((bias_parms[3] - P_C1) * (bias_parms[1] - 1)) - bias_parms[4] + 1)) *
         ((1 - bias_parms[4]) / bias_parms[4])
     bias_perc <- (crude_RR - RR) / RR * 100
 
