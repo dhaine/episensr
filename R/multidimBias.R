@@ -70,51 +70,51 @@ multidimBias <- function(case,
                          alpha = 0.05,
                          dec = 4,
                          print = TRUE) {
-    if(type %in% c("exposure", "outcome") && (!is.null(bias_parms) | !is.null(OR_sel)))
-        stop('Please provide adequate bias parameters (se and sp).')
-    if(type == "confounder" && (!is.null(se) | !is.null(sp) | !is.null(OR_sel)))
-        stop('Please provide adequate bias parameters (bias_parms).')
-    if(type == "selection" && (!is.null(se) | !is.null(sp) | !is.null(bias_parms)))
-        stop('Please provide adequate bias parameters (OR_sel).')
+    if (type %in% c("exposure", "outcome") && (!is.null(bias_parms) | !is.null(OR_sel)))
+        stop("Please provide adequate bias parameters (se and sp).")
+    if (type == "confounder" && (!is.null(se) | !is.null(sp) | !is.null(OR_sel)))
+        stop("Please provide adequate bias parameters (bias_parms).")
+    if (type == "selection" && (!is.null(se) | !is.null(sp) | !is.null(bias_parms)))
+        stop("Please provide adequate bias parameters (OR_sel).")
 
-    if(is.null(se))
+    if (is.null(se))
         se <- c(1, 1)
     else se <- se
-    if(is.null(sp))
+    if (is.null(sp))
         sp <- c(1, 1)
     else sp <- sp
-    if(!is.vector(se))
-        stop('Sensitivity should be a vector.')
-    if(!is.vector(sp))
-        stop('Specificity should be a vector.')
-    if(!all(se >= 0 & se <=1))
-        stop('Sensitivity should be between 0 and 1.')
-    if(!all(sp >= 0 & sp <=1))
-        stop('Specificity should be between 0 and 1.')
-    if(length(se) != length(sp))
-        stop('Sensitivity and specificity should be vectors of the same length.')
+    if (!is.vector(se))
+        stop("Sensitivity should be a vector.")
+    if (!is.vector(sp))
+        stop("Specificity should be a vector.")
+    if (!all(se >= 0 & se <=1))
+        stop("Sensitivity should be between 0 and 1.")
+    if (!all(sp >= 0 & sp <=1))
+        stop("Specificity should be between 0 and 1.")
+    if (length(se) != length(sp))
+        stop("Sensitivity and specificity should be vectors of the same length.")
 
-    if(is.null(bias_parms))
+    if (is.null(bias_parms))
         bias_parms <- list(1, 1, 1)
     else bias_parms <- bias_parms
-    if(!is.list(bias_parms))
-        stop('Bias parameters for the impact of unmeasured confounder should be provided as a list made of 3 elements.')
-    if(length(bias_parms) != 3)
-        stop('The argument bias should be made of the following vectors: (1) Prevalence of Confounder in Exposure+ population, (2) Prevalence of Confounder in Exposure- population, and (3) Relative risk between Confounder and Outcome.')
-    if(!all((bias_parms[[1]] >= 0 & bias_parms[[1]] <= 1) | (bias_parms[[2]] >= 0 & bias_parms[[2]] <= 1)))
-        stop('Prevalences should be between 0 and 1.')
-    if(length(bias_parms[[1]]) != length(bias_parms[[2]]) | length(bias_parms[[2]]) != length(bias_parms[[3]]))
-        stop('Prevalences of Confounder in Exposure+ and Exposure- populations and Relative risk between Confounder and Outcome should be of the same length.')
+    if (!is.list(bias_parms))
+        stop("Bias parameters for the impact of unmeasured confounder should be provided as a list made of 3 elements.")
+    if (length(bias_parms) != 3)
+        stop("The argument bias should be made of the following vectors: (1) Prevalence of Confounder in Exposure+ population, (2) Prevalence of Confounder in Exposure- population, and (3) Relative risk between Confounder and Outcome.")
+    if (!all((bias_parms[[1]] >= 0 & bias_parms[[1]] <= 1) | (bias_parms[[2]] >= 0 & bias_parms[[2]] <= 1)))
+        stop("Prevalences should be between 0 and 1.")
+    if (length(bias_parms[[1]]) != length(bias_parms[[2]]) | length(bias_parms[[2]]) != length(bias_parms[[3]]))
+        stop("Prevalences of Confounder in Exposure+ and Exposure- populations and Relative risk between Confounder and Outcome should be of the same length.")
 
-    if(is.null(OR_sel))
+    if (is.null(OR_sel))
         OR_sel <- 1
     else OR_sel <- OR_sel
-    if(!is.vector(OR_sel))
-        stop('Selection odds ratios should be a vector.')
-    if(!all(OR_sel > 0))
-        stop('Selection odds ratios should be positive.')
+    if (!is.vector(OR_sel))
+        stop("Selection odds ratios should be a vector.")
+    if (!all(OR_sel > 0))
+        stop("Selection odds ratios should be positive.")
 
-    if(inherits(case, c("table", "matrix")))
+    if (inherits(case, c("table", "matrix")))
         tab <- case
     else {tab.df <- table(case, exposed)
           tab <- tab.df[2:1, 2:1]
@@ -125,15 +125,15 @@ multidimBias <- function(case,
     c <- as.numeric(tab[2, 1])
     d <- as.numeric(tab[2, 2])
 
-    rr <- (a/(a + c)) / (b/(b + d))
-    se.log.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
-    lci.rr <- exp(log(rr) - qnorm(1 - alpha/2) * se.log.rr)
-    uci.rr <- exp(log(rr) + qnorm(1 - alpha/2) * se.log.rr)
+    rr <- (a / (a + c)) / (b / (b + d))
+    se.log.rr <- sqrt((c / a) / (a + c) + (d / b) / (b + d))
+    lci.rr <- exp(log(rr) - qnorm(1 - alpha / 2) * se.log.rr)
+    uci.rr <- exp(log(rr) + qnorm(1 - alpha / 2) * se.log.rr)
 
-    or <- (a/b) / (c/d)
-    se.log.or <- sqrt(1/a + 1/b + 1/c + 1/d)
-    lci.or <- exp(log(or) - qnorm(1 - alpha/2) * se.log.or)
-    uci.or <- exp(log(or) + qnorm(1 - alpha/2) * se.log.or)
+    or <- (a / b) / (c / d)
+    se.log.or <- sqrt(1 / a + 1 / b + 1 / c + 1 / d)
+    lci.or <- exp(log(or) - qnorm(1 - alpha / 2) * se.log.or)
+    uci.or <- exp(log(or) + qnorm(1 - alpha / 2) * se.log.or)
 
     rr.mat <- matrix(NA, nrow = length(se), ncol = length(se))
     or.mat <- matrix(NA, nrow = length(se), ncol = length(se))
@@ -145,28 +145,28 @@ multidimBias <- function(case,
         for (i in 1:nrow(rr.mat)) {
             for (j in 1:nrow(rr.mat)) {
                 rr.mat[i, j] <- (((a - (1 - sp[j]) * (a + b)) / (se[j] - (1 - sp[j]))) /
-                                     (((a - (1 - sp[j]) * (a + b)) /
-                                           (se[j] - (1 - sp[j]))) +
-                                      ((c - (1 - sp[i]) * (c + d))) /
-                                            (se[i] - (1 - sp[i])))) /
-                                     (((a + b) - ((a - (1 - sp[j]) * (a + b)) /
-                                                      (se[j] - (1 - sp[j])))) /
-                                     (((a + b) - ((a - (1 - sp[j]) * (a + b)) /
-                                                      (se[j] - (1 - sp[j])))) +
-                                      ((c + d) - ((c - (1 - sp[i]) * (c + d)) /
-                                                      (se[i] - (1 - sp[i]))))))
+                                 (((a - (1 - sp[j]) * (a + b)) /
+                                   (se[j] - (1 - sp[j]))) +
+                                  ((c - (1 - sp[i]) * (c + d))) /
+                                  (se[i] - (1 - sp[i])))) /
+                    (((a + b) - ((a - (1 - sp[j]) * (a + b)) /
+                                 (se[j] - (1 - sp[j])))) /
+                     (((a + b) - ((a - (1 - sp[j]) * (a + b)) /
+                                  (se[j] - (1 - sp[j])))) +
+                      ((c + d) - ((c - (1 - sp[i]) * (c + d)) /
+                                  (se[i] - (1 - sp[i]))))))
             }
         }
 
         for (i in 1:nrow(or.mat)) {
             for (j in 1:nrow(or.mat)) {
                 or.mat[i, j] <- (((a - (1 - sp[j]) * (a + b)) / (se[j] - (1 - sp[j]))) /
-                                     (((c - (1 - sp[i]) * (c + d))) /
-                                          (se[i] - (1 - sp[i])))) /
-                                     (((a + b) - ((a - (1 - sp[j]) * (a + b)) /
-                                                      (se[j] - (1 - sp[j])))) /
-                                      ((c + d) - ((c - (1 - sp[i]) * (c + d)) /
-                                                      (se[i] - (1 - sp[i])))))
+                                 (((c - (1 - sp[i]) * (c + d))) /
+                                  (se[i] - (1 - sp[i])))) /
+                    (((a + b) - ((a - (1 - sp[j]) * (a + b)) /
+                                 (se[j] - (1 - sp[j])))) /
+                     ((c + d) - ((c - (1 - sp[i]) * (c + d)) /
+                                 (se[i] - (1 - sp[i])))))
             }
         }
 
@@ -224,9 +224,9 @@ multidimBias <- function(case,
         for (i in 1:nrow(rr.mat)) {
             for (j in 1:nrow(rr.mat)) {
                 rr.mat[i, j] <- (((a - (1 - sp[j]) * (a + c)) / (se[j] - (1 - sp[j]))) /
-                                     ((a + c))) / (((b - (1 - sp[i]) * (b + d)) /
-                                                        (se[i] - (1 - sp[i]))) /
-                                                            ((b + d)))
+                                 ((a + c))) / (((b - (1 - sp[i]) * (b + d)) /
+                                                (se[i] - (1 - sp[i]))) /
+                                               ((b + d)))
             }
         }
 
@@ -235,9 +235,9 @@ multidimBias <- function(case,
                 or.mat[i, j] <- (((a - (1 - sp[j]) * (a + c)) / (se[j] - (1 - sp[j]))) /
                                  ((a + c) - ((a - (1 - sp[j]) * (a + c)) /
                                              (se[j] - (1 - sp[j]))))) /
-                                (((b - (1 - sp[i]) * (b + d)) / (se[i] - (1 - sp[i]))) /
-                                 ((b + d) - ((b - (1 - sp[i]) * (b + d)) /
-                                             (se[i] - (1 - sp[i])))))
+                    (((b - (1 - sp[i]) * (b + d)) / (se[i] - (1 - sp[i]))) /
+                     ((b + d) - ((b - (1 - sp[i]) * (b + d)) /
+                                 (se[i] - (1 - sp[i])))))
             }
         }
 
@@ -295,7 +295,7 @@ multidimBias <- function(case,
         for (i in 1:nrow(rrc.mat)) {
             for (j in 1:nrow(rrc.mat)) {
                 rrc.mat[i, j] <- rr / ((bias_parms[[1]][i] * (bias_parms[[3]][j] - 1) + 1) /
-                                          (bias_parms[[2]][i] * (bias_parms[[3]][j] - 1) + 1))
+                                       (bias_parms[[2]][i] * (bias_parms[[3]][j] - 1) + 1))
             }
         }
 
@@ -345,8 +345,8 @@ multidimBias <- function(case,
     if (type == "selection") {
         ors.mat[, 1] <- OR_sel
         for (i in 1:nrow(ors.mat)) {
-                ors.mat[i, 2] <- or / OR_sel[i]
-            }
+            ors.mat[i, 2] <- or / OR_sel[i]
+        }
 
         if (is.null(rownames(tab)))
             rownames(tab) <- paste("Row", 1:2)
