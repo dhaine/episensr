@@ -11,7 +11,6 @@ multidimBias(
   se = NULL,
   sp = NULL,
   bias_parms = NULL,
-  OR.sel = NULL,
   OR_sel = NULL,
   alpha = 0.05,
   dec = 4,
@@ -40,8 +39,6 @@ is made of 3 vectors of the same length:
 \item Prevalence of Confounder in Exposure- population, and
 \item Relative risk between Confounder and Outcome.
 }}
-
-\item{OR.sel}{Deprecated; please use OR_sel instead.}
 
 \item{OR_sel}{Selection odds ratios, for selection bias implementation.}
 
