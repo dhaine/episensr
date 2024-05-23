@@ -35,7 +35,7 @@ Suggests:
     rmarkdown,
     testthat,
     tidyr
-VignetteBuilder: 
+VignetteBuilder:
     knitr
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
