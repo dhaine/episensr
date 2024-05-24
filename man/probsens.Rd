@@ -10,10 +10,10 @@ probsens(
   type = c("exposure", "outcome"),
   reps = 1000,
   seca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
+    "normal", "beta"), parms = NULL),
   seexp.parms = NULL,
   spca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
+    "normal", "beta"), parms = NULL),
   spexp.parms = NULL,
   corr.se = NULL,
   corr.sp = NULL,
@@ -32,17 +32,21 @@ probsens(
 
 \item{seca.parms}{List defining:
 \enumerate{
-\item The sensitivity of exposure classification among those with the outcome (when \code{type = "exposure"}), or
-\item The sensitivity of outcome classification among those with the exposure (when \code{type = "outcome"}).
+\item The sensitivity of exposure classification among those with the outcome
+(when \code{type = "exposure"}), or
+\item The sensitivity of outcome classification among those with the exposure
+(when \code{type = "outcome"}).
 }
-The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+The first argument provides the probability distribution function (constant,
+uniform, triangular, trapezoidal, truncated normal, or beta) and the second
+its parameters as a vector. Lower and upper bounds of the truncated normal
+have to be between 0 and 1.
 \enumerate{
 \item constant: constant value,
 \item uniform: min, max,
 \item triangular: lower limit, upper limit, mode,
 \item trapezoidal: min, lower mode, upper mode, max,
-\item logit-logistic: location, scale, lower bound shift, upper bound shift,
-\item logit-normal: location, scale, lower bound shift, upper bound shift.
+\item normal: lower bound, upper bound, mean, sd.
 \item beta: alpha, beta.
 }}
 

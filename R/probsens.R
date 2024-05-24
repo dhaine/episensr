@@ -17,17 +17,21 @@
 #' @param reps Number of replications to run.
 #' @param seca.parms List defining:
 #' \enumerate{
-#' \item The sensitivity of exposure classification among those with the outcome (when \code{type = "exposure"}), or
-#' \item The sensitivity of outcome classification among those with the exposure (when \code{type = "outcome"}).
+#' \item The sensitivity of exposure classification among those with the outcome
+#' (when \code{type = "exposure"}), or
+#' \item The sensitivity of outcome classification among those with the exposure
+#' (when \code{type = "outcome"}).
 #' }
-#' The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+#' The first argument provides the probability distribution function (constant,
+#' uniform, triangular, trapezoidal, truncated normal, or beta) and the second
+#' its parameters as a vector. Lower and upper bounds of the truncated normal
+#' have to be between 0 and 1.
 #' \enumerate{
 #' \item constant: constant value,
 #' \item uniform: min, max,
 #' \item triangular: lower limit, upper limit, mode,
 #' \item trapezoidal: min, lower mode, upper mode, max,
-#' \item logit-logistic: location, scale, lower bound shift, upper bound shift,
-#' \item logit-normal: location, scale, lower bound shift, upper bound shift.
+#' \item normal: lower bound, upper bound, mean, sd.
 #' \item beta: alpha, beta.
 #' }
 #' @param seexp.parms List defining:
@@ -136,13 +140,11 @@ probsens <- function(case,
                      type = c("exposure", "outcome"),
                      reps = 1000,
                      seca.parms = list(dist = c("constant", "uniform", "triangular",
-                                                "trapezoidal", "logit-logistic",
-                                                "logit-normal", "beta"),
+                                                "trapezoidal", "normal", "beta"),
                                        parms = NULL),
                      seexp.parms = NULL,
                      spca.parms = list(dist = c("constant", "uniform", "triangular",
-                                                "trapezoidal", "logit-logistic",
-                                                "logit-normal", "beta"),
+                                                "trapezoidal", "normal", "beta"),
                                        parms = NULL),
                      spexp.parms = NULL,
                      corr.se = NULL,
@@ -187,26 +189,11 @@ probsens <- function(case,
                                             (seca.parms[[2]][2] > seca.parms[[2]][3]) |
                                             (seca.parms[[2]][3] > seca.parms[[2]][4])))
         stop("Wrong arguments for your trapezoidal distribution.")
-    if (seca.parms[[1]] == "logit-logistic" & (length(seca.parms[[2]]) < 2 |
-                                               length(seca.parms[[2]]) == 3 |
-                                               length(seca.parms[[2]]) > 4))
-        stop("For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-    if (seca.parms[[1]] == "logit-logistic" & length(seca.parms[[2]]) == 4 &
-        ((seca.parms[[2]][3] >= seca.parms[[2]][4]) |
-         (!all(seca.parms[[2]][3:4] >= 0 & seca.parms[[2]][3:4] <= 1))))
-        stop("For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-    if (seca.parms[[1]] == "logit-logistic" & length(seca.parms[[2]]) == 2)
-        seca.parms <- list(seca.parms[[1]], c(seca.parms[[2]], c(0, 1)))
-    if (seca.parms[[1]] == "logit-normal" & (length(seca.parms[[2]]) < 2 |
-                                             length(seca.parms[[2]]) == 3 |
-                                             length(seca.parms[[2]]) > 4))
-        stop("For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-    if (seca.parms[[1]] == "logit-normal" & length(seca.parms[[2]]) == 4 &
-        ((seca.parms[[2]][3] >= seca.parms[[2]][4]) |
-         (!all(seca.parms[[2]][3:4] >= 0 & seca.parms[[2]][3:4] <= 1))))
-        stop("For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-    if (seca.parms[[1]] == "logit-normal" & length(seca.parms[[2]]) == 2)
-        seca.parms <- list(seca.parms[[1]], c(seca.parms[[2]], c(0, 1)))
+    if (seca.parms[[1]] == "normal" & (length(seca.parms[[2]]) != 4))
+        stop("For truncated normal distribution, please provide vector of lower and upper bound limits, mean and SD")
+    if (seca.parms[[1]] == "normal" & ((seca.parms[[2]][1] >= seca.parms[[2]][2]) |
+                                       (!all(seca.parms[[2]][1:2] >= 0 & seca.parms[[2]][1:2] <= 1))))
+        stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
     if ((seca.parms[[1]] == "constant" | seca.parms[[1]] == "uniform" | seca.parms[[1]] == "triangular" |
          seca.parms[[1]] == "trapezoidal") & !all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
         stop("Sensitivity of exposure classification among those with the outcome should be between 0 and 1.")
@@ -235,24 +222,12 @@ probsens <- function(case,
         ((seexp.parms[[2]][1] > seexp.parms[[2]][2]) | (seexp.parms[[2]][2] > seexp.parms[[2]][3]) |
          (seexp.parms[[2]][3] > seexp.parms[[2]][4])))
         stop("Wrong arguments for your trapezoidal distribution.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "logit-logistic" &
-        (length(seexp.parms[[2]]) < 2 | length(seexp.parms[[2]]) == 3 | length(seexp.parms[[2]]) > 4))
-        stop("For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "logit-logistic" & length(seexp.parms[[2]]) == 4 &&
-        ((seexp.parms[[2]][3] >= seexp.parms[[2]][4]) | (!all(seexp.parms[[2]][3:4] >= 0 &
-                                                              seexp.parms[[2]][3:4] <= 1))))
-        stop("For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "logit-logistic" & length(seexp.parms[[2]]) == 2)
-        seexp.parms <- list(seexp.parms[[1]], c(seexp.parms[[2]], c(0, 1)))
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "logit-normal" &
-        (length(seexp.parms[[2]]) < 2 | length(seexp.parms[[2]]) == 3 | length(seexp.parms[[2]]) > 4))
-        stop("For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "logit-normal" & length(seexp.parms[[2]]) == 4 &&
-        ((seexp.parms[[2]][3] >= seexp.parms[[2]][4]) | (!all(seexp.parms[[2]][3:4] >= 0 &
-                                                              seexp.parms[[2]][3:4] <= 1))))
-        stop("For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "logit-normal" & length(seexp.parms[[2]]) == 2)
-        seexp.parms <- list(seexp.parms[[1]], c(seexp.parms[[2]], c(0, 1)))
+    if (!is.null(seexp.parms) && seexp.parms[[1]] == "normal" & (length(seexp.parms[[2]]) != 4))
+        stop("For truncated normal distribution, please provide vector of lower and upper bound limits, mean and SD.")
+    if (!is.null(seexp.parms) && seexp.parms[[1]] == "normal" &&
+        ((seexp.parms[[2]][1] >= seexp.parms[[2]][2]) | (!all(seexp.parms[[2]][1:2] >= 0 &
+                                                              seexp.parms[[2]][1:2] <= 1))))
+        stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
     if (!is.null(seexp.parms) && (seexp.parms[[1]] == "constant" | seexp.parms[[1]] == "uniform" |
                                   seexp.parms[[1]] == "triangular" | seexp.parms[[1]] == "trapezoidal") &
         !all(seexp.parms[[2]] >= 0 & seexp.parms[[2]] <= 1))
@@ -282,26 +257,11 @@ probsens <- function(case,
                                             (spca.parms[[2]][2] > spca.parms[[2]][3]) |
                                             (spca.parms[[2]][3] > spca.parms[[2]][4])))
         stop("Wrong arguments for your trapezoidal distribution.")
-    if (spca.parms[[1]] == "logit-logistic" & (length(spca.parms[[2]]) < 2 |
-                                               length(spca.parms[[2]]) == 3 |
-                                               length(spca.parms[[2]]) > 4))
-        stop("For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-    if (spca.parms[[1]] == "logit-logistic" & length(spca.parms[[2]]) == 4 &
-        ((spca.parms[[2]][3] >= spca.parms[[2]][4]) |
-         (!all(spca.parms[[2]][3:4] >= 0 & spca.parms[[2]][3:4] <= 1))))
-        stop("For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-    if (spca.parms[[1]] == "logit-logistic" & length(spca.parms[[2]]) == 2)
-        spca.parms <- list(spca.parms[[1]], c(spca.parms[[2]], c(0, 1)))
-    if (spca.parms[[1]] == "logit-normal" & (length(spca.parms[[2]]) < 2 |
-                                             length(spca.parms[[2]]) == 3 |
-                                             length(spca.parms[[2]]) > 4))
-        stop("For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-    if (spca.parms[[1]] == "logit-normal" & length(spca.parms[[2]]) == 4 &
-        ((spca.parms[[2]][3] >= spca.parms[[2]][4]) |
-         (!all(spca.parms[[2]][3:4] >= 0 & spca.parms[[2]][3:4] <= 1))))
-        stop("For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-    if (spca.parms[[1]] == "logit-normal" & length(spca.parms[[2]]) == 2)
-        spca.parms <- list(spca.parms[[1]], c(spca.parms[[2]], c(0, 1)))
+    if (spca.parms[[1]] == "normal" & (length(spca.parms[[2]]) != 4))
+        stop("For truncated normal distribution, please provide vector of lower and upper bound limits, mean and SD.")
+    if (spca.parms[[1]] == "normal" & ((spca.parms[[2]][1] >= spca.parms[[2]][2]) |
+         (!all(spca.parms[[2]][1:2] >= 0 & spca.parms[[2]][1:2] <= 1))))
+        stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
     if ((spca.parms[[1]] == "constant" | spca.parms[[1]] == "uniform" |
          spca.parms[[1]] == "triangular" |
          spca.parms[[1]] == "trapezoidal") & !all(spca.parms[[2]] >= 0 & spca.parms[[2]] <= 1))
@@ -331,24 +291,12 @@ probsens <- function(case,
         ((spexp.parms[[2]][1] > spexp.parms[[2]][2]) | (spexp.parms[[2]][2] > spexp.parms[[2]][3]) |
          (spexp.parms[[2]][3] > spexp.parms[[2]][4])))
         stop("Wrong arguments for your trapezoidal distribution.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "logit-logistic" &
-        (length(spexp.parms[[2]]) < 2 | length(spexp.parms[[2]]) == 3 | length(spexp.parms[[2]]) > 4))
-        stop("For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "logit-logistic" & length(spexp.parms[[2]]) == 4 &&
-        ((spexp.parms[[2]][3] >= spexp.parms[[2]][4]) |
-         (!all(spexp.parms[[2]][3:4] >= 0 & spexp.parms[[2]][3:4] <= 1))))
-        stop("For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-    if (!is.null(seexp.parms) && spexp.parms[[1]] == "logit-logistic" & length(spexp.parms[[2]]) == 2)
-        spexp.parms <- list(spexp.parms[[1]], c(spexp.parms[[2]], c(0, 1)))
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "logit-normal" &
-        (length(spexp.parms[[2]]) < 2 | length(spexp.parms[[2]]) == 3 | length(spexp.parms[[2]]) > 4))
-        stop("For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "logit-normal" & length(spexp.parms[[2]]) == 4 &&
-        ((spexp.parms[[2]][3] >= spexp.parms[[2]][4]) |
-         (!all(spexp.parms[[2]][3:4] >= 0 & spexp.parms[[2]][3:4] <= 1))))
-        stop("For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "logit-normal" & length(spexp.parms[[2]]) == 2)
-        spexp.parms <- list(spexp.parms[[1]], c(spexp.parms[[2]], c(0, 1)))
+    if (!is.null(spexp.parms) && spexp.parms[[1]] == "normal" & (length(spexp.parms[[2]]) != 4))
+        stop("For truncated normal distribution, please provide vector of lower and upper bound limits, meand and SD.")
+    if (!is.null(spexp.parms) && spexp.parms[[1]] == "normal" &&
+        ((spexp.parms[[2]][1] >= spexp.parms[[2]][2]) |
+         (!all(spexp.parms[[2]][1:2] >= 0 & spexp.parms[[2]][1:2] <= 1))))
+        stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
     if (!is.null(spexp.parms) && (spexp.parms[[1]] == "constant" | spexp.parms[[1]] == "uniform" |
                                   spexp.parms[[1]] == "triangular" | spexp.parms[[1]] == "trapezoidal") &
         !all(spexp.parms[[2]] >= 0 & spexp.parms[[2]] <= 1))
@@ -424,11 +372,8 @@ probsens <- function(case,
         if (seca.parms[[1]] == "trapezoidal") {
             draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(seca))
         }
-        if (seca.parms[[1]] == "logit-logistic") {
-            draws[, 1] <- logitlog.dstr(seca)
-        }
-        if (seca.parms[[1]] == "logit-normal") {
-            draws[, 1] <- logitnorm.dstr(seca)
+        if (seca.parms[[1]] == "normal") {
+            draws[, 1] <- do.call(truncnorm::rtruncnorm, as.list(seca))
         }
         if (seca.parms[[1]] == "beta") {
             draws[, 1] <- do.call(rbeta, as.list(seca))
@@ -446,11 +391,8 @@ probsens <- function(case,
         if (spca.parms[[1]] == "trapezoidal") {
             draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(spca))
         }
-        if (spca.parms[[1]] == "logit-logistic") {
-            draws[, 3] <- logitlog.dstr(spca)
-        }
-        if (spca.parms[[1]] == "logit-normal") {
-            draws[, 3] <- logitnorm.dstr(spca)
+        if (spca.parms[[1]] == "normal") {
+            draws[, 3] <- do.call(truncnorm::rtruncnorm, as.list(spca))
         }
         if (spca.parms[[1]] == "beta") {
             draws[, 3] <- do.call(rbeta, as.list(spca))
@@ -472,15 +414,8 @@ probsens <- function(case,
         if (seca.parms[[1]] == "trapezoidal") {
             draws[, 1] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 1]), as.list(seca[-1])))
         }
-        if (seca.parms[[1]] == "logit-logistic") {
-            seca.w <- seca.parms[[2]][1] + (seca.parms[[2]][2] * log(corr.draws[, 7] / (1 - corr.draws[, 7])))
-            draws[, 1] <- seca.parms[[2]][3] + (seca.parms[[2]][4] - seca.parms[[2]][3]) * exp(seca.w) /
-                (1 + exp(seca.w))
-        }
-        if (seca.parms[[1]] == "logit-normal") {
-            seca.w <- seca.parms[[2]][1] + (seca.parms[[2]][2] * qnorm(corr.draws[, 7]))
-            draws[, 1] <- seca.parms[[2]][3] + (seca.parms[[2]][4] - seca.parms[[2]][3]) * exp(seca.w) /
-                (1 + exp(seca.w))
+        if (seca.parms[[1]] == "normal") {
+            draws[, 1] <- do.call(truncnorm::qtruncnorm, c(list(corr.draws[, 1]), as.list(seca[-1])))
         }
         if (seca.parms[[1]] == "beta") {
             draws[, 1] <- do.call(qbeta, c(list(corr.draws[, 1]), as.list(seca[-1])))
@@ -494,15 +429,8 @@ probsens <- function(case,
         if (seexp.parms[[1]] == "trapezoidal") {
             draws[, 2] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 2]), as.list(seexp[-1])))
         }
-        if (seexp.parms[[1]] == "logit-logistic") {
-            seexp.w <- seexp.parms[[2]][1] + (seexp.parms[[2]][2] * log(corr.draws[, 8] / (1 - corr.draws[, 8])))
-            draws[, 2] <- seexp.parms[[2]][3] + (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * exp(seexp.w) /
-                (1 + exp(seexp.w))
-        }
-        if (seexp.parms[[1]] == "logit-normal") {
-            seexp.w <- seexp.parms[[2]][1] + (seexp.parms[[2]][2] * qnorm(corr.draws[, 8]))
-            draws[, 2] <- seexp.parms[[2]][3] + (seexp.parms[[2]][4] - seexp.parms[[2]][3]) * exp(seexp.w) /
-                (1 + exp(seexp.w))
+        if (seexp.parms[[1]] == "normal") {
+            draws[, 2] <- do.call(truncnorm::qtruncnorm, c(list(corr.draws[, 2]), as.list(seexp[-1])))
         }
         if (seexp.parms[[1]] == "beta") {
             draws[, 2] <- do.call(qbeta, c(list(corr.draws[, 2]), as.list(seexp[-1])))
@@ -516,15 +444,8 @@ probsens <- function(case,
         if (spca.parms[[1]] == "trapezoidal") {
             draws[, 3] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 3]), as.list(spca[-1])))
         }
-        if (spca.parms[[1]] == "logit-logistic") {
-            spca.w <- spca.parms[[2]][1] + (spca.parms[[2]][2] * log(corr.draws[, 9] / (1 - corr.draws[, 9])))
-            draws[, 3] <- spca.parms[[2]][3] + (spca.parms[[2]][4] - spca.parms[[2]][3]) * exp(spca.w) /
-                (1 + exp(spca.w))
-        }
-        if (spca.parms[[1]] == "logit-normal") {
-            spca.w <- spca.parms[[2]][1] + (spca.parms[[2]][2] * qnorm(corr.draws[, 9]))
-            draws[, 3] <- spca.parms[[2]][3] + (spca.parms[[2]][4] - spca.parms[[2]][3]) * exp(spca.w) /
-                (1 + exp(spca.w))
+        if (spca.parms[[1]] == "normal") {
+            draws[, 3] <- do.call(truncnorm::qtruncnorm, c(list(corr.draws[, 3]), as.list(spca[-1])))
         }
         if (spca.parms[[1]] == "beta") {
             draws[, 3] <- do.call(qbeta, c(list(corr.draws[, 3]), as.list(spca[-1])))
@@ -538,15 +459,8 @@ probsens <- function(case,
         if (spexp.parms[[1]] == "trapezoidal") {
             draws[, 4] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 4]), as.list(spexp[-1])))
         }
-        if (spexp.parms[[1]] == "logit-logistic") {
-            spexp.w <- spexp.parms[[2]][1] + (spexp.parms[[2]][2] * log(corr.draws[, 10] / (1 - corr.draws[, 10])))
-            draws[, 4] <- spexp.parms[[2]][3] + (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * exp(spexp.w) /
-                (1 + exp(spexp.w))
-        }
-        if (spexp.parms[[1]] == "logit-normal") {
-            spexp.w <- spexp.parms[[2]][1] + (spexp.parms[[2]][2] * qnorm(corr.draws[, 10]))
-            draws[, 4] <- spexp.parms[[2]][3] + (spexp.parms[[2]][4] - spexp.parms[[2]][3]) * exp(spexp.w) /
-                (1 + exp(spexp.w))
+        if (spexp.parms[[1]] == "normal") {
+            draws[, 4] <- do.call(truncnorm::qtruncnorm, c(list(corr.draws[, 4]), as.list(spexp[-1])))
         }
         if (spexp.parms[[1]] == "beta") {
             draws[, 4] <- do.call(qbeta, c(list(corr.draws[, 4]), as.list(spexp[-1])))
