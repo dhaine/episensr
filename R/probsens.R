@@ -65,20 +65,16 @@
 #' # Greenland S., Salvan A., Wegman D.H., Hallock M.F., Smith T.J.
 #' # A case-control study of cancer mortality at a transformer-assembly facility.
 #' # Int Arch Occup Environ Health 1994; 66(1):49-54.
+#' greenland <- matrix(c(45, 94, 257, 945), dimnames = list(c("BC+", "BC-"),
+#' c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE)
 #' set.seed(123)
 #' # Exposure misclassification, non-differential
-#' probsens(matrix(c(45, 94, 257, 945),
-#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
-#' type = "exposure",
-#' reps = 20000,
+#' probsens(greenland, type = "exposure", reps = 20000,
 #' seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
 #' spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
 #'
 #' # Exposure misclassification, differential
-#' probsens(matrix(c(45, 94, 257, 945),
-#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
-#' type = "exposure",
-#' reps = 20000,
+#' probsens(greenland, type = "exposure", reps = 20000,
 #' seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
 #' seexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
 #' spca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
@@ -86,10 +82,7 @@
 #' corr.se = .8,
 #' corr.sp = .8)
 #'
-#' probsens(matrix(c(45, 94, 257, 945),
-#' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
-#' type = "exposure",
-#' reps = 20000,
+#' probsens(greenland, type = "exposure", reps = 20000,
 #' seca.parms = list("beta", c(908, 16)),
 #' seexp.parms = list("beta", c(156, 56)),
 #' spca.parms = list("beta", c(153, 6)),
