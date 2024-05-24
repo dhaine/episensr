@@ -25,7 +25,8 @@ Imports:
     ggdag,
     magrittr,
     trapezoid,
-    triangle
+    triangle,
+    MASS
 Suggests:
     aplore3,
     covr,

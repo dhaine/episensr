@@ -7,6 +7,10 @@
 #' \code{seexp.parms} and \code{spexp.parms} (i.e. providing the 4 bias parameters)
 #' evaluates a differential misclassification.
 #'
+#' Correlations between sensitivity (or specificity) of exposure classification
+#' among cases and controls can be specified and use the NORmal To Anything
+#' (NORTA) transformation (Li & Hammond, 1975).
+#'
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
 #' @param type Choice of correction for exposure or outcome misclassification.
@@ -45,8 +49,13 @@
 #' \item{sim.df}{Data frame of random parameters and computed values.}
 #' \item{reps}{Number of replications.}
 #'
-#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
+#' @references
+#' Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 #' Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
+#'
+#' Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
+#' with Specified Univariate Distributions and Correlation Coefficients}.
+#' IEEE Trans Syst Man Cybern 5:557-561.
 #' @examples
 #' # The data for this example come from:
 #' # Greenland S., Salvan A., Wegman D.H., Hallock M.F., Smith T.J.
@@ -121,7 +130,7 @@
 #' corr.se = .8,
 #' corr.sp = .8)
 #' @export
-#' @importFrom stats median qnorm quantile runif qbeta rbeta
+#' @importFrom stats median pnorm qnorm quantile qunif runif qbeta rbeta
 probsens <- function(case,
                      exposed,
                      type = c("exposure", "outcome"),
@@ -394,7 +403,7 @@ probsens <- function(case,
                          "corr.RR", "corr.OR",
                          "reps",
                          "tot.RR", "tot.OR")
-    corr.draws <- matrix(NA, nrow = reps, ncol = 10)
+    corr.draws <- matrix(NA, nrow = reps, ncol = 4)
 
     seca <- c(reps, seca.parms[[2]])
     seexp <- c(reps, seexp.parms[[2]])
@@ -448,46 +457,20 @@ probsens <- function(case,
         }
         draws[, 4] <- draws[, 3]
     } else {
-        corr.draws[, 1:6] <- apply(corr.draws[, 1:6],
-                                   2,
-                                   function(x) x = runif(reps))
-        corr.draws[, 1:6] <- apply(corr.draws[, 1:6],
-                                   2,
-                                   function(x) log(x / (1 - x)))
-        corr.draws[, 7] <- exp(sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 2]) /
-            (1 + (exp(sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 2])))
-        corr.draws[, 8] <- exp(sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 3]) /
-            (1 + (exp(sqrt(corr.se) * corr.draws[, 1] + sqrt(1 - corr.se) * corr.draws[, 3])))
-        corr.draws[, 9] <- exp(sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 5]) /
-            (1 + (exp(sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 5])))
-        corr.draws[, 10] <- exp(sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 6]) /
-            (1 + (exp(sqrt(corr.sp) * corr.draws[, 4] + sqrt(1 - corr.sp) * corr.draws[, 6])))
+        norta_se <- matrix(c(1, corr.se, corr.se, 1), ncol = 2)
+        norta_sp <- matrix(c(1, corr.sp, corr.sp, 1), ncol = 2)
+        corr.draws[, 1:2] <- MASS::mvrnorm(reps, c(0, 0), norta_se)
+        corr.draws[, 3:4] <- MASS::mvrnorm(reps, c(0, 0), norta_sp)
+        corr.draws <- pnorm(corr.draws)
 
         if (seca.parms[[1]] == "uniform") {
-            draws[, 1] <- seca.parms[[2]][2] -
-                (seca.parms[[2]][2] - seca.parms[[2]][1]) * corr.draws[, 7]
+            draws[, 1] <- do.call(qunif, c(list(corr.draws[, 1]), as.list(seca[-1])))
         }
         if (seca.parms[[1]] == "triangular") {
-            draws[, 1] <- (corr.draws[, 7] * (seca.parms[[2]][2] - seca.parms[[2]][1]) +
-                           (seca.parms[[2]][1] + seca.parms[[2]][3])) / 2
-            draws[, 1] <- ifelse(draws[, 1] < seca.parms[[2]][3],
-                                 seca.parms[[2]][1] + sqrt(abs((seca.parms[[2]][3] - seca.parms[[2]][1]) *
-                                                               (2 * draws[, 1] - seca.parms[[2]][1] -
-                                                                seca.parms[[2]][3]))), draws[, 1])
-            draws[, 1] <- ifelse(draws[, 1] > seca.parms[[2]][3],
-                                 seca.parms[[2]][2] - sqrt(abs(2 * (seca.parms[[2]][2] - seca.parms[[2]][3]) *
-                                                               (draws[, 1] - seca.parms[[2]][3]))), draws[, 1])
+            draws[, 1] <- do.call(triangle::qtriangle, c(list(corr.draws[, 1]), as.list(seca[-1])))
         }
         if (seca.parms[[1]] == "trapezoidal") {
-            draws[, 1] <- (corr.draws[, 7] * (seca.parms[[2]][4] + seca.parms[[2]][3] - seca.parms[[2]][1] -
-                                              seca.parms[[2]][2]) + (seca.parms[[2]][1] + seca.parms[[2]][2])) / 2
-            draws[, 1] <- ifelse(draws[, 1] < seca.parms[[2]][2],
-                                 seca.parms[[2]][1] + sqrt(abs((seca.parms[[2]][2] - seca.parms[[2]][1]) *
-                                                               (2 * draws[, 1] - seca.parms[[2]][1] -
-                                                                seca.parms[[2]][2]))), draws[, 1])
-            draws[, 1] <- ifelse(draws[, 1] > seca.parms[[2]][3],
-                                 seca.parms[[2]][4] - sqrt(abs(2 * (seca.parms[[2]][4] - seca.parms[[2]][3]) *
-                                                               (draws[, 1] - seca.parms[[2]][3]))), draws[, 1])
+            draws[, 1] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 1]), as.list(seca[-1])))
         }
         if (seca.parms[[1]] == "logit-logistic") {
             seca.w <- seca.parms[[2]][1] + (seca.parms[[2]][2] * log(corr.draws[, 7] / (1 - corr.draws[, 7])))
@@ -500,36 +483,16 @@ probsens <- function(case,
                 (1 + exp(seca.w))
         }
         if (seca.parms[[1]] == "beta") {
-            draws[, 1] <- qbeta(corr.draws[, 7] / (1 + corr.draws[, 7]),
-                                seca.parms[[2]][1],
-                                seca.parms[[2]][2])
+            draws[, 1] <- do.call(qbeta, c(list(corr.draws[, 1]), as.list(seca[-1])))
         }
         if (seexp.parms[[1]] == "uniform") {
-            draws[, 2] <- seexp.parms[[2]][2] - (seexp.parms[[2]][2] - seexp.parms[[2]][1]) * corr.draws[, 8]
+            draws[, 2] <- do.call(qunif, c(list(corr.draws[, 2]), as.list(seexp[-1])))
         }
         if (seexp.parms[[1]] == "triangular") {
-            draws[, 2] <- (corr.draws[, 8] *
-                           (seexp.parms[[2]][2] - seexp.parms[[2]][1]) + (seexp.parms[[2]][1] +
-                                                                          seexp.parms[[2]][3])) / 2
-            draws[, 2] <- ifelse(draws[, 2] < seexp.parms[[2]][3],
-                                 seexp.parms[[2]][1] + sqrt(abs((seexp.parms[[2]][3] - seexp.parms[[2]][1]) *
-                                                                (2 * draws[, 2] - seexp.parms[[2]][1] -
-                                                                 seexp.parms[[2]][3]))), draws[, 2])
-            draws[, 2] <- ifelse(draws[, 2] > seexp.parms[[2]][3],
-                                 seexp.parms[[2]][2] - sqrt(abs(2 * (seexp.parms[[2]][2] - seexp.parms[[2]][3]) *
-                                                                (draws[, 2] - seexp.parms[[2]][3]))), draws[, 2])
+            draws[, 2] <- do.call(triangle::qtriangle, c(list(corr.draws[, 2]), as.list(seexp[-1])))
         }
         if (seexp.parms[[1]] == "trapezoidal") {
-            draws[, 2] <- (corr.draws[, 8] *
-                           (seexp.parms[[2]][4] + seexp.parms[[2]][3] - seexp.parms[[2]][1] -
-                            seexp.parms[[2]][2]) + (seexp.parms[[2]][1] + seexp.parms[[2]][2])) / 2
-            draws[, 2] <- ifelse(draws[, 2] < seexp.parms[[2]][2],
-                                 seexp.parms[[2]][1] + sqrt(abs((seexp.parms[[2]][2] - seexp.parms[[2]][1]) *
-                                                                (2 * draws[, 2] - seexp.parms[[2]][1] -
-                                                                 seexp.parms[[2]][2]))), draws[, 2])
-            draws[, 2] <- ifelse(draws[, 2] > seexp.parms[[2]][3],
-                                 seexp.parms[[2]][4] - sqrt(abs(2 * (seexp.parms[[2]][4] - seexp.parms[[2]][3]) *
-                                                                (draws[, 2] - seexp.parms[[2]][3]))), draws[, 2])
+            draws[, 2] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 2]), as.list(seexp[-1])))
         }
         if (seexp.parms[[1]] == "logit-logistic") {
             seexp.w <- seexp.parms[[2]][1] + (seexp.parms[[2]][2] * log(corr.draws[, 8] / (1 - corr.draws[, 8])))
@@ -542,37 +505,16 @@ probsens <- function(case,
                 (1 + exp(seexp.w))
         }
         if (seexp.parms[[1]] == "beta") {
-            draws[, 2] <- qbeta(corr.draws[, 8] / (1 + corr.draws[, 8]),
-                                seexp.parms[[2]][1],
-                                seexp.parms[[2]][2])
+            draws[, 2] <- do.call(qbeta, c(list(corr.draws[, 2]), as.list(seexp[-1])))
         }
         if (spca.parms[[1]] == "uniform") {
-            draws[, 3] <- spca.parms[[2]][2] -
-                (spca.parms[[2]][2] - spca.parms[[2]][1]) * corr.draws[, 9]
+            draws[, 3] <- do.call(qunif, c(list(corr.draws[, 3]), as.list(spca[-1])))
         }
         if (spca.parms[[1]] == "triangular") {
-            draws[, 3] <- (corr.draws[, 9] *
-                           (spca.parms[[2]][2] - spca.parms[[2]][1]) + (spca.parms[[2]][1] +
-                                                                        spca.parms[[2]][3])) / 2
-            draws[, 3] <- ifelse(draws[, 3] < spca.parms[[2]][3],
-                                 spca.parms[[2]][1] + sqrt(abs((spca.parms[[2]][3] - spca.parms[[2]][1]) *
-                                                               (2 * draws[, 3] - spca.parms[[2]][1] -
-                                                                spca.parms[[2]][3]))), draws[, 3])
-            draws[, 3] <- ifelse(draws[, 3] > spca.parms[[2]][3],
-                                 spca.parms[[2]][2] - sqrt(abs(2 * (spca.parms[[2]][2] - spca.parms[[2]][3]) *
-                                                               (draws[, 3] - spca.parms[[2]][3]))), draws[, 3])
+            draws[, 3] <- do.call(triangle::qtriangle, c(list(corr.draws[, 3]), as.list(spca[-1])))
         }
         if (spca.parms[[1]] == "trapezoidal") {
-            draws[, 3] <- (corr.draws[, 9] *
-                           (spca.parms[[2]][4] + spca.parms[[2]][3] - spca.parms[[2]][1] - spca.parms[[2]][2]) +
-                           (spca.parms[[2]][1] + spca.parms[[2]][2])) / 2
-            draws[, 3] <- ifelse(draws[, 3] < spca.parms[[2]][2],
-                                 spca.parms[[2]][1] + sqrt(abs((spca.parms[[2]][2] - spca.parms[[2]][1]) *
-                                                               (2 * draws[, 3] - spca.parms[[2]][1] -
-                                                                spca.parms[[2]][2]))), draws[, 3])
-            draws[, 3] <- ifelse(draws[, 3] > spca.parms[[2]][3],
-                                 spca.parms[[2]][4] - sqrt(abs(2 * (spca.parms[[2]][4] - spca.parms[[2]][3]) *
-                                                               (draws[, 3] - spca.parms[[2]][3]))), draws[, 3])
+            draws[, 3] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 3]), as.list(spca[-1])))
         }
         if (spca.parms[[1]] == "logit-logistic") {
             spca.w <- spca.parms[[2]][1] + (spca.parms[[2]][2] * log(corr.draws[, 9] / (1 - corr.draws[, 9])))
@@ -585,36 +527,16 @@ probsens <- function(case,
                 (1 + exp(spca.w))
         }
         if (spca.parms[[1]] == "beta") {
-            draws[, 3] <- qbeta(corr.draws[, 9] / (1 + corr.draws[, 9]),
-                                spca.parms[[2]][1],
-                                spca.parms[[2]][2])
+            draws[, 3] <- do.call(qbeta, c(list(corr.draws[, 3]), as.list(spca[-1])))
         }
         if (spexp.parms[[1]] == "uniform") {
-            draws[, 4] <- spexp.parms[[2]][2] - (spexp.parms[[2]][2] - spexp.parms[[2]][1]) * corr.draws[, 10]
+            draws[, 4] <- do.call(qunif, c(list(corr.draws[, 4]), as.list(spexp[-1])))
         }
         if (spexp.parms[[1]] == "triangular") {
-            draws[, 4] <- (corr.draws[, 10] *
-                           (spexp.parms[[2]][2] - spexp.parms[[2]][1]) + (spexp.parms[[2]][1] +
-                                                                          spexp.parms[[2]][3])) / 2
-            draws[, 4] <- ifelse(draws[, 4] < spexp.parms[[2]][3],
-                                 spexp.parms[[2]][1] + sqrt(abs((spexp.parms[[2]][3] - spexp.parms[[2]][1]) *
-                                                                (2 * draws[, 4] - spexp.parms[[2]][1] -
-                                                                 spexp.parms[[2]][3]))), draws[, 4])
-            draws[, 4] <- ifelse(draws[, 4] > spexp.parms[[2]][3],
-                                 spexp.parms[[2]][2] - sqrt(abs(2 * (spexp.parms[[2]][2] - spexp.parms[[2]][3]) *
-                                                                (draws[, 4] - spexp.parms[[2]][3]))), draws[, 4])
+            draws[, 4] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 4]), as.list(spexp[-1])))
         }
         if (spexp.parms[[1]] == "trapezoidal") {
-            draws[, 4] <- (corr.draws[, 10] *
-                           (spexp.parms[[2]][4] + spexp.parms[[2]][3] - spexp.parms[[2]][1] -
-                            spexp.parms[[2]][2]) + (spexp.parms[[2]][1] + spexp.parms[[2]][2])) / 2
-            draws[, 4] <- ifelse(draws[, 4] < spexp.parms[[2]][2],
-                                 spexp.parms[[2]][1] + sqrt(abs((spexp.parms[[2]][2] - spexp.parms[[2]][1]) *
-                                                                (2 * draws[, 4] - spexp.parms[[2]][1] -
-                                                                 spexp.parms[[2]][2]))), draws[, 4])
-            draws[, 4] <- ifelse(draws[, 4] > spexp.parms[[2]][3],
-                                 spexp.parms[[2]][4] - sqrt(abs(2 * (spexp.parms[[2]][4] - spexp.parms[[2]][3]) *
-                                                                (draws[, 4] - spexp.parms[[2]][3]))), draws[, 4])
+            draws[, 4] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 4]), as.list(spexp[-1])))
         }
         if (spexp.parms[[1]] == "logit-logistic") {
             spexp.w <- spexp.parms[[2]][1] + (spexp.parms[[2]][2] * log(corr.draws[, 10] / (1 - corr.draws[, 10])))
@@ -627,9 +549,7 @@ probsens <- function(case,
                 (1 + exp(spexp.w))
         }
         if (spexp.parms[[1]] == "beta") {
-            draws[, 4] <- qbeta(corr.draws[, 10] / (1 + corr.draws[, 10]),
-                                spexp.parms[[2]][1],
-                                spexp.parms[[2]][2])
+            draws[, 4] <- do.call(qbeta, c(list(corr.draws[, 4]), as.list(spexp[-1])))
         }
     }
 

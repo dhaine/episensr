@@ -80,6 +80,11 @@ Non-differential misclassification is assumed when only the two bias parameters
 \code{seexp.parms} and \code{spexp.parms} (i.e. providing the 4 bias parameters)
 evaluates a differential misclassification.
 }
+\details{
+Correlations between sensitivity (or specificity) of exposure classification
+among cases and controls can be specified and use the NORmal To Anything
+(NORTA) transformation (Li & Hammond, 1975).
+}
 \examples{
 # The data for this example come from:
 # Greenland S., Salvan A., Wegman D.H., Hallock M.F., Smith T.J.
@@ -157,4 +162,8 @@ corr.sp = .8)
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
+
+Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
+with Specified Univariate Distributions and Correlation Coefficients}.
+IEEE Trans Syst Man Cybern 5:557-561.
 }
