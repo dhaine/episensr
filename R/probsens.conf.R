@@ -1,22 +1,29 @@
 #' Probabilistic sensitivity analysis for unmeasured confounding.
 #'
-#' Probabilistic sensitivity analysis to correct for unknown or unmeasured confounding and random error simultaneously.
+#' Probabilistic sensitivity analysis to correct for unknown or unmeasured
+#' confounding and random error simultaneously.
 #'
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
 #' @param reps Number of replications to run.
-#' @param prev.exp List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+#' @param prev.exp List defining the prevalence of exposure among the exposed.
+#' The first argument provides the probability distribution function (constant,
+#' uniform, triangular, trapezoidal, truncated normal, or beta) and the second its
+#' parameters as a vector. Lower bound of the truncated normal cannot be less than
+#' zero. Upper bound is Inf by default.
 #' \enumerate{
 #' \item constant: constant value,
 #' \item uniform: min, max,
 #' \item triangular: lower limit, upper limit, mode,
 #' \item trapezoidal: min, lower mode, upper mode, max.
-#' \item logit-logistic: location, scale, lower bound shift, upper bound shift,
-#' \item logit-normal: location, scale, lower bound shift, upper bound shift.
+#' \item normal: lower bound, upper bound, mean, sd.
 #' \item beta: alpha, beta.
 #' }
 #' @param prev.nexp List defining the prevalence of exposure among the unexposed.
-#' @param risk List defining the confounder-disease relative risk or the confounder-exposure odds ratio. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, log-logistic, or log-normal) and the second its parameters as a vector:
+#' @param risk List defining the confounder-disease relative risk or the confounder-exposure
+#' odds ratio. The first argument provides the probability distribution function
+#' (constant, uniform, triangular, trapezoidal, log-logistic, or log-normal) and
+#' the second its parameters as a vector:
 #' \enumerate{
 #' \item constant: constant value,
 #' \item uniform: min, max,
@@ -26,7 +33,8 @@
 #' \item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 #' }
 #' @param corr.p Correlation between the exposure-specific confounder prevalences.
-#' @param discard A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.
+#' @param discard A logical scalar. In case of negative adjusted count, should
+#' the draws be discarded? If set to FALSE, negative counts are set to zero.
 #' @param alpha Significance level.
 #'
 #' @return A list with elements:
