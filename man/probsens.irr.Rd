@@ -9,10 +9,10 @@ probsens.irr(
   pt = NULL,
   reps = 1000,
   seca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
+    "normal", "beta"), parms = NULL),
   seexp.parms = NULL,
   spca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
+    "normal", "beta"), parms = NULL),
   spexp.parms = NULL,
   corr.se = NULL,
   corr.sp = NULL,
@@ -21,25 +21,31 @@ probsens.irr(
 )
 }
 \arguments{
-\item{counts}{A table or matrix where first row contains disease counts and second row contains person-time at risk, and first and second columns are exposed and unexposed observations, as:
+\item{counts}{A table or matrix where first row contains disease counts and
+second row contains person-time at risk, and first and second columns are exposed
+and unexposed observations, as:
 \tabular{lll}{
 \tab Exposed \tab Unexposed \cr
 Cases \tab a \tab b \cr
 Person-time \tab N1 \tab N0
 }}
 
-\item{pt}{A numeric vector of person-time at risk. If provided, \code{counts} must be a numeric vector of disease counts.}
+\item{pt}{A numeric vector of person-time at risk. If provided, \code{counts}
+must be a numeric vector of disease counts.}
 
 \item{reps}{Number of replications to run.}
 
-\item{seca.parms}{List defining the sensitivity of exposure classification among those with the outcome. The first argument provides the probability distribution function (uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+\item{seca.parms}{List defining the sensitivity of exposure classification among
+those with the outcome. The first argument provides the probability distribution
+function (uniform, triangular, trapezoidal, truncated normal, or beta) and the second
+its parameters as a vector. Lower and upper bounds of the truncated normal have
+to be between 0 and 1.
 \enumerate{
 \item constant: constant value,
 \item uniform: min, max,
 \item triangular: lower limit, upper limit, mode,
 \item trapezoidal: min, lower mode, upper mode, max,
-\item logit-logistic: location, scale, lower bound shift, upper bound shift,
-\item logit-normal: location, scale, lower bound shift, upper bound shift,
+\item normal: lower bound, upper bound, mean, sd,
 \item beta: alpha, beta.
 }}
 
@@ -53,7 +59,8 @@ Person-time \tab N1 \tab N0
 
 \item{corr.sp}{Correlation between case and non-case specificities.}
 
-\item{discard}{A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.}
+\item{discard}{A logical scalar. In case of negative adjusted count, should
+the draws be discarded? If set to FALSE, negative counts are set to zero.}
 
 \item{alpha}{Significance level.}
 }
@@ -65,7 +72,8 @@ A list with elements:
 \item{sim.df}{Data frame of random parameters and computed values.}
 }
 \description{
-Probabilistic sensitivity analysis to correct for exposure misclassification when person-time data has been collected.
+Probabilistic sensitivity analysis to correct for exposure misclassification
+when person-time data has been collected.
 Non-differential misclassification is assumed when only the two bias parameters
 \code{seca.parms} and \code{spca.parms} are provided. Adding the 2 parameters
 \code{seexp.parms} and \code{spexp.parms} (i.e. providing the 4 bias parameters)

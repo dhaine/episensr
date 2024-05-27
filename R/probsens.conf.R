@@ -284,7 +284,7 @@ probsens.conf <- function(case,
             draws[, 2] <- do.call(trapezoid::rtrapezoid, as.list(p0))
         }
         if (prev.nexp[[1]] == "normal") {
-            draws[, 2] <- do.call(truncnorm::rtruncnorm, as.list(p2))
+            draws[, 2] <- do.call(truncnorm::rtruncnorm, as.list(p0))
         }
         if (prev.nexp[[1]] == "beta") {
             draws[, 2] <- do.call(rbeta, as.list(p0))

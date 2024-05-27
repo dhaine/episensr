@@ -8,10 +8,10 @@ probsens.conf(
   case,
   exposed,
   reps = 1000,
-  prev.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
-  prev.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
+  prev.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
+  prev.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
   risk = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
     "log-logistic", "log-normal"), parms = NULL),
   corr.p = NULL,
@@ -26,20 +26,26 @@ probsens.conf(
 
 \item{reps}{Number of replications to run.}
 
-\item{prev.exp}{List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+\item{prev.exp}{List defining the prevalence of exposure among the exposed.
+The first argument provides the probability distribution function (constant,
+uniform, triangular, trapezoidal, truncated normal, or beta) and the second its
+parameters as a vector. Lower bound of the truncated normal cannot be less than
+zero. Upper bound is Inf by default.
 \enumerate{
 \item constant: constant value,
 \item uniform: min, max,
 \item triangular: lower limit, upper limit, mode,
 \item trapezoidal: min, lower mode, upper mode, max.
-\item logit-logistic: location, scale, lower bound shift, upper bound shift,
-\item logit-normal: location, scale, lower bound shift, upper bound shift.
+\item normal: lower bound, upper bound, mean, sd.
 \item beta: alpha, beta.
 }}
 
 \item{prev.nexp}{List defining the prevalence of exposure among the unexposed.}
 
-\item{risk}{List defining the confounder-disease relative risk or the confounder-exposure odds ratio. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, log-logistic, or log-normal) and the second its parameters as a vector:
+\item{risk}{List defining the confounder-disease relative risk or the confounder-exposure
+odds ratio. The first argument provides the probability distribution function
+(constant, uniform, triangular, trapezoidal, log-logistic, or log-normal) and
+the second its parameters as a vector:
 \enumerate{
 \item constant: constant value,
 \item uniform: min, max,
@@ -51,7 +57,8 @@ probsens.conf(
 
 \item{corr.p}{Correlation between the exposure-specific confounder prevalences.}
 
-\item{discard}{A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.}
+\item{discard}{A logical scalar. In case of negative adjusted count, should
+the draws be discarded? If set to FALSE, negative counts are set to zero.}
 
 \item{alpha}{Significance level.}
 }
@@ -64,7 +71,8 @@ A list with elements:
 \item{reps}{Number of replications.}
 }
 \description{
-Probabilistic sensitivity analysis to correct for unknown or unmeasured confounding and random error simultaneously.
+Probabilistic sensitivity analysis to correct for unknown or unmeasured
+confounding and random error simultaneously.
 }
 \examples{
 # The data for this example come from:
@@ -72,23 +80,27 @@ Probabilistic sensitivity analysis to correct for unknown or unmeasured confound
 # Increased risk of infection with human immunodeficiency virus type 1 among
 # uncircumcised men presenting with genital ulcer disease in Kenya.
 # Clin Infect Dis 1996;23:449-53.
+tyndall <- matrix(c(105, 85, 527, 93),
+dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")), nrow = 2, byrow = TRUE)
 set.seed(123)
-probsens.conf(matrix(c(105, 85, 527, 93),
-dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")), nrow = 2, byrow = TRUE),
-reps = 20000,
+probsens.conf(tyndall, reps = 20000,
 prev.exp = list("triangular", c(.7, .9, .8)),
 prev.nexp = list("trapezoidal", c(.03, .04, .05, .06)),
 risk = list("triangular", c(.6, .7, .63)),
 corr.p = .8)
 
 set.seed(123)
-probsens.conf(matrix(c(105, 85, 527, 93),
-dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")), nrow = 2, byrow = TRUE),
-reps = 20000,
+probsens.conf(tyndall, reps = 20000,
 prev.exp = list("beta", c(200, 56)),
 prev.nexp = list("beta", c(10, 16)),
 risk = list("triangular", c(.6, .7, .63)),
 corr.p = .8)
+
+set.seed(123)
+probsens.conf(tyndall, reps = 20000,
+prev.exp = list("normal", c(.01, .12, 0.03, 0.005)),
+prev.nexp = list("normal", c(0, Inf, 0.01, 0.0001)),
+risk = list("triangular", c(.6, .7, .63)), corr.p = .8)
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
