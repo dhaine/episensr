@@ -8,10 +8,10 @@ probsens.irr.conf(
   counts,
   pt = NULL,
   reps = 1000,
-  prev.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
-  prev.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
+  prev.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
+  prev.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
   risk = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
     "log-logistic", "log-normal"), parms = NULL),
   corr.p = NULL,
@@ -20,31 +20,40 @@ probsens.irr.conf(
 )
 }
 \arguments{
-\item{counts}{A table or matrix where first row contains disease counts and second row contains person-time at risk, and first and second columns are exposed and unexposed observations, as:
+\item{counts}{A table or matrix where first row contains disease counts and
+second row contains person-time at risk, and first and second columns are
+exposed and unexposed observations, as:
 \tabular{lll}{
 \tab Exposed \tab Unexposed \cr
 Cases \tab a \tab b \cr
 Person-time \tab N1 \tab N0
 }}
 
-\item{pt}{A numeric vector of person-time at risk. If provided, \code{counts} must be a numeric vector of disease counts.}
+\item{pt}{A numeric vector of person-time at risk. If provided, \code{counts}
+must be a numeric vector of disease counts.}
 
 \item{reps}{Number of replications to run.}
 
-\item{prev.exp}{List defining the prevalence of exposure among the exposed. The first argument provides the probability distribution function (constant,uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+\item{prev.exp}{List defining the prevalence of exposure among the exposed.
+The first argument provides the probability distribution function (constant,
+uniform, triangular, trapezoidal, truncated normal, or beta) and the second
+its parameters as a vector. Lower and upper bounds for truncated normal distribution
+cannot be les than zero.
 \enumerate{
 \item constant; value,
 \item uniform: min, max,
 \item triangular: lower limit, upper limit, mode,
 \item trapezoidal: min, lower mode, upper mode, max.
-\item logit-logistic: location, scale, lower bound shift, upper bound shift,
-\item logit-normal: location, scale, lower bound shift, upper bound shift,
+\item normal: lower bound, upper bound, mean, sd,
 \item beta: alpha, beta.
 }}
 
 \item{prev.nexp}{List defining the prevalence of exposure among the unexposed.}
 
-\item{risk}{List defining the confounder-disease relative risk or the confounder-exposure odds ratio. The first argument provides the probability distribution function (constant,uniform, triangular, trapezoidal, log-logistic, or log-normal) and the second its parameters as a vector:
+\item{risk}{List defining the confounder-disease relative risk or the
+confounder-exposure odds ratio. The first argument provides the probability
+distribution function (constant,uniform, triangular, trapezoidal, log-logistic,
+or log-normal) and the second its parameters as a vector:
 \enumerate{
 \item constant: value,
 \item uniform: min, max,

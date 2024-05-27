@@ -593,10 +593,10 @@ test_that("IRR Confounding bias: adjusted measures are correct", {
                       prev.nexp = list("trapezoidal", c(.09, .27, .35, .59)),
                       risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
                       corr.p = .8)
-    expect_equal(model$adj.measures[1, 1], 0.9653, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.7620, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 1.2656, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.9711, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.7063, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 1.3607, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 0.9701, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.8199, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 1.1804, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 0.9718, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.7270, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 1.3065, tolerance = 1e-4, scale = 1)
 })
