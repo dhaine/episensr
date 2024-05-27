@@ -5,7 +5,9 @@
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
 #' @param reps Number of replications to run.
-#' @param or.parms List defining the selection bias odds. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, log-logistic or log-normal) and the second its parameters as a vector:
+#' @param or.parms List defining the selection bias odds. The first argument
+#' provides the probability distribution function (constant, uniform, triangular,
+#' trapezoidal, log-logistic or log-normal) and the second its parameters as a vector:
 #' \enumerate{
 #' \item constant: constant value,
 #' \item uniform: min, max,
@@ -14,14 +16,15 @@
 #' \item log-logistic: shape, rate. Must be strictly positive,
 #' \item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 #' }
-#' @param case.exp If or.parms not provided, defines the selection probability among case exposed. The first argument provides the probability distribution function and the second its parameters as a vector:
+#' @param case.exp If or.parms not provided, defines the selection probability
+#' among case exposed. The first argument provides the probability distribution
+#' function and the second its parameters as a vector:
 #' \enumerate{
 #' \item constant: constant value,
 #' \item uniform: min, max,
 #' \item triangular: lower limit, upper limit, mode,
 #' \item trapezoidal: min, lower mode, upper mode, max.
-#' \item logit-logistic: location, scale, lower bound shift, upper bound shift,
-#' \item logit-normal: location, scale, lower bound shift, upper bound shift,
+#' \item normal: truncated normal with lower bound, upper bound, mean, sd,
 #' \item beta: alpha, beta.
 #' }
 #' @param case.nexp Same among cases non-exposed.
@@ -60,19 +63,19 @@ probsens.sel <- function(case,
                                          parms = NULL),
                          case.exp = list(dist = c("constant", "uniform",
                                                   "triangular", "trapezoidal",
-                                                  "logit-logistic", "logit-normal", "beta"),
+                                                  "normal", "beta"),
                                          parms = NULL),
                          case.nexp = list(dist = c("constant", "uniform",
                                                    "triangular", "trapezoidal",
-                                                   "logit-logistic", "logit-normal", "beta"),
+                                                   "normal", "beta"),
                                           parms = NULL),
                          ncase.exp = list(dist = c("constant", "uniform",
                                                    "triangular", "trapezoidal",
-                                                   "logit-logistic", "logit-normal", "beta"),
+                                                   "normal", "beta"),
                                           parms = NULL),
                          ncase.nexp = list(dist = c("constant", "uniform",
                                                     "triangular", "trapezoidal",
-                                                    "logit-logistic", "logit-normal", "beta"),
+                                                    "normal", "beta"),
                                            parms = NULL),
                          alpha = 0.05) {
     if (reps < 1)
@@ -134,22 +137,11 @@ probsens.sel <- function(case,
                                               (case.exp[[2]][2] > case.exp[[2]][3]) |
                                               (case.exp[[2]][3] > case.exp[[2]][4])))
             stop("Wrong arguments for your trapezoidal distribution.")
-        if (case.exp[[1]] == "logit-logistic" & (length(case.exp[[2]]) < 2 |
-                                                 length(case.exp[[2]]) == 3 | length(case.exp[[2]]) > 4))
-            stop("For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-        if (case.exp[[1]] == "logit-logistic" & length(case.exp[[2]]) == 4 &
-            ((case.exp[[2]][3] >= case.exp[[2]][4]) | (!all(case.exp[[2]][3:4] >= 0 & case.exp[[2]][3:4] <= 1))))
-            stop("For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-        if (case.exp[[1]] == "logit-logistic" & length(case.exp[[2]]) == 2)
-            case.exp <- list(case.exp[[1]], c(case.exp[[2]], c(0, 1)))
-        if (case.exp[[1]] == "logit-normal" & (length(case.exp[[2]]) < 2 |
-                                               length(case.exp[[2]]) == 3 | length(case.exp[[2]]) > 4))
-            stop("For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-        if (case.exp[[1]] == "logit-normal" & length(case.exp[[2]]) == 4 &
-            ((case.exp[[2]][3] >= case.exp[[2]][4]) | (!all(case.exp[[2]][3:4] >= 0 & case.exp[[2]][3:4] <= 1))))
-            stop("For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-        if (case.exp[[1]] == "logit-normal" & length(case.exp[[2]]) == 2)
-            case.exp <- list(case.exp[[1]], c(case.exp[[2]], c(0, 1)))
+        if (case.exp[[1]] == "normal" & (length(case.exp[[2]]) != 4))
+            stop("For truncated normal distribution, please provide vector of lower and upper bounds, mean and sd.")
+        if (case.exp[[1]] == "normal" & length(case.exp[[2]]) == 4 &
+            ((case.exp[[2]][1] >= case.exp[[2]][2]) | (case.exp[[2]][1] < 0)))
+            stop("For truncated normal distribution, please provide sensible values for lower and upper bounds (lower bound >= 0; lower limit < upper limit).")
         if ((case.exp[[1]] == "constant" | case.exp[[1]] == "uniform" |
              case.exp[[1]] == "triangular" | case.exp[[1]] == "trapezoidal") &
             !all(case.exp[[2]] >= 0 & case.exp[[2]] <= 1))
@@ -178,24 +170,11 @@ probsens.sel <- function(case,
                                                (case.nexp[[2]][2] > case.nexp[[2]][3]) |
                                                (case.nexp[[2]][3] > case.nexp[[2]][4])))
             stop("Wrong arguments for your trapezoidal distribution.")
-        if (case.nexp[[1]] == "logit-logistic" & (length(case.nexp[[2]]) < 2 |
-                                                  length(case.nexp[[2]]) == 3 | length(case.nexp[[2]]) > 4))
-            stop("For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-        if (case.nexp[[1]] == "logit-logistic" & length(case.nexp[[2]]) == 4 &
-            ((case.nexp[[2]][3] >= case.nexp[[2]][4]) | (!all(case.nexp[[2]][3:4] >= 0 &
-                                                              case.nexp[[2]][3:4] <= 1))))
-            stop("For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-        if (case.nexp[[1]] == "logit-logistic" & length(case.nexp[[2]]) == 2)
-            case.nexp <- list(case.nexp[[1]], c(case.nexp[[2]], c(0, 1)))
-        if (case.nexp[[1]] == "logit-normal" & (length(case.nexp[[2]]) < 2 |
-                                                length(case.nexp[[2]]) == 3 | length(case.nexp[[2]]) > 4))
-            stop("For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-        if (case.nexp[[1]] == "logit-normal" & length(case.nexp[[2]]) == 4 &
-            ((case.nexp[[2]][3] >= case.nexp[[2]][4]) | (!all(case.nexp[[2]][3:4] >= 0 &
-                                                              case.nexp[[2]][3:4] <= 1))))
-            stop("For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-        if (case.nexp[[1]] == "logit-normal" & length(case.nexp[[2]]) == 2)
-            case.nexp <- list(case.nexp[[1]], c(case.nexp[[2]], c(0, 1)))
+        if (case.nexp[[1]] == "normal" & (length(case.nexp[[2]]) != 4))
+            stop("For truncated normal distribution, please provide vector of lower and upper bounds, mean and sd.")
+        if (case.nexp[[1]] == "normal" & length(case.nexp[[2]]) == 4 &
+            ((case.nexp[[2]][1] >= case.nexp[[2]][2]) | (case.nexp[[2]][1] < 0)))
+            stop("For truncated normal distribution, please provide sensible values for lower and upper bounds (lower bound >=0; lower limit < upper limit).")
         if ((case.nexp[[1]] == "constant" | case.nexp[[1]] == "uniform" |
              case.nexp[[1]] == "triangular" | case.nexp[[1]] == "trapezoidal") &
             !all(case.nexp[[2]] >= 0 & case.nexp[[2]] <= 1))
@@ -224,24 +203,11 @@ probsens.sel <- function(case,
                                                (ncase.exp[[2]][2] > ncase.exp[[2]][3]) |
                                                (ncase.exp[[2]][3] > ncase.exp[[2]][4])))
             stop("Wrong arguments for your trapezoidal distribution.")
-        if (ncase.exp[[1]] == "logit-logistic" & (length(ncase.exp[[2]]) < 2 |
-                                                  length(ncase.exp[[2]]) == 3 | length(ncase.exp[[2]]) > 4))
-            stop("For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-        if (ncase.exp[[1]] == "logit-logistic" & length(ncase.exp[[2]]) == 4 &
-            ((ncase.exp[[2]][3] >= ncase.exp[[2]][4]) | (!all(ncase.exp[[2]][3:4] >= 0 &
-                                                              ncase.exp[[2]][3:4] <= 1))))
-            stop("For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-        if (ncase.exp[[1]] == "logit-logistic" & length(ncase.exp[[2]]) == 2)
-            ncase.exp <- list(ncase.exp[[1]], c(ncase.exp[[2]], c(0, 1)))
-        if (ncase.exp[[1]] == "logit-normal" & (length(ncase.exp[[2]]) < 2 |
-                                                length(ncase.exp[[2]]) == 3 | length(ncase.exp[[2]]) > 4))
-            stop("For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-        if (ncase.exp[[1]] == "logit-normal" & length(ncase.exp[[2]]) == 4 &
-            ((ncase.exp[[2]][3] >= ncase.exp[[2]][4]) | (!all(ncase.exp[[2]][3:4] >= 0 &
-                                                              ncase.exp[[2]][3:4] <= 1))))
-            stop("For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-        if (ncase.exp[[1]] == "logit-normal" & length(ncase.exp[[2]]) == 2)
-            ncase.exp <- list(ncase.exp[[1]], c(ncase.exp[[2]], c(0, 1)))
+        if (ncase.exp[[1]] == "normal" & (length(ncase.exp[[2]]) != 4))
+            stop("For truncated normal distribution, please provide vector of lower and upper bounds, mean and sd.")
+        if (ncase.exp[[1]] == "normal" & length(ncase.exp[[2]]) == 4 &
+            ((ncase.exp[[2]][1] >= ncase.exp[[2]][2]) | (ncase.exp[[2]][1] < 0)))
+            stop("For truncated normal distribution, please provide sensible values for lower and upper bounds (lower bound >= 0; lower limit < upper limit).")
         if ((ncase.exp[[1]] == "constant" | ncase.exp[[1]] == "uniform" |
              ncase.exp[[1]] == "triangular" | ncase.exp[[1]] == "trapezoidal") &
             !all(ncase.exp[[2]] >= 0 & ncase.exp[[2]] <= 1))
@@ -270,24 +236,11 @@ probsens.sel <- function(case,
                                                 (ncase.nexp[[2]][2] > ncase.nexp[[2]][3]) |
                                                 (ncase.nexp[[2]][3] > ncase.nexp[[2]][4])))
             stop("Wrong arguments for your trapezoidal distribution.")
-        if (ncase.nexp[[1]] == "logit-logistic" & (length(ncase.nexp[[2]]) < 2 |
-                                                   length(ncase.nexp[[2]]) == 3 | length(ncase.nexp[[2]]) > 4))
-            stop("For logit-logistic distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-        if (ncase.nexp[[1]] == "logit-logistic" & length(ncase.nexp[[2]]) == 4 &
-            ((ncase.nexp[[2]][3] >= ncase.nexp[[2]][4]) | (!all(ncase.nexp[[2]][3:4] >= 0 &
-                                                                ncase.nexp[[2]][3:4] <= 1))))
-            stop("For logit-logistic distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-        if (ncase.nexp[[1]] == "logit-logistic" & length(ncase.nexp[[2]]) == 2)
-            ncase.nexp <- list(ncase.nexp[[1]], c(ncase.nexp[[2]], c(0, 1)))
-        if (ncase.nexp[[1]] == "logit-normal" & (length(ncase.nexp[[2]]) < 2 |
-                                                 length(ncase.nexp[[2]]) == 3 | length(ncase.nexp[[2]]) > 4))
-            stop("For logit-normal distribution, please provide vector of location, scale, and eventually lower and upper bound limits if you want to shift and rescale the distribution.")
-        if (ncase.nexp[[1]] == "logit-normal" & length(ncase.nexp[[2]]) == 4 &
-            ((ncase.nexp[[2]][3] >= ncase.nexp[[2]][4]) | (!all(ncase.nexp[[2]][3:4] >= 0 &
-                                                                ncase.nexp[[2]][3:4] <= 1))))
-            stop("For logit-normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-        if (ncase.nexp[[1]] == "logit-normal" & length(ncase.nexp[[2]]) == 2)
-            ncase.nexp <- list(ncase.nexp[[1]], c(ncase.nexp[[2]], c(0, 1)))
+        if (ncase.nexp[[1]] == "normal" & (length(ncase.nexp[[2]]) != 4))
+            stop("For truncated normal distribution, please provide vector of lower and upper bounds, mean and sd.")
+        if (ncase.nexp[[1]] == "normal" & length(ncase.nexp[[2]]) == 4 &
+            ((ncase.nexp[[2]][1] >= ncase.nexp[[2]][2]) | (ncase.nexp[[2]][1] < 0)))
+            stop("For truncated normal distribution, please provide sensible values for lower and upper bounds (lower bound >=0; lower limit < upper limit).")
         if ((ncase.nexp[[1]] == "constant" | ncase.nexp[[1]] == "uniform" |
              ncase.nexp[[1]] == "triangular" | ncase.nexp[[1]] == "trapezoidal") &
             !all(ncase.nexp[[2]] >= 0 & ncase.nexp[[2]] <= 1))
@@ -375,11 +328,8 @@ probsens.sel <- function(case,
         if (case.exp[[1]] == "trapezoidal") {
             bias_factor[, 1] <- do.call(trapezoid::rtrapezoid, as.list(case_exp))
         }
-        if (case.exp[[1]] == "logit-logistic") {
-            bias_factor[, 1] <- logitlog.dstr(case_exp)
-        }
-        if (case.exp[[1]] == "logit-normal") {
-            bias_factor[, 1] <- logitnorm.dstr(case_exp)
+        if (case.exp[[1]] == "normal") {
+            bias_factor[, 1] <- do.call(truncnorm::rtruncnorm, as.list(case_exp))
         }
         if (case.exp[[1]] == "beta") {
             bias_factor[, 1] <- do.call(rbeta, as.list(case_exp))
@@ -397,11 +347,8 @@ probsens.sel <- function(case,
         if (case.nexp[[1]] == "trapezoidal") {
             bias_factor[, 2] <- do.call(trapezoid::rtrapezoid, as.list(case_nexp))
         }
-        if (case.nexp[[1]] == "logit-logistic") {
-            bias_factor[, 2] <- logitlog.dstr(case_nexp)
-        }
-        if (case.nexp[[1]] == "logit-normal") {
-            bias_factor[, 2] <- logitnorm.dstr(case_nexp)
+        if (case.nexp[[1]] == "normal") {
+            bias_factor[, 2] <- do.call(truncnorm::rtruncnorm, as.list(case_nexp))
         }
         if (case.nexp[[1]] == "beta") {
             bias_factor[, 2] <- do.call(rbeta, as.list(case_nexp))
@@ -419,11 +366,8 @@ probsens.sel <- function(case,
         if (ncase.exp[[1]] == "trapezoidal") {
             bias_factor[, 3] <- do.call(trapezoid::rtrapezoid, as.list(ncase_exp))
         }
-        if (ncase.exp[[1]] == "logit-logistic") {
-            bias_factor[, 3] <- logitlog.dstr(ncase_exp)
-        }
-        if (ncase.exp[[1]] == "logit-normal") {
-            bias_factor[, 3] <- logitnorm.dstr(ncase_exp)
+        if (ncase.exp[[1]] == "normal") {
+            bias_factor[, 3] <- do.call(truncnorm::rtruncnorm, as.list(ncase_exp))
         }
         if (ncase.exp[[1]] == "beta") {
             bias_factor[, 3] <- do.call(rbeta, as.list(ncase_exp))
@@ -441,18 +385,14 @@ probsens.sel <- function(case,
         if (ncase.nexp[[1]] == "trapezoidal") {
             bias_factor[, 4] <- do.call(trapezoid::rtrapezoid, as.list(ncase_nexp))
         }
-        if (ncase.nexp[[1]] == "logit-logistic") {
-            bias_factor[, 4] <- logitlog.dstr(ncase_nexp)
-        }
-        if (ncase.nexp[[1]] == "logit-normal") {
-            bias_factor[, 4] <- logitnorm.dstr(ncase_nexp)
+        if (ncase.nexp[[1]] == "normal") {
+            bias_factor[, 4] <- do.call(truncnorm::rtruncnorm, as.list(ncase_nexp))
         }
         if (ncase.nexp[[1]] == "beta") {
             bias_factor[, 4] <- do.call(rbeta, as.list(ncase_nexp))
         }
 
-        draws[, 1] <- (bias_factor[, 1]*bias_factor[, 4]) /
-            (bias_factor[, 2]*bias_factor[, 3])
+        draws[, 1] <- (bias_factor[, 1] * bias_factor[, 4]) / (bias_factor[, 2] * bias_factor[, 3])
     }
 
     draws[, 3] <- runif(reps)
