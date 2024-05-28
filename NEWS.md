@@ -1,6 +1,7 @@
-# episensr X.X.X
+# episensr 2.0.0
 - Using NORTA transformation, replacing sampling from a standard uniform distribution, for correlations between sensitivity and specificity of exposure classification among cases and controls in Probabilistic Bias Analyses (PBA).
 - Replacing log-logistic and logit-normal distributions by a truncated normal distribution in PBA (package `truncnorm`).
+- Due to these breaking changes in PBA functions, legacy versions are also available but will be removed in future versions.
 - Remove `Or.sel` from `multidimBias`.
 
 # episensr 1.3.0

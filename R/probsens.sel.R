@@ -2,6 +2,20 @@
 #'
 #' Probabilistic sensitivity analysis to correct for selection bias.
 #'
+#' @section Updated calculations:
+#' episensr 2.0.0 introduced updated calculations of probabilistic bias analyses
+#' by (1) proposing truncated normal distribution instead of log-logistic or
+#' log-normal distributions, and (2) sampling true prevalences and then sampling
+#' the adjusted cell counts rather than just using the expected cell counts from
+#' a simple quantitative bias analysis. This updated version should be preferred
+#' but if you need to run an old analysis, you can easily revert to the
+#' computation using [probsens_legacy()] as follows:
+#'
+#' ```
+#' library(episensr)
+#' probsens.sel <- probsens.sel_legacy
+#' ```
+#'
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
 #' @param reps Number of replications to run.
@@ -39,7 +53,8 @@
 #' \item{sim.df}{Data frame of random parameters and computed values.}
 #' \item{reps}{Number of replications.}
 #'
-#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
+#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
+#' Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
 #'
 #' @examples
 #' # The data for this example come from:

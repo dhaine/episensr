@@ -1,6 +1,25 @@
 #' Probabilistic sensitivity analysis for unmeasured confounding of person-time data and random error.
 #'
-#' Probabilistic sensitivity analysis to correct for unmeasured confounding when person-time data has been collected.
+#' Probabilistic sensitivity analysis to correct for unmeasured confounding when
+#' person-time data has been collected.
+#'
+#' Correlations between prevalences of exposure classification among cases and
+#' controls can be specified and use the NORmal To Anything (NORTA)
+#' transformation (Li & Hammond, 1975).
+#'
+#' @section Updated calculations:
+#' episensr 2.0.0 introduced updated calculations of probabilistic bias analyses
+#' by (1) using the NORTA transformation to define a correlation between
+#' distributions, and (2) sampling true prevalences and then sampling the
+#' adjusted cell counts rather than just using the expected cell counts from a
+#' simple quantitative bias analysis. This updated version should be preferred
+#' but if you need to run an old analysis, you can easily revert to the
+#' computation using [probsens.irr.conf_legacy()] as follows:
+#'
+#' ```
+#' library(episensr)
+#' probsens.irr.conf <- probsens.irr.conf_legacy
+#' ```
 #'
 #' @param counts A table or matrix where first row contains disease counts and
 #' second row contains person-time at risk, and first and second columns are
@@ -51,6 +70,10 @@
 #'
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 #' Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
+#'
+#' Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
+#' with Specified Univariate Distributions and Correlation Coefficients}.
+#' IEEE Trans Syst Man Cybern 5:557-561.
 #' @examples
 #' set.seed(123)
 #' # Unmeasured confounding

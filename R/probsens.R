@@ -11,6 +11,20 @@
 #' among cases and controls can be specified and use the NORmal To Anything
 #' (NORTA) transformation (Li & Hammond, 1975).
 #'
+#' @section Updated calculations:
+#' episensr 2.0.0 introduced updated calculations of probabilistic bias analyses
+#' by (1) using the NORTA transformation to define a correlation between
+#' distributions, and (2) sampling true prevalences and then sampling the
+#' adjusted cell counts rather than just using the expected cell counts from a
+#' simple quantitative bias analysis. This updated version should be preferred
+#' but if you need to run an old analysis, you can easily revert to the
+#' computation using [probsens_legacy()] as follows:
+#'
+#' ```
+#' library(episensr)
+#' probsens <- probsens_legacy
+#' ```
+#'
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
 #' @param type Choice of correction for exposure or outcome misclassification.

@@ -3,6 +3,24 @@
 #' Probabilistic sensitivity analysis to correct for unknown or unmeasured
 #' confounding and random error simultaneously.
 #'
+#' Correlations between prevalences of exposure classification among cases and
+#' controls can be specified and use the NORmal To Anything (NORTA)
+#' transformation (Li & Hammond, 1975).
+#'
+#' @section Updated calculations:
+#' episensr 2.0.0 introduced updated calculations of probabilistic bias analyses
+#' by (1) using the NORTA transformation to define a correlation between
+#' distributions, and (2) sampling true prevalences and then sampling the
+#' adjusted cell counts rather than just using the expected cell counts from a
+#' simple quantitative bias analysis. This updated version should be preferred
+#' but if you need to run an old analysis, you can easily revert to the
+#' computation using [probsens.conf_legacy()] as follows:
+#'
+#' ```
+#' library(episensr)
+#' probsens.conf <- probsens.conf_legacy
+#' ```
+#'
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
 #' @param reps Number of replications to run.
@@ -44,8 +62,12 @@
 #' \item{sim.df}{Data frame of random parameters and computed values.}
 #' \item{reps}{Number of replications.}
 #'
-#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
+#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
+#' Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
 #'
+#' Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
+#' with Specified Univariate Distributions and Correlation Coefficients}.
+#' IEEE Trans Syst Man Cybern 5:557-561.
 #' @examples
 #' # The data for this example come from:
 #' # Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O. et al.
