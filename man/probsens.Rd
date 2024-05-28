@@ -10,10 +10,10 @@ probsens(
   type = c("exposure", "outcome"),
   reps = 1000,
   seca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
+    "normal", "beta"), parms = NULL),
   seexp.parms = NULL,
   spca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
+    "normal", "beta"), parms = NULL),
   spexp.parms = NULL,
   corr.se = NULL,
   corr.sp = NULL,
@@ -32,17 +32,21 @@ probsens(
 
 \item{seca.parms}{List defining:
 \enumerate{
-\item The sensitivity of exposure classification among those with the outcome (when \code{type = "exposure"}), or
-\item The sensitivity of outcome classification among those with the exposure (when \code{type = "outcome"}).
+\item The sensitivity of exposure classification among those with the outcome
+(when \code{type = "exposure"}), or
+\item The sensitivity of outcome classification among those with the exposure
+(when \code{type = "outcome"}).
 }
-The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, logit-logistic, logit-normal, or beta) and the second its parameters as a vector. Logit-logistic and logit-normal distributions can be shifted by providing lower and upper bounds. Avoid providing these values if a non-shifted distribution is desired.
+The first argument provides the probability distribution function (constant,
+uniform, triangular, trapezoidal, truncated normal, or beta) and the second
+its parameters as a vector. Lower and upper bounds of the truncated normal
+have to be between 0 and 1.
 \enumerate{
 \item constant: constant value,
 \item uniform: min, max,
 \item triangular: lower limit, upper limit, mode,
 \item trapezoidal: min, lower mode, upper mode, max,
-\item logit-logistic: location, scale, lower bound shift, upper bound shift,
-\item logit-normal: location, scale, lower bound shift, upper bound shift.
+\item normal: lower bound, upper bound, mean, sd.
 \item beta: alpha, beta.
 }}
 
@@ -80,25 +84,26 @@ Non-differential misclassification is assumed when only the two bias parameters
 \code{seexp.parms} and \code{spexp.parms} (i.e. providing the 4 bias parameters)
 evaluates a differential misclassification.
 }
+\details{
+Correlations between sensitivity (or specificity) of exposure classification
+among cases and controls can be specified and use the NORmal To Anything
+(NORTA) transformation (Li & Hammond, 1975).
+}
 \examples{
 # The data for this example come from:
 # Greenland S., Salvan A., Wegman D.H., Hallock M.F., Smith T.J.
 # A case-control study of cancer mortality at a transformer-assembly facility.
 # Int Arch Occup Environ Health 1994; 66(1):49-54.
+greenland <- matrix(c(45, 94, 257, 945), dimnames = list(c("BC+", "BC-"),
+c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE)
 set.seed(123)
 # Exposure misclassification, non-differential
-probsens(matrix(c(45, 94, 257, 945),
-dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
-type = "exposure",
-reps = 20000,
+probsens(greenland, type = "exposure", reps = 20000,
 seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
 spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
 
 # Exposure misclassification, differential
-probsens(matrix(c(45, 94, 257, 945),
-dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
-type = "exposure",
-reps = 20000,
+probsens(greenland, type = "exposure", reps = 20000,
 seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
 seexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
 spca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
@@ -106,10 +111,7 @@ spexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
 corr.se = .8,
 corr.sp = .8)
 
-probsens(matrix(c(45, 94, 257, 945),
-dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
-type = "exposure",
-reps = 20000,
+probsens(greenland, type = "exposure", reps = 20000,
 seca.parms = list("beta", c(908, 16)),
 seexp.parms = list("beta", c(156, 56)),
 spca.parms = list("beta", c(153, 6)),
@@ -157,4 +159,8 @@ corr.sp = .8)
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
+
+Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
+with Specified Univariate Distributions and Correlation Coefficients}.
+IEEE Trans Syst Man Cybern 5:557-561.
 }

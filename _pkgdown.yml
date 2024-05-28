@@ -1,8 +1,9 @@
-destination: docs
-
+url: https://dhaine.github.io/episensr/
 template:
-  params:
-    bootswatch: simplex
-
+  bootstrap: 5
+  bootswatch: simplex
+development:
+  mode: release
 navbar:
   type: inverse
+

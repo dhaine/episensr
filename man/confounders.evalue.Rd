@@ -58,7 +58,7 @@ association.
 confounders.evalue(est = 3.9, type = "RR")
 
 # The data for this example come from:
-# Oddy W.H, Smith G.J., Jacony P. 
+# Oddy W.H, Smith G.J., Jacony P.
 # A possible strategy for developing a model to account for attrition bias in a
 # longitudinal cohort to investigate associations between exclusive breastfeeding and
 # overweight and obesity at 20 years.

@@ -5,7 +5,7 @@
 #' @param x An object of class "episensr.booted" returned from the episensr bootstrap generation function.
 #' @param association Choice between bias adjusted relative risk (rr) and odds ratio (or).
 #' @param ... Other unused arguments.
-#' 
+#'
 #' @seealso \code{\link{boot.bias}, \link{boot}, \link{selection}, \link{misclassification}}
 #'
 #' @examples
@@ -19,9 +19,9 @@
 #' set.seed(123)
 #' misclass_boot <- boot.bias(misclass_eval)
 #' plot(misclass_boot, association = "rr")
-#' 
+#'
 #' @export
-#' @importFrom ggplot2 ggplot geom_histogram aes geom_density geom_vline ggtitle xlab
+#' @importFrom ggplot2 ggplot geom_histogram aes after_stat geom_density geom_vline ggtitle xlab
 plot.episensr.booted <- function(x,
                                  association = c("rr", "or"),
                                  ...) {
@@ -34,9 +34,9 @@ plot.episensr.booted <- function(x,
 
     if (association == "rr") {
         ggplot(.data, aes(x = .data$rr)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins,
+            geom_histogram(aes(y = after_stat(.data$density)), bins = bins,
                            colour = "grey", fill = "dimgrey") +
-            geom_density() + 
+            geom_density() +
             geom_vline(xintercept = x$ci[1, 1], size = .75,
                        colour = "black", linetype = "dashed") +
             geom_vline(xintercept = x$ci[1, 2], size = .75,
@@ -45,12 +45,12 @@ plot.episensr.booted <- function(x,
             xlab("Relative risk")
     } else if (association == "or") {
         ggplot(.data, aes(x = .data$or)) +
-            geom_histogram(aes(y = .data$..density..), bins = bins,
+            geom_histogram(aes(y = after_stat(.data$density)), bins = bins,
                            colour = "grey", fill = "dimgrey") +
             geom_density() +
-            geom_vline(xintercept = x$ci[1, 1], size = .75,
+            geom_vline(xintercept = x$ci[2, 1], size = .75,
                        colour = "black", linetype = "dashed") +
-            geom_vline(xintercept = x$ci[1, 2], size = .75,
+            geom_vline(xintercept = x$ci[2, 2], size = .75,
                        colour = "black", linetype = "dashed") +
             ggtitle("Bias adjusted odds ratio") +
             xlab("Odds ratio")

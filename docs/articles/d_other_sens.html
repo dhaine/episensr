@@ -4,7 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="episensr">
 <title>Additional Sensitivity Analyses • episensr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -12,105 +13,87 @@
 <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Additional Sensitivity Analyses">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Additional Sensitivity Analyses">
 <meta property="og:description" content="episensr">
-<meta property="og:image" content="/logo.png">
+<meta property="og:image" content="https://dhaine.github.io/episensr/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body data-spy="scroll" data-target="#toc">
-    <div class="container template-article">
-      <header><div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">episensr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
-      </span>
-    </div>
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
+    
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
+    <nav class="navbar fixed-top navbar-inverse navbar-expand-lg bg-light"><div class="container">
+    
+    <a class="navbar-brand me-2" href="../index.html">episensr</a>
+
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.2.0</small>
+
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item">
+  <a class="nav-link" href="../articles/episensr.html">Get started</a>
 </li>
-<li>
-  <a href="../articles/episensr.html">Get started</a>
+<li class="nav-item">
+  <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/b_probabilistic.html">Probabilistic Sensitivity Analysis</a>
-    </li>
-    <li>
-      <a href="../articles/c_multiple_bias.html">Multiple Bias Modeling</a>
-    </li>
-    <li>
-      <a href="../articles/d_other_sens.html">Additional Sensitivity Analyses</a>
-    </li>
-  </ul>
-</li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
-      </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/dhaine/episensr/">
-    <span class="fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
-      </ul>
-</div>
-<!--/.nav-collapse -->
+<li class="active nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/b_probabilistic.html">Probabilistic Sensitivity Analysis</a>
+    <a class="dropdown-item" href="../articles/c_multiple_bias.html">Multiple Bias Modeling</a>
+    <a class="dropdown-item" href="../articles/d_other_sens.html">Additional Sensitivity Analyses</a>
   </div>
-<!--/.container -->
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
+      </ul>
+<form class="form-inline my-2 my-lg-0" role="search">
+        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
+</form>
+
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/dhaine/episensr/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
-<!--/.navbar -->
 
-      
+    
+  </div>
+</nav><div class="container template-article">
 
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Additional Sensitivity Analyses</h1>
-                        <h4 class="author">Denis Haine</h4>
+
+
+<script src="d_other_sens_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+      <img src="../logo.png" class="logo" alt=""><h1>Additional Sensitivity Analyses</h1>
+                        <h4 data-toc-skip class="author">Denis Haine</h4>
             
-            <h4 class="date">2021-02-23</h4>
+            <h4 data-toc-skip class="date">2023-05-17</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/dhaine/episensr/blob/master/vignettes/d_other_sens.Rmd"><code>vignettes/d_other_sens.Rmd</code></a></small>
-      <div class="hidden name"><code>d_other_sens.Rmd</code></div>
-
+      <small class="dont-index">Source: <a href="https://github.com/dhaine/episensr/blob/HEAD/vignettes/d_other_sens.Rmd" class="external-link"><code>vignettes/d_other_sens.Rmd</code></a></small>
+      <div class="d-none name"><code>d_other_sens.Rmd</code></div>
     </div>
 
     
     
-<p>Other functions could be useful and are not part of the book <a href="https://www.springer.com/us/book/9780387879604">“Applying Quantitative Bias Analysis to Epidemiologic Data”</a>. These functions are:</p>
+<p>Other functions could be useful and are not part of the book <a href="https://link.springer.com/book/10.1007/978-3-030-82673-4" class="external-link">“Applying Quantitative Bias Analysis to Epidemiologic Data”</a>. These functions are:</p>
 <ul>
 <li>
 <code>confounders.array</code>: Bias due to unmeasured confounders based on confounding imbalance among exposed and unexposed</li>
@@ -119,160 +102,153 @@
 <li>
 <code>confounders.evalue</code>: E-value due to unmeasured confounder</li>
 </ul>
-<div id="array-approach-for-unmeasured-confounders" class="section level2">
-<h2 class="hasAnchor">
-<a href="#array-approach-for-unmeasured-confounders" class="anchor"></a>Array Approach for Unmeasured Confounders</h2>
-<p><code>episensr</code> also offers the option to check the effect of residual confounding based on the array approach (<a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/pds.1200">Schneeweiss, 2006</a>).</p>
+<div class="section level2">
+<h2 id="array-approach-for-unmeasured-confounders">Array Approach for Unmeasured Confounders<a class="anchor" aria-label="anchor" href="#array-approach-for-unmeasured-confounders"></a>
+</h2>
+<p><code>episensr</code> also offers the option to check the effect of residual confounding based on the array approach (<a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/pds.1200" class="external-link">Schneeweiss, 2006</a>).</p>
 <p>Even after controlling for confounding (in the design or analysis of a study), some residual confounding can still be present, because:</p>
 <ol style="list-style-type: decimal">
 <li>some confounding factors were not taken into account (not looked at, not adjusted for, or no data collected about them),</li>
 <li>you only loosely took into account that confounding (still presence of differences between groups after control by matching for example, or you lost precision on a confounding variable e.g. by categorizing a continuous variable),</li>
 <li>subjects were not correctly classified to confounding variables.</li>
 </ol>
-<div id="simple-sensitivity-analyses-in-the-absence-of-external-information-array-approach" class="section level3">
-<h3 class="hasAnchor">
-<a href="#simple-sensitivity-analyses-in-the-absence-of-external-information-array-approach" class="anchor"></a>Simple Sensitivity Analyses in the Absence of External Information: Array Approach</h3>
+<div class="section level3">
+<h3 id="simple-sensitivity-analyses-in-the-absence-of-external-information-array-approach">Simple Sensitivity Analyses in the Absence of External Information: Array Approach<a class="anchor" aria-label="anchor" href="#simple-sensitivity-analyses-in-the-absence-of-external-information-array-approach"></a>
+</h3>
 <p>The <em>array approach</em> by Schneeweiss provides a corrected RR based on the apparent, confounded, RR, the prevalence of the confounding factor among the exposed and unexposed, and the association between the confounder and the outcome.</p>
 <p>Schneeweiss provides the (made-up) example of the association between TNF<span class="math inline">\(_\alpha\)</span> blocking agents and Non-Hodgkin (NH) Lymphoma in rheumatoid arthritis (RA) patients. Assuming an observed relative risk of 2, that 50% of RA patients have a more progressive immunologic disease, and that more progressive disease is more likely to lead to NH lymphoma:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">episensr</span><span class="op">)</span></code></pre></div>
-<pre><code>## Loading required package: ggplot2</code></pre>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/dhaine/episensr" class="external-link">episensr</a></span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Loading required package: ggplot2</span></span></code></pre>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/confounders.array.html">confounders.array</a></span><span class="op">(</span>crude.risk <span class="op">=</span> <span class="fl">2</span>,
-                  type <span class="op">=</span> <span class="st">"binary"</span>,
-                  bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2.5</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-## Adjusted RR: 3.04 
-## 
-## Percent bias: -34.29 
-## 
-## Input Bias Parameters: 
-## ----------------------
-## 
-##     RR(Confounder-Disease): 2.5 
-##   p(Confounder+|Exposure+): 0.1 
-##   p(Confounder+|Exposure-): 0.5</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/confounders.array.html">confounders.array</a></span><span class="op">(</span>crude.risk <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                  type <span class="op">=</span> <span class="st">"binary"</span>,</span>
+<span>                  bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.5</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## --Input bias parameters--</span></span>
+<span><span class="co">##                              </span></span>
+<span><span class="co">## RR(Confounder-Disease):   2.5</span></span>
+<span><span class="co">## p(Confounder+|Exposure+): 0.1</span></span>
+<span><span class="co">## p(Confounder+|Exposure-): 0.5</span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##                        </span></span>
+<span><span class="co">## Adjusted RR    3.043478</span></span>
+<span><span class="co">## Percent bias -34.285714</span></span></code></pre>
 <p>The function takes values of the observed risk (2.0); if the covariates are binary, continuous, or on a risk difference scale; the association between confounder and outcome (let’s say here 2.5); the prevalence of the confounder among the exposed (let’s say 0.1); and the prevalence of the confounder among the unexposed. The adjusted RR is 3.04.</p>
 <p>However, it is more interesting if we could keep some factors constant in our analysis (the crude risk of 2.0, the prevalence among the unexposed, 0.5), and vary the imbalance of the hypothetical unobserved confounder (association confounder-outcome from 1 to 5.5; prevalence among exposed, from 0 to 1):</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>RR_CD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5.5</span>, <span class="fl">0.5</span><span class="op">)</span>, P_C1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>
-<span class="va">dat</span><span class="op">$</span><span class="va">RR_adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
-                    <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.array.html">confounders.array</a></span><span class="op">(</span><span class="fl">2</span>,
-                                                  type <span class="op">=</span> <span class="st">"binary"</span>,
-                                                  bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,
-                                                                 <span class="va">x</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,
-                                                                 <span class="fl">0.5</span><span class="op">)</span>,
-                                                  print <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>RR_CD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5.5</span>, <span class="fl">0.5</span><span class="op">)</span>, P_C1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">RR_adj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,</span>
+<span>                    <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.array.html">confounders.array</a></span><span class="op">(</span><span class="fl">2</span>,</span>
+<span>                                                  type <span class="op">=</span> <span class="st">"binary"</span>,</span>
+<span>                                                  bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>                                                                 <span class="va">x</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,</span>
+<span>                                                                 <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p>Then adding fun with 3-d plots!</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://lattice.r-forge.r-project.org/">lattice</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">grid</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/pkg/lattice/man/cloud.html">wireframe</a></span><span class="op">(</span><span class="va">RR_adj</span> <span class="op">~</span> <span class="va">RR_CD</span> <span class="op">*</span> <span class="va">P_C1</span>,
-          data <span class="op">=</span> <span class="va">dat</span>,
-          xlab <span class="op">=</span> <span class="st">"RR\nconfounder-outcome"</span>,
-          ylab <span class="op">=</span> <span class="st">"Prevalence confounder\namong exposed"</span>,
-          zlab <span class="op">=</span> <span class="st">"Adjusted\nRR"</span>,
-          drape <span class="op">=</span> <span class="cn">TRUE</span>, colorkey <span class="op">=</span> <span class="cn">TRUE</span>,
-          scales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>arrows <span class="op">=</span> <span class="cn">FALSE</span>, cex <span class="op">=</span> <span class="fl">.5</span>, tick.number <span class="op">=</span> <span class="fl">10</span>,
-                        z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>arrows <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, distance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">1.5</span>, <span class="fl">1.5</span><span class="op">)</span><span class="op">)</span>,
-          zlim <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">4</span>,
-          light.source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span>,
-          col.regions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html">rainbow</a></span><span class="op">(</span><span class="fl">100</span>, s <span class="op">=</span> <span class="fl">1</span>, v <span class="op">=</span> <span class="fl">1</span>,
-                                start <span class="op">=</span> <span class="fl">0</span>, end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">100</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">/</span> <span class="fl">100</span>,
-                                alpha <span class="op">=</span> <span class="fl">.8</span><span class="op">)</span>,
-          screen <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>z <span class="op">=</span> <span class="op">-</span><span class="fl">60</span>, x <span class="op">=</span> <span class="op">-</span><span class="fl">60</span><span class="op">)</span>,
-          panel <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
-          <span class="op">{</span>
-              <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/panel.cloud.html">panel.wireframe</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
-              <span class="fu"><a href="https://rdrr.io/r/grid/grid.text.html">grid.text</a></span><span class="op">(</span><span class="st">"Observed RR = 1\nPrevalence confounder\namong unexposed = 0.5"</span>,
-                        <span class="fl">0.125</span>, <span class="fl">0.175</span>, default.units <span class="op">=</span> <span class="st">"native"</span><span class="op">)</span>
-          <span class="op">}</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lattice.r-forge.r-project.org/" class="external-link">lattice</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">grid</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lattice/man/cloud.html" class="external-link">wireframe</a></span><span class="op">(</span><span class="va">RR_adj</span> <span class="op">~</span> <span class="va">RR_CD</span> <span class="op">*</span> <span class="va">P_C1</span>,</span>
+<span>          data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>          xlab <span class="op">=</span> <span class="st">"RR\nconfounder-outcome"</span>,</span>
+<span>          ylab <span class="op">=</span> <span class="st">"Prevalence confounder\namong exposed"</span>,</span>
+<span>          zlab <span class="op">=</span> <span class="st">"Adjusted\nRR"</span>,</span>
+<span>          drape <span class="op">=</span> <span class="cn">TRUE</span>, colorkey <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          scales <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>arrows <span class="op">=</span> <span class="cn">FALSE</span>, cex <span class="op">=</span> <span class="fl">.5</span>, tick.number <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>                        z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>arrows <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, distance <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.5</span>, <span class="fl">1.5</span>, <span class="fl">1.5</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>          zlim <span class="op">=</span> <span class="fl">0</span><span class="op">:</span><span class="fl">4</span>,</span>
+<span>          light.source <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">0</span>, <span class="fl">10</span><span class="op">)</span>,</span>
+<span>          col.regions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="fl">100</span>, s <span class="op">=</span> <span class="fl">1</span>, v <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                                start <span class="op">=</span> <span class="fl">0</span>, end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">100</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">/</span> <span class="fl">100</span>,</span>
+<span>                                alpha <span class="op">=</span> <span class="fl">.8</span><span class="op">)</span>,</span>
+<span>          screen <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>z <span class="op">=</span> <span class="op">-</span><span class="fl">60</span>, x <span class="op">=</span> <span class="op">-</span><span class="fl">60</span><span class="op">)</span>,</span>
+<span>          panel <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span>          <span class="op">{</span></span>
+<span>              <span class="fu"><a href="https://rdrr.io/pkg/lattice/man/panel.cloud.html" class="external-link">panel.wireframe</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span>              <span class="fu"><a href="https://rdrr.io/r/grid/grid.text.html" class="external-link">grid.text</a></span><span class="op">(</span><span class="st">"Observed RR = 1\nPrevalence confounder\namong unexposed = 0.5"</span>,</span>
+<span>                        <span class="fl">0.125</span>, <span class="fl">0.175</span>, default.units <span class="op">=</span> <span class="st">"native"</span><span class="op">)</span></span>
+<span>          <span class="op">}</span><span class="op">)</span></span></code></pre></div>
 <p><img src="d_other_sens_files/figure-html/array_3d-1.png" width="768"></p>
 </div>
-<div id="using-additional-information-external-adjustment" class="section level3">
-<h3 class="hasAnchor">
-<a href="#using-additional-information-external-adjustment" class="anchor"></a>Using Additional Information: External Adjustment</h3>
+<div class="section level3">
+<h3 id="using-additional-information-external-adjustment">Using Additional Information: External Adjustment<a class="anchor" aria-label="anchor" href="#using-additional-information-external-adjustment"></a>
+</h3>
 <p>You can also use additional information not available in the main study to adjust for the effect of confounding. Sometimes you can get information from a representative sample to quantify the imbalance risk factors that are measured among the exposed group; and from the literature (RCT, observational studies) for the association between the confounder and the outcome.</p>
 <p>We can use the example of Schneeweiss regarding the association between selective COX-2 inhibitor use and the incidence of MI.</p>
 <p>Say we assume an exposure-disease association of 1 (null hypothesis). The more the truth is away from the null, the more bias in our estimate. However the less relevant unmeasured confounders become.</p>
 <p>Let’s try:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span>RR <span class="op">=</span> <span class="fl">1</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1.6</span>, <span class="fl">0.1</span>, <span class="fl">0.51</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-##     Crude RR: 0.96 
-## 
-## Percent bias: -4.03 
-## 
-## Input Bias Parameters: 
-## ----------------------
-## 
-##           RR(Confounder-Disease): 0.1 
-## OR(Exposure category-Confounder): 1.6 
-##                    p(Confounder): 0.1 
-##                      p(Exposure): 0.51</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span>RR <span class="op">=</span> <span class="fl">1</span>, bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1.6</span>, <span class="fl">0.1</span>, <span class="fl">0.51</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## --Input bias parameters--</span></span>
+<span><span class="co">##                                       </span></span>
+<span><span class="co">## RR(Confounder-Disease):           0.10</span></span>
+<span><span class="co">## OR(Exposure category-Confounder): 1.60</span></span>
+<span><span class="co">## p(Confounder):                    0.10</span></span>
+<span><span class="co">## p(Exposure):                      0.51</span></span>
+<span><span class="co">## ---</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">##                        </span></span>
+<span><span class="co">## Crude RR      0.9597175</span></span>
+<span><span class="co">## Percent bias -4.0282475</span></span></code></pre>
 <p>Same here, the interest lies in using the function over a range of values, while keeping some other constant. And we can extend to several confounders:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html">expand.grid</a></span><span class="op">(</span>RR_CD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span>
-<span class="va">dat</span><span class="op">$</span><span class="va">nsaid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
-                   <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,
-                                               bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>, <span class="fl">0.4</span><span class="op">)</span>,
-                                               print <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span><span class="op">)</span>
-<span class="va">dat</span><span class="op">$</span><span class="va">non_user</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
-                      <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,
-                                                  bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1.03</span>, <span class="fl">0.09</span>,
-                                                                 <span class="fl">0.12</span><span class="op">)</span>,
-                                                  print <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span><span class="op">)</span>
-<span class="va">dat</span><span class="op">$</span><span class="va">naproxen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
-                      <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,
-                                                  bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1.15</span>, <span class="fl">0.09</span>,
-                                                                 <span class="fl">0.79</span><span class="op">)</span>,
-                                               print <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span><span class="op">)</span>
-<span class="va">dat</span><span class="op">$</span><span class="va">rof_napro</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,
-                       <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,
-                                               bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1.6</span>, <span class="fl">0.1</span>, <span class="fl">0.51</span><span class="op">)</span>,
-                                               print <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">[</span><span class="fl">7</span><span class="op">]</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
-<span class="va">dat2</span> <span class="op">&lt;-</span> <span class="va">dat</span> <span class="op">%&gt;%</span> <span class="fu">gather</span><span class="op">(</span><span class="va">nsaid</span>, <span class="va">non_user</span>, <span class="va">naproxen</span>, <span class="va">rof_napro</span>,
-                       key <span class="op">=</span> <span class="st">"COX2"</span>, value <span class="op">=</span> <span class="st">"bias_perc"</span><span class="op">)</span>
-
-<span class="fu">ggplot</span><span class="op">(</span><span class="va">dat2</span>, <span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">RR_CD</span>, y <span class="op">=</span> <span class="va">bias_perc</span>, group <span class="op">=</span> <span class="va">COX2</span>, colour <span class="op">=</span> <span class="va">COX2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">scale_colour_brewer</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Dark2"</span>,
-                        labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"COX-2 vs. naproxen"</span>, <span class="st">"COX-2 vs. non-users"</span>,
-                                   <span class="st">"COX-2 vs. non-selective NSAIDs"</span>,
-                                   <span class="st">"Rofecoxib vs. naproxen"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">geom_vline</span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">xlab</span><span class="op">(</span><span class="st">"Association Confounder-Disease (RR)"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ylab</span><span class="op">(</span><span class="st">"Bias of Exposure-Disease Association (RR) in %"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Bias as a function of misspecification of the "</span>, <span class="va">RR</span><span class="op">[</span><span class="va">CD</span><span class="op">]</span>, <span class="st">" from the literature"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">.85</span>, <span class="fl">.3</span><span class="op">)</span>,
-          legend.title <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">annotate</span><span class="op">(</span><span class="st">"text"</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Literature estimate "</span>, <span class="va">RR</span><span class="op">[</span><span class="va">CD</span><span class="op">]</span>, <span class="st">" = 0.7"</span><span class="op">)</span><span class="op">)</span>, x <span class="op">=</span> <span class="fl">0.6</span>, y <span class="op">=</span> <span class="op">-</span><span class="fl">3.75</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>RR_CD <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">nsaid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,</span>
+<span>                   <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,</span>
+<span>                                               bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span>, <span class="fl">0.4</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">non_user</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,</span>
+<span>                      <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,</span>
+<span>                                                  bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1.03</span>, <span class="fl">0.09</span>,</span>
+<span>                                                                 <span class="fl">0.12</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">naproxen</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,</span>
+<span>                      <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,</span>
+<span>                                                  bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1.15</span>, <span class="fl">0.09</span>,</span>
+<span>                                                                 <span class="fl">0.79</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">rof_napro</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fl">1</span>,</span>
+<span>                       <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="../reference/confounders.ext.html">confounders.ext</a></span><span class="op">(</span><span class="fl">1</span>,</span>
+<span>                                               bias_parms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="fl">1.6</span>, <span class="fl">0.1</span>, <span class="fl">0.51</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="va">dat2</span> <span class="op">&lt;-</span> <span class="va">dat</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html" class="external-link">gather</a></span><span class="op">(</span><span class="va">nsaid</span>, <span class="va">non_user</span>, <span class="va">naproxen</span>, <span class="va">rof_napro</span>,</span>
+<span>                       key <span class="op">=</span> <span class="st">"COX2"</span>, value <span class="op">=</span> <span class="st">"bias_perc"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dat2</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">RR_CD</span>, y <span class="op">=</span> <span class="va">bias_perc</span>, group <span class="op">=</span> <span class="va">COX2</span>, colour <span class="op">=</span> <span class="va">COX2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_colour_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Dark2"</span>,</span>
+<span>                        labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COX-2 vs. naproxen"</span>, <span class="st">"COX-2 vs. non-users"</span>,</span>
+<span>                                   <span class="st">"COX-2 vs. non-selective NSAIDs"</span>,</span>
+<span>                                   <span class="st">"Rofecoxib vs. naproxen"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Association Confounder-Disease (RR)"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Bias of Exposure-Disease Association (RR) in %"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Bias as a function of misspecification of the "</span>, <span class="va">RR</span><span class="op">[</span><span class="va">CD</span><span class="op">]</span>, <span class="st">" from the literature"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.85</span>, <span class="fl">.3</span><span class="op">)</span>,</span>
+<span>          legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/annotate.html" class="external-link">annotate</a></span><span class="op">(</span><span class="st">"text"</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Literature estimate "</span>, <span class="va">RR</span><span class="op">[</span><span class="va">CD</span><span class="op">]</span>, <span class="st">" = 0.7"</span><span class="op">)</span><span class="op">)</span>, x <span class="op">=</span> <span class="fl">0.6</span>, y <span class="op">=</span> <span class="op">-</span><span class="fl">3.75</span><span class="op">)</span></span></code></pre></div>
 <p><img src="d_other_sens_files/figure-html/conf_ext_apply-1.png" width="768"></p>
 </div>
 </div>
-<div id="unmeasured-confounding-and-e-value" class="section level2">
-<h2 class="hasAnchor">
-<a href="#unmeasured-confounding-and-e-value" class="anchor"></a>Unmeasured Confounding and E-value</h2>
-<p>E-value, introduced by <a href="https://pubmed.ncbi.nlm.nih.gov/28693043/">VanderWeele et al.</a>, is the minimum strength of association on the risk ratio scale that an unmeasured confounder would need to have with both the exposure and the outcome, conditional on the measured covariates, to fully explain away a specific exposure-outcome association.</p>
-<p>For example, a study by <a href="https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(87)90902-0/fulltext">Victoria et al.</a> found an association between formula-fed babies compared to breast-fed and respiratory death, RR = 3.9. What would be the strength of association for an unmeasured confounder needed to explain away this association? The E-value express the magnitude of the confounder associations that can produce confounding bias equal to the observed exposure-outcome association. This E-value is:</p>
+<div class="section level2">
+<h2 id="unmeasured-confounding-and-e-value">Unmeasured Confounding and E-value<a class="anchor" aria-label="anchor" href="#unmeasured-confounding-and-e-value"></a>
+</h2>
+<p>E-value, introduced by <a href="https://pubmed.ncbi.nlm.nih.gov/28693043/" class="external-link">VanderWeele et al.</a>, is the minimum strength of association on the risk ratio scale that an unmeasured confounder would need to have with both the exposure and the outcome, conditional on the measured covariates, to fully explain away a specific exposure-outcome association.</p>
+<p>For example, a study by <a href="https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(87)90902-0/fulltext" class="external-link">Victoria et al.</a> found an association between formula-fed babies compared to breast-fed and respiratory death, RR = 3.9. What would be the strength of association for an unmeasured confounder needed to explain away this association? The E-value express the magnitude of the confounder associations that can produce confounding bias equal to the observed exposure-outcome association. This E-value is:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/confounders.evalue.html">confounders.evalue</a></span><span class="op">(</span>est <span class="op">=</span> <span class="fl">3.9</span>, lower_ci <span class="op">=</span> <span class="fl">1.8</span>, upper_ci <span class="op">=</span> <span class="fl">8.7</span>, type <span class="op">=</span> <span class="st">"RR"</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-## --E-value--
-##          Point estimate   CI closest to H_0
-##      RR:       3.900000            1.800000
-## E-value:       7.263034            3.000000</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/confounders.evalue.html">confounders.evalue</a></span><span class="op">(</span>est <span class="op">=</span> <span class="fl">3.9</span>, lower_ci <span class="op">=</span> <span class="fl">1.8</span>, upper_ci <span class="op">=</span> <span class="fl">8.7</span>, type <span class="op">=</span> <span class="st">"RR"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## --E-value--</span></span>
+<span><span class="co">##          Point estimate   CI closest to H_0</span></span>
+<span><span class="co">##      RR:       3.900000            1.800000</span></span>
+<span><span class="co">## E-value:       7.263034            3.000000</span></span></code></pre>
 <p>The E-value is 7.26, i.e. an unmeasured confounder must have a risk ratio of at least 7.26 with both the exposure and the outcome, and above and beyond the measured confounders, to explain away the observed risk ratio of 3.9. A weaker unmeasured confounder could not explain this RR. E-value for the CI closest to the null (i.e. 1) can also be reported.</p>
-<p>Similarly, the minimum magnitude of both confounder associations to move away the observed association can be assessed for a non-null hypothesis. For example, the effect of anti-depressant use during pregnancy on infant cardiac defects was 1.06 [0.93–1.22] (<a href="https://www.nejm.org/doi/full/10.1056/NEJMoa1312828">Huybrechts et al.</a>). The confidence interval includes 1 so no further unmeasured confounding is needed to shift the confidence interval to include 1, i.e. the E-value = 1. But what would be the strength of a confounder needed to shift RR to 1.2?</p>
+<p>Similarly, the minimum magnitude of both confounder associations to move away the observed association can be assessed for a non-null hypothesis. For example, the effect of anti-depressant use during pregnancy on infant cardiac defects was 1.06 [0.93–1.22] (<a href="https://www.nejm.org/doi/full/10.1056/NEJMoa1312828" class="external-link">Huybrechts et al.</a>). The confidence interval includes 1 so no further unmeasured confounding is needed to shift the confidence interval to include 1, i.e. the E-value = 1. But what would be the strength of a confounder needed to shift RR to 1.2?</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/confounders.evalue.html">confounders.evalue</a></span><span class="op">(</span>est <span class="op">=</span> <span class="fl">1.06</span>, lower_ci <span class="op">=</span> <span class="fl">0.93</span>, upper_ci <span class="op">=</span> <span class="fl">1.22</span>,
-                   type <span class="op">=</span> <span class="st">"RR"</span>, true_est <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span></code></pre></div>
-<pre><code>## 
-## --E-value--
-##          Point estimate   CI closest to H_0
-##      RR:       1.060000            1.220000
-## E-value:       1.518753            1.146837</code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/confounders.evalue.html">confounders.evalue</a></span><span class="op">(</span>est <span class="op">=</span> <span class="fl">1.06</span>, lower_ci <span class="op">=</span> <span class="fl">0.93</span>, upper_ci <span class="op">=</span> <span class="fl">1.22</span>,</span>
+<span>                   type <span class="op">=</span> <span class="st">"RR"</span>, true_est <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## </span></span>
+<span><span class="co">## --E-value--</span></span>
+<span><span class="co">##          Point estimate   CI closest to H_0</span></span>
+<span><span class="co">##      RR:       1.060000            1.220000</span></span>
+<span><span class="co">## E-value:       1.518753            1.146837</span></span></code></pre>
 <p>We need an unmeasured confounder with a RR of 1.5 each with the outcome, cardiac defect, and the exposure, anti-depressant use, to move the risk ratio to 1.2. A weaker confounder could not shift the observed RR.</p>
 <p>E-value can also be computed when the effect measure is:</p>
 <ul>
@@ -282,31 +258,28 @@
 <li>Difference in continuous outcomes, with standardized effect size <em>d</em> (mean of the outcome variable divided by the SD of the outcome) and an SE for this standardized effect size <em>s_d</em>, either with RR approximation or OR approximation (meta-analysis): <code>diff_RR</code> and <code>diff_OR</code>.</li>
 </ul>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
-
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
-  <p>Developed by Denis Haine.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p></p>
+<p>Developed by Denis Haine.</p>
 </div>
 
-<div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+<div class="pkgdown-footer-right">
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
   
 
+  
 
   </body>
 </html>

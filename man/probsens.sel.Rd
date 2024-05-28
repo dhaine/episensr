@@ -10,14 +10,14 @@ probsens.sel(
   reps = 1000,
   or.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
     "log-logistic", "log-normal"), parms = NULL),
-  case.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
-  case.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
-  ncase.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
+  case.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
+  case.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
+  ncase.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
   ncase.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "logit-logistic", "logit-normal", "beta"), parms = NULL),
+    "normal", "beta"), parms = NULL),
   alpha = 0.05
 )
 }
@@ -28,7 +28,9 @@ probsens.sel(
 
 \item{reps}{Number of replications to run.}
 
-\item{or.parms}{List defining the selection bias odds. The first argument provides the probability distribution function (constant, uniform, triangular, trapezoidal, log-logistic or log-normal) and the second its parameters as a vector:
+\item{or.parms}{List defining the selection bias odds. The first argument
+provides the probability distribution function (constant, uniform, triangular,
+trapezoidal, log-logistic or log-normal) and the second its parameters as a vector:
 \enumerate{
 \item constant: constant value,
 \item uniform: min, max,
@@ -38,14 +40,15 @@ probsens.sel(
 \item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 }}
 
-\item{case.exp}{If or.parms not provided, defines the selection probability among case exposed. The first argument provides the probability distribution function and the second its parameters as a vector:
+\item{case.exp}{If or.parms not provided, defines the selection probability
+among case exposed. The first argument provides the probability distribution
+function and the second its parameters as a vector:
 \enumerate{
 \item constant: constant value,
 \item uniform: min, max,
 \item triangular: lower limit, upper limit, mode,
 \item trapezoidal: min, lower mode, upper mode, max.
-\item logit-logistic: location, scale, lower bound shift, upper bound shift,
-\item logit-normal: location, scale, lower bound shift, upper bound shift,
+\item normal: truncated normal with lower bound, upper bound, mean, sd,
 \item beta: alpha, beta.
 }}
 

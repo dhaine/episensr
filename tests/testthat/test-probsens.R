@@ -35,7 +35,7 @@ test_that("correct arguments --- distribution", {
                          type = "exposure",
                          reps = 1000,
                          seca.parms = list("beta", c(-1, 16)),
-                         seexp.parms = list("logit-normal", c(156, 56)),
+                         seexp.parms = list("normal", c(0.4, 0.7, 0.5, 0.01)),
                          spca.parms = list("uniform", c(1, .5)),
                          spexp.parms = list("triangular", c(1, 0.5, 0.2)),
                          corr.se = .8, corr.sp = .8),
@@ -47,7 +47,7 @@ test_that("correct arguments --- distribution", {
                          type = "exposure",
                          reps = 1000,
                          seca.parms = list("beta", c(908, 16)),
-                         seexp.parms = list("logit-normal", c(156, 56)),
+                         seexp.parms = list("normal", c(156, 56)),
                          spca.parms = list("uniform", c(1, .5)),
                          spexp.parms = list("triangular", c(1, 0.5, 0.2)),
                          corr.se = .8, corr.sp = .8),
@@ -59,7 +59,7 @@ test_that("correct arguments --- distribution", {
                          type = "exposure",
                          reps = 1000,
                          seca.parms = list("beta", c(908, 16)),
-                         seexp.parms = list("logit-normal", c(156, 56)),
+                         seexp.parms = list("normal", c(0.4, 1, 0.8, 0.01)),
                          spca.parms = list("uniform", c(.5, 1)),
                          spexp.parms = list("triangular", c(1, 0.5, 0.2)),
                          corr.se = .8, corr.sp = .8),
@@ -151,12 +151,12 @@ test_that("exposure misclassification: adjusted measures are correct", {
                       spca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
                       spexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
                       corr.se = .8, corr.sp = .8)
-    expect_equal(model$adj.measures[1, 1], 2.9161, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 1.6866, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 10.2742, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 3.5341, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 1.8127, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 54.5525, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 2.9223, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 1.8113, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 10.0058, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 3.5498, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 1.9705, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 47.4763, tolerance = 1e-4, scale = 1)
 })
 
 test_that("exposure misclassification: adjusted measures are correct", {
@@ -169,12 +169,12 @@ test_that("exposure misclassification: adjusted measures are correct", {
                       spca.parms = list("beta", c(153, 6)),
                       spexp.parms = list("beta", c(205, 18)),
                       corr.se = .8, corr.sp = .8)
-    expect_equal(model$adj.measures[1, 1], 1.6084, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 1.4714, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 1.9361, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 1.7140, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 1.5468, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 2.1316, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 1.5928, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 1.3478, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 2.0209, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 1.6946, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 1.3990, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 2.2433, tolerance = 1e-4, scale = 1)
 })
 
 test_that("outcome misclassification (ND): observed measures are correct", {
@@ -235,45 +235,12 @@ test_that("outcome misclassification: adjusted measures are correct", {
                       spca.parms = list("uniform", c(.8, 1)),
                       spexp.parms = list("uniform", c(.7, .95)),
                       corr.se = .8, corr.sp = .8)
-    expect_equal(model$adj.measures[1, 1], 4.8940, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 2.1130, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 77.3781, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 5.5092, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 2.2076, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 88.3274, tolerance = 1e-4, scale = 1)
-})
-
-test_that("outcome misclassification (ND---logit-logistic): adjusted measures are correct", {
-    set.seed(123)
-    model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
-                      type = "outcome",
-                      reps = 50000,
-                      seca.parms = list("logit-logistic", c(0, .8)),
-                      spca.parms = list("logit-logistic", c(0, .8)))
-    expect_equal(model$adj.measures[1, 1], 0.9353, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.4492, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 17.7659, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.5570, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.0337, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 27.4472, tolerance = 1e-4, scale = 1)
-})
-
-test_that("outcome misclassification (D---logit-logistic): adjusted measures are correct", {
-    set.seed(123)
-    model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
-                      type = "outcome",
-                      reps = 50000,
-                      seca.parms = list("logit-logistic", c(0, 0.8)),
-                      seexp.parms = list("logit-logistic", c(0, .5)),
-                      spca.parms = list("logit-logistic", c(0, 0.8)),
-                      spexp.parms = list("logit-logistic", c(0, .5)),
-                      corr.se = .8, corr.sp = .8)
-    expect_equal(model$adj.measures[1, 1], 0.9916, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.1921, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 47.2968, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.9416, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.0081, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 96.2079, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 4.8406, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 2.3768, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 78.6928, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 5.4640, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 2.5203, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 91.2977, tolerance = 1e-4, scale = 1)
 })
 
 test_that("outcome misclassification (D---beta): adjusted measures are correct", {
@@ -287,61 +254,29 @@ test_that("outcome misclassification (D---beta): adjusted measures are correct",
                       spexp.parms = list("beta", c(130, 30)),
                       corr.se = .8,
                       corr.sp = .8)
-    expect_equal(model$adj.measures[1, 1], 1.3736, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 1.3138, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 1.5105, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 1.8097, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 1.6795, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 2.0774, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 1.3576, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 1.2472, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 1.5344, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 1.7747, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 1.5464, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 2.1224, tolerance = 1e-4, scale = 1)
 })
 
 
-test_that("exposure misclassification (ND---logit-logistic): adjusted measures are correct", {
-    set.seed(123)
-    model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
-                      type = "exposure",
-                      reps = 50000,
-                      seca.parms = list("logit-logistic", c(0, .8)),
-                      spca.parms = list("logit-logistic", c(0, .8)))
-    expect_equal(model$adj.measures[1, 1], 0.5855, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.0771, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 12.3942, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.5447, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.0269, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 31.4069, tolerance = 1e-4, scale = 1)
-})
-
-test_that("exposure misclassification (D---logit-logistic): adjusted measures are correct", {
-    set.seed(123)
-    model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
-                      type = "exposure",
-                      reps = 50000,
-                      seca.parms = list("logit-logistic", c(0, 0.8)),
-                      seexp.parms = list("logit-logistic", c(0, .5)),
-                      spca.parms = list("logit-logistic", c(0, 0.8)),
-                      spexp.parms = list("logit-logistic", c(0, .5)),
-                      corr.se = .8, corr.sp = .8)
-    expect_equal(model$adj.measures[1, 1], 0.9410, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.0460, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 22.4035, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.9344, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.0108, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 90.9576, tolerance = 1e-4, scale = 1)
-})
 ####
-test_that("outcome misclassification (ND---logit-normal): adjusted measures are correct", {
+test_that("outcome misclassification (ND---normal): adjusted measures are correct", {
     set.seed(123)
     model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                       type = "outcome",
                       reps = 50000,
-                      seca.parms = list("logit-normal", c(2.159, 0.28)),
-                      spca.parms = list("logit-normal", c(2.159, .28)))
-    expect_equal(model$adj.measures[1, 1], 6.2510, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 2.6536, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 117.1292, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 6.7432, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 2.8596, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 126.5486, tolerance = 1e-4, scale = 1)
+                      seca.parms = list("normal", c(0.4, 0.7, 0.5, 0.001)),
+                      spca.parms = list("normal", c(0.4, 1, 0.9, 0.005)))
+    expect_equal(model$adj.measures[1, 1], 40.1652, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 10.1777, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 718.0268, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 46.8348, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 11.8743, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 837.7270, tolerance = 1e-4, scale = 1)
 })
 
 test_that("outcome misclassification (D---logit-normal): adjusted measures are correct", {
@@ -349,50 +284,50 @@ test_that("outcome misclassification (D---logit-normal): adjusted measures are c
     model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                       type = "outcome",
                       reps = 50000,
-                      seca.parms = list("logit-normal", c(2.159, 0.28)),
-                      seexp.parms = list("logit-normal", c(0, .5)),
-                      spca.parms = list("logit-normal", c(2.159, 0.28)),
-                      spexp.parms = list("logit-normal", c(0, .5)),
+                      seca.parms = list("normal", c(0.1, 0.9, 0.8, 0.001)),
+                      seexp.parms = list("normal", c(0.1, 0.9, 0.82, 0.001)),
+                      spca.parms = list("normal", c(0.4, 1, 0.95, 0.001)),
+                      spexp.parms = list("normal", c(0.4, 1, 0.99, 0.001)),
                       corr.se = .8, corr.sp = .8)
-    expect_equal(model$adj.measures[1, 1], 3.2725, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 3.2725, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 3.2725, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 3.6503, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 3.6503, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 3.6503, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 1.3287, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 1.3112, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 1.3467, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 1.3787, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 1.3586, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 1.3994, tolerance = 1e-4, scale = 1)
 })
 
-test_that("exposure misclassification (ND---logit-normal): adjusted measures are correct", {
+test_that("exposure misclassification (ND---normal): adjusted measures are correct", {
     set.seed(123)
     model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                       type = "exposure",
                       reps = 50000,
-                      seca.parms = list("logit-normal", c(2.159, .28)),
-                      spca.parms = list("logit-normal", c(2.159, .28)))
-    expect_equal(model$adj.measures[1, 1], 2.1230, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 1.8816, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 3.1177, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 2.3822, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 2.0578, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 3.9231, tolerance = 1e-4, scale = 1)
+                      seca.parms = list("normal", c(0.4, 0.7, 0.5, 0.001)),
+                      spca.parms = list("normal", c(0.4, 1, 0.9, 0.005)))
+    expect_equal(model$adj.measures[1, 1], 2.7860, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 2.6963, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 2.8910, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 3.1919, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 3.0671, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 3.3408, tolerance = 1e-4, scale = 1)
 })
 
-test_that("exposure misclassification (D---logit-normal): adjusted measures are correct", {
+test_that("exposure misclassification (D---normal): adjusted measures are correct", {
     set.seed(123)
     model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                       type = "exposure",
                       reps = 50000,
-                      seca.parms = list("logit-normal", c(2.159, 0.28)),
-                      seexp.parms = list("logit-normal", c(0, .5)),
-                      spca.parms = list("logit-normal", c(2.159, 0.28)),
-                      spexp.parms = list("logit-normal", c(0, .5)),
+                      seca.parms = list("normal", c(0.1, 0.9, 0.8, 0.001)),
+                      seexp.parms = list("normal", c(0.1, 0.9, 0.82, 0.001)),
+                      spca.parms = list("normal", c(0.4, 1, 0.95, 0.001)),
+                      spexp.parms = list("normal", c(0.4, 1, 0.99, 0.001)),
                       corr.se = .8, corr.sp = .8)
-    expect_equal(model$adj.measures[1, 1], 0.2808, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.0349, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 10.9991, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.2389, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.0032, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 55.4015, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 1.6076, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 1.5988, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 1.6165, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 1.7095, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 1.6988, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 1.7204, tolerance = 1e-4, scale = 1)
 })
 
 test_that("correct arguments --- list", {
@@ -499,18 +434,18 @@ test_that("Confounding bias: adjusted measures are correct", {
                       prev.nexp = list("trapezoidal", c(.03, .04, .05, .06)),
                       risk = list("triangular", c(.6, .7, .63)),
                       corr.p = .8)
-    expect_equal(model$adj.measures[1, 1], 0.4788, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.4530, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 0.5080, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.4782, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.3768, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 0.6074, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[3, 1], 0.3658, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[3, 2], 0.3361, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[3, 3], 0.4020, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[4, 1], 0.3652, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[4, 2], 0.2524, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[4, 3], 0.5292, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 0.4790, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.4532, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 0.5067, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 0.4789, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.3760, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 0.6094, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 1], 0.3660, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 2], 0.3363, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 3], 0.3999, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 1], 0.3661, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 2], 0.2515, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 0.5321, tolerance = 1e-4, scale = 1)
 })
 
 test_that("Confounding bias: adjusted measures are correct", {
@@ -522,17 +457,17 @@ test_that("Confounding bias: adjusted measures are correct", {
                       risk = list("triangular", c(.6, .7, .65)),
                       corr.p = .8)
     expect_equal(model$adj.measures[1, 1], 0.4759, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.4518, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 0.5060, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.4755, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.3751, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 0.6041, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[3, 1], 0.3628, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[3, 2], 0.3347, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[3, 3], 0.3991, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[4, 1], 0.3626, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[4, 2], 0.2507, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[4, 3], 0.5250, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.4521, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 0.5050, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 0.4762, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.3737, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 0.6057, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 1], 0.3630, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 2], 0.3350, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 3], 0.3978, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 1], 0.3634, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 2], 0.2498, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 0.5281, tolerance = 1e-4, scale = 1)
 })
 
 test_that("Confounding bias: adjusted measures are correct", {
@@ -542,18 +477,18 @@ test_that("Confounding bias: adjusted measures are correct", {
                       prev.exp = list("constant", c(.8)),
                       prev.nexp = list("constant", c(.05)),
                       risk = list("constant", c(.63)))
-    expect_equal(model$adj.measures[1, 1], 0.4850, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.4850, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 0.4850, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 0.4851, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.4851, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 0.4851, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2, 1], 0.4858, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2, 2], 0.3857, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 0.6127, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[3, 1], 0.3726, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[3, 2], 0.3726, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[3, 3], 0.3726, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 0.6128, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 1], 0.3727, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 2], 0.3727, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 3], 0.3727, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[4, 1], 0.3736, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[4, 2], 0.2611, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[4, 3], 0.5356, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 0.5357, tolerance = 1e-4, scale = 1)
 })
 
 test_that("Confounding bias: adjusted measures are correct", {
@@ -564,18 +499,18 @@ test_that("Confounding bias: adjusted measures are correct", {
                       prev.nexp = list("beta", c(10, 16)),
                       risk = list("triangular", c(.6, .7, .63)),
                       corr.p = .8)
-    expect_equal(model$adj.measures[1, 1], 0.4226, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.4079, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 0.4419, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.4231, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.3346, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 0.5328, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[3, 1], 0.2953, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[3, 2], 0.2811, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[3, 3], 0.3178, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[4, 1], 0.2965, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[4, 2], 0.2059, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[4, 3], 0.4239, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 0.4165, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.3898, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 0.4418, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 0.4164, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.3261, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 0.5277, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 1], 0.2885, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 2], 0.2566, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 3], 0.3179, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 1], 0.2883, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 2], 0.1964, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 0.4176, tolerance = 1e-4, scale = 1)
 })
 
 test_that("correct arguments --- list (IRR)", {
@@ -658,10 +593,10 @@ test_that("IRR Confounding bias: adjusted measures are correct", {
                       prev.nexp = list("trapezoidal", c(.09, .27, .35, .59)),
                       risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
                       corr.p = .8)
-    expect_equal(model$adj.measures[1, 1], 0.9653, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 0.7620, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 1.2656, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 0.9711, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 0.7063, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 1.3607, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 0.9701, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.8199, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 1.1804, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 0.9718, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.7270, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 1.3065, tolerance = 1e-4, scale = 1)
 })

@@ -1,5 +1,24 @@
-# episensr 1.0.1
+# episensr X.X.X
+- Using NORTA transformation, replacing sampling from a standard uniform distribution, for correlations between sensitivity and specificity of exposure classification among cases and controls in Probabilistic Bias Analyses (PBA).
+- Replacing log-logistic and logit-normal distributions by a truncated normal distribution in PBA (package `truncnorm`).
+- Remove `Or.sel` from `multidimBias`.
+
+# episensr 1.3.0
+- Adding bias-adjusting for exposure misclassification using predictive values.
+- Adding start-up message.
+
+# episensr 1.2.0
+- Fix CI for OR in `plot.booted` (@codiewood, #2)
+- Replaced dot-dot notation by after_stat(density) in `plot.probsens` and `plot.booted`
+- `misclassification_cov` replaced by `misclassification.cov`
+- Standard output for `confounders.ext`, `confounders.limit`, and `confounders.array`
+- Suggest `tidyr` instead of `tidyverse`
+
+# episensr 1.1.0
 - Fix confidence interval values in plotting output of `probsens`.
+- Fix bug that created integer overflow in rare cases when 2-by-2 table cells
+  were very large.
+- Update documentation.
 
 # episensr 1.0.0
 - Provide default values for variables in `mbias`.

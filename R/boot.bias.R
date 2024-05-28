@@ -8,7 +8,7 @@
 #' @param R The number of bootstrap replicates.
 #' @param conf Confidence level.
 #' @param ci_type A character string giving the type of interval required. Values can be either "norm" or "perc", default to "norm".
-#' 
+#'
 #' @return A list with elements:
 #' \item{model}{Model ran.}
 #' \item{boot_mod}{Bootstrap resampled object, of class \code{boot}.}
@@ -36,9 +36,9 @@ boot.bias <- function(bias_model,
                       conf = 0.95,
                       ci_type = c("norm", "perc")
                       ) {
-    if(!inherits(bias_model, "episensr.boot"))
+    if (!inherits(bias_model, "episensr.boot"))
         stop('Not an episensr.boot class object.')
-    if(R < 1)
+    if (R < 1)
         stop('Please provide a sensible number of replicates to run.')
 
     model <- bias_model$model
@@ -51,33 +51,33 @@ boot.bias <- function(bias_model,
     ci_type <- match.arg(ci_type)
 
     if (model == "misclassification") {
-        boot_fun <- function(data, indices){
+        boot_fun <- function(data, indices) {
             d <- data[indices, ]
             bias_boot <- tryCatch(
-            {
-                misclassification(d$y, d$x,
-                                  type = type,
-                                  bias_parms = bias)$adj.measures
-            },
-            error = function(err){
-                return(c(NA, NA))
-            }
+                                  {
+                                      misclassification(d$y, d$x,
+                                                        type = type,
+                                                        bias_parms = bias)$adj.measures
+                                  },
+                error = function(err) {
+                    return(c(NA, NA))
+                }
             )
             return(bias_boot)
         }
     }
 
     if (model == "selection") {
-        boot_fun <- function(data, indices){
+        boot_fun <- function(data, indices) {
             d <- data[indices, ]
             bias_boot <- tryCatch(
-            {
-                selection(d$y, d$x,
-                          bias_parms = bias)$adj.measures
-            },
-            error = function(err){
-                return(c(NA, NA))
-            }
+                                  {
+                                      selection(d$y, d$x,
+                                                bias_parms = bias)$adj.measures
+                                  },
+                error = function(err) {
+                    return(c(NA, NA))
+                }
             )
             return(bias_boot)
         }
@@ -85,36 +85,35 @@ boot.bias <- function(bias_model,
 
     boot_mod <- boot::boot(data = obs_df, statistic = boot_fun, R = R)
     nrep <- length(which(!is.na(boot_mod$t[, 1])))
-    
+
     if (ci_type == "norm") {
         bias_ci1 <- boot::boot.ci(boot_mod,
-                              t0 = log(boot_mod$t0[1]),
-                              t = log(boot_mod$t[, 1]),
-                              conf = conf,
-                              type = "norm",
-                              hinv = exp)
+                                  t0 = log(boot_mod$t0[1]),
+                                  t = log(boot_mod$t[, 1]),
+                                  conf = conf,
+                                  type = "norm",
+                                  hinv = exp)
         bias_ci2 <- boot::boot.ci(boot_mod,
-                              t0 = log(boot_mod$t0[2]),
-                              t = log(boot_mod$t[, 2]),
-                              conf = conf,
-                              type = "norm",
-                              hinv = exp)
+                                  t0 = log(boot_mod$t0[2]),
+                                  t = log(boot_mod$t[, 2]),
+                                  conf = conf,
+                                  type = "norm",
+                                  hinv = exp)
         rci <- rbind(c(bias_ci1[[4]][2:3]), c(bias_ci2[[4]][2:3]))
+    } else if (ci_type == "perc") {
+        bias_ci1 <- boot::boot.ci(boot_mod,
+                                  t0 = boot_mod$t0[1],
+                                  t = boot_mod$t[, 1],
+                                  conf = conf,
+                                  type = "perc")
+        bias_ci2 <- boot::boot.ci(boot_mod,
+                                  t0 = boot_mod$t0[2],
+                                  t = boot_mod$t[, 2],
+                                  conf = conf,
+                                  type = "perc")
+        rci <- rbind(c(bias_ci1[[4]][4:5]), c(bias_ci2[[4]][4:5]))
     }
-    else if (ci_type == "perc") {
-            bias_ci1 <- boot::boot.ci(boot_mod,
-                                      t0 = boot_mod$t0[1],
-                                      t = boot_mod$t[, 1],
-                                      conf = conf,
-                                      type = "perc")
-            bias_ci2 <- boot::boot.ci(boot_mod,
-                                      t0 = boot_mod$t0[2],
-                                      t = boot_mod$t[, 2],
-                                      conf = conf,
-                                      type = "perc")
-            rci <- rbind(c(bias_ci1[[4]][4:5]), c(bias_ci2[[4]][4:5]))
-    }
-    
+
     res <- list(model = model,
                 boot_mod = boot_mod,
                 nrep = nrep,

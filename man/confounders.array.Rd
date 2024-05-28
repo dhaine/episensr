@@ -8,9 +8,7 @@ among exposed and unexposed}
 confounders.array(
   crude.risk,
   type = c("binary", "continuous", "RD"),
-  bias_parms = NULL,
-  dec = 2,
-  print = TRUE
+  bias_parms = NULL
 )
 }
 \arguments{
@@ -31,21 +29,12 @@ type `binary`), or mean value of the confounder among the exposed (if type
 type `binary`), or mean value of the confounder among the unexposed (if type
 `continuous` or `RD`).
 }}
-
-\item{dec}{Number of decimals in the printout.}
-
-\item{print}{A logical scalar. Should the results be printed?}
 }
 \value{
-A vector with elements:
-\item{crude.risk}{The crude relative risk or risk difference.}
-\item{RR_CD}{The association between the confounder and the outcome.}
-\item{P_C1}{The prevalence of the confounder among the exposed, or mean value of
-the confounder among the exposed.}
-\item{P_C0}{The prevalence of the confounder among the unexposed, or mean value
-of the confounder among the unexposed.}
-\item{risk_adj}{The adjusted exposure relative risk or risk difference.}
-\item{bias_perc}{The bias as a percentage: (crude.RR - risk_adj)/risk_adj * 100.}
+A list with elements:
+\item{model}{Bias analysis performed.}
+\item{bias.parms}{Input bias parameters.}
+\item{adj.measures}{Output results, with bias as a percentage: (crude.RR - risk_adj)/risk_adj * 100.}
 }
 \description{
 Sensitivity analysis to explore effect of residual confounding using simple
@@ -68,8 +57,7 @@ confounders.array(crude.risk = 1.5, type = "binary",
 bias_parms = c(3.25, 0.333, 0.384))
 confounders.array(crude.risk = 1.5, type = "continuous",
 bias_parms = c(1.009, 7.8, 7.9))
-confounders.array(crude.risk = 0.05, type = "RD", bias_parms = c(0.009, 8.5, 8),
-dec = 4)
+confounders.array(crude.risk = 0.05, type = "RD", bias_parms = c(0.009, 8.5, 8))
 }
 \references{
 Schneeweiss, S., 2006. Sensitivity analysis and external adjustment

@@ -20,7 +20,7 @@ susceptible to systematic errors as well, from selection bias to the presence of
 misclassification).
 Bias analysis methods were compiled by Lash et al. in their
 book
-["Applying Quantitative Bias Analysis to Epidemiologic Data"](https://www.springer.com/us/book/9780387879604).
+["Applying Quantitative Bias Analysis to Epidemiologic Data"](https://link.springer.com/book/10.1007/978-3-030-82673-4).
 This package implements the various bias analyses from that book, which are also
 [available](https://sites.google.com/site/biasanalysis/) (for some) as a
 spreadsheet or a SAS macro, as well as some additional approaches.
@@ -97,7 +97,8 @@ are also directly available, or the estimates can also be bootstrapped (see belo
 The confidence intervals from the variance of the corrected odds ratio estimator in the
 `misclassification` function are computed as in [Greenland et
 al.]( https://doi.org/10.1002/sim.4780070704) and [Chu et
-al.](https://doi.org/10.1016/j.annepidem.2006.04.001).
+al.](https://doi.org/10.1016/j.annepidem.2006.04.001), when adjusting for exposure misclassification
+using sensitivity and specificity.
 Using the example in Chu et al. of a case-control study of cigarette smoking and
 invasive pneumococcal disease, the unadjusted odds ratio is 4.32, with a 95%
 confidence interval of 2.96 to 6.31.
@@ -172,6 +173,27 @@ direct.label(p3, list("far.from.others.borders", "calc.boxes", "enlarge.box",
                            hjust = 1, vjust = -.5, box.color = NA, cex = .6,
                            fill = "transparent", "draw.rects"))
 ```
+
+The bias analysis for exposure misclassification can also use positive and negative predictive values.
+[Bodnar et al.](https://doi.org/10.1111/ppe.12120) evaluated the accuracy of maternal prepregnancy BMI
+and gestational weight gain (GWG) data derived from the Pennsylvania state birth certiﬁcates against
+information collected from the medical record. To estimate positive and negative predictive values, a
+validation study was conducted by randomly sampling women conditional on their reported BMI category
+and term/preterm status. BMI was obtained from medical records for these sampled women and used as a
+gold standard for BMI category, allowing to determine positive and negative predictive values:
+PPV<sub>D1</sub> = 65%, PPV<sub>D0</sub> = 74%, NPV<sub>D1</sub> = 100%, NPV<sub>D0</sub> = 98%. The
+analysis is the following.
+
+```{r, misclass_pv}
+misclassification(matrix(c(599, 4978, 31175, 391851),
+                         dimnames = list(c("Preterm", "Term"), c("Underweight", "Normal weight")),
+                         nrow = 2, byrow = TRUE),
+                  type = "exposure_pv",
+                  bias_parms = c(0.65, 0.74, 1, 0.98))
+```
+
+Note that using predictive values relates to the prevalence of the true exposure status, which might
+not be the same in every populations.
 
 Covariate misclassification is available via the function `misclassification.cov`.
 For example, the paper by [Berry et

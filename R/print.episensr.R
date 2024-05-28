@@ -3,14 +3,14 @@
 #' Print associations for episensr objects.
 #'
 #' @param x An object of class 'episensr'.
-#' @param digits Minimal number of _significant_ digits, see 'print.default'. 
+#' @param digits Minimal number of _significant_ digits, see 'print.default'.
 #' @param ... Other unused arguments.
 #'
 #' @return Print the observed and adjusted measures of association.
 #'
 #' @export
 print.episensr <- function(x, digits = getOption("digits"), ...) {
-    if(class(x)[1] == "episensr") {
+    if (class(x)[1] == "episensr") {
         cat("--Observed data--",
             "\n         Outcome:", rownames(x$obs.data)[1],
             "\n       Comparing:", colnames(x$obs.data)[1], "vs.",
@@ -21,7 +21,7 @@ print.episensr <- function(x, digits = getOption("digits"), ...) {
         cat("---\n")
         print.table(x$adj.measures, digits = digits, ...)
         invisible(NULL)
-    } else if(class(x)[1] == "episensr.multiple") {
+    } else if (class(x)[1] == "episensr.multiple") {
         cat("\nMultiple bias analysis\n")
         cat("---\n")
         print.table(x$adj.measures, digits = digits, ...)
@@ -29,6 +29,12 @@ print.episensr <- function(x, digits = getOption("digits"), ...) {
     } else if (class(x)[1] == "episensr.evalue") {
         cat("\n--E-value--\n")
         print.table(x, digits = digits, ...)
+        invisible(NULL)
+    } else if (class(x)[1] == "episensr.confounder") {
+        cat("--Input bias parameters--\n")
+        print.table(x$bias.parms, digits = digits, ...)
+        cat("---\n\n")
+        print.table(x$adj.measures, digits = digits, ...)
         invisible(NULL)
     }
 }

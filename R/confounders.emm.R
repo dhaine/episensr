@@ -21,7 +21,7 @@
 #' \item the prevalence of the confounder among the unexposed (between 0 and 1).
 #' }
 #' @param alpha Significance level.
-#' 
+#'
 #' @return A list with elements:
 #' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
 #' \item{cfder.data}{The same table for Confounder +.}
@@ -34,7 +34,7 @@
 #'
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 #' Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.
-#' 
+#'
 #' @examples
 #' # The data for this example come from:
 #' # Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O.
@@ -47,13 +47,13 @@
 #' nrow = 2, byrow = TRUE),
 #' type = "RR",
 #' bias_parms = c(.4, .7, .8, .05))
-#' 
+#'
 #' confounders.emm(matrix(c(105, 85, 527, 93),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
 #' type = "OR",
 #' bias_parms = c(.4, .7, .8, .05))
-#' 
+#'
 #' confounders.emm(matrix(c(105, 85, 527, 93),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 #' nrow = 2, byrow = TRUE),
@@ -65,38 +65,38 @@ confounders.emm <- function(case,
                             exposed,
                             type = c("RR", "OR", "RD"),
                             bias_parms = NULL,
-                            alpha = 0.05){
-    if(length(type) > 1)
-        stop('Choose between RR, OR, or RD implementation.')
-    
-    if(is.null(bias_parms))
+                            alpha = 0.05) {
+    if (length(type) > 1)
+        stop("Choose between RR, OR, or RD implementation.")
+
+    if (is.null(bias_parms))
         bias_parms <- c(1, 1, 0, 0)
     else bias_parms <- bias_parms
-    if(length(bias_parms) != 4)
-        stop('The argument bias_parms should be made of the following components: (1) Association between the confounder and the outcome among those who were exposed, (2) Association between the confounder and the outcome among those who were not exposed, (3) Prevalence of the confounder among the exposed, and (4) Prevalence of the confounder among the unexposed.')
-    if(!all(bias_parms[3:4] >= 0 & bias_parms[3:4] <=1))
-        stop('Prevalences should be between 0 and 1.')
-    if(!all(bias_parms[1:2] > 0) & type != "RD")
-        stop('Association between the confounder and the outcome should be greater than 0.')
-    
-    if(inherits(case, c("table", "matrix")))
+    if (length(bias_parms) != 4)
+        stop("The argument bias_parms should be made of the following components: (1) Association between the confounder and the outcome among those who were exposed, (2) Association between the confounder and the outcome among those who were not exposed, (3) Prevalence of the confounder among the exposed, and (4) Prevalence of the confounder among the unexposed.")
+    if (!all(bias_parms[3:4] >= 0 & bias_parms[3:4] <= 1))
+        stop("Prevalences should be between 0 and 1.")
+    if (!all(bias_parms[1:2] > 0) & type != "RD")
+        stop("Association between the confounder and the outcome should be greater than 0.")
+
+    if (inherits(case, c("table", "matrix")))
         tab <- case
     else {
         tab.df <- table(case, exposed)
         tab <- tab.df[2:1, 2:1]
     }
 
-    a <- tab[1, 1]
-    b <- tab[1, 2]
-    c <- tab[2, 1]
-    d <- tab[2, 2]
+    a <- as.numeric(tab[1, 1])
+    b <- as.numeric(tab[1, 2])
+    c <- as.numeric(tab[2, 1])
+    d <- as.numeric(tab[2, 2])
 
     type <- match.arg(type)
     if (type == "RR") {
-        crude.rr <- (a/(a + c)) / (b/(b + d))
-        se.log.crude.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
-        lci.crude.rr <- exp(log(crude.rr) - qnorm(1 - alpha/2) * se.log.crude.rr)
-        uci.crude.rr <- exp(log(crude.rr) + qnorm(1 - alpha/2) * se.log.crude.rr)
+        crude.rr <- (a / (a + c)) / (b / (b + d))
+        se.log.crude.rr <- sqrt((c / a) / (a + c) + (d / b) / (b + d))
+        lci.crude.rr <- exp(log(crude.rr) - qnorm(1 - alpha / 2) * se.log.crude.rr)
+        uci.crude.rr <- exp(log(crude.rr) + qnorm(1 - alpha / 2) * se.log.crude.rr)
 
         M1 <- (a + c) * bias_parms[3]
         N1 <- (b + d) * bias_parms[4]
@@ -111,18 +111,16 @@ confounders.emm <- function(case,
         C0 <- c - C1
         D0 <- d - D1
 
-        if(A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
-           A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
-        
+        if (A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 | A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
+            stop("Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).")
+
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
 
-        SMRrr <- a / ((M1 * B1/N1) + (M0 * B0/N0))
-        MHrr <- (A1 * N1/(M1 + N1) + A0 * N0/(M0 + N0)) /
-            (B1 * M1/(M1 + N1) + B0 * M0/(M0 + N0)) 
-        cfder.rr <- (A1/(A1 + C1)) / (B1/(B1 + D1))
-        nocfder.rr <- (A0/(A0 + C0)) / (B0/(B0 + D0))
+        SMRrr <- a / ((M1 * B1 / N1) + (M0 * B0 / N0))
+        MHrr <- (A1 * N1 / (M1 + N1) + A0 * N0 / (M0 + N0)) / (B1 * M1 / (M1 + N1) + B0 * M0 / (M0 + N0))
+        cfder.rr <- (A1 / (A1 + C1)) / (B1 / (B1 + D1))
+        nocfder.rr <- (A0 / (A0 + C0)) / (B0 / (B0 + D0))
         RRadj.smr <- crude.rr / SMRrr
         RRadj.mh <- crude.rr / MHrr
 
@@ -130,30 +128,30 @@ confounders.emm <- function(case,
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
-        if (is.null(rownames(tab))){
+        if (is.null(rownames(tab))) {
             rownames(tab.cfder) <- paste("Row", 1:2)
         } else {
             rownames(tab.cfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){
+        if (is.null(colnames(tab))) {
             colnames(tab.cfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.cfder) <- colnames(tab)
         }
-        if (is.null(rownames(tab))){
+        if (is.null(rownames(tab))) {
             rownames(tab.nocfder) <- paste("Row", 1:2)
         } else {
             rownames(tab.nocfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))) {
             colnames(tab.nocfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.nocfder) <- colnames(tab)
         }
         rmat <- rbind(c(crude.rr, lci.crude.rr, uci.crude.rr))
         colnames(rmat) <- c(" ",
-                            paste(100 * (alpha/2), "%", sep = ""),
-                            paste(100 * (1 - alpha/2), "%", sep = ""))
+                            paste(100 * (alpha / 2), "%", sep = ""),
+                            paste(100 * (1 - alpha / 2), "%", sep = ""))
         rmatc <- rbind(c(SMRrr, RRadj.smr), c(MHrr, RRadj.mh))
         rownames(rmatc) <- c("Standardized Morbidity Ratio:",
                              "             Mantel-Haenszel:")
@@ -163,12 +161,12 @@ confounders.emm <- function(case,
                             "Relative Risk, Confounder +:",
                             "Relative Risk, Confounder -:")
     }
-    
-    if (type == "OR"){
-        crude.or <- (a/b) / (c/d)
-        se.log.crude.or <- sqrt(1/a + 1/b + 1/c + 1/d)
-        lci.crude.or <- exp(log(crude.or) - qnorm(1 - alpha/2) * se.log.crude.or)
-        uci.crude.or <- exp(log(crude.or) + qnorm(1 - alpha/2) * se.log.crude.or)
+
+    if (type == "OR") {
+        crude.or <- (a / b) / (c / d)
+        se.log.crude.or <- sqrt(1 / a + 1 / b + 1 / c + 1 / d)
+        lci.crude.or <- exp(log(crude.or) - qnorm(1 - alpha / 2) * se.log.crude.or)
+        uci.crude.or <- exp(log(crude.or) + qnorm(1 - alpha / 2) * se.log.crude.or)
 
         C1 <- c * bias_parms[3]
         D1 <- d * bias_parms[4]
@@ -183,16 +181,14 @@ confounders.emm <- function(case,
         M0 <- A0 + C0
         N0 <- B0 + C0
 
-        if(A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
-           A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
-        
+        if (A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 | A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
+            stop("Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).")
+
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
 
-        SMRor <- a / ((C1 * B1/D1) + (C0 * B0/D0))
-        MHor <- (A1 * D1/(M1 + N1) + A0 * D0/(M0 + N0)) /
-            (B1 * C1/(M1 + N1) + B0 * C0/(M0 + N0)) 
+        SMRor <- a / ((C1 * B1 / D1) + (C0 * B0 / D0))
+        MHor <- (A1 * D1 / (M1 + N1) + A0 * D0 / (M0 + N0)) / (B1 * C1 / (M1 + N1) + B0 * C0 / (M0 + N0))
         cfder.or <- (A1 / C1) / (B1 / D1)
         nocfder.or <- (A0 / C0) / (B0 / D0)
         ORadj.smr <- crude.or / SMRor
@@ -202,30 +198,30 @@ confounders.emm <- function(case,
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
-        if (is.null(rownames(tab))){
+        if (is.null(rownames(tab))) {
             rownames(tab.cfder) <- paste("Row", 1:2)
         } else {
             rownames(tab.cfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))) {
             colnames(tab.cfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.cfder) <- colnames(tab)
         }
-        if (is.null(rownames(tab))){
+        if (is.null(rownames(tab))) {
             rownames(tab.nocfder) <- paste("Row", 1:2)
         } else {
             rownames(tab.nocfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))) {
             colnames(tab.nocfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.nocfder) <- colnames(tab)
         }
         rmat <- rbind(c(crude.or, lci.crude.or, uci.crude.or))
         colnames(rmat) <- c(" ",
-                            paste(100 * (alpha/2), "%", sep = ""),
-                            paste(100 * (1 - alpha/2), "%", sep = ""))
+                            paste(100 * (alpha / 2), "%", sep = ""),
+                            paste(100 * (1 - alpha / 2), "%", sep = ""))
         rmatc <- rbind(c(SMRor, ORadj.smr), c(MHor, ORadj.mh))
         rownames(rmatc) <- c("Standardized Morbidity Ratio:",
                              "             Mantel-Haenszel:")
@@ -235,12 +231,12 @@ confounders.emm <- function(case,
                             "Odds Ratio, Confounder +:",
                             "Odds Ratio, Confounder -:")
     }
-    
-    if (type == "RD"){
+
+    if (type == "RD") {
         crude.rd <- (a / (a + c)) - (b / (b + d))
         se.log.crude.rd <- sqrt((a * c) / (a + c)^3 + (b * d) / (b + d)^3)
-        lci.crude.rd <- crude.rd - qnorm(1 - alpha/2) * se.log.crude.rd
-        uci.crude.rd <- crude.rd + qnorm(1 - alpha/2) * se.log.crude.rd
+        lci.crude.rd <- crude.rd - qnorm(1 - alpha / 2) * se.log.crude.rd
+        uci.crude.rd <- crude.rd + qnorm(1 - alpha / 2) * se.log.crude.rd
 
         M1 <- (a + c) * bias_parms[3]
         N1 <- (b + d) * bias_parms[4]
@@ -255,17 +251,14 @@ confounders.emm <- function(case,
         C0 <- c - C1
         D0 <- d - D1
 
-        if(A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 |
-           A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
-            stop('Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).')
-        
+        if (A1 < 0 | B1 < 0 | C1 < 0 | D1 < 0 | A0 < 0 | B0 < 0 | C0 < 0 | D0 < 0)
+            stop("Parameters chosen lead to negative cell(s) in adjusted 2x2 table(s).")
+
         tab.cfder <- matrix(c(A1, B1, C1, D1), nrow = 2, byrow = TRUE)
         tab.nocfder <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
 
-        MHrd <- (((A1 * N1 - B1 * M1) / (M1 + N1)) +
-                     ((A0 * N0 - B0 * M0) / (M0 + N0))) /
-                         ((M1 * N1 / (M1 + N1)) +
-                              (M0 * N0 / (M0 + N0)))
+        MHrd <- (((A1 * N1 - B1 * M1) / (M1 + N1)) + ((A0 * N0 - B0 * M0) / (M0 + N0))) /
+            ((M1 * N1 / (M1 + N1)) + (M0 * N0 / (M0 + N0)))
         cfder.rd <- (A1 / M1) - (B1 / N1)
         nocfder.rd <- (A0 / M0) - (B0 / N0)
         RDadj.mh <- crude.rd - MHrd
@@ -274,30 +267,30 @@ confounders.emm <- function(case,
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
-        if (is.null(rownames(tab))){
+        if (is.null(rownames(tab))) {
             rownames(tab.cfder) <- paste("Row", 1:2)
         } else {
             rownames(tab.cfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))) {
             colnames(tab.cfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.cfder) <- colnames(tab)
         }
-        if (is.null(rownames(tab))){
+        if (is.null(rownames(tab))) {
             rownames(tab.nocfder) <- paste("Row", 1:2)
         } else {
             rownames(tab.nocfder) <- row.names(tab)
         }
-        if (is.null(colnames(tab))){ 
+        if (is.null(colnames(tab))) {
             colnames(tab.nocfder) <- paste("Col", 1:2)
         } else {
             colnames(tab.nocfder) <- colnames(tab)
         }
         rmat <- rbind(c(crude.rd, lci.crude.rd, uci.crude.rd))
         colnames(rmat) <- c(" ",
-                            paste(100 * (alpha/2), "%", sep = ""),
-                            paste(100 * (1 - alpha/2), "%", sep = ""))
+                            paste(100 * (alpha / 2), "%", sep = ""),
+                            paste(100 * (1 - alpha / 2), "%", sep = ""))
         rmatc <- rbind(c(MHrd, RDadj.mh))
         rownames(rmatc) <- "Mantel-Haenszel:"
         colnames(rmatc) <- c(" ", "Adjusted RD")

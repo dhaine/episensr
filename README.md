@@ -5,12 +5,11 @@
 
 <!-- badges: start -->
 
-[![Build
-Status](https://travis-ci.org/dhaine/episensr.svg?branch=master)](https://travis-ci.org/dhaine/episensr)
+[![R-CMD-check](https://github.com/dhaine/episensr/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/dhaine/episensr/actions/workflows/check-standard.yaml)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/episensr)](https://cran.r-project.org/package=episensr)
-[![DOI](https://zenodo.org/badge/33018836.svg)](https://doi.org/10.5281/zenodo.4554554)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8299430.svg)](https://doi.org/10.5281/zenodo.8299430)
 [![Codecov test
-coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](https://codecov.io/gh/dhaine/episensr?branch=master)
+coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](https://app.codecov.io/gh/dhaine/episensr/tree/master)
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
@@ -23,9 +22,7 @@ The R package **episensr** allows to do basic sensitivity analysis of
 epidemiological results as described in **Applying Quantitative Bias
 Analysis to Epidemiological Data** by Timothy L. Lash, Matthew P. Fox,
 and Aliza K. Fink (ISBN: 978-0-387-87960-4,
-[bias.analysis](https://sites.google.com/site/biasanalysis/)). A similar
-function is available in Stata
-([episens](https://ideas.repec.org/c/boc/bocode/s456792.html)).
+[bias.analysis](https://sites.google.com/site/biasanalysis/)).
 
 ## License
 
@@ -37,21 +34,20 @@ To cite **episensr**, please use:
 
 ``` r
 citation("episensr")
+#> To cite package 'episensr' in publications use:
 #> 
-#> To cite episensr in publications use:
-#> 
-#>   Haine, Denis (2021). The episensr package: basic sensitivity analysis
-#>   of epidemiological results. R package version 1.0.0.
-#>   https://dhaine.github.io/episensr/. doi: 10.5281/zenodo.4554554.
+#>   Haine, Denis (2023). The episensr package: basic sensitivity analysis
+#>   of epidemiological results. R package version 1.3.0.
+#>   https://dhaine.github.io/episensr/. doi: 10.5281/zenodo.8299430.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Misc{,
 #>     title = {The episensr package: basic sensitivity analysis of epidemiological results},
 #>     author = {Denis Haine},
-#>     year = {2021},
-#>     note = {R package version 1.0.0},
-#>     doi = {10.5281/zenodo.4554554},
+#>     year = {2023},
+#>     note = {R package version 1.3.0},
+#>     doi = {10.5281/zenodo.8299430},
 #>     url = {https://dhaine.github.io/episensr/},
 #>   }
 ```
@@ -77,6 +73,10 @@ We use the function `selection` as shown below.
 
 ``` r
 library(episensr)
+#> Loading required package: ggplot2
+#> Thank you for using episensr!
+#> This is version 1.3.0 of episensr
+#> Type 'citation("episensr")' for citing this R package in publications.
 
 selection(matrix(c(136, 107, 297, 165),
                  dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),

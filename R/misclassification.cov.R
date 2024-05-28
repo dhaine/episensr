@@ -15,7 +15,7 @@
 #' \item Specificity of confounder classification among those without the outcome.
 #' }
 #' @param alpha Significance level.
-#' 
+#'
 #' @return A list with elements:
 #' \item{obs.data}{The analyzed stratified 2 x 2 tables from the observed data.}
 #' \item{corr.data}{The expected stratified observed data given the true data assuming
@@ -27,7 +27,7 @@
 #'
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 #' Bias Analysis to Epidemiologic Data}, pp.79--108, Springer.
-#' 
+#'
 #' @examples
 #' # The data for this example come from:
 #' # Berry, R.J., Kihlberg, R., and Devine, O. Impact of misclassification of in vitro
@@ -43,69 +43,59 @@
 #' bias_parms = c(.6, .6, .95, .95))
 #' @export
 #' @importFrom stats qnorm
-misclassification_cov <- function(case, exposed, covariate,
-                                  bias_parms = NULL, alpha = 0.05) {
-    warning("Please use misclassification.cov() instead of misclassification_cov()",
-            call. = FALSE)
-    misclassification.cov(case, exposed, covariate, bias_parms = NULL, alpha = 0.05)
-}
-
-#' @export
-#' @rdname misclassification_cov
-
 misclassification.cov <- function(case,
                                   exposed,
                                   covariate,
                                   bias_parms = NULL,
-                                  alpha = 0.05){
-    if(is.null(bias_parms))
+                                  alpha = 0.05) {
+    if (is.null(bias_parms))
         bias_parms <- c(1, 1, 1, 1)
     else bias_parms <- bias_parms
-    if(length(bias_parms) != 4)
-        stop('The argument bias_parms should be made of the following components: (1) Sensitivity of classification among those with the outcome, (2) Sensitivity of classification among those without the outcome, (3) Specificity of classification among those with the outcome, and (4) Specificity of classification among those without the outcome.')
-    if(!all(bias_parms >= 0 & bias_parms <=1))
-        stop('Bias parameters should be between 0 and 1.')
+    if (length(bias_parms) != 4)
+        stop("The argument bias_parms should be made of the following components: (1) Sensitivity of classification among those with the outcome, (2) Sensitivity of classification among those without the outcome, (3) Specificity of classification among those with the outcome, and (4) Specificity of classification among those without the outcome.")
+    if (!all(bias_parms >= 0 & bias_parms <=1))
+        stop("Bias parameters should be between 0 and 1.")
 
-    if(inherits(case, c("table", "array")))
+    if (inherits(case, c("table", "array")))
         tab <- case
     else {
         tab.df <- table(case, exposed, covariate)
         tab <- tab.df[2:1, 2:1, ]
         }
-    
-    a <- tab[1, 1, 1]
-    b <- tab[1, 2, 1]
-    c <- tab[2, 1, 1]
-    d <- tab[2, 2, 1]
 
-    Ac1 <- tab[1, 1, 2]
-    Bc1 <- tab[1, 2, 2]
-    Cc1 <- tab[2, 1, 2]
-    Dc1 <- tab[2, 2, 2]
+    a <- as.numeric(tab[1, 1, 1])
+    b <- as.numeric(tab[1, 2, 1])
+    c <- as.numeric(tab[2, 1, 1])
+    d <- as.numeric(tab[2, 2, 1])
 
-    Ac0 <- tab[1, 1, 3]
-    Bc0 <- tab[1, 2, 3]
-    Cc0 <- tab[2, 1, 3]
-    Dc0 <- tab[2, 2, 3]
+    Ac1 <- as.numeric(tab[1, 1, 2])
+    Bc1 <- as.numeric(tab[1, 2, 2])
+    Cc1 <- as.numeric(tab[2, 1, 2])
+    Dc1 <- as.numeric(tab[2, 2, 2])
 
-    obs.rr <- (a/(a + c)) / (b/(b + d))
-    se.log.obs.rr <- sqrt((c/a) / (a+c) + (d/b) / (b+d))
-    lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha/2) * se.log.obs.rr)
-    uci.obs.rr <- exp(log(obs.rr) + qnorm(1 - alpha/2) * se.log.obs.rr)
+    Ac0 <- as.numeric(tab[1, 1, 3])
+    Bc0 <- as.numeric(tab[1, 2, 3])
+    Cc0 <- as.numeric(tab[2, 1, 3])
+    Dc0 <- as.numeric(tab[2, 2, 3])
 
-    obs.or <- (a/c) / (b/d)
-    se.log.obs.or <- sqrt(1/a + 1/b + 1/c + 1/d)
-    lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha/2) * se.log.obs.or)
-    uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha/2) * se.log.obs.or)
+    obs.rr <- (a / (a + c)) / (b / (b + d))
+    se.log.obs.rr <- sqrt((c / a) / (a + c) + (d / b) / (b + d))
+    lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha / 2) * se.log.obs.rr)
+    uci.obs.rr <- exp(log(obs.rr) + qnorm(1 - alpha / 2) * se.log.obs.rr)
 
-    SMR_RR <- a / (((Ac1+Cc1) * Bc1/(Bc1+Dc1)) + ((Ac0+Cc0) * Bc0/(Bc0+Dc0)))
-    SMR_OR <- a / ((Cc1 * Bc1/Dc1) + (Cc0 * Bc0/Dc0))
+    obs.or <- (a / c) / (b / d)
+    se.log.obs.or <- sqrt(1 / a + 1 / b + 1 / c + 1 / d)
+    lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha / 2) * se.log.obs.or)
+    uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha / 2) * se.log.obs.or)
+
+    SMR_RR <- a / (((Ac1 + Cc1) * Bc1 / (Bc1 + Dc1)) + ((Ac0 + Cc0) * Bc0 / (Bc0 + Dc0)))
+    SMR_OR <- a / ((Cc1 * Bc1 / Dc1) + (Cc0 * Bc0 / Dc0))
     SMR_RR_C <- obs.rr / SMR_RR
     SMR_OR_C <- obs.or / SMR_OR
-    MH_RR <- (Ac1 * (Bc1+Dc1) / sum(tab[,,2]) + Ac0 * (Bc0+Dc0) / sum(tab[,,3])) /
-        (Bc1 * (Ac1+Cc1) / sum(tab[,,2]) + Bc0 * (Ac0+Cc0) / sum(tab[,,3]))
-    MH_OR <- (Ac1 * Dc1 / sum(tab[,,2]) + Ac0 * Dc0 / sum(tab[,,3])) /
-        (Bc1 * Cc1 / sum(tab[,,2]) + Bc0 * Cc0 / sum(tab[,,3]))
+    MH_RR <- (Ac1 * (Bc1 + Dc1) / sum(tab[, , 2]) + Ac0 * (Bc0 + Dc0) / sum(tab[, , 3])) /
+        (Bc1 * (Ac1 + Cc1) / sum(tab[, , 2]) + Bc0 * (Ac0 + Cc0) / sum(tab[, , 3]))
+    MH_OR <- (Ac1 * Dc1 / sum(tab[, , 2]) + Ac0 * Dc0 / sum(tab[, , 3])) /
+        (Bc1 * Cc1 / sum(tab[, , 2]) + Bc0 * Cc0 / sum(tab[, , 3]))
     MH_RR_C <- obs.rr / MH_RR
     MH_OR_C <- obs.or / MH_OR
 
@@ -118,22 +108,22 @@ misclassification.cov <- function(case,
     Bc0_Cr <- b - Bc1_Cr
     Cc0_Cr <- c - Cc1_Cr
     Dc0_Cr <- d - Dc1_Cr
-    
-    if(Ac1_Cr < 1 | Ac0_Cr < 1 | Bc1_Cr < 1 | Bc0_Cr < 1 | Cc1_Cr < 1 | Cc0_Cr < 1 |
-       Dc1_Cr < 1 | Dc0_Cr < 1)
-        stop('Parameters chosen lead to negative cell(s) in adjusted stratified 2x2 table.')
+
+    if (Ac1_Cr < 1 | Ac0_Cr < 1 | Bc1_Cr < 1 | Bc0_Cr < 1 | Cc1_Cr < 1 | Cc0_Cr < 1 |
+        Dc1_Cr < 1 | Dc0_Cr < 1)
+        stop("Parameters chosen lead to negative cell(s) in adjusted stratified 2x2 table.")
 
     corr.tab1 <- matrix(c(Ac1_Cr, Bc1_Cr, Cc1_Cr, Dc1_Cr), nrow = 2, byrow = TRUE)
     corr.tab0 <- matrix(c(Ac0_Cr, Bc0_Cr, Cc0_Cr, Dc0_Cr), nrow = 2, byrow = TRUE)
 
-    corr.SMR_RR <- a / (((Ac1_Cr+Cc1_Cr) * Bc1_Cr / (Bc1_Cr+Dc1_Cr)) +
-                        ((Ac0_Cr+Cc0_Cr) * Bc0_Cr / (Bc0_Cr+Dc0_Cr)))
+    corr.SMR_RR <- a / (((Ac1_Cr + Cc1_Cr) * Bc1_Cr / (Bc1_Cr + Dc1_Cr)) +
+                        ((Ac0_Cr + Cc0_Cr) * Bc0_Cr / (Bc0_Cr + Dc0_Cr)))
     corr.SMR_OR <- a / ((Cc1_Cr * Bc1_Cr / Dc1_Cr) + (Cc0_Cr * Bc0_Cr / Dc0_Cr))
     corr.RR_C <- obs.rr / corr.SMR_RR
     corr.OR_C <- obs.or / corr.SMR_OR
-    corr.MH_RR <- (Ac1_Cr * (Bc1_Cr+Dc1_Cr) / sum(corr.tab1) + Ac0_Cr *
-                   (Bc0_Cr+Dc0_Cr) / sum(corr.tab0)) /
-        (Bc1_Cr * (Ac1_Cr+Cc1_Cr) / sum(corr.tab1) + Bc0_Cr * (Ac0_Cr+Cc0_Cr) /
+    corr.MH_RR <- (Ac1_Cr * (Bc1_Cr + Dc1_Cr) / sum(corr.tab1) + Ac0_Cr *
+                   (Bc0_Cr + Dc0_Cr) / sum(corr.tab0)) /
+        (Bc1_Cr * (Ac1_Cr + Cc1_Cr) / sum(corr.tab1) + Bc0_Cr * (Ac0_Cr + Cc0_Cr) /
          sum(corr.tab0))
     corr.MH_OR <- (Ac1_Cr * Dc1_Cr / sum(corr.tab1) + Ac0_Cr * Dc0_Cr / sum(corr.tab0)) /
         (Bc1_Cr * Cc1_Cr / sum(corr.tab1) + Bc0_Cr * Cc0_Cr / sum(corr.tab0))
@@ -144,14 +134,14 @@ misclassification.cov <- function(case,
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    if (is.null(rownames(tab))){
+    if (is.null(rownames(tab))) {
         rownames(corr.tab1) <- paste("Row", 1:2)
         rownames(corr.tab0) <- paste("Row", 1:2)
         } else {
             rownames(corr.tab1) <- row.names(tab)
             rownames(corr.tab0) <- row.names(tab)
         }
-    if (is.null(colnames(tab))){
+    if (is.null(colnames(tab))) {
         colnames(corr.tab1) <- paste("Col", 1:2)
         colnames(corr.tab0) <- paste("Col", 1:2)
         } else {
@@ -163,8 +153,8 @@ misclassification.cov <- function(case,
     rownames(rmat) <- c("Observed Relative Risk:",
                         "   Observed Odds Ratio:")
     colnames(rmat) <- c(" ",
-                        paste(100 * (alpha/2), "%", sep = ""),
-                        paste(100 * (1 - alpha/2), "%", sep = ""))
+                        paste(100 * (alpha / 2), "%", sep = ""),
+                        paste(100 * (1 - alpha / 2), "%", sep = ""))
     rmata <- rbind(SMR_RR, SMR_RR_C, MH_RR, MH_RR_C,
                    SMR_OR, SMR_OR_C, MH_OR, MH_OR_C)
     rmatar <- rbind(corr.SMR_RR, corr.RR_C, corr.MH_RR, corr.MH_RR_C,
@@ -183,7 +173,7 @@ misclassification.cov <- function(case,
     res <- list(model = "misclassification.cov",
                 obs.data = tab,
                 corr.data = c(corr.tab1, corr.tab0),
-                obs.measures = rmat, 
+                obs.measures = rmat,
                 adj.measures = rmatc,
                 bias.parms = bias_parms)
     class(res) <- c("episensr", "list")

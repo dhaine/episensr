@@ -19,7 +19,7 @@ test_that("bias function is provided", {
              expect_error(dat %>%
                           misclassification(., type = "exposure",
                                             bias_parms = c(.56, .58, .99, .97)) %>%
-                          multiple.bias(., 
+                          multiple.bias(.,
                                         RR = 1, bias_parms = c(0.1, 0.9, 0.1, 0.4)))
          })
 
@@ -67,23 +67,23 @@ test_that("Correct table passed on (probabilistic)", {
                                 case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
                                 ncase.exp = list("logit-normal", c(-1.2, 0, 0, 1)),
                                 ncase.nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1)))
-              expect_equal(model$obs.data[1, 1], 182.6, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs.data[1, 2], 767.4, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs.data[2, 1], 169.3, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs.data[2, 2], 817.7, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs.data[1, 1], 182.9, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs.data[1, 2], 767.1, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs.data[2, 1], 168.9, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs.data[2, 2], 818.1, tolerance = 1e-4, scale = 1)
 })
 
 test_that("selection bias has correct arguments", {
-             expect_error(chien %>% 
+             expect_error(chien %>%
                           misclassification(., type = "exposure",
                                             bias_parms = c(.56, .58, .99, .97)) %>%
                           multiple.bias(., bias_function = "selection"))
-             expect_error(chien %>% 
+             expect_error(chien %>%
                           misclassification(., type = "exposure",
                                             bias_parms = c(.56, .58, .99, .97)) %>%
                           multiple.bias(., bias_function = "selection",
                                         bias = c(0.5, 0.5, 0.5, 0.5)))
-             expect_error(chien %>% 
+             expect_error(chien %>%
                           misclassification(., type = "exposure",
                                             bias_parms = c(.56, .58, .99, .97)) %>%
                           multiple.bias(., bias_function = "selection",
@@ -186,7 +186,7 @@ test_that("probsens.conf has correct arguments", {
                                         case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
                                         ncase.exp = list("beta", c(12.6, 50.4)),
                                         ncase.nexp = list("trapezoidal",
-                                                          c(0.7, 0.8, 0.9, 1))) %>% 
+                                                          c(0.7, 0.8, 0.9, 1))) %>%
                           multiple.bias(., bias_function = "probsens.conf",
                                         prev.nexp = list("beta", c(42.9, 54.6)),
                                         risk = list("trapezoidal", c(.2, .58, 1.01, 1.24))))
@@ -202,7 +202,7 @@ test_that("probsens.conf has correct arguments", {
                                         case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
                                         ncase.exp = list("beta", c(12.6, 50.4)),
                                         ncase.nexp = list("trapezoidal",
-                                                          c(0.7, 0.8, 0.9, 1))) %>% 
+                                                          c(0.7, 0.8, 0.9, 1))) %>%
                           multiple.bias(., bias_function = "probsens.conf",
                                         whoaa = list("beta", c(24.9, 58.1)),
                                         prev.nexp = list("beta", c(42.9, 54.6)),
