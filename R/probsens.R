@@ -572,7 +572,7 @@ probsens <- function(case,
         draws[, 9] <- ifelse(draws[, 9] != 8 | is.na(draws[, 9]), NA, 1)
         discard <- sum(is.na(draws[, 9]))
         if (sum(is.na(draws[, 9])) > 0) {
-            cli::cli_alert_warning("Chosen prior Se/Sp distributions lead to {discard} impossible values which were discarded.")
+            cli::cli_alert_warning("Chosen Se/Sp distributions lead to {discard} impossible value{?s} which w{?as/ere} discarded.")
             }
         draws <- draws[draws[, 9] == 1 & !is.na(draws[, 9]), ]
 
