@@ -4,8 +4,8 @@ test_that("correct arguments --- list", {
     expect_that(probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                          type = "exposure",
                          reps = 1000,
-                         seca.parms = c("uniform", 1, 2),
-                         spca.parms = list("beta", c(153, 6))),
+                         seca = c("uniform", 1, 2),
+                         spca = list("beta", c(153, 6))),
                 throws_error())
 })
 
@@ -13,8 +13,8 @@ test_that("correct arguments --- distribution", {
     expect_that(probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                          type = "exposure",
                          reps = 1000,
-                         seca.parms = list(c("uniform", "beta"), c(908, 16)),
-                         spca.parms = list("beta", c(153, 6))),
+                         seca = list(c("uniform", "beta"), c(908, 16)),
+                         spca = list("beta", c(153, 6))),
                 throws_error())
 })
 
@@ -22,11 +22,11 @@ test_that("correct arguments --- distribution", {
     expect_that(probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                          type = "exposure",
                          reps = 1000,
-                         seca.parms = list("beta", c(908, 16)),
-                         seexp.parms = list("beta", "trapezoidal", c(156, 56)),
-                         spca.parms = list("beta", c(153, 6)),
-                         spexp.parms = list("beta", c(205, 18)),
-                         corr.se = .8, corr.sp = .8),
+                         seca = list("beta", c(908, 16)),
+                         seexp = list("beta", "trapezoidal", c(156, 56)),
+                         spca = list("beta", c(153, 6)),
+                         spexp = list("beta", c(205, 18)),
+                         corr_se = .8, corr_sp = .8),
                 throws_error())
 })
 
@@ -34,11 +34,11 @@ test_that("correct arguments --- distribution", {
     expect_that(probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                          type = "exposure",
                          reps = 1000,
-                         seca.parms = list("beta", c(-1, 16)),
-                         seexp.parms = list("normal", c(0.4, 0.7, 0.5, 0.01)),
-                         spca.parms = list("uniform", c(1, .5)),
-                         spexp.parms = list("triangular", c(1, 0.5, 0.2)),
-                         corr.se = .8, corr.sp = .8),
+                         seca = list("beta", c(-1, 16)),
+                         seexp = list("normal", c(0.4, 0.7, 0.5, 0.01)),
+                         spca = list("uniform", c(1, .5)),
+                         spexp = list("triangular", c(1, 0.5, 0.2)),
+                         corr_se = .8, corr_sp = .8),
                 throws_error())
 })
 
@@ -46,11 +46,11 @@ test_that("correct arguments --- distribution", {
     expect_that(probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                          type = "exposure",
                          reps = 1000,
-                         seca.parms = list("beta", c(908, 16)),
-                         seexp.parms = list("normal", c(156, 56)),
-                         spca.parms = list("uniform", c(1, .5)),
-                         spexp.parms = list("triangular", c(1, 0.5, 0.2)),
-                         corr.se = .8, corr.sp = .8),
+                         seca = list("beta", c(908, 16)),
+                         seexp = list("normal", c(156, 56)),
+                         spca = list("uniform", c(1, .5)),
+                         spexp = list("triangular", c(1, 0.5, 0.2)),
+                         corr_se = .8, corr_sp = .8),
                 throws_error())
 })
 
@@ -58,11 +58,11 @@ test_that("correct arguments --- distribution", {
     expect_that(probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                          type = "exposure",
                          reps = 1000,
-                         seca.parms = list("beta", c(908, 16)),
-                         seexp.parms = list("normal", c(0.4, 1, 0.8, 0.01)),
-                         spca.parms = list("uniform", c(.5, 1)),
-                         spexp.parms = list("triangular", c(1, 0.5, 0.2)),
-                         corr.se = .8, corr.sp = .8),
+                         seca = list("beta", c(908, 16)),
+                         seexp = list("normal", c(0.4, 1, 0.8, 0.01)),
+                         spca = list("uniform", c(.5, 1)),
+                         spexp = list("triangular", c(1, 0.5, 0.2)),
+                         corr_se = .8, corr_sp = .8),
                 throws_error())
 })
 
@@ -70,11 +70,11 @@ test_that("correct arguments --- parameters", {
     expect_that(probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                          type = "exposure",
                          reps = 1000,
-                         seca.parms = list("beta", "beta", c(908, 16)),
-                         seexp.parms = list("beta", c(156, 56)),
-                         spca.parms = list("beta", c(153, 6)),
-                         spexp.parms = list("beta", c(205, 18)),
-                         corr.se = .8, corr.sp = .8),
+                         seca = list("beta", "beta", c(908, 16)),
+                         seexp = list("beta", c(156, 56)),
+                         spca = list("beta", c(153, 6)),
+                         spexp = list("beta", c(205, 18)),
+                         corr_se = .8, corr_sp = .8),
                 throws_error())
 })
 
@@ -83,8 +83,8 @@ test_that("exposure misclassification (ND): observed measures are correct", {
     model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                       type = "exposure",
                       reps = 50000,
-                      seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
-                      spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
+                      seca = list("trapezoidal", c(.75, .85, .95, 1)),
+                      spca = list("trapezoidal", c(.75, .85, .95, 1)))
     expect_equal(model$obs.measures[1, 1], 1.6470, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 2], 1.1824, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 3], 2.2941, tolerance = 1e-4, scale = 1)
@@ -98,14 +98,14 @@ test_that("exposure misclassification (ND): adjusted measures are correct", {
     model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                       type = "exposure",
                       reps = 50000,
-                      seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
-                      spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
-    expect_equal(model$adj.measures[1, 1], 2.1765, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 1.7378, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 6.4922, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 2.4549, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 1.8723, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 13.8513, tolerance = 1e-4, scale = 1)
+                      seca = list("trapezoidal", c(.75, .85, .95, 1)),
+                      spca = list("trapezoidal", c(.75, .85, .95, 1)))
+    expect_equal(model$adj.measures[2, 1], 2.2431, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 1.3164, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 6.8389, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 1], 2.5388, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 2], 1.3584, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 14.6663, tolerance = 1e-4, scale = 1)
 })
 
 test_that("exposure misclassification (ND): adjusted measures are correct", {
@@ -113,14 +113,14 @@ test_that("exposure misclassification (ND): adjusted measures are correct", {
     model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                       type = "exposure",
                       reps = 50000,
-                      seca.parms = list("beta", c(908, 16)),
-                      spca.parms = list("beta", c(153, 6)))
-    expect_equal(model$adj.measures[1, 1], 1.7479, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 1.6857, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 1.8909, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 1.8878, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 1.8086, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 2.0740, tolerance = 1e-4, scale = 1)
+                      seca = list("beta", c(908, 16)),
+                      spca = list("beta", c(153, 6)))
+    expect_equal(model$adj.measures[2, 1], 1.7520, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 1.2116, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 2.5463, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 1], 1.8929, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 2], 1.2356, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 2.9299, tolerance = 1e-4, scale = 1)
 })
 
 test_that("exposure misclassification (D): observed measures are correct", {
@@ -128,11 +128,11 @@ test_that("exposure misclassification (D): observed measures are correct", {
     model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                       type = "exposure",
                       reps = 50000,
-                      seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
-                      seexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
-                      spca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
-                      spexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
-                      corr.se = .8, corr.sp = .8)
+                      seca = list("trapezoidal", c(.75, .85, .95, 1)),
+                      seexp = list("trapezoidal", c(.7, .8, .9, .95)),
+                      spca = list("trapezoidal", c(.75, .85, .95, 1)),
+                      spexp = list("trapezoidal", c(.7, .8, .9, .95)),
+                      corr_se = .8, corr_sp = .8)
     expect_equal(model$obs.measures[1, 1], 1.6470, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 2], 1.1824, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 3], 2.2941, tolerance = 1e-4, scale = 1)
@@ -146,17 +146,17 @@ test_that("exposure misclassification: adjusted measures are correct", {
     model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                       type = "exposure",
                       reps = 50000,
-                      seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
-                      seexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
-                      spca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
-                      spexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
-                      corr.se = .8, corr.sp = .8)
-    expect_equal(model$adj.measures[1, 1], 2.9223, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 1.8113, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 10.0058, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 3.5498, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 1.9705, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 47.4763, tolerance = 1e-4, scale = 1)
+                      seca = list("trapezoidal", c(.75, .85, .95, 1)),
+                      seexp = list("trapezoidal", c(.7, .8, .9, .95)),
+                      spca = list("trapezoidal", c(.75, .85, .95, 1)),
+                      spexp = list("trapezoidal", c(.7, .8, .9, .95)),
+                      corr_se = .8, corr_sp = .8)
+    expect_equal(model$adj.measures[2, 1], 3.0106, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 1.4977, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 10.2873, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 1], 3.6676, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 2], 1.5770, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 48.1868, tolerance = 1e-4, scale = 1)
 })
 
 test_that("exposure misclassification: adjusted measures are correct", {
@@ -164,17 +164,36 @@ test_that("exposure misclassification: adjusted measures are correct", {
     model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                       type = "exposure",
                       reps = 50000,
-                      seca.parms = list("beta", c(908, 16)),
-                      seexp.parms = list("beta", c(156, 56)),
-                      spca.parms = list("beta", c(153, 6)),
-                      spexp.parms = list("beta", c(205, 18)),
-                      corr.se = .8, corr.sp = .8)
-    expect_equal(model$adj.measures[1, 1], 1.5928, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 1.3478, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 2.0209, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 1.6946, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 1.3990, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 2.2433, tolerance = 1e-4, scale = 1)
+                      seca = list("beta", c(908, 16)),
+                      seexp = list("beta", c(156, 56)),
+                      spca = list("beta", c(153, 6)),
+                      spexp = list("beta", c(205, 18)),
+                      corr_se = .8, corr_sp = .8)
+    expect_equal(model$adj.measures[2, 1], 1.6015, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 1.0478, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 2.4756, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 1], 1.7046, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 2], 1.0502, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 2.8417, tolerance = 1e-4, scale = 1)
+})
+
+test_that("exposure misclassification: Fox 2023 paper is reproduced", {
+    set.seed(1234)
+    model <- probsens(matrix(c(40, 20, 60, 80), nrow = 2, byrow = TRUE),
+                      type = "exposure",
+                      reps = 10^6,
+                      seca = list("beta", c(25, 3)),
+                      spca = list("trapezoidal", c(.9, .93, .97, 1)),
+                      seexp = list("beta", c(45, 7)),
+                      spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+                      corr_se = .8,
+                      corr_sp = .8)
+    expect_equal(model$obs.measures[1, 1], 2.0000, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs.measures[1, 2], 1.2630, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs.measures[1, 3], 3.1671, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 2.8415, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 1.5355, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 7.7767, tolerance = 1e-4, scale = 1)
 })
 
 test_that("outcome misclassification (ND): observed measures are correct", {

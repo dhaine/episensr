@@ -573,7 +573,9 @@ probsens <- function(case,
         discard <- sum(is.na(draws[, 9]))
         if (sum(is.na(draws[, 9])) > 0) {
             cli::cli_alert_warning("Chosen Se/Sp distributions lead to {discard} impossible value{?s} which w{?as/ere} discarded.")
-            }
+            neg_warn <- paste("Prior Se/Sp distributions lead to",  discard, "impossible value(s).")
+        } else neg_warn <- NULL
+
         draws <- draws[draws[, 9] == 1 & !is.na(draws[, 9]), ]
 
         rr_syst <- c(median(draws[, 20], na.rm = TRUE),
@@ -712,8 +714,9 @@ probsens <- function(case,
                 sim.df = as.data.frame(draws[, -9]),
                 reps = reps,
                 fun = "probsens",
-                warnings = neg_warn,
-                message = discard_mess)
+                warnings = neg_warn#,
+#                message = discard_mess
+                )
     class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }
