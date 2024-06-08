@@ -181,167 +181,212 @@ probsens <- function(case,
                      corr_sp = NULL,
                      alpha = 0.05) {
     if (reps < 1)
-        stop(paste("Invalid argument: reps =", reps))
+        stop(cli::format_error(c("x" = "Wrong number of replications: reps = {reps}",
+                                 "i" = "reps must be >= 1")))
 
-    if (is.null(seca) | is.null(spca))
-        stop("At least one Se and one Sp should be provided through outcome parameters.")
+    if (is.null(seca[[2]]) | is.null(spca[[2]]))
+        stop(cli::format_error(c("x" = "Missing argument(s) for seca or spca",
+                                 "i" = "At least one Se and one Sp should be
+provided through outcome parameters.")))
     if (!is.list(seca))
-        stop("Sensitivity of exposure classification among those with the outcome should be a list.")
+        stop(cli::format_error(c("i" = "Sensitivity of exposure classification among
+those with the outcome should be a list.")))
     else seca <- seca
     if ((length(seca) != 2) | (length(spca) != 2))
-        stop("Check distribution parameters")
+        stop(cli::format_error(c("i" = "Check distribution parameters")))
     if ((!is.null(seexp) & length(seexp) != 2) | (!is.null(spexp) & length(spexp) != 2))
-        stop("Check distribution parameters")
+        stop(cli::format_error(c("i" = "Check distribution parameters")))
     if ((length(seca[[1]]) != 1) | (length(spca[[1]]) != 1))
-        stop("Which distribution?")
+        stop(cli::format_error(c("x" = "Which distribution?")))
     if ((!is.null(seexp[[1]]) & length(seexp[[1]]) != 1) |
         (!is.null(spexp[[1]]) & length(spexp[[1]]) != 1))
-        stop("Which distribution?")
+        stop(cli::format_error(c("x" = "Which distribution?")))
     if (!is.null(corr_se) && (seca[[1]] == "constant" | seexp[[1]] == "constant"))
-        stop("No correlated distributions with constant values.")
+        stop(cli::format_error(c("x" = "No correlated distributions with constant values.")))
     if (!is.null(corr_sp) && (spca[[1]] == "constant" | spexp[[1]] == "constant"))
-        stop("No correlated distributions with constant values.")
+        stop(cli::format_error(c("x" = "No correlated distributions with constant values.")))
     if (seca[[1]] == "constant" & length(seca[[2]]) != 1)
-        stop("For constant value, please provide a single value.")
+        stop(cli::format_error(c("i" = "For constant value, please provide a single value.")))
     if (seca[[1]] == "uniform" & length(seca[[2]]) != 2)
-        stop("For uniform distribution, please provide vector of lower and upper limits.")
+        stop(cli::format_error(c("i" = "For uniform distribution, please provide
+vector of lower and upper limits.")))
     if (seca[[1]] == "uniform" & seca[[2]][1] >= seca[[2]][2])
-        stop("Lower limit of your uniform distribution is greater than upper limit.")
+        stop(cli::format_error(c("i" = "Lower limit of your uniform distribution is
+greater than upper limit.")))
     if (seca[[1]] == "triangular" & length(seca[[2]]) != 3)
-        stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
+        stop(cli::format_error(c("i" = "For triangular distribution, please provide
+vector of lower, upper limits, and mode.")))
     if (seca[[1]] == "triangular" & ((seca[[2]][1] > seca[[2]][3]) |
                                      (seca[[2]][2] < seca[[2]][3])))
-        stop("Wrong arguments for your triangular distribution.")
+        stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
     if (seca[[1]] == "trapezoidal" & length(seca[[2]]) != 4)
-        stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
+        stop(cli::format_error(c("i" = "For trapezoidal distribution, please provide
+vector of lower limit, lower mode, upper mode, and upper limit.")))
     if (seca[[1]] == "trapezoidal" & ((seca[[2]][1] > seca[[2]][2]) |
                                       (seca[[2]][2] > seca[[2]][3]) |
                                       (seca[[2]][3] > seca[[2]][4])))
-        stop("Wrong arguments for your trapezoidal distribution.")
+        stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
     if (seca[[1]] == "normal" & (length(seca[[2]]) != 4))
-        stop("For truncated normal distribution, please provide vector of lower and upper bound limits, mean and SD")
+        stop(cli::format_error(c("i" = "For truncated normal distribution,
+please provide vector of lower and upper bound limits, mean and SD")))
     if (seca[[1]] == "normal" & ((seca[[2]][1] >= seca[[2]][2]) |
                                  (!all(seca[[2]][1:2] >= 0 & seca[[2]][1:2] <= 1))))
-        stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
+        stop(cli::format_error(c("i" = "For truncated normal distribution,
+please provide sensible values for lower and upper bound limits (between 0 and 1;
+lower limit < upper limit).")))
     if ((seca[[1]] == "constant" | seca[[1]] == "uniform" | seca[[1]] == "triangular" |
          seca[[1]] == "trapezoidal") & !all(seca[[2]] >= 0 & seca[[2]] <= 1))
-        stop("Sensitivity of exposure classification among those with the outcome should be between 0 and 1.")
+        stop(cli::format_error(c("i" = "Sensitivity of exposure classification
+among those with the outcome should be between 0 and 1.")))
     if (seca[[1]] == "beta" & length(seca[[2]]) != 2)
-        stop("For beta distribution, please provide alpha and beta.")
+        stop(cli::format_error(c("x" = "For beta distribution, please provide alpha and beta.")))
     if (seca[[1]] == "beta" & (seca[[2]][1] < 0 | seca[[2]][2] < 0))
-        stop("Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")
+        stop(cli::format_error(c("i" = "Wrong arguments for your beta distribution.
+Alpha and Beta should be > 0.")))
 
     if (!is.null(seexp) & !is.list(seexp))
-        stop("Sensitivity of exposure classification among those without the outcome should be a list.")
+        stop(cli::format_error(c("x" = "Sensitivity of exposure classification
+among those without the outcome should be a list.")))
     else seexp <- seexp
     if (!is.null(seexp) && seexp[[1]] == "constant" & length(seexp[[2]]) != 1)
-        stop("For constant value, please provide a single value.")
+        stop(cli::format_error(c("i" = "For constant value, please provide a single value.")))
     if (!is.null(seexp) && seexp[[1]] == "uniform" & length(seexp[[2]]) != 2)
-        stop("For uniform distribution, please provide vector of lower and upper limits.")
+        stop(cli::format_error(c("i" = "For uniform distribution, please provide
+vector of lower and upper limits.")))
     if (!is.null(seexp) && seexp[[1]] == "uniform" && seexp[[2]][1] >= seexp[[2]][2])
-        stop("Lower limit of your uniform distribution is greater than upper limit.")
+        stop(cli::format_error(c("x" = "Lower limit of your uniform distribution
+is greater than upper limit.")))
     if (!is.null(seexp) && seexp[[1]] == "triangular" & length(seexp[[2]]) != 3)
-        stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
+        stop(cli::format_error(c("i" = "For triangular distribution, please provide
+vector of lower, upper limits, and mode.")))
     if (!is.null(seexp) && seexp[[1]] == "triangular" &&
         ((seexp[[2]][1] > seexp[[2]][3]) | (seexp[[2]][2] < seexp[[2]][3])))
-        stop("Wrong arguments for your triangular distribution.")
+        stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
     if (!is.null(seexp) && seexp[[1]] == "trapezoidal" & length(seexp[[2]]) != 4)
-        stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
+        stop(cli::format_error(c("i" = "For trapezoidal distribution, please provide
+vector of lower limit, lower mode, upper mode, and upper limit.")))
     if (!is.null(seexp) && seexp[[1]] == "trapezoidal" &&
         ((seexp[[2]][1] > seexp[[2]][2]) | (seexp[[2]][2] > seexp[[2]][3]) |
          (seexp[[2]][3] > seexp[[2]][4])))
-        stop("Wrong arguments for your trapezoidal distribution.")
+        stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
     if (!is.null(seexp) && seexp[[1]] == "normal" & (length(seexp[[2]]) != 4))
-        stop("For truncated normal distribution, please provide vector of lower and upper bound limits, mean and SD.")
+        stop(cli::format_error(c("i" = "For truncated normal distribution,
+please provide vector of lower and upper bound limits, mean and SD.")))
     if (!is.null(seexp) && seexp[[1]] == "normal" &&
         ((seexp[[2]][1] >= seexp[[2]][2]) | (!all(seexp[[2]][1:2] >= 0 &
                                                   seexp[[2]][1:2] <= 1))))
-        stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
+        stop(cli::format_error(c("x" = "For truncated normal distribution,
+please provide sensible values for lower and upper bound limits (between 0 and 1;
+lower limit < upper limit).")))
     if (!is.null(seexp) && (seexp[[1]] == "constant" | seexp[[1]] == "uniform" |
                             seexp[[1]] == "triangular" | seexp[[1]] == "trapezoidal") &
         !all(seexp[[2]] >= 0 & seexp[[2]] <= 1))
-        stop("Sensitivity of exposure classification among those without the outcome should be between 0 and 1.")
+        stop(cli::format_error(c("x" = "Sensitivity of exposure classification among
+those without the outcome should be between 0 and 1.")))
     if (!is.null(seexp) && seexp[[1]] == "beta" && length(seexp[[2]]) != 2)
-        stop("For beta distribution, please provide alpha and beta.")
+        stop(cli::format_error(c("x" = "For beta distribution, please provide alpha and beta.")))
     if (!is.null(seexp) && seexp[[1]] == "beta" && (seexp[[2]][1] < 0 | seexp[[2]][2] < 0))
-        stop("Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")
+        stop(cli::format_error(c("i" = "Wrong arguments for your beta distribution.
+Alpha and Beta should be > 0.")))
 
     if (!is.list(spca))
-        stop("Specificity of exposure classification among those with the outcome should be a list.")
+        stop(cli::format_error(c("i" = "Specificity of exposure classification
+among those with the outcome should be a list.")))
     else spca <- spca
     if (spca[[1]] == "constant" & length(spca[[2]]) != 1)
-        stop("For constant value, please provide a single value.")
+        stop(cli::format_error(c("x" = "For constant value, please provide a single value.")))
     if (spca[[1]] == "uniform" & length(spca[[2]]) != 2)
-        stop("For uniform distribution, please provide vector of lower and upper limits.")
+        stop(cli::format_error(c("i" = "For uniform distribution, please provide
+vector of lower and upper limits.")))
     if (spca[[1]] == "uniform" & spca[[2]][1] >= spca[[2]][2])
-        stop("Lower limit of your uniform distribution is greater than upper limit.")
+        stop(cli::format_error(c("i" = "Lower limit of your uniform distribution
+is greater than upper limit.")))
     if (spca[[1]] == "triangular" & length(spca[[2]]) != 3)
-        stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
+        stop(cli::format_error(c("i" = "For triangular distribution, please provide
+vector of lower, upper limits, and mode.")))
     if (spca[[1]] == "triangular" & ((spca[[2]][1] > spca[[2]][3]) |
                                      (spca[[2]][2] < spca[[2]][3])))
-        stop("Wrong arguments for your triangular distribution.")
+        stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
     if (spca[[1]] == "trapezoidal" & length(spca[[2]]) != 4)
-        stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
+        stop(cli::format_error(c("i" = "For trapezoidal distribution, please
+provide vector of lower limit, lower mode, upper mode, and upper limit.")))
     if (spca[[1]] == "trapezoidal" & ((spca[[2]][1] > spca[[2]][2]) |
                                       (spca[[2]][2] > spca[[2]][3]) |
                                       (spca[[2]][3] > spca[[2]][4])))
-        stop("Wrong arguments for your trapezoidal distribution.")
+        stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
     if (spca[[1]] == "normal" & (length(spca[[2]]) != 4))
-        stop("For truncated normal distribution, please provide vector of lower and upper bound limits, mean and SD.")
+        stop(cli::format_error(c("i" = "For truncated normal distribution,
+please provide vector of lower and upper bound limits, mean and SD.")))
     if (spca[[1]] == "normal" & ((spca[[2]][1] >= spca[[2]][2]) |
                                  (!all(spca[[2]][1:2] >= 0 & spca[[2]][1:2] <= 1))))
-        stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
+        stop(cli::format_error(c("i" = "For truncated normal distribution,
+please provide sensible values for lower and upper bound limits (between 0
+and 1; lower limit < upper limit).")))
     if ((spca[[1]] == "constant" | spca[[1]] == "uniform" |
          spca[[1]] == "triangular" |
          spca[[1]] == "trapezoidal") & !all(spca[[2]] >= 0 & spca[[2]] <= 1))
-        stop("Specificity of exposure classification among those with the outcome should be between 0 and 1.")
+        stop(cli::format_error(c("x" = "Specificity of exposure classification
+among those with the outcome should be between 0 and 1.")))
     if (spca[[1]] == "beta" & length(spca[[2]]) != 2)
-        stop("For beta distribution, please provide alpha and beta.")
+        stop(cli::format_error(c("x" = "For beta distribution, please provide alpha and beta.")))
     if (spca[[1]] == "beta" & (spca[[2]][1] < 0 | spca[[2]][2] < 0))
-        stop("Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")
+        stop(cli::format_error(c("i" = "Wrong arguments for your beta distribution.
+Alpha and Beta should be > 0.")))
 
     if (!is.null(spexp) & !is.list(spexp))
-        stop("Specificity of exposure classification among those without the outcome should be a list.")
+        stop(cli::format_error(c("x" = "Specificity of exposure classification
+among those without the outcome should be a list.")))
     else spexp <- spexp
     if (!is.null(spexp) && spexp[[1]] == "constant" & length(spexp[[2]]) != 1)
-        stop("For constant value, please provide a single value.")
+        stop(cli::format_error(c("x" = "For constant value, please provide a single value.")))
     if (!is.null(spexp) && spexp[[1]] == "uniform" & length(spexp[[2]]) != 2)
-        stop("For uniform distribution, please provide vector of lower and upper limits.")
+        stop(cli::format_error(c("i" = "For uniform distribution, please provide
+vector of lower and upper limits.")))
     if (!is.null(spexp) && spexp[[1]] == "uniform" && spexp[[2]][1] >= spexp[[2]][2])
-        stop("Lower limit of your uniform distribution is greater than upper limit.")
+        stop(cli::format_error(c("i" = "Lower limit of your uniform distribution is
+greater than upper limit.")))
     if (!is.null(spexp) && spexp[[1]] == "triangular" & length(spexp[[2]]) != 3)
-        stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
+        stop(cli::format_error(c("i" = "For triangular distribution, please provide
+vector of lower, upper limits, and mode.")))
     if (!is.null(spexp) && spexp[[1]] == "triangular" &&
         ((spexp[[2]][1] > spexp[[2]][3]) | (spexp[[2]][2] < spexp[[2]][3])))
-        stop("Wrong arguments for your triangular distribution.")
+        stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
     if (!is.null(spexp) && spexp[[1]] == "trapezoidal" & length(spexp[[2]]) != 4)
-        stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
+        stop(cli::format_error(c("i" = "For trapezoidal distribution, please provide
+vector of lower limit, lower mode, upper mode, and upper limit.")))
     if (!is.null(spexp) && spexp[[1]] == "trapezoidal" &&
         ((spexp[[2]][1] > spexp[[2]][2]) | (spexp[[2]][2] > spexp[[2]][3]) |
          (spexp[[2]][3] > spexp[[2]][4])))
-        stop("Wrong arguments for your trapezoidal distribution.")
+        stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
     if (!is.null(spexp) && spexp[[1]] == "normal" & (length(spexp[[2]]) != 4))
-        stop("For truncated normal distribution, please provide vector of lower and upper bound limits, meand and SD.")
+        stop(cli::format_error(c("i" = "For truncated normal distribution, please
+provide vector of lower and upper bound limits, meand and SD.")))
     if (!is.null(spexp) && spexp[[1]] == "normal" &&
         ((spexp[[2]][1] >= spexp[[2]][2]) |
          (!all(spexp[[2]][1:2] >= 0 & spexp[[2]][1:2] <= 1))))
-        stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
+        stop(cli::format_error(c("i" = "For truncated normal distribution, please
+provide sensible values for lower and upper bound limits (between 0 and 1;
+lower limit < upper limit).")))
     if (!is.null(spexp) && (spexp[[1]] == "constant" | spexp[[1]] == "uniform" |
                             spexp[[1]] == "triangular" | spexp[[1]] == "trapezoidal") &
         !all(spexp[[2]] >= 0 & spexp[[2]] <= 1))
-        stop("Specificity of exposure classification among those without the outcome should be between 0 and 1.")
+        stop(cli::format_error(c("i" = "Specificity of exposure classification
+among those without the outcome should be between 0 and 1.")))
     if (!is.null(spexp) && spexp[[1]] == "beta" && length(spexp[[2]]) != 2)
-        stop("For beta distribution, please provide alpha and beta.")
+        stop(cli::format_error(c("x" = "For beta distribution, please provide alpha and beta.")))
     if (!is.null(spexp) && spexp[[1]] == "beta" && (spexp[[2]][1] < 0 | spexp[[2]][2] < 0))
-        stop("Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")
+        stop(cli::format_error(c("i" = "Wrong arguments for your beta distribution.
+Alpha and Beta should be > 0.")))
 
     if (!is.null(seexp) & (is.null(spca) | is.null(spexp) | is.null(corr_se) | is.null(corr_sp)))
-        stop("For differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations.")
+        stop(cli::format_error(c("i" = "For differential misclassification type,
+have to provide Se and Sp for among those with and without the outcome as well as
+Se and Sp correlations.")))
 
     if (!is.null(corr_se) && (corr_se == 0 | corr_se == 1))
-        stop("Correlations should be > 0 and < 1.")
+        stop(cli::format_error(c("x" = "Correlations should be > 0 and < 1.")))
     if (!is.null(corr_sp) && (corr_sp == 0 | corr_sp == 1))
-        stop("Correlations should be > 0 and < 1.")
+        stop(cli::format_error(c("x" = "Correlations should be > 0 and < 1.")))
 
     if (!inherits(case, "episensr.probsens")) {
         if (inherits(case, c("table", "matrix")))

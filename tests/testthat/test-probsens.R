@@ -9,6 +9,23 @@ test_that("correct arguments --- list", {
                 throws_error())
 })
 
+test_that("correct arguments --- reps", {
+    expect_that(probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
+                         type = "exposure",
+                         reps = 0.5,
+                         seca = c("uniform", 1, 2),
+                         spca = list("beta", c(153, 6))),
+                throws_error())
+})
+
+test_that("correct arguments --- dist", {
+    expect_that(probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
+                         type = "exposure",
+                         reps = 1000,
+                         seca = c("uniform", 1, 2)),
+                throws_error())
+})
+
 test_that("correct arguments --- distribution", {
     expect_that(probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                          type = "exposure",
