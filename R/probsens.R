@@ -3,8 +3,8 @@
 #' Probabilistic sensitivity analysis to correct for exposure misclassification
 #' or outcome misclassification and random error.
 #' Non-differential misclassification is assumed when only the two bias
-#' parameters \code{seca} and \code{spca.parms} are provided. Adding the 2
-#' parameters \code{seexp} and \code{spexp.parms} (i.e. providing the 4 bias
+#' parameters \code{seca} and \code{spca} are provided. Adding the 2
+#' parameters \code{seexp} and \code{spexp} (i.e. providing the 4 bias
 #' parameters) evaluates a differential misclassification.
 #'
 #' Correlations between sensitivity (or specificity) of exposure classification
@@ -58,8 +58,8 @@
 #' \item The sensitivity of outcome classification among those without the
 #' exposure (when \code{type = "outcome"}).
 #' }
-#' @param spca List as above for \code{seca.parms} but for specificity.
-#' @param spexp List as above for \code{seexp.parms} but for specificity.
+#' @param spca List as above for \code{seca} but for specificity.
+#' @param spexp List as above for \code{seexp} but for specificity.
 #' @param corr_se Correlation between case and non-case sensitivities.
 #' @param corr_sp Correlation between case and non-case specificities.
 #' @param alpha Significance level.
@@ -73,8 +73,8 @@
 #' \item{reps}{Number of replications.}
 #'
 #' @references
-#' Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
-#' Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
+#' Fox, M.P, MacLehose, R.F., Lash, T.L., 2021 \emph{Applying Quantitative
+#' Bias Analysis to Epidemiologic Data}, pp.233--290, Springer.
 #'
 #' Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
 #' with Specified Univariate Distributions and Correlation Coefficients}.
