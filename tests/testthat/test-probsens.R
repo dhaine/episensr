@@ -191,9 +191,42 @@ test_that("exposure misclassification: Fox 2023 paper is reproduced", {
     expect_equal(model$obs.measures[1, 1], 2.0000, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 2], 1.2630, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs.measures[1, 3], 3.1671, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 2.7989, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 1.9604, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 6.6522, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2, 1], 2.8415, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2, 2], 1.5355, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj.measures[2, 3], 7.7767, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 1], 4.2699, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 2], 2.5909, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 3], 12.0582, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 1], 4.3618, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 2], 1.8721, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 14.8008, tolerance = 1e-4, scale = 1)
+})
+
+test_that("exposure misclassification: Ch.8 is reproduced", {
+    set.seed(1234)
+    model <- probsens(matrix(c(215, 1449, 668, 4296), nrow = 2, byrow = TRUE),
+                      type = "exposure",
+                      reps = 10^5,
+                      seca = list("beta", c(50.6, 14.3)),
+                      spca = list("beta", c(70, 1)))
+    expect_equal(model$obs.measures[2, 1], 0.9542, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs.measures[2, 2], 0.8093, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs.measures[2, 3], 1.1252, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 1], 0.9599, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 0.8790, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 1.0376, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 0.9601, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 0.8276, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 1.1035, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 1], 0.9471, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 2], 0.8439, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 3], 1.0508, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 1], 0.9472, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 2], 0.7796, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 1.1402, tolerance = 1e-4, scale = 1)
 })
 
 test_that("outcome misclassification (ND): observed measures are correct", {
