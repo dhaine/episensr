@@ -21,20 +21,20 @@
 #' risk <- probsens(matrix(c(45, 94, 257, 945),
 #' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 #' type = "exposure", reps = 20000,
-#' seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
-#' spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
+#' seca = list("trapezoidal", c(.75, .85, .95, 1)),
+#' spca = list("trapezoidal", c(.75, .85, .95, 1)))
 #' plot(risk, "rr")
 #'
 #' set.seed(123)
 #' odds <- probsens(matrix(c(45, 94, 257, 945),
 #' dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 #' type = "exposure", reps = 20000,
-#' seca.parms = list("beta", c(908, 16)),
-#' seexp.parms = list("beta", c(156, 56)),
-#' spca.parms = list("beta", c(153, 6)),
-#' spexp.parms = list("beta", c(205, 18)),
-#' corr.se = .8,
-#' corr.sp = .8)
+#' seca = list("beta", c(908, 16)),
+#' seexp = list("beta", c(156, 56)),
+#' spca = list("beta", c(153, 6)),
+#' spexp = list("beta", c(205, 18)),
+#' corr_se = .8,
+#' corr_sp = .8)
 #' plot(odds, "seca")
 #'
 #' set.seed(123)
@@ -84,22 +84,26 @@ plot.episensr.probsens <- function(x,
     prob.fun <- x$fun
 
     if (length(parms) != 1)
-        stop("Please provide one parameter to plot.")
+        stop(cli::format_error(c("x" = "Please provide one parameter to plot.")))
 
     if (prob.fun == "probsens" & !(parms %in% c("rr", "or", "rr_tot", "or_tot",
                                                 "seca", "seexp", "spca", "spexp")))
-        stop("Please provide parameters to plot: rr, or, rr_tot, or_tot, seca, seexp, spca, spexp.")
+        stop(cli::format_error(c("i" = "Please provide parameters to plot: rr, or,
+rr_tot, or_tot, seca, seexp, spca, spexp.")))
     if (prob.fun == "probsens.sel" & !(parms %in% c("or", "or_tot", "or_sel")))
-        stop("Please provide parameters to plot: or, or_tot, or or_sel")
+        stop(cli::format_error(c("i" = "Please provide parameters to plot: or, or_tot, or or_sel")))
     if (prob.fun == "probsens.conf" & !(parms %in% c("rr", "or", "rr_tot", "or_tot",
                                                      "prev.exp", "prev.nexp", "risk")))
-        stop("Please provide parameters to plot: rr, or, rr_tot, or_tot, prev.exp, prev.nexp, risk.")
+        stop(cli::format_error(c("i" = "Please provide parameters to plot: rr, or,
+rr_tot, or_tot, prev.exp, prev.nexp, risk.")))
     if (prob.fun == "probsens.irr" & !(parms %in% c("irr", "irr_tot",
                                                     "seca", "seexp", "spca", "spexp")))
-        stop("Please provide parameters to plot: irr, irr_tot, seca, seexp, spca, spexp")
+        stop(cli::format_error(c("i" = "Please provide parameters to plot: irr,
+irr_tot, seca, seexp, spca, spexp")))
     if (prob.fun == "probsens.irr.conf" & !(parms %in% c("irr", "irr_tot",
                                                          "prev.exp", "prev.nexp", "risk")))
-        stop("Please provide parameters to plot: irr, irr_tot, prev.exp, prev.nexp, risk.")
+        stop(cli::format_error(c("x" = "Please provide parameters to plot: irr,
+irr_tot, prev.exp, prev.nexp, risk.")))
 
     parms <- match.arg(parms)
 
@@ -108,7 +112,7 @@ plot.episensr.probsens <- function(x,
             ifelse(bins > 100, 100, bins))
 
     if (parms == "rr" & (prob.fun %in% c("probsens", "probsens.conf"))) {
-        ggplot(.data, aes(x = .data$corr.RR)) +
+        ggplot(.data, aes(x = .data$corr_RR)) +
             geom_histogram(aes(y = after_stat(.data$density)), bins = bins,
                            colour = "grey", fill = "dimgrey") +
             geom_density() +
@@ -120,7 +124,7 @@ plot.episensr.probsens <- function(x,
             xlab("Relative risk")
     } else if (parms == "or" &
                (prob.fun %in% c("probsens", "probsens.conf", "probsens.sel"))) {
-        ggplot(.data, aes(x = .data$corr.OR)) +
+        ggplot(.data, aes(x = .data$corr_OR)) +
             geom_histogram(aes(y = after_stat(.data$density)), bins = bins,
                            colour = "grey", fill = "dimgrey") +
             geom_density() +
@@ -131,7 +135,7 @@ plot.episensr.probsens <- function(x,
             ggtitle("Bias adjusted odds ratio") +
             xlab("Odds ratio")
     } else if (parms == "rr_tot" & (prob.fun %in% c("probsens", "probsens.conf"))) {
-        ggplot(.data, aes(x = .data$tot.RR)) +
+        ggplot(.data, aes(x = .data$tot_RR)) +
             geom_histogram(aes(y = after_stat(.data$density)), bins = bins,
                            colour = "grey", fill = "dimgrey") +
             geom_density() +
@@ -143,7 +147,7 @@ plot.episensr.probsens <- function(x,
             xlab("Relative risk")
     } else if (parms == "or_tot" &
                (prob.fun %in% c("probsens", "probsens.conf", "probsens.sel"))) {
-        ggplot(.data, aes(x = .data$tot.OR)) +
+        ggplot(.data, aes(x = .data$tot_OR)) +
             geom_histogram(aes(y = after_stat(.data$density)), bins = bins,
                            colour = "grey", fill = "dimgrey") +
             geom_density() +
