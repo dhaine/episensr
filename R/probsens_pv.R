@@ -30,13 +30,13 @@
 #' # Greenland S., Salvan A., Wegman D.H., Hallock M.F., Smith T.J.
 #' # A case-control study of cancer mortality at a transformer-assembly facility.
 #' # Int Arch Occup Environ Health 1994; 66(1):49-54.
-#' greenland <- matrix(c(45, 94, 257, 945), dimnames = list(c("BC+", "BC-"),
-#' c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE)
-#' set.seed(123)
+#' #greenland <- matrix(c(45, 94, 257, 945), dimnames = list(c("BC+", "BC-"),
+#' #c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE)
+#' #set.seed(123)
 #' # Exposure misclassification, non-differential
-#' probsens(greenland, type = "exposure", reps = 20000,
-#' seca = list("trapezoidal", c(.75, .85, .95, 1)),
-#' spca = list("trapezoidal", c(.75, .85, .95, 1)))
+#' #probsens(greenland, type = "exposure", reps = 20000,
+#' #seca = list("trapezoidal", c(.75, .85, .95, 1)),
+#' #spca = list("trapezoidal", c(.75, .85, .95, 1)))
 #' @export
 #' @importFrom stats median pnorm qnorm quantile qunif runif qbeta rbeta
 probsens_pv <- function(case,
@@ -62,6 +62,8 @@ to be provided.")))
         npvca[2] < 0 | npvexp[1] < 0 | npvexp[2] < 0)
         stop(cli::format_error(c("i" = "Wrong arguments for your beta distribution.
 Alpha and Beta should be > 0.")))
+
+    shape1 <- shape2 <- NULL
 
     if (!inherits(case, "episensr.probsens")) {
         if (inherits(case, c("table", "matrix")))
@@ -111,7 +113,7 @@ Alpha and Beta should be > 0.")))
 
     draws[, 7] <- draws[, 1] * draws[, 6] + (1 - draws[, 2]) * (1 - draws[, 6])
     draws[, 8] <- draws[, 3] * draws[, 5] + (1 - draws[, 4]) * (1 - draws[, 5])
-    draws[, 9] <- logit(draws[, 7]) - logit(draws[, 8])
+    draws[, 9] <- log(draws[, 7] / (1 - draws[, 7])) - log(draws[, 8] / (1 - draws[, 8]))
     draws[, 11] <- exp(draws[, 9])
 
     or_syst <- c(median(draws[, 11], na.rm = TRUE),

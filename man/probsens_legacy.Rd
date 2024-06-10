@@ -107,7 +107,7 @@ probsens <- probsens_legacy
 # Int Arch Occup Environ Health 1994; 66(1):49-54.
 set.seed(123)
 # Exposure misclassification, non-differential
-probsens(matrix(c(45, 94, 257, 945),
+probsens_legacy(matrix(c(45, 94, 257, 945),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 type = "exposure",
 reps = 20000,
@@ -115,7 +115,7 @@ seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
 spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
 
 # Exposure misclassification, differential
-probsens(matrix(c(45, 94, 257, 945),
+probsens_legacy(matrix(c(45, 94, 257, 945),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 type = "exposure",
 reps = 20000,
@@ -126,7 +126,7 @@ spexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
 corr.se = .8,
 corr.sp = .8)
 
-probsens(matrix(c(45, 94, 257, 945),
+probsens_legacy(matrix(c(45, 94, 257, 945),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 type = "exposure",
 reps = 20000,
@@ -137,7 +137,7 @@ spexp.parms = list("beta", c(205, 18)),
 corr.se = .8,
 corr.sp = .8)
 
-probsens(matrix(c(338, 490, 17984, 32024),
+probsens_legacy(matrix(c(338, 490, 17984, 32024),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 type = "exposure",
 reps = 1000,
@@ -145,14 +145,14 @@ seca.parms = list("trapezoidal", c(.8, .9, .9, 1)),
 spca.parms = list("trapezoidal", c(.8, .9, .9, 1)))
 
 # Disease misclassification
-probsens(matrix(c(173, 602, 134, 663),
+probsens_legacy(matrix(c(173, 602, 134, 663),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 type = "outcome",
 reps = 20000,
 seca.parms = list("uniform", c(.8, 1)),
 spca.parms = list("uniform", c(.8, 1)))
 
-probsens(matrix(c(338, 490, 17984, 32024),
+probsens_legacy(matrix(c(338, 490, 17984, 32024),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 type = "outcome",
 reps = 20000,
@@ -163,7 +163,7 @@ spexp.parms = list("uniform", c(.99, 1)),
 corr.se = .8,
 corr.sp = .8)
 
-probsens(matrix(c(173, 602, 134, 663),
+probsens_legacy(matrix(c(173, 602, 134, 663),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 type = "outcome",
 reps = 20000,

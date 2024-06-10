@@ -57,11 +57,11 @@ test_that("Correct table passed on (probabilistic)", {
               set.seed(123)
               model <- dat %>%
                   probsens(., type = "exposure", reps = 5000,
-                           seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
-                           seexp.parms = list("trapezoidal", c(.4, .48, .58, .63)),
-                           spca.parms = list("trapezoidal", c(.95, .97, .99, 1)),
-                           spexp.parms = list("trapezoidal", c(.96, .98, .99, 1)),
-                           corr.se = .8, corr.sp = .8) %>%
+                           seca = list("trapezoidal", c(.45, .5, .6, .65)),
+                           seexp = list("trapezoidal", c(.4, .48, .58, .63)),
+                           spca = list("trapezoidal", c(.95, .97, .99, 1)),
+                           spexp = list("trapezoidal", c(.96, .98, .99, 1)),
+                           corr_se = .8, corr_sp = .8) %>%
                   multiple.bias(., bias_function = "probsens.sel",
                                 case.exp = list("logit-normal", c(-1.1, 0, 0, 1)),
                                 case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
@@ -164,11 +164,11 @@ test_that("probsens.sel has correct arguments", {
              set.seed(123)
              expect_error(chien %>%
                           probsens(., type = "exposure", reps = 1000,
-                                   seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
-                                   seexp.parms = list("trapezoidal", c(.4, .48, .58, .63)),
-                                   spca.parms = list("trapezoidal", c(.95, .97, .99, 1)),
-                                   spexp.parms = list("trapezoidal", c(.96, .98, .99, 1)),
-                                   corr.se = .8, corr.sp = .8) %>%
+                                   seca = list("trapezoidal", c(.45, .5, .6, .65)),
+                                   seexp = list("trapezoidal", c(.4, .48, .58, .63)),
+                                   spca = list("trapezoidal", c(.95, .97, .99, 1)),
+                                   spexp = list("trapezoidal", c(.96, .98, .99, 1)),
+                                   corr_se = .8, corr_sp = .8) %>%
                           multiple.bias(., bias_function = "probsens.sel"))
          })
 
@@ -176,11 +176,11 @@ test_that("probsens.conf has correct arguments", {
              set.seed(123)
              expect_error(chien %>%
                           probsens(., type = "exposure", reps = 1000,
-                                   seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
-                                   seexp.parms = list("trapezoidal", c(.4, .48, .58, .63)),
-                                   spca.parms = list("trapezoidal", c(.95, .97, .99, 1)),
-                                   spexp.parms = list("trapezoidal", c(.96, .98, .99, 1)),
-                                   corr.se = .8, corr.sp = .8) %>%
+                                   seca = list("trapezoidal", c(.45, .5, .6, .65)),
+                                   seexp = list("trapezoidal", c(.4, .48, .58, .63)),
+                                   spca = list("trapezoidal", c(.95, .97, .99, 1)),
+                                   spexp = list("trapezoidal", c(.96, .98, .99, 1)),
+                                   corr_se = .8, corr_sp = .8) %>%
                           multiple.bias(., bias_function = "probsens.sel",
                                         case.exp = list("beta", c(8.08, 24.25)),
                                         case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),
@@ -192,11 +192,11 @@ test_that("probsens.conf has correct arguments", {
                                         risk = list("trapezoidal", c(.2, .58, 1.01, 1.24))))
              expect_error(chien %>%
                           probsens(., type = "exposure", reps = 1000,
-                                   seca.parms = list("trapezoidal", c(.45, .5, .6, .65)),
-                                   seexp.parms = list("trapezoidal", c(.4, .48, .58, .63)),
-                                   spca.parms = list("trapezoidal", c(.95, .97, .99, 1)),
-                                   spexp.parms = list("trapezoidal", c(.96, .98, .99, 1)),
-                                   corr.se = .8, corr.sp = .8) %>%
+                                   seca = list("trapezoidal", c(.45, .5, .6, .65)),
+                                   seexp = list("trapezoidal", c(.4, .48, .58, .63)),
+                                   spca = list("trapezoidal", c(.95, .97, .99, 1)),
+                                   spexp = list("trapezoidal", c(.96, .98, .99, 1)),
+                                   corr_se = .8, corr_sp = .8) %>%
                           multiple.bias(., bias_function = "probsens.sel",
                                         case.exp = list("beta", c(8.08, 24.25)),
                                         case.nexp = list("trapezoidal", c(.75, .85, .95, 1)),

@@ -432,14 +432,20 @@ test_that("exposure misclassification (ND---normal): adjusted measures are corre
     model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                       type = "exposure",
                       reps = 50000,
-                      seca.parms = list("normal", c(0.4, 0.7, 0.5, 0.001)),
-                      spca.parms = list("normal", c(0.4, 1, 0.9, 0.005)))
-    expect_equal(model$adj.measures[1, 1], 2.7860, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 2.6963, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 2.8910, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 3.1919, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 3.0671, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 3.3408, tolerance = 1e-4, scale = 1)
+                      seca = list("normal", c(0.4, 0.7, 0.5, 0.001)),
+                      spca = list("normal", c(0.4, 1, 0.9, 0.005)))
+    expect_equal(model$adj.measures[1, 1], 2.7943, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 1.9055, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 4.1900, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 2.7976, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 1.7019, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 4.6640, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 1], 3.2025, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 2], 2.0682, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 3], 5.0776, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 1], 3.2078, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 2], 1.8205, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 5.7337, tolerance = 1e-4, scale = 1)
 })
 
 test_that("exposure misclassification (D---normal): adjusted measures are correct", {
@@ -447,17 +453,23 @@ test_that("exposure misclassification (D---normal): adjusted measures are correc
     model <- probsens(matrix(c(45, 94, 257, 945), nrow = 2, byrow = TRUE),
                       type = "exposure",
                       reps = 50000,
-                      seca.parms = list("normal", c(0.1, 0.9, 0.8, 0.001)),
-                      seexp.parms = list("normal", c(0.1, 0.9, 0.82, 0.001)),
-                      spca.parms = list("normal", c(0.4, 1, 0.95, 0.001)),
-                      spexp.parms = list("normal", c(0.4, 1, 0.99, 0.001)),
-                      corr.se = .8, corr.sp = .8)
-    expect_equal(model$adj.measures[1, 1], 1.6076, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 2], 1.5988, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[1, 3], 1.6165, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 1], 1.7095, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 2], 1.6988, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj.measures[2, 3], 1.7204, tolerance = 1e-4, scale = 1)
+                      seca = list("normal", c(0.1, 0.9, 0.8, 0.001)),
+                      seexp = list("normal", c(0.1, 0.9, 0.82, 0.001)),
+                      spca = list("normal", c(0.4, 1, 0.95, 0.001)),
+                      spexp = list("normal", c(0.4, 1, 0.99, 0.001)),
+                      corr_se = .8, corr_sp = .8)
+    expect_equal(model$adj.measures[1, 1], 1.6035, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 2], 1.2648, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[1, 3], 2.0385, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 1], 1.6092, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 2], 1.0705, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[2, 3], 2.3940, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 1], 1.7044, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 2], 1.3019, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[3, 3], 2.2469, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 1], 1.7110, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 2], 1.0770, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj.measures[4, 3], 2.6977, tolerance = 1e-4, scale = 1)
 })
 
 test_that("correct arguments --- list", {

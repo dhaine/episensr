@@ -9,15 +9,14 @@ probsens(
   exposed,
   type = c("exposure", "outcome"),
   reps = 1000,
-  seca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "normal", "beta"), parms = NULL),
-  seexp.parms = NULL,
-  spca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "normal", "beta"), parms = NULL),
-  spexp.parms = NULL,
-  corr.se = NULL,
-  corr.sp = NULL,
-  discard = TRUE,
+  seca = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
+  seexp = NULL,
+  spca = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
+  spexp = NULL,
+  corr_se = NULL,
+  corr_sp = NULL,
   alpha = 0.05
 )
 }
@@ -30,7 +29,7 @@ probsens(
 
 \item{reps}{Number of replications to run.}
 
-\item{seca.parms}{List defining:
+\item{seca}{List defining sensitivity among cases:
 \enumerate{
 \item The sensitivity of exposure classification among those with the outcome
 (when \code{type = "exposure"}), or
@@ -50,44 +49,48 @@ have to be between 0 and 1.
 \item beta: alpha, beta.
 }}
 
-\item{seexp.parms}{List defining:
+\item{seexp}{List defining sensitivity among controls:
 \enumerate{
-\item The sensitivity of exposure classification among those without the outcome (when \code{type = "exposure"}), or
-\item The sensitivity of outcome classification among those without the exposure (when \code{type = "outcome"}).
+\item The sensitivity of exposure classification among those without the
+outcome (when \code{type = "exposure"}), or
+\item The sensitivity of outcome classification among those without the
+exposure (when \code{type = "outcome"}).
 }}
 
-\item{spca.parms}{List as above for \code{seca.parms} but for specificity.}
+\item{spca}{List as above for \code{seca} but for specificity.}
 
-\item{spexp.parms}{List as above for \code{seexp.parms} but for specificity.}
+\item{spexp}{List as above for \code{seexp} but for specificity.}
 
-\item{corr.se}{Correlation between case and non-case sensitivities.}
+\item{corr_se}{Correlation between case and non-case sensitivities.}
 
-\item{corr.sp}{Correlation between case and non-case specificities.}
-
-\item{discard}{A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.}
+\item{corr_sp}{Correlation between case and non-case specificities.}
 
 \item{alpha}{Significance level.}
 }
 \value{
 A list with elements:
-\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
-\item{obs.measures}{A table of observed relative risk and odds ratio with confidence intervals.}
-\item{adj.measures}{A table of corrected relative risks and odds ratios.}
-\item{sim.df}{Data frame of random parameters and computed values.}
+\item{obs_data}{The analyzed 2 x 2 table from the observed data.}
+\item{obs_measures}{A table of observed relative risk and odds ratio with
+confidence intervals.}
+\item{adj_measures}{A table of corrected relative risks and odds ratios.}
+\item{sim_df}{Data frame of random parameters and computed values.}
 \item{reps}{Number of replications.}
 }
 \description{
-Probabilistic sensitivity analysis to correct for exposure misclassification or
-outcome misclassification and random error.
-Non-differential misclassification is assumed when only the two bias parameters
-\code{seca.parms} and \code{spca.parms} are provided. Adding the 2 parameters
-\code{seexp.parms} and \code{spexp.parms} (i.e. providing the 4 bias parameters)
-evaluates a differential misclassification.
+Summary-level probabilistic sensitivity analysis to correct for exposure
+misclassification or outcome misclassification and random error.
+Non-differential misclassification is assumed when only the two bias
+parameters \code{seca} and \code{spca} are provided. Adding the 2
+parameters \code{seexp} and \code{spexp} (i.e. providing the 4 bias
+parameters) evaluates a differential misclassification.
 }
 \details{
 Correlations between sensitivity (or specificity) of exposure classification
 among cases and controls can be specified and use the NORmal To Anything
 (NORTA) transformation (Li & Hammond, 1975).
+
+In case of negative (<=0) adjusted count in the 2-by-2 table following given
+prior Se/Sp distribution(s), draws are discarded.
 }
 \section{Updated calculations}{
 
@@ -115,66 +118,82 @@ c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE)
 set.seed(123)
 # Exposure misclassification, non-differential
 probsens(greenland, type = "exposure", reps = 20000,
-seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
-spca.parms = list("trapezoidal", c(.75, .85, .95, 1)))
+seca = list("trapezoidal", c(.75, .85, .95, 1)),
+spca = list("trapezoidal", c(.75, .85, .95, 1)))
 
 # Exposure misclassification, differential
 probsens(greenland, type = "exposure", reps = 20000,
-seca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
-seexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
-spca.parms = list("trapezoidal", c(.75, .85, .95, 1)),
-spexp.parms = list("trapezoidal", c(.7, .8, .9, .95)),
-corr.se = .8,
-corr.sp = .8)
+seca = list("trapezoidal", c(.75, .85, .95, 1)),
+seexp = list("trapezoidal", c(.7, .8, .9, .95)),
+spca = list("trapezoidal", c(.75, .85, .95, 1)),
+spexp = list("trapezoidal", c(.7, .8, .9, .95)),
+corr_se = .8,
+corr_sp = .8)
 
 probsens(greenland, type = "exposure", reps = 20000,
-seca.parms = list("beta", c(908, 16)),
-seexp.parms = list("beta", c(156, 56)),
-spca.parms = list("beta", c(153, 6)),
-spexp.parms = list("beta", c(205, 18)),
-corr.se = .8,
-corr.sp = .8)
+seca = list("beta", c(908, 16)),
+seexp = list("beta", c(156, 56)),
+spca = list("beta", c(153, 6)),
+spexp = list("beta", c(205, 18)),
+corr_se = .8,
+corr_sp = .8)
 
 probsens(matrix(c(338, 490, 17984, 32024),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 type = "exposure",
 reps = 1000,
-seca.parms = list("trapezoidal", c(.8, .9, .9, 1)),
-spca.parms = list("trapezoidal", c(.8, .9, .9, 1)))
+seca = list("trapezoidal", c(.8, .9, .9, 1)),
+spca = list("trapezoidal", c(.8, .9, .9, 1)))
 
 # Disease misclassification
 probsens(matrix(c(173, 602, 134, 663),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 type = "outcome",
 reps = 20000,
-seca.parms = list("uniform", c(.8, 1)),
-spca.parms = list("uniform", c(.8, 1)))
+seca = list("uniform", c(.8, 1)),
+spca = list("uniform", c(.8, 1)))
 
 probsens(matrix(c(338, 490, 17984, 32024),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 type = "outcome",
 reps = 20000,
-seca.parms = list("uniform", c(.2, .6)),
-seexp.parms = list("uniform", c(.1, .5)),
-spca.parms = list("uniform", c(.99, 1)),
-spexp.parms = list("uniform", c(.99, 1)),
-corr.se = .8,
-corr.sp = .8)
+seca = list("uniform", c(.2, .6)),
+seexp = list("uniform", c(.1, .5)),
+spca = list("uniform", c(.99, 1)),
+spexp = list("uniform", c(.99, 1)),
+corr_se = .8,
+corr_sp = .8)
 
 probsens(matrix(c(173, 602, 134, 663),
 dimnames = list(c("BC+", "BC-"), c("Smoke+", "Smoke-")), nrow = 2, byrow = TRUE),
 type = "outcome",
 reps = 20000,
-seca.parms = list("beta", c(100, 5)),
-seexp.parms = list("beta", c(110, 10)),
-spca.parms = list("beta", c(120, 15)),
-spexp.parms = list("beta", c(130, 30)),
-corr.se = .8,
-corr.sp = .8)
+seca = list("beta", c(100, 5)),
+seexp = list("beta", c(110, 10)),
+spca = list("beta", c(120, 15)),
+spexp = list("beta", c(130, 30)),
+corr_se = .8,
+corr_sp = .8)
+
+# Fox M.P., MacLehose R.F., Lash T.L.
+# SAS and R code for probabilistic quantitative bias analysis for
+# misclassified binary variables and binary unmeasured confounders
+# Int J Epidemiol 2023:1624-1633.
+fox <- matrix(c(40, 20, 60, 80),
+dimnames = list(c("Diseased", "Non-diseased"), c("Exposed", "Unexposed")),
+nrow = 2, byrow = TRUE)
+set.seed(123)
+probsens(fox, type = "exposure", reps = 10^6,
+seca = list("beta", c(25, 3)),
+spca = list("trapezoidal", c(.9, .93, .97, 1)),
+seexp = list("beta", c(47, 7)),
+spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+corr_se = .8,
+corr_sp = .8)
 }
 \references{
-Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
-Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
+Fox, M.P, MacLehose, R.F., Lash, T.L., 2021 \emph{Applying Quantitative
+Bias Analysis to Epidemiologic Data}, pp.233--290, Springer.
 
 Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
 with Specified Univariate Distributions and Correlation Coefficients}.

@@ -154,15 +154,15 @@
 #' dimnames = list(c("Diseased", "Non-diseased"), c("Exposed", "Unexposed")),
 #' nrow = 2, byrow = TRUE)
 #' set.seed(123)
-#' probsens(fox, type = "exposure", reps = 20000,
+#' probsens(fox, type = "exposure", reps = 10^6,
 #' seca = list("beta", c(25, 3)),
 #' spca = list("trapezoidal", c(.9, .93, .97, 1)),
-#' spexp = list("beta", c(47, 7)),
+#' seexp = list("beta", c(47, 7)),
 #' spexp = list("trapezoidal", c(.8, .83, .87, .9)),
 #' corr_se = .8,
 #' corr_sp = .8)
 #' @export
-#' @importFrom stats median pnorm qnorm quantile qunif runif qbeta rbeta
+#' @importFrom stats median pnorm qnorm quantile qunif runif rnorm rbinom qbeta rbeta
 probsens <- function(case,
                      exposed,
                      type = c("exposure", "outcome"),

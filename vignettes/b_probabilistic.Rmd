@@ -63,8 +63,8 @@ smoke.nd <- probsens(matrix(c(215, 1449, 668, 4296),
                             nrow = 2, byrow = TRUE),
                      type = "exposure",
                      reps = 50000,
-                     seca.parms = list("uniform", c(.7, .95)),
-                     spca.parms = list("uniform", c(.9, .99)))
+                     seca = list("uniform", c(.7, .95)),
+                     spca = list("uniform", c(.9, .99)))
 smoke.nd
 ```
 
@@ -172,5 +172,5 @@ similar to our uncertainty about random error.
 You can plot the bias-adjusted OR including both systematic and random error:
 
 ```{r probsens_conf_plot, fig.cap='Distribution of the 50,000 confounder-adjusted odds ratios.',fig.width=6,fig.height=4}
-plot(greenland, "or_tot")
+#plot(greenland, "or_tot")
 ```
