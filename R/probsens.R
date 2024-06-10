@@ -1,7 +1,7 @@
 #' Probabilistic sensitivity analysis.
 #'
-#' Probabilistic sensitivity analysis to correct for exposure misclassification
-#' or outcome misclassification and random error.
+#' Summary-level probabilistic sensitivity analysis to correct for exposure
+#' misclassification or outcome misclassification and random error.
 #' Non-differential misclassification is assumed when only the two bias
 #' parameters \code{seca} and \code{spca} are provided. Adding the 2
 #' parameters \code{seexp} and \code{spexp} (i.e. providing the 4 bias
@@ -664,75 +664,83 @@ Se and Sp correlations.")))
     }
 
     if (type == "outcome") {
+        ## Step 4b: Bias-adjusted cell frequencies using simple bias analysis
+        ## methods and the sampled bias parameters
+        cli::cli_progress_step("Simple bias analysis", spinner = TRUE)
         draws[, 5] <- (a - (1 - draws[, 3]) * (a + c)) / (draws[, 1] - (1 - draws[, 3]))
         draws[, 6] <- (b - (1 - draws[, 4]) * (b + d)) / (draws[, 2] - (1 - draws[, 4]))
         draws[, 7] <- (a + c) - draws[, 5]
         draws[, 8] <- (b + d) - draws[, 6]
 
-        draws[, 9] <- (draws[, 5] / (draws[, 5] + draws[, 7])) / (draws[, 6] / (draws[, 6] + draws[, 8]))
-        draws[, 10] <- (draws[, 5] / draws[, 7]) / (draws[, 6] / draws[, 8])
+        ## Prevalence of outcome in cases and controls, accounting for sampling error
+        suppressWarnings({
+                             draws[, 10] <- rbeta(reps, draws[, 5], draws[, 7])
+                             draws[, 11] <- rbeta(reps, draws[, 6], draws[, 8])
+                         })
+        ## PPV and NPV of outcome classification in cases and controls
+        draws[, 12] <- (draws[, 1] * draws[, 10]) /
+            ((draws[, 1] * draws[, 10]) + (1 - draws[, 3]) * (1 - draws[, 10]))
+        draws[, 13] <- (draws[, 2] * draws[, 11]) /
+            ((draws[, 2] * draws[, 11]) + (1 - draws[, 4]) * (1 - draws[, 11]))
+        draws[, 14] <- (draws[, 3] * (1 - draws[, 10])) /
+            ((1 - draws[, 1]) * draws[, 10] + draws[, 3] * (1 - draws[, 10]))
+        draws[, 15] <- (draws[, 4] * (1 - draws[, 11])) /
+            ((1 - draws[, 2]) * draws[, 11] + draws[, 4] * (1 - draws[, 11]))
+        ## Expected number of cases among exposed and unexposed
+        suppressWarnings(draws[, 16] <- rbinom(reps, a, draws[, 12]) +
+                             rbinom(reps, c, 1 - draws[, 14]))
+        suppressWarnings(draws[, 17] <- rbinom(reps, b, draws[, 13]) +
+                             rbinom(reps, d, 1 - draws[, 15]))
+        draws[, 18] <- (a + c) - draws[, 16]
+        draws[, 19] <- (b + d) - draws[, 17]
 
-        draws[, 9] <- ifelse(draws[, 5] < 0 |
-                             draws[, 6] < 0 |
-                             draws[, 7] < 0 |
-                             draws[, 8] < 0, NA, draws[, 9])
-        draws[, 10] <- ifelse(draws[, 5] < 0 |
-                              draws[, 6] < 0 |
-                              draws[, 7] < 0 |
-                              draws[, 8] < 0, NA, draws[, 10])
+        ## Bias-adjusted RR and OR with second source of uncertainty
+        draws[, 20] <- (draws[, 16] / (draws[, 16] + draws[, 18])) /
+            (draws[, 17] / (draws[, 17] + draws[, 19]))
+        draws[, 21] <- (draws[, 16] / draws[, 18]) / (draws[, 17] / draws[, 19])
 
-        if (all(is.na(draws[, 9])) | all(is.na(draws[, 10]))) {
-            warning("Prior Se/Sp distributions lead to all negative adjusted counts.")
-            neg_warn <- "Prior Se/Sp distributions lead to all negative adjusted counts."
+        ## Step 4c: Incorporate conventional random error by sampling summary
+        ## statistics
+        ## Calculate bias-adjusted RR and OR, third source of uncertainty,
+        ## bias-adjusted SE
+        cli::cli_progress_step("Incorporating random error", spinner = TRUE)
+        draws[, 22] <- sqrt(1 / draws[, 16] + 1 / draws[, 17] -
+                            1 / (draws[, 16] + draws[, 18]) -
+                            1 / (draws[, 17] + draws[, 19]))
+        draws[, 23] <- sqrt((1 / draws[, 16]) + (1 / draws[, 17]) +
+                            (1 / draws[, 18]) + (1 / draws[, 19]))
+        draws[, 24] <- rnorm(reps)
+        draws[, 25] <- exp(log(draws[, 20]) - (draws[, 24] * draws[, 22]))
+        draws[, 26] <- exp(log(draws[, 21]) - (draws[, 24] * draws[, 23]))
+
+        ## Clean up
+        draws[, 9] <- apply(draws[, c(5:8, 16:19)], MARGIN = 1, function(x) sum(x > 0))
+        draws[, 9] <- ifelse(draws[, 9] != 8 | is.na(draws[, 9]), NA, 1)
+        discard <- sum(is.na(draws[, 9]))
+        if (sum(is.na(draws[, 9])) > 0) {
+            cli::cli_alert_warning("Chosen Se/Sp distributions lead to {discard} impossible value{?s} which w{?as/ere} discarded.")
+            neg_warn <- paste("Prior Se/Sp distributions lead to",  discard, "impossible value(s).")
         } else neg_warn <- NULL
-        if (discard) {
-            if (sum(is.na(draws[, 9])) > 0) {
-                message("Chosen prior Se/Sp distributions lead to ",
-                        sum(is.na(draws[, 9])),
-                        " negative adjusted counts which were discarded.")
-                discard_mess <- c(paste("Chosen prior Se/Sp distributions lead to ",
-                                        sum(is.na(draws[, 9])),
-                                        " negative adjusted counts which were discarded."))
-            } else discard_mess <- NULL
-        } else {
-            if (sum(is.na(draws[, 9])) > 0) {
-                message("Chosen prior Se/Sp distributions lead to ",
-                        sum(is.na(draws[, 9])),
-                        " negative adjusted counts which were set to zero.")
-                discard_mess <- c(paste("Chosen prior Se/Sp distributions lead to ",
-                                        sum(is.na(draws[, 9])),
-                                        " negative adjusted counts which were set to zero."))
-                draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
-                draws[, 10] <- ifelse(is.na(draws[, 10]), 0, draws[, 10])
-            } else discard_mess <- NULL
-        }
 
-        draws[, 12] <- exp(log(draws[, 9]) -
-                               qnorm(draws[, 11]) *
-                                         ((log(uci.obs.rr) - log(lci.obs.rr)) /
-                                              (qnorm(.975) * 2)))
-        draws[, 13] <- exp(log(draws[, 10]) -
-                               qnorm(draws[, 11]) *
-                                         ((log(uci.obs.or) - log(lci.obs.or)) /
-                                              (qnorm(.975) * 2)))
+        draws <- draws[draws[, 9] == 1 & !is.na(draws[, 9]), ]
 
-        corr.rr <- c(median(draws[, 9], na.rm = TRUE),
-                     quantile(draws[, 9], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 9], probs = .975, na.rm = TRUE))
-        corr.or <- c(median(draws[, 10], na.rm = TRUE),
-                     quantile(draws[, 10], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 10], probs = .975, na.rm = TRUE))
-        tot.rr <- c(median(draws[, 12], na.rm = TRUE),
-                    quantile(draws[, 12], probs = .025, na.rm = TRUE),
-                    quantile(draws[, 12], probs = .975, na.rm = TRUE))
-        tot.or <- c(median(draws[, 13], na.rm = TRUE),
-                    quantile(draws[, 13], probs = .025, na.rm = TRUE),
-                    quantile(draws[, 13], probs = .975, na.rm = TRUE))
+        rr_syst <- c(median(draws[, 20], na.rm = TRUE),
+                     quantile(draws[, 20], probs = .025, na.rm = TRUE),
+                     quantile(draws[, 20], probs = .975, na.rm = TRUE))
+        or_syst <- c(median(draws[, 21], na.rm = TRUE),
+                     quantile(draws[, 21], probs = .025, na.rm = TRUE),
+                     quantile(draws[, 21], probs = .975, na.rm = TRUE))
+        rr_tot <- c(median(draws[, 25], na.rm = TRUE),
+                    quantile(draws[, 25], probs = .025, na.rm = TRUE),
+                    quantile(draws[, 25], probs = .975, na.rm = TRUE))
+        or_tot <- c(median(draws[, 26], na.rm = TRUE),
+                    quantile(draws[, 26], probs = .025, na.rm = TRUE),
+                    quantile(draws[, 26], probs = .975, na.rm = TRUE))
 
         if(!inherits(case, "episensr.probsens")) {
             tab <- tab
-            rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr),
-                          c(obs.or, lci.obs.or, uci.obs.or))
+            rmat <- rbind(c(obs_rr, lci_obs_rr, uci_obs_rr),
+                          c(obs_or, lci_obs_or, uci_obs_or))
             rownames(rmat) <- c(" Observed Relative Risk:",
                                 "    Observed Odds Ratio:")
             colnames(rmat) <- c(" ",
@@ -746,12 +754,14 @@ Se and Sp correlations.")))
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
-        rmatc <- rbind(corr.rr, corr.or, tot.rr, tot.or)
-        rownames(rmatc) <- c("           Relative Risk -- systematic error:",
-                             "              Odds Ratio -- systematic error:",
-                             "Relative Risk -- systematic and random error:",
-                             "   Odds Ratio -- systematic and random error:")
-        colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
+        rmatc <- rbind(rr_syst, rr_tot, or_syst, or_tot)
+        rownames(rmatc) <- c("Relative Risk -- systematic error:",
+                             "                      total error:",
+                             "   Odds Ratio -- systematic error:",
+                             "                      total error:")
+        colnames(rmatc) <- c("Median", "p2.5", "p97.5")
+
+        cli::cli_progress_update()
     }
     res <- list(obs.data = tab,
                 obs.measures = rmat,
