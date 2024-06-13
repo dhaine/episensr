@@ -13,17 +13,17 @@ print.episensr <- function(x, digits = getOption("digits"), ...) {
     if (class(x)[1] == "episensr") {
         cli::cli_h1("Observed data")
         cli::cli_par()
-        cli::cli_ul(c("Outcome: {rownames(x$obs.data)[1]}",
-                      "Comparing: {colnames(x$obs.data)[1]} vs. {colnames(x$obs.data)[2]}"))
+        cli::cli_ul(c("Outcome: {rownames(x$obs_data)[1]}",
+                      "Comparing: {colnames(x$obs_data)[1]} vs. {colnames(x$obs_data)[2]}"))
         cli::cli_end()
         cli::cli_par()
-        print.table(x$obs.data, digits = digits, ...)
+        print.table(x$obs_data, digits = digits, ...)
         cli::cli_end()
         cli::cli_par()
-        print.table(x$obs.measures, digits = digits, ...)
+        print.table(x$obs_measures, digits = digits, ...)
         cli::cli_end()
         cli::cli_h2("Bias-adjusted measures")
-        print.table(x$adj.measures, digits = digits, ...)
+        print.table(x$adj_measures, digits = digits, ...)
         invisible(NULL)
     } else if (class(x)[1] == "episensr.multiple") {
         cat("\nMultiple bias analysis\n")

@@ -41,35 +41,35 @@
 #' select <- probsens.sel(matrix(c(136, 107, 297, 165),
 #' dimnames = list(c("Melanoma+", "Melanoma-"), c("Mobile+", "Mobile-")),
 #' nrow = 2, byrow = TRUE), reps = 20000,
-#' or.parms = list("triangular", c(.35, 1.1, .43)))
+#' or_parms = list("triangular", c(.35, 1.1, .43)))
 #' plot(select, "or_sel")
 #'
 #' set.seed(123)
 #' conf <- probsens.conf(matrix(c(105, 85, 527, 93),
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")), nrow = 2, byrow = TRUE),
 #' reps = 20000,
-#' prev.exp = list("triangular", c(.7, .9, .8)),
-#' prev.nexp = list("trapezoidal", c(.03, .04, .05, .06)),
+#' prev_exp = list("triangular", c(.7, .9, .8)),
+#' prev_nexp = list("trapezoidal", c(.03, .04, .05, .06)),
 #' risk = list("triangular", c(.6, .7, .63)),
-#' corr.p = .8)
-#' plot(conf, "prev.exp")
+#' corr_p = .8)
+#' plot(conf, "prev_exp")
 #'
 #' set.seed(123)
 #' inc1 <- probsens.irr(matrix(c(2, 67232, 58, 10539000),
 #' dimnames = list(c("GBS+", "Person-time"), c("HPV+", "HPV-")), ncol = 2),
 #' reps = 20000,
-#' seca.parms = list("trapezoidal", c(.4, .45, .55, .6)),
-#' spca.parms = list("constant", 1))
+#' seca_parms = list("trapezoidal", c(.4, .45, .55, .6)),
+#' spca_parms = list("constant", 1))
 #' plot(inc1, "irr")
 #'
 #' set.seed(123)
 #' inc2 <- probsens.irr.conf(matrix(c(77, 10000, 87, 10000),
 #' dimnames = list(c("D+", "Person-time"), c("E+", "E-")), ncol = 2),
 #' reps = 20000,
-#' prev.exp = list("trapezoidal", c(.01, .2, .3, .51)),
-#' prev.nexp = list("trapezoidal", c(.09, .27, .35, .59)),
+#' prev_exp = list("trapezoidal", c(.01, .2, .3, .51)),
+#' prev_nexp = list("trapezoidal", c(.09, .27, .35, .59)),
 #' risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
-#' corr.p = .8)
+#' corr_p = .8)
 #' plot(inc2, "risk")
 #' @export
 #' @importFrom ggplot2 ggplot geom_histogram aes after_stat geom_density geom_vline ggtitle xlab
@@ -80,7 +80,7 @@ plot.episensr.probsens <- function(x,
                                              "or_sel",
                                              "prev.exp", "prev.nexp", "risk"),
                                    ...) {
-    .data <- x$sim.df
+    .data <- x$sim_df
     prob.fun <- x$fun
 
     if (length(parms) != 1)

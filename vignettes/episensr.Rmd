@@ -37,7 +37,7 @@ Functions available in `episensr` are:
 * `confounders.array`: Bias due to unmeasured confounders based on confounding imbalance among exposed and unexposed
 * `confounders.ext`: Unmeasured confounders based on external measurement
 * `confounders.evalue`: E-value due to unmeasured confounder
-* `misclassification`: Disease or exposure misclassification
+* `misclass`: Disease or exposure misclassification
 * `misclassification_cov`: Covariate misclassification
 * `bootstrap`: Bootstrap resampling for selection and misclassification bias
 * `multidimBias`: Multidimensional bias analysis
@@ -91,14 +91,13 @@ risk), followed by the corrected ones.
 
 ## Misclassification Bias
 
-Misclassification bias can be assessed with the function `misclassification`.
+Misclassification bias can be assessed with the function `misclass`.
 Confidence intervals for corrected association due to exposure misclassification
 are also directly available, or the estimates can also be bootstrapped (see below).
 The confidence intervals from the variance of the corrected odds ratio estimator in the
-`misclassification` function are computed as in [Greenland et
-al.]( https://doi.org/10.1002/sim.4780070704) and [Chu et
-al.](https://doi.org/10.1016/j.annepidem.2006.04.001), when adjusting for exposure misclassification
-using sensitivity and specificity.
+`misclass` function are computed as in [Greenland et al.]( https://doi.org/10.1002/sim.4780070704)
+and [Chu et al.](https://doi.org/10.1016/j.annepidem.2006.04.001), when adjusting for
+exposure misclassification using sensitivity and specificity.
 Using the example in Chu et al. of a case-control study of cigarette smoking and
 invasive pneumococcal disease, the unadjusted odds ratio is 4.32, with a 95%
 confidence interval of 2.96 to 6.31.
@@ -106,12 +105,12 @@ Let's say the sensitivity of self-reported smoking is 94% and specificity is
 97%, for both the case and control groups:
 
 ```{r misclass}
-misclassification(matrix(c(126, 92, 71, 224),
-                         dimnames = list(c("Case", "Control"),
-                                         c("Smoking +", "Smoking - ")),
-                         nrow = 2, byrow = TRUE),
-                  type = "exposure",
-                  bias_parms = c(0.94, 0.94, 0.97, 0.97))
+misclass(matrix(c(126, 92, 71, 224),
+                dimnames = list(c("Case", "Control"),
+                                c("Smoking +", "Smoking - ")),
+                nrow = 2, byrow = TRUE),
+         type = "exposure",
+         bias_parms = c(0.94, 0.94, 0.97, 0.97))
 ```
 
 The corrected odds ratio is now 5.02, with a widened 95% confidence interval
@@ -125,36 +124,36 @@ dat <- expand.grid(Se = seq(0.582, 1, 0.02),
                    Sp = seq(0.762, 1, 0.02))
 
 dat$OR_c <- apply(dat, 1,
-                  function(x) misclassification(matrix(c(126, 92, 71, 224),
-                                                       nrow = 2, byrow = TRUE),
-                                                type = "exposure",
-                                                bias_parms = c(x[1], x[1], x[2], x[2]))$adj.measures[2, 1])
+                  function(x) misclass(matrix(c(126, 92, 71, 224),
+                                              nrow = 2, byrow = TRUE),
+                                       type = "exposure",
+                                       bias_parms = c(x[1], x[1], x[2], x[2]))$adj_measures[2, 1])
 dat$OR_c <- round(dat$OR_c, 2)
+dat$lab <- cut(dat$OR_c, breaks = c(4.32, 6.96, 8.56, 12.79, 23.41, 432.1, Inf), right = FALSE,
+                 labels = c("", "6.96", "8.56", "12.79", "23.41", "432.1"))
 
 library(ggplot2)
 library(directlabels)
-p1 <- ggplot(dat, aes(x = Se, y = Sp, z = OR_c)) +
-    geom_contour(aes(colour = ..level..), breaks = c(4.32, 6.96, 8.56, 12.79, 23.41, 432.1)) +
+ggplot(dat, aes(x = Se, y = Sp, z = OR_c)) +
+    geom_contour(aes(colour = after_stat(level)), breaks = c(4.32, 6.96, 8.56, 12.79, 23.41, 432.1)) +
     annotate("text", x = 1, y = 1, label = "4.32", size = 3) +
-    scale_fill_gradient(limits = range(dat$OR_c), high = 'red', low = 'green') +
-    scale_x_continuous(breaks = seq(0.5, 1, .1), expand = c(0,0)) +
-    scale_y_continuous(breaks = seq(0.5, 1, .1), expand = c(0,0)) +
+    scale_x_continuous(breaks = seq(0.5, 1, .1), expand = c(0, 0)) +
+    scale_y_continuous(breaks = seq(0.5, 1, .1), expand = c(0, 0)) +
     coord_fixed(ylim = c(0.5, 1.025), xlim = c(0.5, 1.025)) +
-    scale_colour_gradient(guide = 'none') +
+    scale_colour_gradient(guide = "none") +
     xlab("Sensitivity") +
     ylab("Specificity") +
-    ggtitle("Estimates of Corrected OR")
-direct.label(p1, list("far.from.others.borders", "calc.boxes", "enlarge.box",
-                      hjust = 1, vjust = -.5, box.color = NA, cex = .6,
-                      fill = "transparent", "draw.rects"))
+    ggtitle("Estimates of Corrected OR") +
+    geom_dl(aes(label = lab), method = list("last.points", hjust = 1, vjust = -.1, cex = .7))
+dat$lab <- NULL
 ```
 
 ```{r, warning=FALSE,fig.cap='Contour plot of 95% lower confidence limit of corrected OR',warning=FALSE,fig.width=6,fig.height=4}
 dat$ORc_lci <- apply(dat, 1,
-                     function(x) misclassification(matrix(c(126, 92, 71, 224),
-                                                          nrow = 2, byrow = TRUE),
-                                                   type = "exposure",
-                                                   bias_parms = c(x[1], x[1], x[2], x[2]))$adj.measures[2, 2])
+                     function(x) misclass(matrix(c(126, 92, 71, 224),
+                                                 nrow = 2, byrow = TRUE),
+                                          type = "exposure",
+                                          bias_parms = c(x[1], x[1], x[2], x[2]))$adj_measures[2, 2])
 dat$ORc_lci <- round(dat$ORc_lci, 2)
 
 p3 <- ggplot(dat, aes(x = Se, y = Sp, z = ORc_lci)) +
@@ -185,11 +184,11 @@ PPV<sub>D1</sub> = 65%, PPV<sub>D0</sub> = 74%, NPV<sub>D1</sub> = 100%, NPV<sub
 analysis is the following.
 
 ```{r, misclass_pv}
-misclassification(matrix(c(599, 4978, 31175, 391851),
-                         dimnames = list(c("Preterm", "Term"), c("Underweight", "Normal weight")),
-                         nrow = 2, byrow = TRUE),
-                  type = "exposure_pv",
-                  bias_parms = c(0.65, 0.74, 1, 0.98))
+misclass(matrix(c(599, 4978, 31175, 391851),
+                dimnames = list(c("Preterm", "Term"), c("Underweight", "Normal weight")),
+                nrow = 2, byrow = TRUE),
+         type = "exposure_pv",
+         bias_parms = c(0.65, 0.74, 1, 0.98))
 ```
 
 Note that using predictive values relates to the prevalence of the true exposure status, which might
@@ -255,10 +254,10 @@ confounder.
 
 ```{r confounders_add}
 ## Confounder +
-tyndall$cfder.data
+tyndall$cfder_data
 
 ## Confounder -
-tyndall$nocfder.data
+tyndall$nocfder_data
 ```
 
 As described in this function's help file, the bias correction used is the
@@ -393,9 +392,9 @@ library(aplore3)  # to get ICU data
 data(icu)
 
 ## First run the model
-misclass_eval <- misclassification(icu$sta, icu$inf,
-                                   type = "exposure",
-                                   bias_parms = c(.75, .85, .9, .95))
+misclass_eval <- misclass(icu$sta, icu$inf,
+                          type = "exposure",
+                          bias_parms = c(.75, .85, .9, .95))
 misclass_eval
 
 ## Then bootstrap it
