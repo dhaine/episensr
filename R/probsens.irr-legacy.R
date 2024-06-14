@@ -53,6 +53,7 @@
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 #' Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
 #' @examples
+#' \dontrun{
 #' set.seed(123)
 #' # Exposure misclassification, non-differential
 #' probsens.irr(matrix(c(2, 67232, 58, 10539000),
@@ -60,6 +61,7 @@
 #' reps = 20000,
 #' seca.parms = list("trapezoidal", c(.4, .45, .55, .6)),
 #' spca.parms = list("constant", 1))
+#' }
 #' @export
 #' @importFrom stats binom.test median quantile qnorm runif qbeta rbeta
 #' @rdname probsens.irr_legacy

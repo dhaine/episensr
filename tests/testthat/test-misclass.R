@@ -99,38 +99,38 @@ test_that("CI is correct for OR when exposure misclassification", {
 })
 
 test_that("correct number of arguments for bias parameters", {
-    expect_that(misclassification.cov(array(c(1319, 38054, 5641, 405546, 565,
-                                              3583, 781, 21958, 754, 34471,
-                                              4860, 383588),
-                                            dimnames = list(c("Twins+", "Twins-"),
-                                                            c("Folic acid+", "Folic acid-"),
-                                                            c("Total", "IVF+", "IVF-")),
-                                            dim = c(2, 2, 3)),
-                                      bias_parms = c(.6, .6, .95)),
+    expect_that(misclass_cov(array(c(1319, 38054, 5641, 405546, 565,
+                                     3583, 781, 21958, 754, 34471,
+                                     4860, 383588),
+                                   dimnames = list(c("Twins+", "Twins-"),
+                                                   c("Folic acid+", "Folic acid-"),
+                                                   c("Total", "IVF+", "IVF-")),
+                                   dim = c(2, 2, 3)),
+                             bias_parms = c(.6, .6, .95)),
                 throws_error())
 })
 
 test_that("bias parameters between 0 and 1", {
-    expect_that(misclassification.cov(array(c(1319, 38054, 5641, 405546, 565,
-                                              3583, 781, 21958, 754, 34471,
-                                              4860, 383588),
-                                            dimnames = list(c("Twins+", "Twins-"),
-                                                            c("Folic acid+", "Folic acid-"),
-                                                            c("Total", "IVF+", "IVF-")),
-                                            dim = c(2, 2, 3)),
-                                      bias_parms = c(-1, .6, .95, 2)),
+    expect_that(misclass_cov(array(c(1319, 38054, 5641, 405546, 565,
+                                     3583, 781, 21958, 754, 34471,
+                                     4860, 383588),
+                                   dimnames = list(c("Twins+", "Twins-"),
+                                                   c("Folic acid+", "Folic acid-"),
+                                                   c("Total", "IVF+", "IVF-")),
+                                   dim = c(2, 2, 3)),
+                             bias_parms = c(-1, .6, .95, 2)),
                 throws_error())
 })
 
 test_that("Observed measures are correct for covariate misclassification", {
-    model <- misclassification.cov(array(c(1319, 38054, 5641, 405546, 565,
-                                           3583, 781, 21958, 754, 34471,
-                                           4860, 383588),
-                                         dimnames = list(c("Twins+", "Twins-"),
-                                                         c("Folic acid+", "Folic acid-"),
-                                                         c("Total", "IVF+", "IVF-")),
-                                         dim = c(2, 2, 3)),
-                                   bias_parms = c(.6, .6, .95, .95))
+    model <- misclass_cov(array(c(1319, 38054, 5641, 405546, 565,
+                                  3583, 781, 21958, 754, 34471,
+                                  4860, 383588),
+                                dimnames = list(c("Twins+", "Twins-"),
+                                                c("Folic acid+", "Folic acid-"),
+                                                c("Total", "IVF+", "IVF-")),
+                                dim = c(2, 2, 3)),
+                          bias_parms = c(.6, .6, .95, .95))
     expect_equal(model$obs_measures[1, 1], 2.4419, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs_measures[1, 2], 2.3019, tolerance = 1e-4, scale = 1)
     expect_equal(model$obs_measures[1, 3], 2.5904, tolerance = 1e-4, scale = 1)
@@ -140,14 +140,14 @@ test_that("Observed measures are correct for covariate misclassification", {
 })
 
 test_that("Adjusted measures are correct for covariate misclassification", {
-    model <- misclassification.cov(array(c(1319, 38054, 5641, 405546, 565,
-                                           3583, 781, 21958, 754, 34471,
-                                           4860, 383588),
-                                         dimnames = list(c("Twins+", "Twins-"),
-                                                         c("Folic acid+", "Folic acid-"),
-                                                         c("Total", "IVF+", "IVF-")),
-                                         dim = c(2, 2, 3)),
-                                   bias_parms = c(.6, .6, .95, .95))
+    model <- misclass_cov(array(c(1319, 38054, 5641, 405546, 565,
+                                  3583, 781, 21958, 754, 34471,
+                                  4860, 383588),
+                                dimnames = list(c("Twins+", "Twins-"),
+                                                c("Folic acid+", "Folic acid-"),
+                                                c("Total", "IVF+", "IVF-")),
+                                dim = c(2, 2, 3)),
+                          bias_parms = c(.6, .6, .95, .95))
     expect_equal(model$adj_measures[1, 1], 2.2617, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj_measures[1, 2], 1.0002, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj_measures[2, 1], 1.0797, tolerance = 1e-4, scale = 1)
@@ -167,14 +167,14 @@ test_that("Adjusted measures are correct for covariate misclassification", {
 })
 
 test_that("Adjusted measures are correct for covariate misclassification", {
-    model <- misclassification.cov(array(c(1319, 38054, 5641, 405546, 565,
-                                           3583, 781, 21958, 754, 34471,
-                                           4860, 383588),
-                                         dimnames = list(c("Twins+", "Twins-"),
-                                                         c("Folic acid+", "Folic acid-"),
-                                                         c("Total", "IVF+", "IVF-")),
-                                         dim = c(2, 2, 3)),
-                                   bias_parms = c(.78, .78, .96, .96))
+    model <- misclass_cov(array(c(1319, 38054, 5641, 405546, 565,
+                                  3583, 781, 21958, 754, 34471,
+                                  4860, 383588),
+                                dimnames = list(c("Twins+", "Twins-"),
+                                                c("Folic acid+", "Folic acid-"),
+                                                c("Total", "IVF+", "IVF-")),
+                                dim = c(2, 2, 3)),
+                          bias_parms = c(.78, .78, .96, .96))
     expect_equal(model$adj_measures[1, 2], 1.7755, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj_measures[2, 2], 1.3753, tolerance = 1e-4, scale = 1)
     expect_equal(model$adj_measures[3, 2], 1.7259, tolerance = 1e-4, scale = 1)

@@ -18,7 +18,7 @@ generate a frequency distribution of the corrected estimates of effect.
 `episensr` has a set of `probsens` functions for this:
 
 * `probsens.sel`: Probabilistic analysis for selection bias
-* `probsens.conf`: Probabilistic analysis for unmeasured confounding
+* `probsens_conf`: Probabilistic analysis for unmeasured confounding
 * `probsens`: Probabilistic analysis for misclassification
 * `probsens.irr.conf`: Probabilistic analysis for unmeasured confounding of person-time data
 * `probsens.irr`: Probabilistic analysis for exposure misclassification of person-time data
@@ -80,16 +80,16 @@ str(smoke.nd)
 
 `smoke.nd` is a list of 8 elements where different information on the analysis
 done are saved.
-We have `smoke.nd$obs.data` where we have the observed 2X2 table,
-`smoke.nd$obs.measures` (the observed measures of association),
-`smoke.nd$adj.measures` (the adjusted measures of association), and
-`smoke.nd$sim.df`, a data frame with the simulated variables from each
+We have `smoke.nd$obs_data` where we have the observed 2X2 table,
+`smoke.nd$obs_measures` (the observed measures of association),
+`smoke.nd$adj_measures` (the adjusted measures of association), and
+`smoke.nd$sim_df`, a data frame with the simulated variables from each
 replication, like the Se and Sp, the 4 cells of the adjusted 2X2 table, and the
 adjusted measures.
 `episensr` offers some plot functions to allow plotting directly these saved
 information, for example the Se prior distribution:
 
-```{r plot, fig.cap = "Sensibility prior distribution.",fig.width=6,fig.height=4}
+```{r plot, fig.cap = "Sensibility prior distribution.",fig.width=6,fig.height=4, eval=FALSE}
 plot(smoke.nd, "seca")
 ```
 
@@ -153,12 +153,12 @@ Now, let's run `probsens.conf` with 50,000 iterations:
 
 ```{r probsens-conf}
 set.seed(123)
-greenland <- probsens.conf(matrix(c(45, 94, 257, 945),
+greenland <- probsens_conf(matrix(c(45, 94, 257, 945),
                                   dimnames = list(c("Cases+", "Cases-"), c("Res+", "Res-")),
                                   nrow = 2, byrow = TRUE),
                            reps = 50000,
-                           prev.exp = list("uniform", c(.4, .7)),
-                           prev.nexp = list("uniform", c(.4, .7)),
+                           prev_exp = list("uniform", c(.4, .7)),
+                           prev_nexp = list("uniform", c(.4, .7)),
                            risk = list("log-normal", c(2.159, .28)))
 greenland
 ```
@@ -171,6 +171,6 @@ similar to our uncertainty about random error.
 
 You can plot the bias-adjusted OR including both systematic and random error:
 
-```{r probsens_conf_plot, fig.cap='Distribution of the 50,000 confounder-adjusted odds ratios.',fig.width=6,fig.height=4}
-#plot(greenland, "or_tot")
+```{r probsens_conf_plot, fig.cap='Distribution of the 50,000 confounder-adjusted odds ratios.',fig.width=6,fig.height=4, eval=FALSE}
+#plot(greenland, "rr_tot")
 ```

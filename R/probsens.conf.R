@@ -24,7 +24,7 @@
 #' @param case Outcome variable. If a variable, this variable is tabulated against.
 #' @param exposed Exposure variable.
 #' @param reps Number of replications to run.
-#' @param prev.exp List defining the prevalence of exposure among the exposed.
+#' @param prev_exp List defining the prevalence of exposure among the exposed.
 #' The first argument provides the probability distribution function (constant,
 #' uniform, triangular, trapezoidal, truncated normal, or beta) and the second its
 #' parameters as a vector. Lower bound of the truncated normal cannot be less than
@@ -37,7 +37,7 @@
 #' \item normal: lower bound, upper bound, mean, sd.
 #' \item beta: alpha, beta.
 #' }
-#' @param prev.nexp List defining the prevalence of exposure among the unexposed.
+#' @param prev_nexp List defining the prevalence of exposure among the unexposed.
 #' @param risk List defining the confounder-disease relative risk or the confounder-exposure
 #' odds ratio. The first argument provides the probability distribution function
 #' (constant, uniform, triangular, trapezoidal, log-logistic, or log-normal) and
@@ -50,16 +50,16 @@
 #' \item log-logistic: shape, rate. Must be strictly positive,
 #' \item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 #' }
-#' @param corr.p Correlation between the exposure-specific confounder prevalences.
+#' @param corr_p Correlation between the exposure-specific confounder prevalences.
 #' @param discard A logical scalar. In case of negative adjusted count, should
 #' the draws be discarded? If set to FALSE, negative counts are set to zero.
 #' @param alpha Significance level.
 #'
 #' @return A list with elements:
-#' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
-#' \item{obs.measures}{A table of observed relative risk and odds ratio with confidence intervals.}
-#' \item{adj.measures}{A table of corrected relative risks and odds ratios.}
-#' \item{sim.df}{Data frame of random parameters and computed values.}
+#' \item{obs_data}{The analyzed 2 x 2 table from the observed data.}
+#' \item{obs_measures}{A table of observed relative risk and odds ratio with confidence intervals.}
+#' \item{adj_measures}{A table of corrected relative risks and odds ratios.}
+#' \item{sim_df}{Data frame of random parameters and computed values.}
 #' \item{reps}{Number of replications.}
 #'
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
@@ -78,33 +78,33 @@
 #' dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")), nrow = 2, byrow = TRUE)
 #' set.seed(123)
 #' probsens.conf(tyndall, reps = 20000,
-#' prev.exp = list("triangular", c(.7, .9, .8)),
-#' prev.nexp = list("trapezoidal", c(.03, .04, .05, .06)),
+#' prev_exp = list("triangular", c(.7, .9, .8)),
+#' prev_nexp = list("trapezoidal", c(.03, .04, .05, .06)),
 #' risk = list("triangular", c(.6, .7, .63)),
-#' corr.p = .8)
+#' corr_p = .8)
 #'
 #' set.seed(123)
 #' probsens.conf(tyndall, reps = 20000,
-#' prev.exp = list("beta", c(200, 56)),
-#' prev.nexp = list("beta", c(10, 16)),
+#' prev_exp = list("beta", c(200, 56)),
+#' prev_nexp = list("beta", c(10, 16)),
 #' risk = list("triangular", c(.6, .7, .63)),
-#' corr.p = .8)
+#' corr_p = .8)
 #'
 #' set.seed(123)
 #' probsens.conf(tyndall, reps = 20000,
-#' prev.exp = list("normal", c(.01, .12, 0.03, 0.005)),
-#' prev.nexp = list("normal", c(0, Inf, 0.01, 0.0001)),
-#' risk = list("triangular", c(.6, .7, .63)), corr.p = .8)
+#' prev_exp = list("normal", c(.01, .12, 0.03, 0.005)),
+#' prev_nexp = list("normal", c(0, Inf, 0.01, 0.0001)),
+#' risk = list("triangular", c(.6, .7, .63)), corr_p = .8)
 #' @export
 #' @importFrom stats median qnorm quantile runif rlnorm rbeta qbeta
 probsens.conf <- function(case,
                           exposed,
                           reps = 1000,
-                          prev.exp = list(dist = c("constant", "uniform",
+                          prev_exp = list(dist = c("constant", "uniform",
                                                    "triangular", "trapezoidal",
                                                    "normal", "beta"),
                                           parms = NULL),
-                          prev.nexp = list(dist = c("constant", "uniform",
+                          prev_nexp = list(dist = c("constant", "uniform",
                                                     "triangular", "trapezoidal",
                                                     "normal", "beta"),
                                            parms = NULL),
@@ -112,90 +112,90 @@ probsens.conf <- function(case,
                                                "triangular", "trapezoidal",
                                                "log-logistic", "log-normal"),
                                       parms = NULL),
-                          corr.p = NULL,
+                          corr_p = NULL,
                           discard = TRUE,
                           alpha = 0.05) {
     if (reps < 1)
         stop(paste("Invalid argument: reps =", reps))
 
-    if (is.null(prev.exp) | is.null(prev.nexp))
+    if (is.null(prev_exp) | is.null(prev_nexp))
         stop("Please provide prevalences among the exposed and unexposed.")
     if (is.null(risk))
         stop("Please provide risk of acquiring outcome.")
 
-    if (!is.list(prev.exp))
+    if (!is.list(prev_exp))
         stop("Prevalence of exposure among the exposed should be a list.")
-    else prev.exp <- prev.exp
-    if ((length(prev.exp) != 2) | (length(prev.nexp) != 2) | (length(risk) != 2))
+    else prev_exp <- prev_exp
+    if ((length(prev_exp) != 2) | (length(prev_nexp) != 2) | (length(risk) != 2))
         stop("Check distribution parameters.")
-    if ((length(prev.exp[[1]]) != 1) | (length(prev.nexp[[1]]) != 1) | (length(risk[[1]]) != 1))
+    if ((length(prev_exp[[1]]) != 1) | (length(prev_nexp[[1]]) != 1) | (length(risk[[1]]) != 1))
         stop("Which distribution?")
-    if (!is.null(corr.p) && (prev.exp[[1]] == "constant" | prev.nexp[[1]] == "constant"))
+    if (!is.null(corr_p) && (prev_exp[[1]] == "constant" | prev_nexp[[1]] == "constant"))
         stop("No correlated distributions with constant values.")
-    if (prev.exp[[1]] == "constant" & length(prev.exp[[2]]) != 1)
+    if (prev_exp[[1]] == "constant" & length(prev_exp[[2]]) != 1)
         stop("For constant value, please provide a single value.")
-    if (prev.exp[[1]] == "uniform" & length(prev.exp[[2]]) != 2)
+    if (prev_exp[[1]] == "uniform" & length(prev_exp[[2]]) != 2)
         stop("For uniform distribution, please provide vector of lower and upper limits.")
-    if (prev.exp[[1]] == "uniform" & prev.exp[[2]][1] >= prev.exp[[2]][2])
+    if (prev_exp[[1]] == "uniform" & prev_exp[[2]][1] >= prev_exp[[2]][2])
         stop("Lower limit of your uniform distribution is greater than upper limit.")
-    if (prev.exp[[1]] == "triangular" & length(prev.exp[[2]]) != 3)
+    if (prev_exp[[1]] == "triangular" & length(prev_exp[[2]]) != 3)
         stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
-    if (prev.exp[[1]] == "triangular" & ((prev.exp[[2]][1] > prev.exp[[2]][3]) |
-                                         (prev.exp[[2]][2] < prev.exp[[2]][3])))
+    if (prev_exp[[1]] == "triangular" & ((prev_exp[[2]][1] > prev_exp[[2]][3]) |
+                                         (prev_exp[[2]][2] < prev_exp[[2]][3])))
         stop("Wrong arguments for your triangular distribution.")
-    if (prev.exp[[1]] == "trapezoidal" & length(prev.exp[[2]]) != 4)
+    if (prev_exp[[1]] == "trapezoidal" & length(prev_exp[[2]]) != 4)
         stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
-    if (prev.exp[[1]] == "trapezoidal" & ((prev.exp[[2]][1] > prev.exp[[2]][2]) |
-                                          (prev.exp[[2]][2] > prev.exp[[2]][3]) |
-                                          (prev.exp[[2]][3] > prev.exp[[2]][4])))
+    if (prev_exp[[1]] == "trapezoidal" & ((prev_exp[[2]][1] > prev_exp[[2]][2]) |
+                                          (prev_exp[[2]][2] > prev_exp[[2]][3]) |
+                                          (prev_exp[[2]][3] > prev_exp[[2]][4])))
         stop("Wrong arguments for your trapezoidal distribution.")
-    if (prev.exp[[1]] == "normal" & (length(prev.exp[[2]]) != 4))
+    if (prev_exp[[1]] == "normal" & (length(prev_exp[[2]]) != 4))
         stop("For truncated normal distribution, please provide vector of lower and upper bound limits, mean and sd.")
-    if (prev.exp[[1]] == "normal" & length(prev.exp[[2]]) == 4 &
-        ((prev.exp[[2]][1] >= prev.exp[[2]][2]) | (prev.exp[[2]][1] < 0)))
+    if (prev_exp[[1]] == "normal" & length(prev_exp[[2]]) == 4 &
+        ((prev_exp[[2]][1] >= prev_exp[[2]][2]) | (prev_exp[[2]][1] < 0)))
         stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (lower limit >= 0; lower limit < upper limit).")
-    if ((prev.exp[[1]] == "constant" | prev.exp[[1]] == "uniform" |
-         prev.exp[[1]] == "triangular" | prev.exp[[1]] == "trapezoidal") &
-        !all(prev.exp[[2]] >= 0 & prev.exp[[2]] <= 1))
+    if ((prev_exp[[1]] == "constant" | prev_exp[[1]] == "uniform" |
+         prev_exp[[1]] == "triangular" | prev_exp[[1]] == "trapezoidal") &
+        !all(prev_exp[[2]] >= 0 & prev_exp[[2]] <= 1))
         stop("Prevalence should be between 0 and 1.")
-    if (!is.null(prev.exp) && prev.exp[[1]] == "beta" && length(prev.exp[[2]]) != 2)
+    if (!is.null(prev_exp) && prev_exp[[1]] == "beta" && length(prev_exp[[2]]) != 2)
         stop("For beta distribution, please provide alpha and beta.")
-    if (!is.null(prev.exp) && prev.exp[[1]] == "beta" &&
-       (prev.exp[[2]][1] < 0 | prev.exp[[2]][2] < 0))
+    if (!is.null(prev_exp) && prev_exp[[1]] == "beta" &&
+       (prev_exp[[2]][1] < 0 | prev_exp[[2]][2] < 0))
         stop("Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")
 
-    if (!is.list(prev.nexp))
+    if (!is.list(prev_nexp))
         stop("Prevalence of exposure among the non-exposed should be a list.")
-    else prev.nexp <- prev.nexp
-    if (prev.nexp[[1]] == "constant" & length(prev.nexp[[2]]) != 1)
+    else prev_nexp <- prev_nexp
+    if (prev_nexp[[1]] == "constant" & length(prev_nexp[[2]]) != 1)
         stop("For constant value, please provide a single value.")
-    if (prev.nexp[[1]] == "uniform" & length(prev.nexp[[2]]) != 2)
+    if (prev_nexp[[1]] == "uniform" & length(prev_nexp[[2]]) != 2)
         stop("For uniform distribution, please provide vector of lower and upper limits.")
-    if (prev.nexp[[1]] == "uniform" & prev.nexp[[2]][1] >= prev.nexp[[2]][2])
+    if (prev_nexp[[1]] == "uniform" & prev_nexp[[2]][1] >= prev_nexp[[2]][2])
         stop("Lower limit of your uniform distribution is greater than upper limit.")
-    if (prev.nexp[[1]] == "triangular" & length(prev.nexp[[2]]) != 3)
+    if (prev_nexp[[1]] == "triangular" & length(prev_nexp[[2]]) != 3)
         stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
-    if (prev.nexp[[1]] == "triangular" & ((prev.nexp[[2]][1] > prev.nexp[[2]][3]) |
-                                          (prev.nexp[[2]][2] < prev.nexp[[2]][3])))
+    if (prev_nexp[[1]] == "triangular" & ((prev_nexp[[2]][1] > prev_nexp[[2]][3]) |
+                                          (prev_nexp[[2]][2] < prev_nexp[[2]][3])))
         stop("Wrong arguments for your triangular distribution.")
-    if (prev.nexp[[1]] == "trapezoidal" & length(prev.nexp[[2]]) != 4)
+    if (prev_nexp[[1]] == "trapezoidal" & length(prev_nexp[[2]]) != 4)
         stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
-    if (prev.nexp[[1]] == "trapezoidal" & ((prev.nexp[[2]][1] > prev.nexp[[2]][2]) |
-                                           (prev.nexp[[2]][2] > prev.nexp[[2]][3]) |
-                                           (prev.nexp[[2]][3] > prev.nexp[[2]][4])))
+    if (prev_nexp[[1]] == "trapezoidal" & ((prev_nexp[[2]][1] > prev_nexp[[2]][2]) |
+                                           (prev_nexp[[2]][2] > prev_nexp[[2]][3]) |
+                                           (prev_nexp[[2]][3] > prev_nexp[[2]][4])))
         stop("Wrong arguments for your trapezoidal distribution.")
-    if (prev.nexp[[1]] == "normal" & (length(prev.nexp[[2]]) != 4))
+    if (prev_nexp[[1]] == "normal" & (length(prev_nexp[[2]]) != 4))
         stop("For truncated normal distribution, please provide vector of lower and upper bound limits, mean and sd.")
-    if (prev.nexp[[1]] == "normal" & length(prev.nexp[[2]]) == 4 &
-        ((prev.nexp[[2]][1] >= prev.nexp[[2]][2]) | (prev.nexp[[2]][1] < 0)))
+    if (prev_nexp[[1]] == "normal" & length(prev_nexp[[2]]) == 4 &
+        ((prev_nexp[[2]][1] >= prev_nexp[[2]][2]) | (prev_nexp[[2]][1] < 0)))
         stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (lower limit >= 0; lower limit < upper limit).")
-    if ((prev.nexp[[1]] == "constant" | prev.nexp[[1]] == "uniform" |
-         prev.nexp[[1]] == "triangular" | prev.nexp[[1]] == "trapezoidal") &
-        !all(prev.nexp[[2]] >= 0 & prev.nexp[[2]] <= 1))
+    if ((prev_nexp[[1]] == "constant" | prev_nexp[[1]] == "uniform" |
+         prev_nexp[[1]] == "triangular" | prev_nexp[[1]] == "trapezoidal") &
+        !all(prev_nexp[[2]] >= 0 & prev_nexp[[2]] <= 1))
         stop("Prevalence should be between 0 and 1.")
-    if (!is.null(prev.nexp) && prev.nexp[[1]] == "beta" && length(prev.nexp[[2]]) != 2)
+    if (!is.null(prev_nexp) && prev_nexp[[1]] == "beta" && length(prev_nexp[[2]]) != 2)
         stop("For beta distribution, please provide alpha and beta.")
-    if (!is.null(prev.nexp) && prev.nexp[[1]] == "beta" && (prev.nexp[[2]][1] < 0 | prev.nexp[[2]][2] < 0))
+    if (!is.null(prev_nexp) && prev_nexp[[1]] == "beta" && (prev_nexp[[2]][1] < 0 | prev_nexp[[2]][2] < 0))
         stop("Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")
 
     if (!is.list(risk))
@@ -222,15 +222,15 @@ probsens.conf <- function(case,
     if (risk[[1]] == "log-normal" & length(risk[[2]]) != 2)
         stop("For log-normal distribution, please provide vector of meanlog and sdlog.")
 
-    if (!is.null(corr.p) && (corr.p == 0 | corr.p == 1))
+    if (!is.null(corr_p) && (corr_p == 0 | corr_p == 1))
         stop("Correlations should be > 0 and < 1.")
 
     if (!inherits(case, "episensr.probsens")) {
         if (inherits(case, c("table", "matrix")))
             tab <- case
         else {
-            tab.df <- table(case, exposed)
-            tab <- tab.df[2:1, 2:1]
+            tab_df <- table(case, exposed)
+            tab <- tab_df[2:1, 2:1]
         }
 
         a <- as.numeric(tab[1, 1])
@@ -246,105 +246,105 @@ probsens.conf <- function(case,
         reps <- case[[4]]
     }
 
-    obs.rr <- (a / (a + c)) / (b / (b + d))
-    se.log.obs.rr <- sqrt((c / a) / (a + c) + (d / b) / (b + d))
-    lci.obs.rr <- exp(log(obs.rr) - qnorm(1 - alpha / 2) * se.log.obs.rr)
-    uci.obs.rr <- exp(log(obs.rr) + qnorm(1 - alpha / 2) * se.log.obs.rr)
+    obs_rr <- (a / (a + c)) / (b / (b + d))
+    se_log_obs_rr <- sqrt((c / a) / (a + c) + (d / b) / (b + d))
+    lci_obs_rr <- exp(log(obs_rr) - qnorm(1 - alpha / 2) * se_log_obs_rr)
+    uci_obs_rr <- exp(log(obs_rr) + qnorm(1 - alpha / 2) * se_log_obs_rr)
 
-    obs.or <- (a / b) / (c / d)
-    se.log.obs.or <- sqrt(1 / a + 1 / b + 1 / c + 1 / d)
-    lci.obs.or <- exp(log(obs.or) - qnorm(1 - alpha / 2) * se.log.obs.or)
-    uci.obs.or <- exp(log(obs.or) + qnorm(1 - alpha / 2) * se.log.obs.or)
+    obs_or <- (a / b) / (c / d)
+    se_log_obs_or <- sqrt(1 / a + 1 / b + 1 / c + 1 / d)
+    lci_obs_or <- exp(log(obs_or) - qnorm(1 - alpha / 2) * se_log_obs_or)
+    uci_obs_or <- exp(log(obs_or) + qnorm(1 - alpha / 2) * se_log_obs_or)
 
     draws <- matrix(NA, nrow = reps, ncol = 16)
-    colnames(draws) <- c("p1", "p0", "RR.cd",
+    colnames(draws) <- c("p1", "p0", "RR_cd",
                          "A_11",
                          "B_11",
                          "C_11",
                          "D_11",
-                         "corr.RR",
-                         "corr.OR",
+                         "corr_RR",
+                         "corr_OR",
                          "reps",
-                         "tot.RR",
-                         "tot.OR",
+                         "tot_RR",
+                         "tot_OR",
                          "A1", "B1", "C1", "D1")
-    corr.draws <- matrix(NA, nrow = reps, ncol = 2)
+    corr_draws <- matrix(NA, nrow = reps, ncol = 2)
 
-    p1 <- c(reps, prev.exp[[2]])
-    p0 <- c(reps, prev.nexp[[2]])
-    rr.cd <- c(reps, risk[[2]])
+    p1 <- c(reps, prev_exp[[2]])
+    p0 <- c(reps, prev_nexp[[2]])
+    rr_cd <- c(reps, risk[[2]])
 
-    if (is.null(corr.p)) {
-        if (prev.exp[[1]] == "constant") {
-            draws[, 1] <- prev.exp[[2]]
+    if (is.null(corr_p)) {
+        if (prev_exp[[1]] == "constant") {
+            draws[, 1] <- prev_exp[[2]]
         }
-        if (prev.exp[[1]] == "uniform") {
+        if (prev_exp[[1]] == "uniform") {
             draws[, 1] <- do.call(runif, as.list(p1))
         }
-        if (prev.exp[[1]] == "triangular") {
+        if (prev_exp[[1]] == "triangular") {
             draws[, 1] <- do.call(triangle::rtriangle, as.list(p1))
         }
-        if (prev.exp[[1]] == "trapezoidal") {
+        if (prev_exp[[1]] == "trapezoidal") {
             draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(p1))
         }
-        if (prev.exp[[1]] == "normal") {
+        if (prev_exp[[1]] == "normal") {
             draws[, 1] <- do.call(truncnorm::rtruncnorm, as.list(p1))
         }
-        if (prev.exp[[1]] == "beta") {
+        if (prev_exp[[1]] == "beta") {
             draws[, 1] <- do.call(rbeta, as.list(p1))
         }
-        if (prev.nexp[[1]] == "constant") {
-            draws[, 2] <- prev.nexp[[2]]
+        if (prev_nexp[[1]] == "constant") {
+            draws[, 2] <- prev_nexp[[2]]
         }
-        if (prev.nexp[[1]] == "uniform") {
+        if (prev_nexp[[1]] == "uniform") {
             draws[, 2] <- do.call(runif, as.list(p0))
         }
-        if (prev.nexp[[1]] == "triangular") {
+        if (prev_nexp[[1]] == "triangular") {
             draws[, 2] <- do.call(triangle::rtriangle, as.list(p0))
         }
-        if (prev.nexp[[1]] == "trapezoidal") {
+        if (prev_nexp[[1]] == "trapezoidal") {
             draws[, 2] <- do.call(trapezoid::rtrapezoid, as.list(p0))
         }
-        if (prev.nexp[[1]] == "normal") {
+        if (prev_nexp[[1]] == "normal") {
             draws[, 2] <- do.call(truncnorm::rtruncnorm, as.list(p0))
         }
-        if (prev.nexp[[1]] == "beta") {
+        if (prev_nexp[[1]] == "beta") {
             draws[, 2] <- do.call(rbeta, as.list(p0))
         }
     } else {
-        norta_prev <- matrix(c(1, corr.p, corr.p, 1), ncol = 2)
-        corr.draws <- MASS::mvrnorm(reps, c(0, 0), norta_prev)
-        corr.draws <- pnorm(corr.draws)
+        norta_prev <- matrix(c(1, corr_p, corr_p, 1), ncol = 2)
+        corr_draws <- MASS::mvrnorm(reps, c(0, 0), norta_prev)
+        corr_draws <- pnorm(corr_draws)
 
-        if (prev.exp[[1]] == "uniform") {
-            draws[, 1] <- do.call(qunif, c(list(corr.draws[, 1]), as.list(p1[-1])))
+        if (prev_exp[[1]] == "uniform") {
+            draws[, 1] <- do.call(qunif, c(list(corr_draws[, 1]), as.list(p1[-1])))
         }
-        if (prev.exp[[1]] == "triangular") {
-            draws[, 1] <- do.call(triangle::qtriangle, c(list(corr.draws[, 1]), as.list(p1[-1])))
+        if (prev_exp[[1]] == "triangular") {
+            draws[, 1] <- do.call(triangle::qtriangle, c(list(corr_draws[, 1]), as.list(p1[-1])))
         }
-        if (prev.exp[[1]] == "trapezoidal") {
-            draws[, 1] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 1]), as.list(p1[-1])))
+        if (prev_exp[[1]] == "trapezoidal") {
+            draws[, 1] <- do.call(trapezoid::qtrapezoid, c(list(corr_draws[, 1]), as.list(p1[-1])))
         }
-        if (prev.exp[[1]] == "normal") {
-            draws[, 1] <- do.call(truncnorm::qtruncnorm, c(list(corr.draws[, 1]), as.list(p1[-1])))
+        if (prev_exp[[1]] == "normal") {
+            draws[, 1] <- do.call(truncnorm::qtruncnorm, c(list(corr_draws[, 1]), as.list(p1[-1])))
         }
-        if (prev.exp[[1]] == "beta") {
-            draws[, 1] <- do.call(qbeta, c(list(corr.draws[, 1]), as.list(p1[-1])))
+        if (prev_exp[[1]] == "beta") {
+            draws[, 1] <- do.call(qbeta, c(list(corr_draws[, 1]), as.list(p1[-1])))
         }
-        if (prev.nexp[[1]] == "uniform") {
-            draws[, 2] <- do.call(qunif, c(list(corr.draws[, 2]), as.list(p0[-1])))
+        if (prev_nexp[[1]] == "uniform") {
+            draws[, 2] <- do.call(qunif, c(list(corr_draws[, 2]), as.list(p0[-1])))
         }
-        if (prev.nexp[[1]] == "triangular") {
-            draws[, 2] <- do.call(triangle::qtriangle, c(list(corr.draws[, 2]), as.list(p0[-1])))
+        if (prev_nexp[[1]] == "triangular") {
+            draws[, 2] <- do.call(triangle::qtriangle, c(list(corr_draws[, 2]), as.list(p0[-1])))
         }
-        if (prev.nexp[[1]] == "trapezoidal") {
-            draws[, 2] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 2]), as.list(p0[-1])))
+        if (prev_nexp[[1]] == "trapezoidal") {
+            draws[, 2] <- do.call(trapezoid::qtrapezoid, c(list(corr_draws[, 2]), as.list(p0[-1])))
         }
-        if (prev.nexp[[1]] == "normal") {
-            draws[, 2] <- do.call(truncnorm::qtruncnorm, c(list(corr.draws[, 2]), as.list(p0[-1])))
+        if (prev_nexp[[1]] == "normal") {
+            draws[, 2] <- do.call(truncnorm::qtruncnorm, c(list(corr_draws[, 2]), as.list(p0[-1])))
         }
-        if (prev.nexp[[1]] == "beta") {
-            draws[, 2] <- do.call(qbeta, c(list(corr.draws[, 2]), as.list(p0[-1])))
+        if (prev_nexp[[1]] == "beta") {
+            draws[, 2] <- do.call(qbeta, c(list(corr_draws[, 2]), as.list(p0[-1])))
         }
     }
 
@@ -352,19 +352,19 @@ probsens.conf <- function(case,
         draws[, 3] <- risk[[2]]
     }
     if (risk[[1]] == "uniform") {
-        draws[, 3] <- do.call(runif, as.list(rr.cd))
+        draws[, 3] <- do.call(runif, as.list(rr_cd))
     }
     if (risk[[1]] == "triangular") {
-        draws[, 3] <- do.call(triangle::rtriangle, as.list(rr.cd))
+        draws[, 3] <- do.call(triangle::rtriangle, as.list(rr_cd))
     }
     if (risk[[1]] == "trapezoidal") {
-        draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(rr.cd))
+        draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(rr_cd))
     }
     if (risk[[1]] == "log-logistic") {
-        draws[, 3] <- do.call(actuar::rllogis, as.list(rr.cd))
+        draws[, 3] <- do.call(actuar::rllogis, as.list(rr_cd))
     }
     if (risk[[1]] == "log-normal") {
-        draws[, 3] <- do.call(rlnorm, as.list(rr.cd))
+        draws[, 3] <- do.call(rlnorm, as.list(rr_cd))
     }
 
     draws[, 10] <- runif(reps)
@@ -424,32 +424,32 @@ probsens.conf <- function(case,
         } else discard_mess <- NULL
     }
 
-    draws[, 11] <- exp(log(draws[, 8]) - qnorm(draws[, 10]) * ((log(uci.obs.rr) - log(lci.obs.rr)) /
+    draws[, 11] <- exp(log(draws[, 8]) - qnorm(draws[, 10]) * ((log(uci_obs_rr) - log(lci_obs_rr)) /
                                                                (qnorm(.975) * 2)))
-    draws[, 12] <- exp(log(draws[, 9]) - qnorm(draws[, 10]) * ((log(uci.obs.or) - log(lci.obs.or)) /
+    draws[, 12] <- exp(log(draws[, 9]) - qnorm(draws[, 10]) * ((log(uci_obs_or) - log(lci_obs_or)) /
                                                                (qnorm(.975) * 2)))
     draws[, 13] <- a
     draws[, 14] <- b
     draws[, 15] <- c
     draws[, 16] <- d
 
-    corr.RR <- c(median(draws[, 8], na.rm = TRUE),
+    corr_RR <- c(median(draws[, 8], na.rm = TRUE),
                  quantile(draws[, 8], probs = .025, na.rm = TRUE),
                  quantile(draws[, 8], probs = .975, na.rm = TRUE))
-    corr.OR <- c(median(draws[, 9], na.rm = TRUE),
+    corr_OR <- c(median(draws[, 9], na.rm = TRUE),
                  quantile(draws[, 9], probs = .025, na.rm = TRUE),
                  quantile(draws[, 9], probs = .975, na.rm = TRUE))
-    tot.RR <- c(median(draws[, 11], na.rm = TRUE),
+    tot_RR <- c(median(draws[, 11], na.rm = TRUE),
                 quantile(draws[, 11], probs = .025, na.rm = TRUE),
                 quantile(draws[, 11], probs = .975, na.rm = TRUE))
-    tot.OR <- c(median(draws[, 12], na.rm = TRUE),
+    tot_OR <- c(median(draws[, 12], na.rm = TRUE),
                 quantile(draws[, 12], probs = .025, na.rm = TRUE),
                 quantile(draws[, 12], probs = .975, na.rm = TRUE))
 
     if (!inherits(case, "episensr.probsens")) {
         tab <- tab
-        rmat <- rbind(c(obs.rr, lci.obs.rr, uci.obs.rr),
-                      c(obs.or, lci.obs.or, uci.obs.or))
+        rmat <- rbind(c(obs_rr, lci_obs_rr, uci_obs_rr),
+                      c(obs_or, lci_obs_or, uci_obs_or))
         rownames(rmat) <- c("Observed Relative Risk:",
                             "   Observed Odds Ratio:")
         colnames(rmat) <- c(" ",
@@ -463,16 +463,16 @@ probsens.conf <- function(case,
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    rmatc <- rbind(corr.RR, tot.RR, corr.OR, tot.OR)
+    rmatc <- rbind(corr_RR, tot_RR, corr_OR, tot_OR)
     rownames(rmatc) <- c("           RR (SMR) -- systematic error:",
                          "RR (SMR) -- systematic and random error:",
                          "           OR (SMR) -- systematic error:",
                          "OR (SMR) -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
-    res <- list(obs.data = tab,
-                obs.measures = rmat,
-                adj.measures = rmatc,
-                sim.df = as.data.frame(draws[, -10]),
+    res <- list(obs_data = tab,
+                obs_measures = rmat,
+                adj_measures = rmatc,
+                sim_df = as.data.frame(draws[, -10]),
                 reps = reps,
                 fun = "probsens.conf",
                 warnings = neg_warn,

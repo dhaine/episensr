@@ -84,6 +84,7 @@ probsens.sel <- probsens.sel_legacy
 ```
 }
 \examples{
+\dontrun{
 # The data for this example come from:
 # Stang A., Schmidt-Pokrzywniak A., Lehnert M., Parkin D.M., Ferlay J., Bornfeld N. et al.
 # Population-based incidence estimates of uveal melanoma in Germany.
@@ -94,6 +95,7 @@ probsens.sel(matrix(c(136, 107, 297, 165),
 dimnames = list(c("Melanoma+", "Melanoma-"), c("Mobile+", "Mobile-")), nrow = 2, byrow = TRUE),
 reps = 20000,
 or.parms = list("triangular", c(.35, 1.1, .43)))
+}
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.

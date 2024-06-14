@@ -87,6 +87,7 @@ probsens.conf <- probsens.conf_legacy
 # Increased risk of infection with human immunodeficiency virus type 1 among
 # uncircumcised men presenting with genital ulcer disease in Kenya.
 # Clin Infect Dis 1996;23:449-53.
+\dontrun{
 set.seed(123)
 probsens.conf(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")), nrow = 2, byrow = TRUE),
@@ -104,6 +105,7 @@ prev.exp = list("beta", c(200, 56)),
 prev.nexp = list("beta", c(10, 16)),
 risk = list("triangular", c(.6, .7, .63)),
 corr.p = .8)
+}
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.

@@ -59,6 +59,7 @@
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
 #' Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
 #' @examples
+#' \dontrun{
 #' set.seed(123)
 #' # Unmeasured confounding
 #' probsens.irr.conf(matrix(c(77, 10000, 87, 10000),
@@ -68,6 +69,7 @@
 #' prev.nexp = list("trapezoidal", c(.09, .27, .35, .59)),
 #' risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
 #' corr.p = .8)
+#' }
 #' @export
 #' @importFrom stats binom.test median quantile runif rbeta qbeta
 #' @rdname probsens.irr.conf_legacy

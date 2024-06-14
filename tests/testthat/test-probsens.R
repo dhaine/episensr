@@ -564,127 +564,133 @@ test_that("Selection bias: adjusted measures are correct (logit)", {
 #})
 
 test_that("correct arguments --- list", {
-    expect_that(probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
-                         reps = 1000,
-                         prev.exp = c("uniform", 1, 2),
-                         prev.nexp = list("beta", c(10, 16)),
-                         risk = list("triangular", c(.6, .7, .63)),
-                         corr.p = .8),
+    expect_that(probsens_conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
+                             reps = 1000,
+                             prev.exp = c("uniform", 1, 2),
+                             prev.nexp = list("beta", c(10, 16)),
+                             risk = list("triangular", c(.6, .7, .63)),
+                             corr.p = .8),
                 throws_error())
 })
 
 test_that("correct arguments --- distribution", {
-    expect_that(probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
-                         reps = 1000,
-                         prev.exp = list(c("uniform", "beta"), c(10, 16)),
-                         prev.nexp = list("beta", c(10, 16)),
-                         risk = list("triangular", c(.6, .7, .63)),
-                         corr.p = .8),
+    expect_that(probsens_conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
+                             reps = 1000,
+                             prev.exp = list(c("uniform", "beta"), c(10, 16)),
+                             prev.nexp = list("beta", c(10, 16)),
+                             risk = list("triangular", c(.6, .7, .63)),
+                             corr.p = .8),
                 throws_error())
 })
 
-#test_that("Confounding bias: observed measures are correct", {
-#    set.seed(123)
-#    model <- probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
-#                      reps = 20000,
-#                      prev.exp = list("triangular", c(.7, .9, .8)),
-#                      prev.nexp = list("trapezoidal", c(.03, .04, .05, .06)),
-#                      risk = list("triangular", c(.6, .7, .63)),
-#                      corr.p = .8)
-#    expect_equal(model$obs_measures[1, 1], 0.3479, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$obs_measures[1, 2], 0.2757, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$obs_measures[1, 3], 0.4390, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$obs_measures[2, 1], 0.2180, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$obs_measures[2, 2], 0.1519, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$obs_measures[2, 3], 0.3128, tolerance = 1e-4, scale = 1)
-#})
+test_that("Confounding bias: observed measures are correct", {
+    set.seed(123)
+    model <- probsens_conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
+                          reps = 20000,
+                          prev_exp = list("triangular", c(.7, .9, .8)),
+                          prev_nexp = list("trapezoidal", c(.03, .04, .05, .06)),
+                          risk = list("triangular", c(.6, .7, .63)),
+                          corr_p = .8)
+    expect_equal(model$obs_measures[1, 1], 0.3479, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 2], 0.2757, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 3], 0.4390, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[2, 1], 0.2180, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[2, 2], 0.1519, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[2, 3], 0.3128, tolerance = 1e-4, scale = 1)
+})
 
-#test_that("Confounding bias: adjusted measures are correct", {
-#    set.seed(123)
-#    model <- probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
-#                      reps = 20000,
-#                      prev.exp = list("triangular", c(.7, .9, .8)),
-#                      prev.nexp = list("trapezoidal", c(.03, .04, .05, .06)),
-#                      risk = list("triangular", c(.6, .7, .63)),
-#                      corr.p = .8)
-#    expect_equal(model$adj_measures[1, 1], 0.4790, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 2], 0.4532, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 3], 0.5067, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 1], 0.4789, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 2], 0.3760, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 3], 0.6094, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[3, 1], 0.3660, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[3, 2], 0.3363, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[3, 3], 0.3999, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[4, 1], 0.3661, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[4, 2], 0.2515, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[4, 3], 0.5321, tolerance = 1e-4, scale = 1)
-#})
+test_that("Confounding bias: adjusted measures are correct", {
+    set.seed(123)
+    model <- probsens_conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
+                          reps = 20000,
+                          prev_exp = list("triangular", c(.7, .9, .8)),
+                          prev_nexp = list("trapezoidal", c(.03, .04, .05, .06)),
+                          risk = list("triangular", c(.6, .7, .63)),
+                          corr_p = .8)
+    expect_equal(model$adj_measures[1, 1], 0.4762, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 0.3564, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 0.6139, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 0.4787, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 0.2976, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 0.7206, tolerance = 1e-4, scale = 1)
+})
 
-#test_that("Confounding bias: adjusted measures are correct", {
-#    set.seed(123)
-#    model <- probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
-#                      reps = 20000,
-#                      prev.exp = list("triangular", c(.7, .9, .8)),
-#                      prev.nexp = list("triangular", c(.03, .05, .04)),
-#                      risk = list("triangular", c(.6, .7, .65)),
-#                      corr.p = .8)
-#    expect_equal(model$adj_measures[1, 1], 0.4759, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 2], 0.4521, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 3], 0.5050, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 1], 0.4762, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 2], 0.3737, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 3], 0.6057, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[3, 1], 0.3630, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[3, 2], 0.3350, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[3, 3], 0.3978, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[4, 1], 0.3634, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[4, 2], 0.2498, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[4, 3], 0.5281, tolerance = 1e-4, scale = 1)
-#})
+test_that("Confounding bias: adjusted measures are correct", {
+    set.seed(123)
+    model <- probsens_conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
+                          reps = 20000,
+                          prev_exp = list("triangular", c(.7, .9, .8)),
+                          prev_nexp = list("triangular", c(.03, .05, .04)),
+                          risk = list("triangular", c(.6, .7, .65)),
+                          corr_p = .8)
+    expect_equal(model$adj_measures[1, 1], 0.4745, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 0.3534, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 0.6130, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 0.4746, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 0.2959, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 0.7183, tolerance = 1e-4, scale = 1)
+})
 
-#test_that("Confounding bias: adjusted measures are correct", {
-#    set.seed(123)
-#    model <- probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
-#                      reps = 10000,
-#                      prev.exp = list("constant", c(.8)),
-#                      prev.nexp = list("constant", c(.05)),
-#                      risk = list("constant", c(.63)))
-#    expect_equal(model$adj_measures[1, 1], 0.4851, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 2], 0.4851, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 3], 0.4851, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 1], 0.4858, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 2], 0.3857, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 3], 0.6128, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[3, 1], 0.3727, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[3, 2], 0.3727, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[3, 3], 0.3727, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[4, 1], 0.3736, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[4, 2], 0.2611, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[4, 3], 0.5357, tolerance = 1e-4, scale = 1)
-#})
+test_that("Confounding bias: adjusted measures are correct", {
+    set.seed(123)
+    model <- probsens_conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
+                          reps = 10000,
+                          prev_exp = list("constant", c(.8)),
+                          prev_nexp = list("constant", c(.05)),
+                          risk = list("constant", c(.63)))
+    expect_equal(model$adj_measures[1, 1], 0.4834, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 0.3672, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 0.6063, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 0.4835, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 0.3061, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 0.7103, tolerance = 1e-4, scale = 1)
+})
 
-#test_that("Confounding bias: adjusted measures are correct", {
-#    set.seed(123)
-#    model <- probsens.conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
-#                      reps = 10000,
-#                      prev.exp = list("beta", c(200, 56)),
-#                      prev.nexp = list("beta", c(10, 16)),
-#                      risk = list("triangular", c(.6, .7, .63)),
-#                      corr.p = .8)
-#    expect_equal(model$adj_measures[1, 1], 0.4165, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 2], 0.3898, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 3], 0.4418, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 1], 0.4164, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 2], 0.3261, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 3], 0.5277, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[3, 1], 0.2885, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[3, 2], 0.2566, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[3, 3], 0.3179, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[4, 1], 0.2883, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[4, 2], 0.1964, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[4, 3], 0.4176, tolerance = 1e-4, scale = 1)
-#})
+test_that("Confounding bias: adjusted measures are correct", {
+    set.seed(123)
+    model <- probsens_conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
+                          reps = 10000,
+                          prev_exp = list("beta", c(200, 56)),
+                          prev_nexp = list("beta", c(10, 16)),
+                          risk = list("triangular", c(.6, .7, .63)),
+                          corr_p = .8)
+    expect_equal(model$adj_measures[1, 1], 0.4144, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 0.3639, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 0.4847, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 0.4152, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 0.3094, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 0.5645, tolerance = 1e-4, scale = 1)
+})
+
+test_that("Confounding bias: book is correct", {
+    set.seed(1234)
+    model <- probsens_conf(matrix(c(40, 20, 60, 80), nrow = 2, byrow = TRUE),
+                          reps = 10^5,
+                          prev_exp = list("beta", c(10, 20)),
+                          prev_nexp = list("beta", c(5, 20)),
+                          risk = list("trapezoidal", c(1.5, 1.7, 2.3, 2.5)))
+    expect_equal(model$adj_measures[1, 1], 1.8242, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 1.3769, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 2.2087, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 1.8065, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 1.0621, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 2.9833, tolerance = 1e-4, scale = 1)
+})
+
+test_that("Confounding bias: book is correct", {
+    set.seed(1234)
+    model <- probsens_conf(matrix(c(40, 20, 60, 80), nrow = 2, byrow = TRUE),
+                          reps = 10^5,
+                          prev_exp = list("beta", c(10, 20)),
+                          prev_nexp = list("beta", c(5, 20)),
+                          risk = list("log-normal", c(log(2), .23)))
+    expect_equal(model$adj_measures[1, 1], 1.8309, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 1.3344, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 2.2150, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 1.8013, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 1.0465, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 3.0019, tolerance = 1e-4, scale = 1)
+})
 
 test_that("correct arguments --- list (IRR)", {
     expect_that(probsens.irr(matrix(c(2, 67232, 58, 10539000), nrow = 2, byrow = TRUE),

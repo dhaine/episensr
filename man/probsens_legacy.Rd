@@ -105,6 +105,7 @@ probsens <- probsens_legacy
 # Greenland S., Salvan A., Wegman D.H., Hallock M.F., Smith T.J.
 # A case-control study of cancer mortality at a transformer-assembly facility.
 # Int Arch Occup Environ Health 1994; 66(1):49-54.
+\dontrun{
 set.seed(123)
 # Exposure misclassification, non-differential
 probsens_legacy(matrix(c(45, 94, 257, 945),
@@ -173,6 +174,7 @@ spca.parms = list("beta", c(120, 15)),
 spexp.parms = list("beta", c(130, 30)),
 corr.se = .8,
 corr.sp = .8)
+}
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative

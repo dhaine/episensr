@@ -1,6 +1,6 @@
 #' Misclassification of exposure or outcome
 #'
-#' `misclass()` and `probsens()` allows to provide adjusted measures of
+#' `misclass()` and `probsens()` allow to provide adjusted measures of
 #' association corrected for misclassification of the exposure or the outcome.
 #'
 #' @section Simple bias analysis with `misclass()`:
@@ -90,7 +90,7 @@
 #'
 #' @references
 #' Fox, M.P, MacLehose, R.F., Lash, T.L., 2021 \emph{Applying Quantitative
-#' Bias Analysis to Epidemiologic Data}, pp.233--290, Springer.
+#' Bias Analysis to Epidemiologic Data}, pp.141--176, 233--256, Springer.
 #'
 #' Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
 #' with Specified Univariate Distributions and Correlation Coefficients}.

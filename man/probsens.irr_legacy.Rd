@@ -83,6 +83,7 @@ probsens.irr <- probsens.irr_legacy
 ```
 }
 \examples{
+\dontrun{
 set.seed(123)
 # Exposure misclassification, non-differential
 probsens.irr(matrix(c(2, 67232, 58, 10539000),
@@ -90,6 +91,7 @@ dimnames = list(c("GBS+", "Person-time"), c("HPV+", "HPV-")), ncol = 2),
 reps = 20000,
 seca.parms = list("trapezoidal", c(.4, .45, .55, .6)),
 spca.parms = list("constant", 1))
+}
 }
 \references{
 Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative

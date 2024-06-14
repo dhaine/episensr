@@ -55,6 +55,7 @@
 #' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
 #'
 #' @examples
+#' \dontrun{
 #' # The data for this example come from:
 #' # Stang A., Schmidt-Pokrzywniak A., Lehnert M., Parkin D.M., Ferlay J., Bornfeld N. et al.
 #' # Population-based incidence estimates of uveal melanoma in Germany.
@@ -65,6 +66,7 @@
 #' dimnames = list(c("Melanoma+", "Melanoma-"), c("Mobile+", "Mobile-")), nrow = 2, byrow = TRUE),
 #' reps = 20000,
 #' or.parms = list("triangular", c(.35, 1.1, .43)))
+#' }
 #' @export
 #' @importFrom stats median qnorm quantile runif rlnorm rbeta
 #' @rdname probsens.sel_legacy
