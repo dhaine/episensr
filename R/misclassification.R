@@ -370,7 +370,7 @@ in adjusted 2x2 table.")))
 #'   If PPV/NPV is chosen in case of exposure misclassification, the same four (4)
 #'   parameters `seca`, `seexp`, `spca`, `spexp` as for Se/Sp have to be used but
 #'   with the following meaning, and only for a beta distributions and no
-#'   correlation between distirbutions:
+#'   correlation between distributions:
 #'   \enumerate{
 #'   \item Positive predictive value among those with the outcome,
 #'   \item Positive predictive value among those without the outcome,
@@ -769,7 +769,7 @@ Se and Sp correlations.")))
     lci_obs_or <- exp(log(obs_or) - qnorm(1 - alpha / 2) * se_log_obs_or)
     uci_obs_or <- exp(log(obs_or) + qnorm(1 - alpha / 2) * se_log_obs_or)
 
-    draws <- matrix(NA, nrow = reps, ncol = 26)
+    draws <- matrix(NA, nrow = reps, ncol = 28)
     colnames(draws) <- c("seca", "seexp", "spca", "spexp",
                          "A1", "B1", "C1", "D1",
                          "flag",
@@ -778,7 +778,7 @@ Se and Sp correlations.")))
                          "ab", "bb", "cb", "db",
                          "corr_RR", "corr_OR",
                          "rr_se_b", "or_se_b", "z",
-                         "tot_RR", "tot_OR")
+                         "tot_RR", "tot_OR", "syst_RR", "syst_OR")
     corr_draws <- matrix(NA, nrow = reps, ncol = 4)
 
     se1 <- c(reps, seca[[2]])
@@ -971,6 +971,10 @@ Se and Sp correlations.")))
         draws[, 25] <- exp(log(draws[, 20]) - (draws[, 24] * draws[, 22]))
         draws[, 26] <- exp(log(draws[, 21]) - (draws[, 24] * draws[, 23]))
 
+        ## Systematic error
+        draws[, 27] <- (draws[, 5] / (draws[, 5] + draws[, 7])) / (draws[, 6] / (draws[, 6] + draws[, 8]))
+        draws[, 28] <- (draws[, 5] / draws[, 7]) / (draws[, 6] / draws[, 8])
+
         ## Clean up
         draws[, 9] <- apply(draws[, c(5:8, 16:19)], MARGIN = 1, function(x) sum(x > 0))
         draws[, 9] <- ifelse(draws[, 9] != 8 | is.na(draws[, 9]), NA, 1)
@@ -982,12 +986,12 @@ Se and Sp correlations.")))
 
         draws <- draws[draws[, 9] == 1 & !is.na(draws[, 9]), ]
 
-        rr_syst <- c(median(draws[, 20], na.rm = TRUE),
-                     quantile(draws[, 20], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 20], probs = .975, na.rm = TRUE))
-        or_syst <- c(median(draws[, 21], na.rm = TRUE),
-                     quantile(draws[, 21], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 21], probs = .975, na.rm = TRUE))
+        rr_syst <- c(median(draws[, 27], na.rm = TRUE),
+                     quantile(draws[, 27], probs = .025, na.rm = TRUE),
+                     quantile(draws[, 27], probs = .975, na.rm = TRUE))
+        or_syst <- c(median(draws[, 28], na.rm = TRUE),
+                     quantile(draws[, 28], probs = .025, na.rm = TRUE),
+                     quantile(draws[, 28], probs = .975, na.rm = TRUE))
         rr_tot <- c(median(draws[, 25], na.rm = TRUE),
                     quantile(draws[, 25], probs = .025, na.rm = TRUE),
                     quantile(draws[, 25], probs = .975, na.rm = TRUE))
@@ -1141,7 +1145,7 @@ Se and Sp correlations.")))
                     quantile(draws[, 26], probs = .025, na.rm = TRUE),
                     quantile(draws[, 26], probs = .975, na.rm = TRUE))
 
-        if(!inherits(case, "episensr.probsens")) {
+        if (!inherits(case, "episensr.probsens")) {
             tab <- tab
             rmat <- rbind(c(obs_rr, lci_obs_rr, uci_obs_rr),
                           c(obs_or, lci_obs_or, uci_obs_or))
