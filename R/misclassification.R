@@ -1121,6 +1121,10 @@ Se and Sp correlations.")))
         draws[, 25] <- exp(log(draws[, 20]) - (draws[, 24] * draws[, 22]))
         draws[, 26] <- exp(log(draws[, 21]) - (draws[, 24] * draws[, 23]))
 
+        ## Systematic error
+        draws[, 27] <- (draws[, 5] / (draws[, 5] + draws[, 7])) / (draws[, 6] / (draws[, 6] + draws[, 8]))
+        draws[, 28] <- (draws[, 5] / draws[, 7]) / (draws[, 6] / draws[, 8])
+
         ## Clean up
         draws[, 9] <- apply(draws[, c(5:8, 16:19)], MARGIN = 1, function(x) sum(x > 0))
         draws[, 9] <- ifelse(draws[, 9] != 8 | is.na(draws[, 9]), NA, 1)
@@ -1132,12 +1136,12 @@ Se and Sp correlations.")))
 
         draws <- draws[draws[, 9] == 1 & !is.na(draws[, 9]), ]
 
-        rr_syst <- c(median(draws[, 20], na.rm = TRUE),
-                     quantile(draws[, 20], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 20], probs = .975, na.rm = TRUE))
-        or_syst <- c(median(draws[, 21], na.rm = TRUE),
-                     quantile(draws[, 21], probs = .025, na.rm = TRUE),
-                     quantile(draws[, 21], probs = .975, na.rm = TRUE))
+        rr_syst <- c(median(draws[, 27], na.rm = TRUE),
+                     quantile(draws[, 27], probs = .025, na.rm = TRUE),
+                     quantile(draws[, 27], probs = .975, na.rm = TRUE))
+        or_syst <- c(median(draws[, 28], na.rm = TRUE),
+                     quantile(draws[, 28], probs = .025, na.rm = TRUE),
+                     quantile(draws[, 28], probs = .975, na.rm = TRUE))
         rr_tot <- c(median(draws[, 25], na.rm = TRUE),
                     quantile(draws[, 25], probs = .025, na.rm = TRUE),
                     quantile(draws[, 25], probs = .975, na.rm = TRUE))
