@@ -716,30 +716,30 @@ test_that("correct arguments --- list (IRR)", {
                 throws_error())
     })
 
-#test_that("IRR exposure misclassification: observed measures are correct", {
-#    set.seed(123)
-#    model <- probsens.irr(matrix(c(2, 67232, 58, 10539000), nrow = 2, byrow = TRUE),
-#                          reps = 10000,
-#                          seca.parms = list("trapezoidal", c(.4, .45, .55, .6)),
-#                          spca.parms = list("constant", 1))
-#    expect_equal(model$obs_measures[1, 1], 5.4054, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$obs_measures[1, 2], 0.6546, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$obs_measures[1, 3], 19.5268, tolerance = 1e-4, scale = 1)
-#})
+test_that("IRR exposure misclassification: observed measures are correct", {
+    set.seed(123)
+    model <- probsens.irr(matrix(c(2, 67232, 58, 10539000), nrow = 2, byrow = TRUE),
+                          reps = 10000,
+                          seca = list("trapezoidal", c(.4, .45, .55, .6)),
+                          spca = list("constant", 1))
+    expect_equal(model$obs_measures[1, 1], 5.4054, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 2], 0.6546, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 3], 19.5268, tolerance = 1e-4, scale = 1)
+})
 
-#test_that("IRR exposure misclassification: adjusted measures are correct", {
-#    set.seed(123)
-#    model <- probsens.irr(matrix(c(2, 67232, 58, 10539000), nrow = 2, byrow = TRUE),
-#                          reps = 10000,
-#                          seca.parms = list("trapezoidal", c(.4, .45, .55, .6)),
-#                          spca.parms = list("constant", 1))
-#    expect_equal(model$adj_measures[1, 1], 5.2587, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 2], 5.2586, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 3], 5.2587, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 1], 5.3569, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 2], 0.9784, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 3], 28.3129, tolerance = 1e-4, scale = 1)
-#})
+test_that("IRR exposure misclassification: adjusted measures are correct", {
+    set.seed(123)
+    model <- probsens.irr(matrix(c(2, 67232, 58, 10539000), nrow = 2, byrow = TRUE),
+                          reps = 10000,
+                          seca = list("trapezoidal", c(.4, .45, .55, .6)),
+                          spca = list("constant", 1))
+    expect_equal(model$adj_measures[1, 1], 5.2587, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 5.2586, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 5.2587, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 5.3569, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 0.9784, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 28.3129, tolerance = 1e-4, scale = 1)
+})
 
 test_that("correct arguments --- list", {
     expect_that(probsens.irr.conf(matrix(c(77, 10000, 87, 10000), nrow = 2, byrow = TRUE),

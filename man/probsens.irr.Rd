@@ -8,15 +8,14 @@ probsens.irr(
   counts,
   pt = NULL,
   reps = 1000,
-  seca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "normal", "beta"), parms = NULL),
-  seexp.parms = NULL,
-  spca.parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "normal", "beta"), parms = NULL),
-  spexp.parms = NULL,
-  corr.se = NULL,
-  corr.sp = NULL,
-  discard = TRUE,
+  seca = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
+  seexp = NULL,
+  spca = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
+  spexp = NULL,
+  corr_se = NULL,
+  corr_sp = NULL,
   alpha = 0.05
 )
 }
@@ -35,7 +34,7 @@ must be a numeric vector of disease counts.}
 
 \item{reps}{Number of replications to run.}
 
-\item{seca.parms}{List defining the sensitivity of exposure classification among
+\item{seca}{List defining the sensitivity of exposure classification among
 those with the outcome. The first argument provides the probability distribution
 function (uniform, triangular, trapezoidal, truncated normal, or beta) and the second
 its parameters as a vector. Lower and upper bounds of the truncated normal have
@@ -49,34 +48,31 @@ to be between 0 and 1.
 \item beta: alpha, beta.
 }}
 
-\item{seexp.parms}{List defining the sensitivity of exposure classification among those without the outcome.}
+\item{seexp}{List defining the sensitivity of exposure classification among those without the outcome.}
 
-\item{spca.parms}{List defining the specificity of exposure classification among those with the outcome.}
+\item{spca}{List defining the specificity of exposure classification among those with the outcome.}
 
-\item{spexp.parms}{List defining the specificity of exposure classification among those without the outcome.}
+\item{spexp}{List defining the specificity of exposure classification among those without the outcome.}
 
-\item{corr.se}{Correlation between case and non-case sensitivities.}
+\item{corr_se}{Correlation between case and non-case sensitivities.}
 
-\item{corr.sp}{Correlation between case and non-case specificities.}
-
-\item{discard}{A logical scalar. In case of negative adjusted count, should
-the draws be discarded? If set to FALSE, negative counts are set to zero.}
+\item{corr_sp}{Correlation between case and non-case specificities.}
 
 \item{alpha}{Significance level.}
 }
 \value{
 A list with elements:
-\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
-\item{obs.measures}{A table of observed incidence rate ratio with exact confidence interval.}
-\item{adj.measures}{A table of corrected incidence rate ratios.}
-\item{sim.df}{Data frame of random parameters and computed values.}
+\item{obs_data}{The analyzed 2 x 2 table from the observed data.}
+\item{obs_measures}{A table of observed incidence rate ratio with exact confidence interval.}
+\item{adj_measures}{A table of corrected incidence rate ratios.}
+\item{sim_df}{Data frame of random parameters and computed values.}
 }
 \description{
 Probabilistic sensitivity analysis to correct for exposure misclassification
 when person-time data has been collected.
 Non-differential misclassification is assumed when only the two bias parameters
-\code{seca.parms} and \code{spca.parms} are provided. Adding the 2 parameters
-\code{seexp.parms} and \code{spexp.parms} (i.e. providing the 4 bias parameters)
+\code{seca} and \code{spca} are provided. Adding the 2 parameters
+\code{seexp} and \code{spexp} (i.e. providing the 4 bias parameters)
 evaluates a differential misclassification.
 }
 \details{
@@ -106,13 +102,10 @@ set.seed(123)
 probsens.irr(matrix(c(2, 67232, 58, 10539000),
 dimnames = list(c("GBS+", "Person-time"), c("HPV+", "HPV-")), ncol = 2),
 reps = 20000,
-seca.parms = list("trapezoidal", c(.4, .45, .55, .6)),
-spca.parms = list("constant", 1))
+seca = list("trapezoidal", c(.4, .45, .55, .6)),
+spca = list("constant", 1))
 }
 \references{
-Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
-Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
-
 Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
 with Specified Univariate Distributions and Correlation Coefficients}.
 IEEE Trans Syst Man Cybern 5:557-561.

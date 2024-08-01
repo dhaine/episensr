@@ -3,8 +3,8 @@
 #' Probabilistic sensitivity analysis to correct for exposure misclassification
 #' when person-time data has been collected.
 #' Non-differential misclassification is assumed when only the two bias parameters
-#' \code{seca.parms} and \code{spca.parms} are provided. Adding the 2 parameters
-#' \code{seexp.parms} and \code{spexp.parms} (i.e. providing the 4 bias parameters)
+#' \code{seca} and \code{spca} are provided. Adding the 2 parameters
+#' \code{seexp} and \code{spexp} (i.e. providing the 4 bias parameters)
 #' evaluates a differential misclassification.
 #'
 #' Correlations between sensitivity (or specificity) of exposure classification
@@ -36,7 +36,7 @@
 #' @param pt A numeric vector of person-time at risk. If provided, \code{counts}
 #' must be a numeric vector of disease counts.
 #' @param reps Number of replications to run.
-#' @param seca.parms List defining the sensitivity of exposure classification among
+#' @param seca List defining the sensitivity of exposure classification among
 #' those with the outcome. The first argument provides the probability distribution
 #' function (uniform, triangular, trapezoidal, truncated normal, or beta) and the second
 #' its parameters as a vector. Lower and upper bounds of the truncated normal have
@@ -49,25 +49,20 @@
 #' \item normal: lower bound, upper bound, mean, sd,
 #' \item beta: alpha, beta.
 #' }
-#' @param seexp.parms List defining the sensitivity of exposure classification among those without the outcome.
-#' @param spca.parms List defining the specificity of exposure classification among those with the outcome.
-#' @param spexp.parms List defining the specificity of exposure classification among those without the outcome.
-#' @param corr.se Correlation between case and non-case sensitivities.
-#' @param corr.sp Correlation between case and non-case specificities.
-#' @param discard A logical scalar. In case of negative adjusted count, should
-#' the draws be discarded? If set to FALSE, negative counts are set to zero.
+#' @param seexp List defining the sensitivity of exposure classification among those without the outcome.
+#' @param spca List defining the specificity of exposure classification among those with the outcome.
+#' @param spexp List defining the specificity of exposure classification among those without the outcome.
+#' @param corr_se Correlation between case and non-case sensitivities.
+#' @param corr_sp Correlation between case and non-case specificities.
 #' @param alpha Significance level.
 #'
 #' @return A list with elements:
-#' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
-#' \item{obs.measures}{A table of observed incidence rate ratio with exact confidence interval.}
-#' \item{adj.measures}{A table of corrected incidence rate ratios.}
-#' \item{sim.df}{Data frame of random parameters and computed values.}
+#' \item{obs_data}{The analyzed 2 x 2 table from the observed data.}
+#' \item{obs_measures}{A table of observed incidence rate ratio with exact confidence interval.}
+#' \item{adj_measures}{A table of corrected incidence rate ratios.}
+#' \item{sim_df}{Data frame of random parameters and computed values.}
 #'
-#' @references Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
-#' Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
-#'
-#' Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
+#' @references Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
 #' with Specified Univariate Distributions and Correlation Coefficients}.
 #' IEEE Trans Syst Man Cybern 5:557-561.
 #' @examples
@@ -76,202 +71,246 @@
 #' probsens.irr(matrix(c(2, 67232, 58, 10539000),
 #' dimnames = list(c("GBS+", "Person-time"), c("HPV+", "HPV-")), ncol = 2),
 #' reps = 20000,
-#' seca.parms = list("trapezoidal", c(.4, .45, .55, .6)),
-#' spca.parms = list("constant", 1))
+#' seca = list("trapezoidal", c(.4, .45, .55, .6)),
+#' spca = list("constant", 1))
 #' @export
 #' @importFrom stats binom.test median quantile qnorm runif qbeta rbeta
 probsens.irr <- function(counts,
                          pt = NULL,
                          reps = 1000,
-                         seca.parms = list(dist = c("constant", "uniform",
-                                                    "triangular", "trapezoidal",
-                                                    "normal", "beta"),
-                                           parms = NULL),
-                         seexp.parms = NULL,
-                         spca.parms = list(dist = c("constant", "uniform",
-                                                    "triangular", "trapezoidal",
-                                                    "normal", "beta"),
-                                           parms = NULL),
-                         spexp.parms = NULL,
-                         corr.se = NULL,
-                         corr.sp = NULL,
-                         discard = TRUE,
+                         seca = list(dist = c("constant", "uniform",
+                                              "triangular", "trapezoidal",
+                                              "normal", "beta"),
+                                     parms = NULL),
+                         seexp = NULL,
+                         spca = list(dist = c("constant", "uniform",
+                                              "triangular", "trapezoidal",
+                                              "normal", "beta"),
+                                     parms = NULL),
+                         spexp = NULL,
+                         corr_se = NULL,
+                         corr_sp = NULL,
                          alpha = 0.05) {
     if (reps < 1)
-        stop(paste("Invalid argument: reps = ", reps))
+        stop(cli::format_error(c("x" = "Wrong number of replications: reps = {reps}",
+                                 "i" = "reps must be >= 1")))
 
-    if (is.null(seca.parms) | is.null(spca.parms))
-        stop("At least one Se and one Sp should be provided through outcome parameters.")
-    if (!is.list(seca.parms))
-        stop("Sensitivity of exposure classification among those with the outcome should be a list.")
-    else seca.parms <- seca.parms
-    if ((length(seca.parms) != 2) | (length(spca.parms) != 2))
-        stop("Check distribution parameters")
-    if ((!is.null(seexp.parms) & length(seexp.parms) != 2) |
-        (!is.null(spexp.parms) & length(spexp.parms) != 2))
-        stop("Check distribution parameters")
-    if ((length(seca.parms[[1]]) != 1) | (length(spca.parms[[1]]) != 1))
-        stop("Which distribution?")
-    if ((!is.null(seexp.parms[[1]]) & length(seexp.parms[[1]]) != 1) |
-        (!is.null(spexp.parms[[1]]) & length(spexp.parms[[1]]) != 1))
-        stop("Which distribution?")
-    if (!is.null(corr.se) && (seca.parms[[1]] == "constant" | seexp.parms[[1]] == "constant"))
-        stop("No correlated distributions with constant values.")
-    if (!is.null(corr.sp) && (spca.parms[[1]] == "constant" | spexp.parms[[1]] == "constant"))
-        stop("No correlated distributions with constant values.")
-    if (seca.parms[[1]] == "constant" & length(seca.parms[[2]]) != 1)
-        stop("For constant value, please provide a single value.")
-    if (seca.parms[[1]] == "uniform" & length(seca.parms[[2]]) != 2)
-        stop("For uniform distribution, please provide vector of lower and upper limits.")
-    if (seca.parms[[1]] == "uniform" & seca.parms[[2]][1] >= seca.parms[[2]][2])
-        stop("Lower limit of your uniform distribution is greater than upper limit.")
-    if (seca.parms[[1]] == "triangular" & length(seca.parms[[2]]) != 3)
-        stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
-    if (seca.parms[[1]] == "triangular" & ((seca.parms[[2]][1] > seca.parms[[2]][3]) |
-                                           (seca.parms[[2]][2] < seca.parms[[2]][3])))
-        stop("Wrong arguments for your triangular distribution.")
-    if (seca.parms[[1]] == "trapezoidal" & length(seca.parms[[2]]) != 4)
-        stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
-    if (seca.parms[[1]] == "trapezoidal" & ((seca.parms[[2]][1] > seca.parms[[2]][2]) |
-                                            (seca.parms[[2]][2] > seca.parms[[2]][3]) |
-                                            (seca.parms[[2]][3] > seca.parms[[2]][4])))
-        stop("Wrong arguments for your trapezoidal distribution.")
-    if (seca.parms[[1]] == "normal" & (length(seca.parms[[2]]) != 4))
-        stop("For truncated normal distribution, please provide vector of lower and upper bounds, mean and sd.")
-    if (seca.parms[[1]] == "normal" & ((seca.parms[[2]][1] >= seca.parms[[2]][2]) |
-                                       (!all(seca.parms[[2]][1:2] >= 0 & seca.parms[[2]][1:2] <= 1))))
-        stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-    if ((seca.parms[[1]] == "constant" | seca.parms[[1]] == "uniform" |
-         seca.parms[[1]] == "triangular" | seca.parms[[1]] == "trapezoidal") &
-        !all(seca.parms[[2]] >= 0 & seca.parms[[2]] <= 1))
-        stop("Sensitivity of exposure classification among those with the outcome should be between 0 and 1.")
-    if (seca.parms[[1]] == "beta" & length(seca.parms[[2]]) != 2)
-        stop("For beta distribution, please provide alpha and beta.")
-    if (seca.parms[[1]] == "beta" & (seca.parms[[2]][1] < 0 | seca.parms[[2]][2] < 0))
-        stop("Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")
+    if (is.null(seca) | is.null(spca))
+        stop(cli::format_error(c("x" = "Missing argument(s) for seca or spca",
+                                 "i" = "At least one Se and one Sp should be
+provided through outcome parameters.")))
+    if (!is.list(seca))
+        stop(cli::format_error(c("i" = "Sensitivity of exposure classification among
+those with the outcome should be a list.")))
+    else seca <- seca
+    if ((length(seca) != 2) | (length(spca) != 2))
+        stop(cli::format_error(c("i" = "Check distribution parameters")))
+    if ((!is.null(seexp) & length(seexp) != 2) |
+        (!is.null(spexp) & length(spexp) != 2))
+        stop(cli::format_error(c("i" = "Check distribution parameters")))
+    if ((length(seca[[1]]) != 1) | (length(spca[[1]]) != 1))
+        stop(cli::format_error(c("x" = "Which distribution?")))
+    if ((!is.null(seexp[[1]]) & length(seexp[[1]]) != 1) |
+        (!is.null(spexp[[1]]) & length(spexp[[1]]) != 1))
+        stop(cli::format_error(c("x" = "Which distribution?")))
+    if (!is.null(corr_se) && (seca[[1]] == "constant" | seexp[[1]] == "constant"))
+        stop(cli::format_error(c("x" = "No correlated distributions with constant values.")))
+    if (!is.null(corr_sp) && (spca[[1]] == "constant" | spexp[[1]] == "constant"))
+        stop(cli::format_error(c("x" = "No correlated distributions with constant values.")))
+    if (seca[[1]] == "constant" & length(seca[[2]]) != 1)
+        stop(cli::format_error(c("i" = "For constant value, please provide a single value.")))
+    if (seca[[1]] == "uniform" & length(seca[[2]]) != 2)
+        stop(cli::format_error(c("i" = "For uniform distribution, please provide
+vector of lower and upper limits.")))
+    if (seca[[1]] == "uniform" & seca[[2]][1] >= seca[[2]][2])
+        stop(cli::format_error(c("x" = "Lower limit of your uniform distribution is
+greater than upper limit.")))
+    if (seca[[1]] == "triangular" & length(seca[[2]]) != 3)
+        stop(cli::format_error(c("x" = "For triangular distribution, please provide
+vector of lower, upper limits, and mode.")))
+    if (seca[[1]] == "triangular" & ((seca[[2]][1] > seca[[2]][3]) |
+                                           (seca[[2]][2] < seca[[2]][3])))
+        stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
+    if (seca[[1]] == "trapezoidal" & length(seca[[2]]) != 4)
+        stop(cli::format_error(c("i" = "For trapezoidal distribution, please provide
+vector of lower limit, lower mode, upper mode, and upper limit.")))
+    if (seca[[1]] == "trapezoidal" & ((seca[[2]][1] > seca[[2]][2]) |
+                                            (seca[[2]][2] > seca[[2]][3]) |
+                                            (seca[[2]][3] > seca[[2]][4])))
+        stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
+    if (seca[[1]] == "normal" & (length(seca[[2]]) != 4))
+        stop(cli::format_error(c("i" = "For truncated normal distribution,
+please provide vector of lower and upper bound limits, mean and SD")))
+    if (seca[[1]] == "normal" & ((seca[[2]][1] >= seca[[2]][2]) |
+                                       (!all(seca[[2]][1:2] >= 0 & seca[[2]][1:2] <= 1))))
+        stop(cli::format_error(c("x" = "For truncated normal distribution,
+please provide sensible values for lower and upper bound limits (between 0 and 1;
+lower limit < upper limit).")))
+    if ((seca[[1]] == "constant" | seca[[1]] == "uniform" |
+         seca[[1]] == "triangular" | seca[[1]] == "trapezoidal") &
+        !all(seca[[2]] >= 0 & seca[[2]] <= 1))
+        stop(cli::format_error(c("x" = "Sensitivity of exposure classification
+among those with the outcome should be between 0 and 1.")))
+    if (seca[[1]] == "beta" & length(seca[[2]]) != 2)
+        stop(cli::format_error(c("i" = "For beta distribution, please provide alpha and beta.")))
+    if (seca[[1]] == "beta" & (seca[[2]][1] < 0 | seca[[2]][2] < 0))
+        stop(cli::format_error(c("x" = "Wrong arguments for your beta distribution.
+Alpha and Beta should be > 0.")))
 
-    if (!is.null(seexp.parms) & !is.list(seexp.parms))
-        stop("Sensitivity of exposure classification among those without the outcome should be a list.")
-    else seexp.parms <- seexp.parms
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "constant" & length(seexp.parms[[2]]) != 1)
-        stop("For constant value, please provide a single value.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "uniform" & length(seexp.parms[[2]]) != 2)
-        stop("For uniform distribution, please provide vector of lower and upper limits.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "uniform" && seexp.parms[[2]][1] >= seexp.parms[[2]][2])
-        stop("Lower limit of your uniform distribution is greater than upper limit.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "triangular" & length(seexp.parms[[2]]) != 3)
-        stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "triangular" &&
-        ((seexp.parms[[2]][1] > seexp.parms[[2]][3]) | (seexp.parms[[2]][2] < seexp.parms[[2]][3])))
-        stop("Wrong arguments for your triangular distribution.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "trapezoidal" & length(seexp.parms[[2]]) != 4)
-        stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "trapezoidal" &&
-        ((seexp.parms[[2]][1] > seexp.parms[[2]][2]) |
-         (seexp.parms[[2]][2] > seexp.parms[[2]][3]) |
-         (seexp.parms[[2]][3] > seexp.parms[[2]][4])))
-        stop("Wrong arguments for your trapezoidal distribution.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "normal" & (length(seexp.parms[[2]]) != 4))
-        stop("For truncated normal distribution, please provide vector of lower and upper bounds, mean and sd.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "normal" &&
-        length(seexp.parms[[2]]) == 4 && ((seexp.parms[[2]][1] >= seexp.parms[[2]][2]) |
-                                          (!all(seexp.parms[[2]][1:2] >= 0 & seexp.parms[[2]][1:2] <= 1))))
-        stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-    if (!is.null(seexp.parms) && (seexp.parms[[1]] == "constant" |
-                                  seexp.parms[[1]] == "uniform" |
-                                  seexp.parms[[1]] == "triangular" |
-                                  seexp.parms[[1]] == "trapezoidal") &
-        !all(seexp.parms[[2]] >= 0 & seexp.parms[[2]] <= 1))
-        stop("Sensitivity of exposure classification among those without the outcome should be between 0 and 1.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "beta" && length(seexp.parms[[2]]) != 2)
-        stop("For beta distribution, please provide alpha and beta.")
-    if (!is.null(seexp.parms) && seexp.parms[[1]] == "beta" && (seexp.parms[[2]][1] < 0 |
-                                                                seexp.parms[[2]][2] < 0))
-        stop("Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")
+    if (!is.null(seexp) & !is.list(seexp))
+        stop(cli::format_error(c("i" = "Sensitivity of exposure classification
+among those without the outcome should be a list.")))
+    else seexp <- seexp
+    if (!is.null(seexp) && seexp[[1]] == "constant" & length(seexp[[2]]) != 1)
+        stop(cli::format_error(c("i" = "For constant value, please provide a single value.")))
+    if (!is.null(seexp) && seexp[[1]] == "uniform" & length(seexp[[2]]) != 2)
+        stop(cli::format_error(c("i" = "For uniform distribution, please provide
+vector of lower and upper limits.")))
+    if (!is.null(seexp) && seexp[[1]] == "uniform" && seexp[[2]][1] >= seexp[[2]][2])
+        stop(cli::format_error(c("x" = "Lower limit of your uniform distribution
+is greater than upper limit.")))
+    if (!is.null(seexp) && seexp[[1]] == "triangular" & length(seexp[[2]]) != 3)
+        stop(cli::format_error(c("x" = "For triangular distribution, please provide
+vector of lower, upper limits, and mode.")))
+    if (!is.null(seexp) && seexp[[1]] == "triangular" &&
+        ((seexp[[2]][1] > seexp[[2]][3]) | (seexp[[2]][2] < seexp[[2]][3])))
+        stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
+    if (!is.null(seexp) && seexp[[1]] == "trapezoidal" & length(seexp[[2]]) != 4)
+        stop(cli::format_error(c("i" = "For trapezoidal distribution, please provide
+vector of lower limit, lower mode, upper mode, and upper limit.")))
+    if (!is.null(seexp) && seexp[[1]] == "trapezoidal" &&
+        ((seexp[[2]][1] > seexp[[2]][2]) |
+         (seexp[[2]][2] > seexp[[2]][3]) |
+         (seexp[[2]][3] > seexp[[2]][4])))
+        stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
+    if (!is.null(seexp) && seexp[[1]] == "normal" & (length(seexp[[2]]) != 4))
+        stop(cli::format_error(c("i" = "For truncated normal distribution,
+please provide vector of lower and upper bound limits, mean and SD.")))
+    if (!is.null(seexp) && seexp[[1]] == "normal" &&
+        length(seexp[[2]]) == 4 && ((seexp[[2]][1] >= seexp[[2]][2]) |
+                                          (!all(seexp[[2]][1:2] >= 0 & seexp[[2]][1:2] <= 1))))
+        stop(cli::format_error(c("x" = "For truncated normal distribution,
+please provide sensible values for lower and upper bound limits (between 0 and 1;
+lower limit < upper limit).")))
+    if (!is.null(seexp) && (seexp[[1]] == "constant" |
+                                  seexp[[1]] == "uniform" |
+                                  seexp[[1]] == "triangular" |
+                                  seexp[[1]] == "trapezoidal") &
+        !all(seexp[[2]] >= 0 & seexp[[2]] <= 1))
+        stop(cli::format_error(c("x" = "Sensitivity of exposure classification among
+those without the outcome should be between 0 and 1.")))
+    if (!is.null(seexp) && seexp[[1]] == "beta" && length(seexp[[2]]) != 2)
+        stop(cli::format_error(c("i" = "For beta distribution, please provide alpha and beta.")))
+    if (!is.null(seexp) && seexp[[1]] == "beta" && (seexp[[2]][1] < 0 |
+                                                                seexp[[2]][2] < 0))
+        stop(cli::format_error(c("x" = "Wrong arguments for your beta distribution.
+Alpha and Beta should be > 0.")))
 
-    if (!is.list(spca.parms))
-        stop("Specificity of exposure classification among those with the outcome should be a list.")
-    else spca.parms <- spca.parms
-    if (spca.parms[[1]] == "constant" & length(spca.parms[[2]]) != 1)
-        stop("For constant value, please provide a single value.")
-    if (spca.parms[[1]] == "uniform" & length(spca.parms[[2]]) != 2)
-        stop("For uniform distribution, please provide vector of lower and upper limits.")
-    if (spca.parms[[1]] == "uniform" & spca.parms[[2]][1] >= spca.parms[[2]][2])
-        stop("Lower limit of your uniform distribution is greater than upper limit.")
-    if (spca.parms[[1]] == "triangular" & length(spca.parms[[2]]) != 3)
-        stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
-    if (spca.parms[[1]] == "triangular" & ((spca.parms[[2]][1] > spca.parms[[2]][3]) |
-                                           (spca.parms[[2]][2] < spca.parms[[2]][3])))
-        stop("Wrong arguments for your triangular distribution.")
-    if (spca.parms[[1]] == "trapezoidal" & length(spca.parms[[2]]) != 4)
-        stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
-    if (spca.parms[[1]] == "trapezoidal" & ((spca.parms[[2]][1] > spca.parms[[2]][2]) |
-                                            (spca.parms[[2]][2] > spca.parms[[2]][3]) |
-                                            (spca.parms[[2]][3] > spca.parms[[2]][4])))
-        stop("Wrong arguments for your trapezoidal distribution.")
-    if (spca.parms[[1]] == "normal" & (length(spca.parms[[2]]) != 4))
-        stop("For truncated normal distribution, please provide vector of lower and upper bounds, mean and sd.")
-    if (spca.parms[[1]] == "normal" & ((spca.parms[[2]][1] >= spca.parms[[2]][2]) |
-                                       (!all(spca.parms[[2]][1:2] >= 0 & spca.parms[[2]][1:2] <= 1))))
-        stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-    if ((spca.parms[[1]] == "constant" | spca.parms[[1]] == "uniform" |
-         spca.parms[[1]] == "triangular" | spca.parms[[1]] == "trapezoidal") &
-        !all(spca.parms[[2]] >= 0 & spca.parms[[2]] <= 1))
-        stop("Specificity of exposure classification among those with the outcome should be between 0 and 1.")
-    if (spca.parms[[1]] == "beta" & length(spca.parms[[2]]) != 2)
-        stop("For beta distribution, please provide alpha and beta.")
-    if (spca.parms[[1]] == "beta" & (spca.parms[[2]][1] < 0 | spca.parms[[2]][2] < 0))
-        stop("Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")
+    if (!is.list(spca))
+        stop(cli::format_error(c("i" = "Specificity of exposure classification
+among those with the outcome should be a list.")))
+    else spca <- spca
+    if (spca[[1]] == "constant" & length(spca[[2]]) != 1)
+        stop(cli::format_error(c("x" = "For constant value, please provide a single value.")))
+    if (spca[[1]] == "uniform" & length(spca[[2]]) != 2)
+        stop(cli::format_error(c("i" = "For uniform distribution, please provide
+vector of lower and upper limits.")))
+    if (spca[[1]] == "uniform" & spca[[2]][1] >= spca[[2]][2])
+        stop(cli::format_error(c("x" = "Lower limit of your uniform distribution
+is greater than upper limit.")))
+    if (spca[[1]] == "triangular" & length(spca[[2]]) != 3)
+        stop(cli::format_error(c("i" = "For triangular distribution, please provide
+vector of lower, upper limits, and mode.")))
+    if (spca[[1]] == "triangular" & ((spca[[2]][1] > spca[[2]][3]) |
+                                           (spca[[2]][2] < spca[[2]][3])))
+        stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
+    if (spca[[1]] == "trapezoidal" & length(spca[[2]]) != 4)
+        stop(cli::format_error(c("i" = "For trapezoidal distribution, please
+provide vector of lower limit, lower mode, upper mode, and upper limit.")))
+    if (spca[[1]] == "trapezoidal" & ((spca[[2]][1] > spca[[2]][2]) |
+                                            (spca[[2]][2] > spca[[2]][3]) |
+                                            (spca[[2]][3] > spca[[2]][4])))
+        stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
+    if (spca[[1]] == "normal" & (length(spca[[2]]) != 4))
+        stop(cli::format_error(c("i" = "For truncated normal distribution,
+please provide vector of lower and upper bound limits, mean and SD.")))
+    if (spca[[1]] == "normal" & ((spca[[2]][1] >= spca[[2]][2]) |
+                                       (!all(spca[[2]][1:2] >= 0 & spca[[2]][1:2] <= 1))))
+        stop(cli::format_error(c("x" = "For truncated normal distribution,
+please provide sensible values for lower and upper bound limits (between 0
+and 1; lower limit < upper limit).")))
+    if ((spca[[1]] == "constant" | spca[[1]] == "uniform" |
+         spca[[1]] == "triangular" | spca[[1]] == "trapezoidal") &
+        !all(spca[[2]] >= 0 & spca[[2]] <= 1))
+        stop(cli::format_error(c("x" = "Specificity of exposure classification
+among those with the outcome should be between 0 and 1.")))
+    if (spca[[1]] == "beta" & length(spca[[2]]) != 2)
+        stop(cli::format_error(c("i" = "For beta distribution, please provide alpha and beta.")))
+    if (spca[[1]] == "beta" & (spca[[2]][1] < 0 | spca[[2]][2] < 0))
+        stop(cli::format_error(c("x" = "Wrong arguments for your beta distribution.
+Alpha and Beta should be > 0.")))
 
-    if (!is.null(spexp.parms) & !is.list(spexp.parms))
-        stop("Specificity of exposure classification among those without the outcome should be a list.")
-    else spexp.parms <- spexp.parms
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "constant" & length(spexp.parms[[2]]) != 1)
-        stop("For constant value, please provide a single value.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "uniform" & length(spexp.parms[[2]]) != 2)
-        stop("For uniform distribution, please provide vector of lower and upper limits.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "uniform" && spexp.parms[[2]][1] >= spexp.parms[[2]][2])
-        stop("Lower limit of your uniform distribution is greater than upper limit.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "triangular" & length(spexp.parms[[2]]) != 3)
-        stop("For triangular distribution, please provide vector of lower, upper limits, and mode.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "triangular" &&
-        ((spexp.parms[[2]][1] > spexp.parms[[2]][3]) | (spexp.parms[[2]][2] < spexp.parms[[2]][3])))
-        stop("Wrong arguments for your triangular distribution.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "trapezoidal" & length(spexp.parms[[2]]) != 4)
-        stop("For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "trapezoidal" &&
-        ((spexp.parms[[2]][1] > spexp.parms[[2]][2]) |
-         (spexp.parms[[2]][2] > spexp.parms[[2]][3]) |
-         (spexp.parms[[2]][3] > spexp.parms[[2]][4])))
-        stop("Wrong arguments for your trapezoidal distribution.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "normal" & (length(spexp.parms[[2]]) != 4))
-        stop("For truncated normal distribution, please provide vector of lower and upper bounds, mean and sd.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "normal" &&
-        ((spexp.parms[[2]][1] >= spexp.parms[[2]][2]) | (!all(spexp.parms[[2]][1:2] >= 0 &
-                                                              spexp.parms[[2]][1:2] <= 1))))
-        stop("For truncated normal distribution, please provide sensible values for lower and upper bound limits (between 0 and 1; lower limit < upper limit).")
-    if (!is.null(spexp.parms) && (spexp.parms[[1]] == "constant" | spexp.parms[[1]] == "uniform" |
-                                  spexp.parms[[1]] == "triangular" | spexp.parms[[1]] == "trapezoidal") &
-        !all(spexp.parms[[2]] >= 0 & spexp.parms[[2]] <= 1))
-        stop("Specificity of exposure classification among those without the outcome should be between 0 and 1.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "beta" && length(spexp.parms[[2]]) != 2)
-        stop("For beta distribution, please provide alpha and beta.")
-    if (!is.null(spexp.parms) && spexp.parms[[1]] == "beta" &&
-        (spexp.parms[[2]][1] < 0 | spexp.parms[[2]][2] < 0))
-        stop("Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")
+    if (!is.null(spexp) & !is.list(spexp))
+        stop(cli::format_error(c("i" = "Specificity of exposure classification
+among those without the outcome should be a list.")))
+    else spexp <- spexp
+    if (!is.null(spexp) && spexp[[1]] == "constant" & length(spexp[[2]]) != 1)
+        stop(cli::format_error(c("i" = "For constant value, please provide a single value.")))
+    if (!is.null(spexp) && spexp[[1]] == "uniform" & length(spexp[[2]]) != 2)
+        stop(cli::format_error(c("i" = "For uniform distribution, please provide
+vector of lower and upper limits.")))
+    if (!is.null(spexp) && spexp[[1]] == "uniform" && spexp[[2]][1] >= spexp[[2]][2])
+        stop(cli::format_error(c("x" = "Lower limit of your uniform distribution is
+greater than upper limit.")))
+    if (!is.null(spexp) && spexp[[1]] == "triangular" & length(spexp[[2]]) != 3)
+        stop(cli::format_error(c("i" = "For triangular distribution, please provide
+vector of lower, upper limits, and mode.")))
+    if (!is.null(spexp) && spexp[[1]] == "triangular" &&
+        ((spexp[[2]][1] > spexp[[2]][3]) | (spexp[[2]][2] < spexp[[2]][3])))
+        stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
+    if (!is.null(spexp) && spexp[[1]] == "trapezoidal" & length(spexp[[2]]) != 4)
+        stop(cli::format_error(c("i" = "For trapezoidal distribution, please provide
+vector of lower limit, lower mode, upper mode, and upper limit.")))
+    if (!is.null(spexp) && spexp[[1]] == "trapezoidal" &&
+        ((spexp[[2]][1] > spexp[[2]][2]) |
+         (spexp[[2]][2] > spexp[[2]][3]) |
+         (spexp[[2]][3] > spexp[[2]][4])))
+        stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
+    if (!is.null(spexp) && spexp[[1]] == "normal" & (length(spexp[[2]]) != 4))
+        stop(cli::format_error(c("i" = "For truncated normal distribution, please
+provide vector of lower and upper bound limits, meand and SD.")))
+    if (!is.null(spexp) && spexp[[1]] == "normal" &&
+        ((spexp[[2]][1] >= spexp[[2]][2]) | (!all(spexp[[2]][1:2] >= 0 &
+                                                              spexp[[2]][1:2] <= 1))))
+        stop(cli::format_error(c("x" = "For truncated normal distribution, please
+provide sensible values for lower and upper bound limits (between 0 and 1;
+lower limit < upper limit).")))
+    if (!is.null(spexp) && (spexp[[1]] == "constant" | spexp[[1]] == "uniform" |
+                                  spexp[[1]] == "triangular" | spexp[[1]] == "trapezoidal") &
+        !all(spexp[[2]] >= 0 & spexp[[2]] <= 1))
+        stop(cli::format_error(c("x" = "Specificity of exposure classification
+among those without the outcome should be between 0 and 1.")))
+    if (!is.null(spexp) && spexp[[1]] == "beta" && length(spexp[[2]]) != 2)
+        stop(cli::format_error(c("i" = "For beta distribution, please provide alpha and beta.")))
+    if (!is.null(spexp) && spexp[[1]] == "beta" &&
+        (spexp[[2]][1] < 0 | spexp[[2]][2] < 0))
+        stop(cli::format_error(c("x" = "Wrong arguments for your beta distribution.
+Alpha and Beta should be > 0.")))
 
-    if (!is.null(seexp.parms) & (is.null(spca.parms) | is.null(spexp.parms) | is.null(corr.se) | is.null(corr.sp)))
-        stop("For differential misclassification type, have to provide Se and Sp for among those with and without the outcome as well as Se and Sp correlations.")
+    if (!is.null(seexp) & (is.null(spca) | is.null(spexp) | is.null(corr_se) | is.null(corr_sp)))
+        stop(cli::format_error(c("i" = "For differential misclassification type,
+have to provide Se and Sp for among those with and without the outcome as well as
+Se and Sp correlations.")))
 
-    if (!is.null(corr.se) && (corr.se == 0 | corr.se == 1))
-        stop("Correlations should be > 0 and < 1.")
-    if (!is.null(corr.sp) && (corr.sp == 0 | corr.sp == 1))
-        stop("Correlations should be > 0 and < 1.")
+    if (!is.null(corr_se) && (corr_se == 0 | corr_se == 1))
+        stop(cli::format_error(c("x" = "Correlations should be > 0 and < 1.")))
+    if (!is.null(corr_sp) && (corr_sp == 0 | corr_sp == 1))
+        stop(cli::format_error(c("x" = "Correlations should be > 0 and < 1.")))
 
     if (!is.null(pt) && inherits(counts, c("table", "matrix")))
-        stop("pt argument should be NULL.")
+        stop(cli::format_error(c("x" = "pt argument should be NULL.")))
     if (!inherits(counts, c("vector", "table", "matrix")))
-        stop("counts argument should be a vector, a table, or a matrix.")
+        stop(cli::format_error(c("x" = "counts argument should be a vector, a table, or a matrix.")))
     if (is.null(pt) && inherits(counts, c("table", "matrix")))
         tab <- counts
     else tab <- rbind(counts, pt)
@@ -280,132 +319,135 @@ probsens.irr <- function(counts,
     c <- as.numeric(tab[2, 1])
     d <- as.numeric(tab[2, 2])
 
-    draws <- matrix(NA, nrow = reps, ncol = 11)
+    draws <- matrix(NA, nrow = reps, ncol = 12)
     colnames(draws) <- c("seca", "seexp", "spca", "spexp",
                          "A1", "B1", "C1", "D1",
-                         "corr.IRR", "tot.IRR", "reps")
-    corr.draws <- matrix(NA, nrow = reps, ncol = 4)
+                         "corr_IRR", "tot_IRR", "reps", "flag")
+    corr_draws <- matrix(NA, nrow = reps, ncol = 4)
 
-    seca <- c(reps, seca.parms[[2]])
-    seexp <- c(reps, seexp.parms[[2]])
-    spca <- c(reps, spca.parms[[2]])
-    spexp <- c(reps, spexp.parms[[2]])
+    se1 <- c(reps, seca[[2]])
+    se0 <- c(reps, seexp[[2]])
+    sp1 <- c(reps, spca[[2]])
+    sp0 <- c(reps, spexp[[2]])
 
-    obs.irr <- (a / c) / (b / d)
-    lci.obs.irr <- (binom.test(a, a + b, conf.level = 1 - alpha)$conf.int[1] * d) /
+    cli::cli_alert_info("Calculating observed measures")
+    obs_irr <- (a / c) / (b / d)
+    lci_obs_irr <- (binom.test(a, a + b, conf.level = 1 - alpha)$conf.int[1] * d) /
         ((1 - binom.test(a, a + b, conf.level = 1 - alpha)$conf.int[1]) * c)
-    uci.obs.irr <- (binom.test(a, a + b, conf.level = 1 - alpha)$conf.int[2] * d) /
+    uci_obs_irr <- (binom.test(a, a + b, conf.level = 1 - alpha)$conf.int[2] * d) /
         ((1 - binom.test(a, a + b, conf.level = 1 - alpha)$conf.int[2]) * c)
 
-    if (is.null(seexp.parms) & !is.null(spca.parms) & is.null(spexp.parms) &
-        is.null(corr.se) & is.null(corr.sp)) {
-        if (seca.parms[[1]] == "constant") {
-            draws[, 1] <- seca.parms[[2]]
+    cli::cli_progress_step("Assign probability distributions", spinner = TRUE)
+    if (is.null(seexp) & !is.null(spca) & is.null(spexp) &
+        is.null(corr_se) & is.null(corr_sp)) {
+        if (seca[[1]] == "constant") {
+            draws[, 1] <- seca[[2]]
         }
-        if (seca.parms[[1]] == "uniform") {
-            draws[, 1] <- do.call(runif, as.list(seca))
+        if (seca[[1]] == "uniform") {
+            draws[, 1] <- do.call(runif, as.list(se1))
         }
-        if (seca.parms[[1]] == "triangular") {
-            draws[, 1] <- do.call(triangle::rtriangle, as.list(seca))
+        if (seca[[1]] == "triangular") {
+            draws[, 1] <- do.call(triangle::rtriangle, as.list(se1))
         }
-        if (seca.parms[[1]] == "trapezoidal") {
-            draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(seca))
+        if (seca[[1]] == "trapezoidal") {
+            draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(se1))
         }
-        if (seca.parms[[1]] == "normal") {
-            draws[, 1] <- do.call(truncnorm::rtruncnorm, as.list(seca))
+        if (seca[[1]] == "normal") {
+            draws[, 1] <- do.call(truncnorm::rtruncnorm, as.list(se1))
         }
-        if (seca.parms[[1]] == "beta") {
-            draws[, 1] <- do.call(rbeta, as.list(seca))
+        if (seca[[1]] == "beta") {
+            draws[, 1] <- do.call(rbeta, as.list(se1))
         }
         draws[, 2] <- draws[, 1]
-        if (spca.parms[[1]] == "constant") {
-            draws[, 3] <- spca.parms[[2]]
+        if (spca[[1]] == "constant") {
+            draws[, 3] <- spca[[2]]
         }
-        if (spca.parms[[1]] == "uniform") {
-            draws[, 3] <- do.call(runif, as.list(spca))
+        if (spca[[1]] == "uniform") {
+            draws[, 3] <- do.call(runif, as.list(sp1))
         }
-        if (spca.parms[[1]] == "triangular") {
-            draws[, 3] <- do.call(triangle::rtriangle, as.list(spca))
+        if (spca[[1]] == "triangular") {
+            draws[, 3] <- do.call(triangle::rtriangle, as.list(sp1))
         }
-        if (spca.parms[[1]] == "trapezoidal") {
-            draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(spca))
+        if (spca[[1]] == "trapezoidal") {
+            draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(sp1))
         }
-        if (spca.parms[[1]] == "normal") {
-            draws[, 3] <- do.call(truncnorm::rtruncnorm, as.list(spca))
+        if (spca[[1]] == "normal") {
+            draws[, 3] <- do.call(truncnorm::rtruncnorm, as.list(sp1))
         }
-        if (spca.parms[[1]] == "beta") {
-            draws[, 3] <- do.call(rbeta, as.list(spca))
+        if (spca[[1]] == "beta") {
+            draws[, 3] <- do.call(rbeta, as.list(sp1))
         }
         draws[, 4] <- draws[, 3]
     } else {
-        norta_se <- matrix(c(1, corr.se, corr.se, 1), ncol = 2)
-        norta_sp <- matrix(c(1, corr.sp, corr.sp, 1), ncol = 2)
-        corr.draws[, 1:2] <- MASS::mvrnorm(reps, c(0, 0), norta_se)
-        corr.draws[, 3:4] <- MASS::mvrnorm(reps, c(0, 0), norta_sp)
-        corr.draws <- pnorm(corr.draws)
+        norta_se <- matrix(c(1, corr_se, corr_se, 1), ncol = 2)
+        norta_sp <- matrix(c(1, corr_sp, corr_sp, 1), ncol = 2)
+        corr_draws[, 1:2] <- MASS::mvrnorm(reps, c(0, 0), norta_se)
+        corr_draws[, 3:4] <- MASS::mvrnorm(reps, c(0, 0), norta_sp)
+        corr_draws <- pnorm(corr_draws)
 
-        if (seca.parms[[1]] == "uniform") {
-            draws[, 1] <- do.call(qunif, c(list(corr.draws[, 1]), as.list(seca[-1])))
+        if (seca[[1]] == "uniform") {
+            draws[, 1] <- do.call(qunif, c(list(corr_draws[, 1]), as.list(se1[-1])))
         }
-        if (seca.parms[[1]] == "triangular") {
-            draws[, 1] <- do.call(triangle::qtriangle, c(list(corr.draws[, 1]), as.list(seca[-1])))
+        if (seca[[1]] == "triangular") {
+            draws[, 1] <- do.call(triangle::qtriangle, c(list(corr_draws[, 1]), as.list(se1[-1])))
         }
-        if (seca.parms[[1]] == "trapezoidal") {
-            draws[, 1] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 1]), as.list(seca[-1])))
+        if (seca[[1]] == "trapezoidal") {
+            draws[, 1] <- do.call(trapezoid::qtrapezoid, c(list(corr_draws[, 1]), as.list(se1[-1])))
         }
-        if (seca.parms[[1]] == "normal") {
-            draws[, 1] <- do.call(truncnorm::qtruncnorm, c(list(corr.draws[, 1]), as.list(seca[-1])))
+        if (seca[[1]] == "normal") {
+            draws[, 1] <- do.call(truncnorm::qtruncnorm, c(list(corr_draws[, 1]), as.list(se1[-1])))
         }
-        if (seca.parms[[1]] == "beta") {
-            draws[, 1] <- do.call(qbeta, c(list(corr.draws[, 1]), as.list(seca[-1])))
+        if (seca[[1]] == "beta") {
+            draws[, 1] <- do.call(qbeta, c(list(corr_draws[, 1]), as.list(se1[-1])))
         }
-        if (seexp.parms[[1]] == "uniform") {
-            draws[, 2] <- do.call(qunif, c(list(corr.draws[, 2]), as.list(seexp[-1])))
+        if (seexp[[1]] == "uniform") {
+            draws[, 2] <- do.call(qunif, c(list(corr_draws[, 2]), as.list(se0[-1])))
         }
-        if (seexp.parms[[1]] == "triangular") {
-            draws[, 2] <- do.call(triangle::qtriangle, c(list(corr.draws[, 2]), as.list(seexp[-1])))
+        if (seexp[[1]] == "triangular") {
+            draws[, 2] <- do.call(triangle::qtriangle, c(list(corr_draws[, 2]), as.list(se0[-1])))
         }
-        if (seexp.parms[[1]] == "trapezoidal") {
-            draws[, 2] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 2]), as.list(seexp[-1])))
+        if (seexp[[1]] == "trapezoidal") {
+            draws[, 2] <- do.call(trapezoid::qtrapezoid, c(list(corr_draws[, 2]), as.list(se0[-1])))
         }
-        if (seexp.parms[[1]] == "normal") {
-            draws[, 2] <- do.call(truncnorm::qtruncnorm, c(list(corr.draws[, 2]), as.list(seexp[-1])))
+        if (seexp[[1]] == "normal") {
+            draws[, 2] <- do.call(truncnorm::qtruncnorm, c(list(corr_draws[, 2]), as.list(se0[-1])))
         }
-        if (seexp.parms[[1]] == "beta") {
-            draws[, 2] <- do.call(qbeta, c(list(corr.draws[, 2]), as.list(seexp[-1])))
+        if (seexp[[1]] == "beta") {
+            draws[, 2] <- do.call(qbeta, c(list(corr_draws[, 2]), as.list(se0[-1])))
         }
-        if (spca.parms[[1]] == "uniform") {
-            draws[, 3] <- do.call(qunif, c(list(corr.draws[, 3]), as.list(spca[-1])))
+        if (spca[[1]] == "uniform") {
+            draws[, 3] <- do.call(qunif, c(list(corr_draws[, 3]), as.list(sp1[-1])))
         }
-        if (spca.parms[[1]] == "triangular") {
-            draws[, 3] <- do.call(triangle::qtriangle, c(list(corr.draws[, 3]), as.list(spca[-1])))
+        if (spca[[1]] == "triangular") {
+            draws[, 3] <- do.call(triangle::qtriangle, c(list(corr_draws[, 3]), as.list(sp1[-1])))
         }
-        if (spca.parms[[1]] == "trapezoidal") {
-            draws[, 3] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 3]), as.list(spca[-1])))
+        if (spca[[1]] == "trapezoidal") {
+            draws[, 3] <- do.call(trapezoid::qtrapezoid, c(list(corr_draws[, 3]), as.list(sp1[-1])))
         }
-        if (spca.parms[[1]] == "normal") {
-            draws[, 3] <- do.call(truncnorm::qtruncnorm, c(list(corr.draws[, 3]), as.list(spca[-1])))
+        if (spca[[1]] == "normal") {
+            draws[, 3] <- do.call(truncnorm::qtruncnorm, c(list(corr_draws[, 3]), as.list(sp1[-1])))
         }
-        if (spca.parms[[1]] == "beta") {
-            draws[, 3] <- do.call(qbeta, c(list(corr.draws[, 3]), as.list(spca[-1])))
+        if (spca[[1]] == "beta") {
+            draws[, 3] <- do.call(qbeta, c(list(corr_draws[, 3]), as.list(sp1[-1])))
         }
-        if (spexp.parms[[1]] == "uniform") {
-            draws[, 4] <- do.call(qunif, c(list(corr.draws[, 4]), as.list(spexp[-1])))
+        if (spexp[[1]] == "uniform") {
+            draws[, 4] <- do.call(qunif, c(list(corr_draws[, 4]), as.list(sp0[-1])))
         }
-        if (spexp.parms[[1]] == "triangular") {
-            draws[, 4] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 4]), as.list(spexp[-1])))
+        if (spexp[[1]] == "triangular") {
+            draws[, 4] <- do.call(trapezoid::qtrapezoid, c(list(corr_draws[, 4]), as.list(sp0[-1])))
         }
-        if (spexp.parms[[1]] == "trapezoidal") {
-            draws[, 4] <- do.call(trapezoid::qtrapezoid, c(list(corr.draws[, 4]), as.list(spexp[-1])))
+        if (spexp[[1]] == "trapezoidal") {
+            draws[, 4] <- do.call(trapezoid::qtrapezoid, c(list(corr_draws[, 4]), as.list(sp0[-1])))
         }
-        if (spexp.parms[[1]] == "normal") {
-            draws[, 4] <- do.call(truncnorm::qtruncnorm, c(list(corr.draws[, 4]), as.list(spexp[-1])))
+        if (spexp[[1]] == "normal") {
+            draws[, 4] <- do.call(truncnorm::qtruncnorm, c(list(corr_draws[, 4]), as.list(sp0[-1])))
         }
-        if (spexp.parms[[1]] == "beta") {
-            draws[, 4] <- do.call(qbeta, c(list(corr.draws[, 4]), as.list(spexp[-1])))
+        if (spexp[[1]] == "beta") {
+            draws[, 4] <- do.call(qbeta, c(list(corr_draws[, 4]), as.list(sp0[-1])))
         }
     }
 
+    cli::cli_progress_step("Bias analysis", spinner = TRUE)
     draws[, 11] <- runif(reps)
 
     draws[, 5] <- (a - (1 - draws[, 3]) * (a + b)) / (draws[, 1] - (1 - draws[, 3]))
@@ -415,44 +457,26 @@ probsens.irr <- function(counts,
 
     draws[, 9] <- (draws[, 5] / (draws[, 5] + draws[, 7])) / (draws[, 6] / (draws[, 6] + draws[, 8]))
 
-    draws[, 9] <- ifelse(draws[, 5] < 0 |
-                             draws[, 6] < 0 |
-                                 draws[, 7] < 0 |
-                                     draws[, 8] < 0, NA, draws[, 9])
-    if (all(is.na(draws[, 9]))) {
-        warning("Prior Se/Sp distributions lead to all negative adjusted counts.")
-        neg_warn <- "Prior Se/Sp distributions lead to all negative adjusted counts."
+    ## Clean up
+    draws[, 12] <- apply(draws[, 5:8], MARGIN = 1, function(x) sum(x > 0))
+    draws[, 12] <- ifelse(draws[, 12] != 4 | is.na(draws[, 12]), NA, 1)
+    discard <- sum(is.na(draws[, 12]))
+    if (sum(is.na(draws[, 12])) > 0) {
+        cli::cli_alert_warning("Chosen Se/Sp distributions lead to {discard} impossible value{?s} which w{?as/ere} discarded.")
+        neg_warn <- paste("Prior Se/Sp distributions lead to",  discard, "impossible value(s).")
     } else neg_warn <- NULL
-    if (discard) {
-        if (sum(is.na(draws[, 9])) > 0) {
-            message("Chosen prior Se/Sp distributions lead to ",
-                    sum(is.na(draws[, 9])),
-                    " negative adjusted counts which were discarded.")
-            discard_mess <- c(paste("Chosen prior Se/Sp distributions lead to ",
-                                    sum(is.na(draws[, 9])),
-                                    " negative adjusted counts which were discarded."))
-        } else discard_mess <- NULL
-    } else {
-        if (sum(is.na(draws[, 9])) > 0) {
-            message("Chosen prior Se/Sp distributions lead to ",
-                    sum(is.na(draws[, 9])),
-                    " negative adjusted counts which were set to zero.")
-            discard_mess <- c(paste("Chosen prior Se/Sp distributions lead to ",
-                                    sum(is.na(draws[, 9])),
-                                    " negative adjusted counts which were set to zero."))
-            draws[, 9] <- ifelse(is.na(draws[, 9]), 0, draws[, 9])
-        } else discard_mess <- NULL
-    }
+
+    draws <- draws[draws[, 12] == 1 & !is.na(draws[, 12]), ]
 
     draws[, 10] <- exp(log(draws[, 9]) -
                            qnorm(draws[, 11]) *
-                               ((log(uci.obs.irr) - log(lci.obs.irr)) /
+                               ((log(uci_obs_irr) - log(lci_obs_irr)) /
                                     (qnorm(.975) * 2)))
 
-    corr.irr <- c(median(draws[, 9], na.rm = TRUE),
+    corr_irr <- c(median(draws[, 9], na.rm = TRUE),
                   quantile(draws[, 9], probs = .025, na.rm = TRUE),
                   quantile(draws[, 9], probs = .975, na.rm = TRUE))
-    tot.irr <- c(median(draws[, 10], na.rm = TRUE),
+    tot_irr <- c(median(draws[, 10], na.rm = TRUE),
                  quantile(draws[, 10], probs = .025, na.rm = TRUE),
                  quantile(draws[, 10], probs = .975, na.rm = TRUE))
 
@@ -460,23 +484,22 @@ probsens.irr <- function(counts,
         rownames(tab) <- c("Cases", "Person-time")
     if (is.null(colnames(tab)))
         colnames(tab) <- c("Exposed", "Unexposed")
-    rmat <- matrix(c(obs.irr, lci.obs.irr, uci.obs.irr), nrow = 1)
+    rmat <- matrix(c(obs_irr, lci_obs_irr, uci_obs_irr), nrow = 1)
     rownames(rmat) <- " Observed Incidence Rate Ratio:"
     colnames(rmat) <- c(" ",
                         paste(100 * (alpha / 2), "%", sep = ""),
                         paste(100 * (1 - alpha / 2), "%", sep = ""))
-    rmatc <- rbind(corr.irr, tot.irr)
+    rmatc <- rbind(corr_irr, tot_irr)
     rownames(rmatc) <- c("           Incidence Rate Ratio -- systematic error:",
                          "Incidence Rate Ratio -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
-    res <- list(obs.data = tab,
-                obs.measures = rmat,
-                adj.measures = rmatc,
-                sim.df = as.data.frame(draws[, -11]),
+    res <- list(obs_data = tab,
+                obs_measures = rmat,
+                adj_measures = rmatc,
+                sim_df = as.data.frame(draws[, -c(11, 12)]),
                 reps = reps,
                 fun = "probsens.irr",
-                warnings = neg_warn,
-                message = discard_mess)
+                warnings = neg_warn)
     class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }
