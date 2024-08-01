@@ -91,7 +91,7 @@ have to be between 0 and 1.
 If PPV/NPV is chosen in case of exposure misclassification, the same four (4)
 parameters `seca`, `seexp`, `spca`, `spexp` as for Se/Sp have to be used but
 with the following meaning, and only for a beta distributions and no
-correlation between distirbutions:
+correlation between distributions:
 \enumerate{
 \item Positive predictive value among those with the outcome,
 \item Positive predictive value among those without the outcome,
