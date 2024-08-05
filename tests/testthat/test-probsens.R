@@ -607,12 +607,12 @@ test_that("Confounding bias: adjusted measures are correct", {
                           prev_nexp = list("trapezoidal", c(.03, .04, .05, .06)),
                           risk = list("triangular", c(.6, .7, .63)),
                           corr_p = .8)
-    expect_equal(model$adj_measures[1, 1], 0.4762, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 2], 0.3564, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 3], 0.6139, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 1], 0.4787, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 2], 0.2976, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 3], 0.7206, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 1], 0.4792, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 0.4533, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 0.5068, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 0.4797, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 0.3366, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 0.6827, tolerance = 1e-4, scale = 1)
 })
 
 test_that("Confounding bias: adjusted measures are correct", {
@@ -623,12 +623,12 @@ test_that("Confounding bias: adjusted measures are correct", {
                           prev_nexp = list("triangular", c(.03, .05, .04)),
                           risk = list("triangular", c(.6, .7, .65)),
                           corr_p = .8)
-    expect_equal(model$adj_measures[1, 1], 0.4745, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 2], 0.3534, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 3], 0.6130, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 1], 0.4746, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 2], 0.2959, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 3], 0.7183, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 1], 0.4761, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 0.4523, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 0.5052, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 0.4756, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 0.3343, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 0.6790, tolerance = 1e-4, scale = 1)
 })
 
 test_that("Confounding bias: adjusted measures are correct", {
@@ -638,12 +638,12 @@ test_that("Confounding bias: adjusted measures are correct", {
                           prev_exp = list("constant", c(.8)),
                           prev_nexp = list("constant", c(.05)),
                           risk = list("constant", c(.63)))
-    expect_equal(model$adj_measures[1, 1], 0.4834, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 2], 0.3672, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 3], 0.6063, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 1], 0.4835, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 2], 0.3061, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 3], 0.7103, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 1], 0.4851, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 0.4851, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 0.4851, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 0.4858, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 0.3469, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 0.6779, tolerance = 1e-4, scale = 1)
 })
 
 test_that("Confounding bias: adjusted measures are correct", {
@@ -654,27 +654,39 @@ test_that("Confounding bias: adjusted measures are correct", {
                           prev_nexp = list("beta", c(10, 16)),
                           risk = list("triangular", c(.6, .7, .63)),
                           corr_p = .8)
-    expect_equal(model$adj_measures[1, 1], 0.4144, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 2], 0.3639, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 3], 0.4847, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 1], 0.4152, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 2], 0.3094, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 3], 0.5645, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 1], 0.4165, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 0.3898, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 0.4418, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 0.4154, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 0.3188, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 0.5493, tolerance = 1e-4, scale = 1)
 })
 
-test_that("Confounding bias: book is correct", {
+test_that("Confounding bias: Fox paper 2023", {
     set.seed(1234)
     model <- probsens_conf(matrix(c(40, 20, 60, 80), nrow = 2, byrow = TRUE),
                           reps = 10^5,
                           prev_exp = list("beta", c(10, 20)),
                           prev_nexp = list("beta", c(5, 20)),
                           risk = list("trapezoidal", c(1.5, 1.7, 2.3, 2.5)))
-    expect_equal(model$adj_measures[1, 1], 1.8242, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 2], 1.3769, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 3], 2.2087, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 1], 1.8065, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 2], 1.0621, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 3], 2.9833, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 1], 2.0000, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 2], 1.2630, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 3], 3.1671, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[2, 1], 2.6667, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[2, 2], 1.4166, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[2, 3], 5.0199, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 1], 1.8070, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 1.4907, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 2.1576, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 1.8069, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 1.0902, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 2.9426, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[3, 1], 2.9709, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[3, 2], 2.0709, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[3, 3], 4.8405, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[4, 1], 3.0076, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[4, 2], 1.6338, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[4, 3], 5.7567, tolerance = 1e-4, scale = 1)
 })
 
 test_that("Confounding bias: book is correct", {
@@ -684,12 +696,39 @@ test_that("Confounding bias: book is correct", {
                           prev_exp = list("beta", c(10, 20)),
                           prev_nexp = list("beta", c(5, 20)),
                           risk = list("log-normal", c(log(2), .23)))
-    expect_equal(model$adj_measures[1, 1], 1.8309, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 2], 1.3344, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 3], 2.2150, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 1], 1.8013, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 2], 1.0465, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 3], 3.0019, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 1], 1.8188, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 1.4263, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 2.1558, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 1.8037, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 1.0773, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 2.9570, tolerance = 1e-4, scale = 1)
+})
+
+test_that("Confounding bias: book is correct", {
+    set.seed(1234)
+    model <- probsens_conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),
+                          reps = 10^5,
+                          prev_exp = list("trapezoidal", c(.7, .75, .85, .9)),
+                          prev_nexp = list("trapezoidal", c(.03, .04, .07, .1)),
+                          risk = list("trapezoidal", c(.5, .6, .7, .8)))
+    expect_equal(model$obs_measures[1, 1], 0.3479, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 2], 0.2757, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 3], 0.4390, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[2, 1], 0.2180, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[2, 2], 0.1519, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[2, 3], 0.3128, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 1], 0.4718, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 0.4194, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 0.5487, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 0.4738, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 0.3278, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 0.6866, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[3, 1], 0.3785, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[3, 2], 0.3093, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[3, 3], 0.4747, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[4, 1], 0.3798, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[4, 2], 0.2542, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[4, 3], 0.5765, tolerance = 1e-4, scale = 1)
 })
 
 test_that("correct arguments --- list (IRR)", {

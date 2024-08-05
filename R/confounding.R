@@ -15,7 +15,8 @@
 #' is the standardized (adjusted) risk ratio, RR_crude is the crude risk ratio, and
 #' RR_conf is the relative risk component attributable to confounding by the
 #' stratification factors. The output provides both RR_adj (SMR or Mantel-Haenszel)
-#' and the RR_conf.
+#' and the RR_conf (i.e., RR, OR or RD due to confounding from the unmeasured
+#' confounder).
 #'
 #' @section Probabilistic sensitivity analysis with `probsens_conf()`:
 #' `probsens_conf()` performs a summary-level probabilistic sensitivity analysis
@@ -203,7 +204,7 @@ in adjusted 2x2 table(s).")))
         rmatc <- rbind(c(SMRrr, RRadj_smr), c(MHrr, RRadj_mh))
         rownames(rmatc) <- c("Standardized Morbidity Ratio:",
                              "             Mantel-Haenszel:")
-        colnames(rmatc) <- c(" ", "RR_conf")
+        colnames(rmatc) <- c(" ", "RR due to confounding")
         rmat <- rbind(rmat, c(cfder_rr, NA, NA), c(nocfder_rr, NA, NA))
         rownames(rmat) <- c("        Crude Relative Risk:",
                             "Relative Risk, Confounder +:",
@@ -274,7 +275,7 @@ in adjusted 2x2 table(s).")))
         rmatc <- rbind(c(SMRor, ORadj_smr), c(MHor, ORadj_mh))
         rownames(rmatc) <- c("Standardized Morbidity Ratio:",
                              "             Mantel-Haenszel:")
-        colnames(rmatc) <- c(" ", "OR_conf")
+        colnames(rmatc) <- c(" ", "OR due to confounding")
         rmat <- rbind(rmat, c(cfder_or, NA, NA), c(nocfder_or, NA, NA))
         rownames(rmat) <- c("        Crude Odds Ratio:",
                             "Odds Ratio, Confounder +:",
@@ -343,7 +344,7 @@ cell(s) in adjusted 2x2 table(s).")))
                             paste(100 * (1 - alpha / 2), "%", sep = ""))
         rmatc <- rbind(c(MHrd, RDadj_mh))
         rownames(rmatc) <- "Mantel-Haenszel:"
-        colnames(rmatc) <- c(" ", "RD_conf")
+        colnames(rmatc) <- c(" ", "RD due to unmeasured confounder")
         rmat <- rbind(rmat, c(cfder_rd, NA, NA), c(nocfder_rd, NA, NA))
         rownames(rmat) <- c("        Crude Risk Difference:",
                             "Risk Difference, Confounder +:",
@@ -761,8 +762,8 @@ meanlog and sdlog.")))
     draws[, 15] <- d - draws[, 11]
 
     ## Clean up
-    draws[, 16] <- apply(draws[, c(8:15)], MARGIN = 1, function(x) sum(x > 0))
-    draws[, 16] <- ifelse(draws[, 16] != 8 | is.na(draws[, 16]), NA, 1)
+    draws[, 16] <- apply(draws[, c(4:15)], MARGIN = 1, function(x) sum(x > 0))
+    draws[, 16] <- ifelse(draws[, 16] != 12 | is.na(draws[, 16]), NA, 1)
     discard <- sum(is.na(draws[, 16]))
     if (sum(is.na(draws[, 16])) > 0) {
         cli::cli_alert_warning("Samplings lead to {discard} instance{?s} in which
@@ -773,42 +774,40 @@ sampled cell counts w{?as/ere} zero and discarded.")
     draws <- draws[draws[, 16] == 1 & !is.na(draws[, 16]), ]
     reps <- dim(draws)[1]
 
+    draws[, 17] <- (draws[, 4] * (draws[, 5] + draws[, 7]) /
+                    ((draws[, 4] + draws[, 6]) + (draws[, 5] + draws[, 7])) +
+                    draws[, 4] * (draws[, 5] + draws[, 7]) /
+                    ((draws[, 4] + draws[, 6]) + (draws[, 5] + draws[, 7]))) /
+        (draws[, 5] * (draws[, 4] + draws[, 6]) /
+         ((draws[, 4] + draws[, 6]) + (draws[, 5] + draws[, 7])) +
+         draws[, 5] * (draws[, 4] + draws[, 6]) /
+         ((draws[, 4] + draws[, 6]) + (draws[, 5] + draws[, 7])))  ## RR_MH
+    draws[, 18] <- (draws[, 4] * draws[, 7] / (draws[, 6] + draws[, 7]) +
+                    draws[, 8] * draws[, 7] / (draws[, 6] + draws[, 7])) /
+        (draws[, 5] * draws[, 6] / (draws[, 6] + draws[, 7]) + draws[, 5] * draws[, 6] /
+         (draws[, 6] + draws[, 7]))  ## OR_MH
+
     ## Step 4c: Sample the bias-adjusted effect estimate
     cli::cli_progress_step("Incorporating random error", spinner = TRUE)
-    draws[, 17] <- (draws[, 12] * (draws[, 13] + draws[, 15]) /
-                    ((draws[, 12] + draws[, 14]) + (draws[, 13] + draws[, 15])) +
-                    draws[, 8] * (draws[, 9] + draws[, 11]) /
-                    ((draws[, 8] + draws[, 10]) + (draws[, 9] + draws[, 11]))) /
-        (draws[, 13] * (draws[, 12] + draws[, 14]) /
-         ((draws[, 12] + draws[, 14]) + (draws[, 13] + draws[, 15])) +
-         draws[, 9] * (draws[, 8] + draws[, 10]) /
-         ((draws[, 8] + draws[, 10]) + (draws[, 9] + draws[, 11])))  ## RR_MH
-#    draws[, 18] <- a / ((draws[, 6] * draws[, 5] / draws[, 7]) +
-#                        ((c - draws[, 6]) * (b - draws[, 5]) / (d - draws[, 7])))
-
-#    draws[, 18] <- (A0 * D0 / (C0 + D0) + A1 * D1 / (C1 + D1)) /
-#        (B0 * C0 / (C0 + D0) + B1 * C1 / (C1 + D1))
-
     draws[, 19] <- (((draws[, 12] + draws[, 13]) * (draws[, 12] + draws[, 14]) * (draws[, 13] + draws[, 15]) / ((draws[, 12] + draws[, 14]) + (draws[, 13] + draws[, 15]))^2 - draws[, 12] * draws[, 13] / ((draws[, 12] + draws[, 14]) + (draws[, 13] + draws[, 15]))) +
                     ((draws[, 8] + draws[, 9]) * (draws[, 8] + draws[, 10]) * (draws[, 9] + draws[, 11]) / ((draws[, 8] + draws[, 10]) + (draws[, 9] + draws[, 11]))^2 - draws[, 8] * draws[, 9] / ((draws[, 8] + draws[, 10]) + (draws[, 9] + draws[, 11])))) /
         (((draws[, 12] * (draws[, 13] + draws[, 15]) / ((draws[, 12] + draws[, 14]) + (draws[, 13] + draws[, 15])) + draws[, 8] * (draws[, 9] + draws[, 11]) / ((draws[, 8] + draws[, 10]) + (draws[, 9] + draws[, 11])))) * (draws[, 13] * (draws[, 12] + draws[, 14]) / ((draws[, 12] + draws[, 14]) + (draws[, 13] + draws[, 15])) + draws[, 9] * (draws[, 8] + draws[, 10]) / ((draws[, 8] + draws[, 10]) + (draws[, 9] + draws[, 11]))))
 
     draws[, 20] <- exp(rnorm(reps, log(draws[, 17]), sqrt(draws[, 19])))
-#    draws[, 21] <- exp(log(draws[, 9]) - qnorm(draws[, 10]) * ((log(uci_obs_or) - log(lci_obs_or)) /
-#                                                               (qnorm(.975) * 2)))
+    draws[, 21] <- exp(rnorm(reps, log(draws[, 18]), sqrt(draws[, 19])))
 
     corr_RR <- c(median(draws[, 17], na.rm = TRUE),
                  quantile(draws[, 17], probs = .025, na.rm = TRUE),
                  quantile(draws[, 17], probs = .975, na.rm = TRUE))
-#    corr_OR <- c(median(draws[, 9], na.rm = TRUE),
-#                 quantile(draws[, 9], probs = .025, na.rm = TRUE),
-#                 quantile(draws[, 9], probs = .975, na.rm = TRUE))
+    corr_OR <- c(median(draws[, 18], na.rm = TRUE),
+                 quantile(draws[, 18], probs = .025, na.rm = TRUE),
+                 quantile(draws[, 18], probs = .975, na.rm = TRUE))
     tot_RR <- c(median(draws[, 20], na.rm = TRUE),
                 quantile(draws[, 20], probs = .025, na.rm = TRUE),
                 quantile(draws[, 20], probs = .975, na.rm = TRUE))
-#    tot_OR <- c(median(draws[, 12], na.rm = TRUE),
-#                quantile(draws[, 12], probs = .025, na.rm = TRUE),
-#                quantile(draws[, 12], probs = .975, na.rm = TRUE))
+    tot_OR <- c(median(draws[, 21], na.rm = TRUE),
+                quantile(draws[, 21], probs = .025, na.rm = TRUE),
+                quantile(draws[, 21], probs = .975, na.rm = TRUE))
 
     if (!inherits(case, "episensr.probsens")) {
         tab <- tab
@@ -827,13 +826,11 @@ sampled cell counts w{?as/ere} zero and discarded.")
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    rmatc <- rbind(corr_RR, tot_RR#, corr_OR, tot_OR
-                   )
+    rmatc <- rbind(corr_RR, tot_RR, corr_OR, tot_OR)
     rownames(rmatc) <- c("           RR (MH) -- systematic error:",
-                         "RR (MH) -- systematic and random error:"#,
-#                         "           OR (SMR) -- systematic error:",
-#                         "OR (SMR) -- systematic and random error:"
-                         )
+                         "RR (MH) -- systematic and random error:",
+                         "           OR (SMR) -- systematic error:",
+                         "OR (SMR) -- systematic and random error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
     res <- list(obs_data = tab,
                 obs_measures = rmat,

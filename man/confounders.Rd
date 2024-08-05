@@ -115,7 +115,8 @@ Miettinen (1972), i.e. \eqn{RR_{adj} = \frac{RR_{crude}}{RR_{conf}}} where RR_ad
 is the standardized (adjusted) risk ratio, RR_crude is the crude risk ratio, and
 RR_conf is the relative risk component attributable to confounding by the
 stratification factors. The output provides both RR_adj (SMR or Mantel-Haenszel)
-and the RR_conf.
+and the RR_conf (i.e., RR, OR or RD due to confounding from the unmeasured
+confounder).
 }
 
 \section{Probabilistic sensitivity analysis with `probsens_conf()`}{
