@@ -2,10 +2,28 @@
 % Please edit documentation in R/confounding.R
 \name{confounders}
 \alias{confounders}
+\alias{confounders.emm}
+\alias{confounders.poly}
 \alias{probsens_conf}
 \title{Uncontrolled confounding}
 \usage{
 confounders(
+  case,
+  exposed,
+  type = c("RR", "OR", "RD"),
+  bias_parms = NULL,
+  alpha = 0.05
+)
+
+confounders.emm(
+  case,
+  exposed,
+  type = c("RR", "OR", "RD"),
+  bias_parms = NULL,
+  alpha = 0.05
+)
+
+confounders.poly(
   case,
   exposed,
   type = c("RR", "OR", "RD"),
@@ -36,13 +54,36 @@ probsens_conf(
 ratio measures (relative risk -- RR; odds ratio -- OR) or difference measures
 (risk difference -- RD).}
 
-\item{bias_parms}{Numeric vector defining the 3 necessary bias parameters.
-This vector has 3 elements, in the following order:
-\enumerate{
-\item the association between the confounder and the outcome among those who
-were not exposed (RR, OR, or RD according to choice of implementation),
-\item the prevalence of the confounder among the exposed (between 0 and 1), and
-\item the prevalence of the confounder among the unexposed (between 0 and 1).
+\item{bias_parms}{Numeric vector defining the 3, 4, or 6 necessary bias parameters.
+  \itemize{
+    \item This vector has 3 elements for the `confounders()` function, in the
+    following order:
+      \enumerate{
+         \item the association between the confounder and the outcome among those who
+          were not exposed (RR, OR, or RD according to choice of implementation),
+         \item the prevalence of the confounder among the exposed (between 0 and 1), and
+         \item the prevalence of the confounder among the unexposed (between 0 and 1).
+       }
+    \item This vector has 4 elements for the `confounders.emm()` function, in the
+    following order:
+      \enumerate{
+         \item the association between the confounder and the outcome among those who
+         were exposed,
+         \item the association between the confounder and the outcome among those who
+         were not exposed,
+         \item the prevalence of the confounder among the exposed (between 0 and 1), and
+         \item the prevalence of the confounder among the unexposed (between 0 and 1).
+      }
+    \item This vector has 6 elements for the `confounders.poly()` function, in the
+    following order:
+      \enumerate{
+        \item the association between the highest level confounder and the outcome,
+        \item the association between the mid-level confounder and the outcome,
+        \item the prevalence of the highest level confounder among the exposed (between 0 and 1),
+        \item the prevalence of the highest level confounder among the unexposed (between 0 and 1),
+        \item the prevalence of the mid-level confounder among the exposed (between 0 and 1), and
+        \item the prevalence of the mid-level confounder among the unexposed (between 0 and 1).
+      }
 }}
 
 \item{alpha}{Significance level.}
@@ -84,6 +125,8 @@ log-logistic, or log-normal) and the second its parameters as a vector:
 A list with elements:
 \item{obs_data}{The analyzed 2 x 2 table from the observed data.}
 \item{cfder_data}{The same table for Confounder +.}
+\item{cfder1.data}{The same table for Mid-level Confounder + (for `confounders.poly()`).}
+\item{cfder2.data}{The same table for Highest-level Confounder + (for `confounders.poly()`).}
 \item{nocfder_data}{The same table for Confounder -.}
 \item{obs_measures}{A table of relative risk with confidence intervals; for
   Total, Confounder +, and Confounder -.}
@@ -102,6 +145,15 @@ A list with elements (for `probsens_conf()`):
 `confounders()` and `probsens_conf()` allow to provide adjusted measures of
 association corrected for unknown or unmeasured confounding without effect
 modification.
+}
+\details{
+`confounders.emm()` allows to provide for adjusted measures of association
+corrected for unknown or unmeasured confounding in the presence of effect
+modification.
+
+`confounders.poly()` allows to provide for adjusted measures of association
+corrected for unknown or unmeasured polychotomous (3-level) confounding without
+effect modification.
 }
 \section{Simple bias analysis with `confounders()`}{
 
@@ -128,6 +180,22 @@ It returns the Mantel-Haenszel risk ratio.
 Correlations between prevalences of exposure classification among cases and
 controls can be specified and use the NORmal To Anything (NORTA)
 transformation (Li & Hammond, 1975).
+}
+
+\section{Simple bias analysis with `confounders.emm()`}{
+
+`confounders.emm()` allows you to run a simple sensitivity analysis to correct
+for unknown or unmeasured confounding in the presence of effect modification.
+Implementation for ratio measures (relative risk -- RR, or odds ratio -- OR)
+and difference measures (risk difference -- RD).
+}
+
+\section{Simple bias analysis with `confounders.poly()`}{
+
+`confounders.poly()` allows you to run a simple sensitivity analysis to correct
+for unknown or unmeasured polychotomous (3-level) confounding without effect
+modification. Implementation for ratio measures (relative risk -- RR, or odds
+ratio -- OR) and difference measures (risk difference -- RD).
 }
 
 \section{Updated calculations}{
@@ -170,6 +238,46 @@ dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "RD",
 bias_parms = c(-.37, .8, .05))
+confounders.emm(matrix(c(105, 85, 527, 93),
+dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+nrow = 2, byrow = TRUE),
+type = "RR",
+bias_parms = c(.4, .7, .8, .05))
+
+confounders.emm(matrix(c(105, 85, 527, 93),
+dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+nrow = 2, byrow = TRUE),
+type = "OR",
+bias_parms = c(.4, .7, .8, .05))
+
+confounders.emm(matrix(c(105, 85, 527, 93),
+dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+nrow = 2, byrow = TRUE),
+type = "RD",
+bias_parms = c(-.6, -.3, .8, .05))
+# The data for this example come from:
+# Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O.
+# et al.
+# Increased risk of infection with human immunodeficiency virus type 1 among
+# uncircumcised men presenting with genital ulcer disease in Kenya.
+# Clin Infect Dis 1996;23:449-53.
+confounders.poly(matrix(c(105, 85, 527, 93),
+dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+nrow = 2, byrow = TRUE),
+type = "RR",
+bias_parms = c(.4, .8, .6, .05, .2, .2))
+
+confounders.poly(matrix(c(105, 85, 527, 93),
+dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+nrow = 2, byrow = TRUE),
+type = "OR",
+bias_parms = c(.4, .8, .6, .05, .2, .2))
+
+confounders.poly(matrix(c(105, 85, 527, 93),
+dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
+nrow = 2, byrow = TRUE),
+type = "RD",
+bias_parms = c(-.4, -.2, .6, .05, .2, .2))
 # The data for this example come from:
 # Tyndall M.W., Ronald A.R., Agoki E., Malisa W., Bwayo J.J., Ndinya-Achola J.O. et al.
 # Increased risk of infection with human immunodeficiency virus type 1 among
@@ -217,7 +325,8 @@ risk = list("log-normal", c(log(2), .23)))
 }
 \references{
 Fox, M.P, MacLehose, R.F., Lash, T.L., 2021 \emph{Applying Quantitative
-Bias Analysis to Epidemiologic Data}, pp.105--140, 256--262, Springer.
+Bias Analysis to Epidemiologic Data}, pp.105--140, 256--262,
+Springer.
 
 Miettinen, 1971. Components of the Crude Risk Ratio. \emph{Am J Epidemiol}
 96(2):168-172.
