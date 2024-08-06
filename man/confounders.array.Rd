@@ -6,13 +6,13 @@
 among exposed and unexposed}
 \usage{
 confounders.array(
-  crude.risk,
+  crude_risk,
   type = c("binary", "continuous", "RD"),
   bias_parms = NULL
 )
 }
 \arguments{
-\item{crude.risk}{Crude (apparent or observed) relative risk between the exposure
+\item{crude_risk}{Crude (apparent or observed) relative risk between the exposure
 and the outcome. If type `RD`, this is the crude (observed) risk difference.}
 
 \item{type}{Choice of implementation, for binary covariates, continuous
@@ -33,8 +33,8 @@ type `binary`), or mean value of the confounder among the unexposed (if type
 \value{
 A list with elements:
 \item{model}{Bias analysis performed.}
-\item{bias.parms}{Input bias parameters.}
-\item{adj.measures}{Output results, with bias as a percentage: (crude.RR - risk_adj)/risk_adj * 100.}
+\item{bias_parms}{Input bias parameters.}
+\item{adj_measures}{Output results, with bias as a percentage: (crude_RR - risk_adj)/risk_adj * 100.}
 }
 \description{
 Sensitivity analysis to explore effect of residual confounding using simple
@@ -46,21 +46,27 @@ affect the observed (crude) relative risk.
 # Example from Schneeweiss, S. Sensitivity analysis and external adjustment for
 # unmeasured confounders in epidemiologic database studies of therapeutics.
 # Pharmacoepidemiol Drug Safety 2006; 15: 291-303.
-confounders.array(crude.risk = 1.5, type = "binary",
+confounders.array(crude_risk = 1.5, type = "binary",
 bias_parms = c(5.5, 0.5, 0.1))
 # Examples from Patorno E., Gopalakrishnan, C., Franklin, J.M., Brodovicz, K.G.,
 # Masso-Gonzalez, E., Bartels, D.B., Liu, J., and Schneeweiss, S. Claims-based
 # studies of oral glucose-lowering medications can achieve balance in critical
 # clinical variables only observed in electronic health records 2017; 20(4): 974-
 # 984.
-confounders.array(crude.risk = 1.5, type = "binary",
+confounders.array(crude_risk = 1.5, type = "binary",
 bias_parms = c(3.25, 0.333, 0.384))
-confounders.array(crude.risk = 1.5, type = "continuous",
+confounders.array(crude_risk = 1.5, type = "continuous",
 bias_parms = c(1.009, 7.8, 7.9))
-confounders.array(crude.risk = 0.05, type = "RD", bias_parms = c(0.009, 8.5, 8))
+confounders.array(crude_risk = 0.05, type = "RD", bias_parms = c(0.009, 8.5, 8))
 }
 \references{
 Schneeweiss, S., 2006. Sensitivity analysis and external adjustment
 for unmeasured confounders in epidemiologic database studies of therapeutics.
 \emph{Pharmacoepidemiol Drug Safety} 15: 291-303.
 }
+\seealso{
+Other confounding: 
+\code{\link{confounders}()},
+\code{\link{probsens.irr.conf}()}
+}
+\concept{confounding}
