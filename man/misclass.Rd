@@ -329,6 +329,7 @@ Annals of Epidemiology 2006;16:834-841.
 }
 \seealso{
 Other misclassification: 
-\code{\link{misclass_cov}()}
+\code{\link{misclass_cov}()},
+\code{\link{probsens.irr}()}
 }
 \concept{misclassification}

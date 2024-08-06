@@ -62,6 +62,8 @@
 #' \item{adj_measures}{A table of corrected incidence rate ratios.}
 #' \item{sim_df}{Data frame of random parameters and computed values.}
 #'
+#' @family misclassification
+#'
 #' @references Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
 #' with Specified Univariate Distributions and Correlation Coefficients}.
 #' IEEE Trans Syst Man Cybern 5:557-561.

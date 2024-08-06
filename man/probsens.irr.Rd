@@ -110,3 +110,9 @@ Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
 with Specified Univariate Distributions and Correlation Coefficients}.
 IEEE Trans Syst Man Cybern 5:557-561.
 }
+\seealso{
+Other misclassification: 
+\code{\link{misclass}()},
+\code{\link{misclass_cov}()}
+}
+\concept{misclassification}

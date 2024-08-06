@@ -58,6 +58,7 @@ Bias Analysis to Epidemiologic Data}, pp.176--179, Springer.
 }
 \seealso{
 Other misclassification: 
-\code{\link{misclass}()}
+\code{\link{misclass}()},
+\code{\link{probsens.irr}()}
 }
 \concept{misclassification}
