@@ -1,7 +1,11 @@
-#' Sensitivity analysis to correct for selection bias.
+#' Selection bias.
 #'
-#' Simple sensitivity analysis to correct for selection bias using estimates of
-#' the selection proportions.
+#' `selection()` and `probsens.sel()` allow to provide adjusted measures of
+#' association corrected for selection bias.
+#'
+#' @section Simple bias analysis with `selection()`:
+#' `selection()` allows you to run a simple sensitivity analysis to correct for
+#' selection bias using estimates of the selection proportions.
 #'
 #' @param case Outcome variable. If a variable, this variable is tabulated
 #' against.
@@ -22,12 +26,18 @@
 #'
 #' @return A list with elements:
 #' \item{model}{Bias analysis performed.}
-#' \item{obs.data}{The analyzed 2 x 2 table from the observed data.}
-#' \item{corr.data}{The same table corrected for  selection proportions.}
-#' \item{obs.measures}{A table of odds ratios and relative risk with confidence intervals.}
-#' \item{adj.measures}{Selection bias corrected measures of outcome-exposure relationship.}
-#' \item{bias.parms}{Input bias parameters: selection probabilities.}
-#' \item{selbias.or}{Selection bias odds ratio based on the bias parameters chosen.}
+#' \item{obs_data}{The analyzed 2 x 2 table from the observed data.}
+#' \item{corr_data}{The same table corrected for  selection proportions.}
+#' \item{obs_measures}{A table of odds ratios and relative risk with confidence intervals.}
+#' \item{adj_measures}{Selection bias corrected measures of outcome-exposure relationship.}
+#' \item{bias_parms}{Input bias parameters: selection probabilities.}
+#' \item{selbias_or}{Selection bias odds ratio based on the bias parameters chosen.}
+#'
+#' @family selection
+#'
+#' @references
+#' Fox, M.P, MacLehose, R.F., Lash, T.L., 2021 \emph{Applying Quantitative
+#' Bias Analysis to Epidemiologic Data}, pp.90--91, Springer.
 #'
 #' @examples
 #' # The data for this example come from:
@@ -56,19 +66,19 @@ selection <- function(case,
         bias_parms <- c(1, 1, 1, 1)
     else bias_parms <- bias_parms
     if (!is.vector(bias_parms))
-        stop("The argument bias_parms should be a vector of length 4.")
+        stop(cli::format_error(c("x" = "The argument bias_parms should be a vector of length 4.")))
     if (length(bias_parms) != 4 & length(bias_parms) != 1)
-        stop("The argument bias_parms should be made of either a) 4 components in the following order: (1) Selection probability among cases exposed, (2) Selection probability among cases unexposed, (3) Selection probability among noncases exposed, and (4) Selection probability among noncases unexposed; or b) the selection probability.")
+        stop(cli::format_error(c("x" = "The argument bias_parms should be made of either a) 4 components in the following order: (1) Selection probability among cases exposed, (2) Selection probability among cases unexposed, (3) Selection probability among noncases exposed, and (4) Selection probability among noncases unexposed; or b) the selection probability.")))
     if (length(bias_parms) == 4 & !all(bias_parms >= 0 & bias_parms <=1))
-        stop("Selection probabilities should be between 0 and 1.")
+        stop(cli::format_error(c("x" = "Selection probabilities should be between 0 and 1.")))
     if (length(bias_parms) == 1 & !all(bias_parms >= 0))
-        stop("Selection probability should be positive.")
+        stop(cli::format_error(c("x" = "Selection probability should be positive.")))
 
     if (inherits(case, c("table", "matrix")))
         tab <- case
     else {
-        tab.df <- table(case, exposed)
-        tab <- tab.df[2:1, 2:1]
+        tab_df <- table(case, exposed)
+        tab <- tab_df[2:1, 2:1]
     }
     tab <- tab[1:2, 1:2]
 
@@ -78,14 +88,14 @@ selection <- function(case,
     d <- as.numeric(tab[2, 2])
 
     rr <- (a / (a + c)) / (b / (b + d))
-    se.log.rr <- sqrt((c / a) / (a + c) + (d / b) / (b + d))
-    lci.rr <- exp(log(rr) - qnorm(1 - alpha / 2) * se.log.rr)
-    uci.rr <- exp(log(rr) + qnorm(1 - alpha / 2) * se.log.rr)
+    se_log_rr <- sqrt((c / a) / (a + c) + (d / b) / (b + d))
+    lci_rr <- exp(log(rr) - qnorm(1 - alpha / 2) * se_log_rr)
+    uci_rr <- exp(log(rr) + qnorm(1 - alpha / 2) * se_log_rr)
 
     or <- (a / b) / (c / d)
-    se.log.or <- sqrt(1 / a + 1 / b + 1 / c + 1 / d)
-    lci.or <- exp(log(or) - qnorm(1 - alpha / 2) * se.log.or)
-    uci.or <- exp(log(or) + qnorm(1 - alpha / 2) * se.log.or)
+    se_log_or <- sqrt(1 / a + 1 / b + 1 / c + 1 / d)
+    lci_or <- exp(log(or) - qnorm(1 - alpha / 2) * se_log_or)
+    uci_or <- exp(log(or) + qnorm(1 - alpha / 2) * se_log_or)
 
     if (length(bias_parms) == 4) {
         A0 <- a / bias_parms[1]
@@ -93,13 +103,13 @@ selection <- function(case,
         C0 <- c / bias_parms[3]
         D0 <- d / bias_parms[4]
 
-        tab.corr <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
-        rr.corr <- (A0 / (A0 + C0)) / (B0 / (B0 + D0))
-        or.corr <- (A0 / B0) / (C0 / D0)
+        tab_corr <- matrix(c(A0, B0, C0, D0), nrow = 2, byrow = TRUE)
+        rr_corr <- (A0 / (A0 + C0)) / (B0 / (B0 + D0))
+        or_corr <- (A0 / B0) / (C0 / D0)
     } else {
-        tab.corr <- matrix(c(NA, NA, NA, NA), nrow = 2, byrow = TRUE)
-        rr.corr <- rr / bias_parms
-        or.corr <- or / bias_parms
+        tab_corr <- matrix(c(NA, NA, NA, NA), nrow = 2, byrow = TRUE)
+        rr_corr <- rr / bias_parms
+        or_corr <- or / bias_parms
     }
 
 
@@ -108,21 +118,21 @@ selection <- function(case,
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
     if (is.null(rownames(tab))) {
-        rownames(tab.corr) <- paste("Row", 1:2)
+        rownames(tab_corr) <- paste("Row", 1:2)
         } else {
-        rownames(tab.corr) <- row.names(tab)
+        rownames(tab_corr) <- rownames(tab)
     }
     if (is.null(colnames(tab))) {
-        colnames(tab.corr) <- paste("Col", 1:2)
+        colnames(tab_corr) <- paste("Col", 1:2)
         } else {
-        colnames(tab.corr) <- colnames(tab)
+        colnames(tab_corr) <- colnames(tab)
     }
-    rmat <- rbind(c(rr, lci.rr, uci.rr), c(or, lci.or, uci.or))
+    rmat <- rbind(c(rr, lci_rr, uci_rr), c(or, lci_or, uci_or))
     rownames(rmat) <- c("Observed Relative Risk:", "   Observed Odds Ratio:")
     colnames(rmat) <- c(" ",
                         paste(100 * (alpha / 2), "%", sep = ""),
                         paste(100 * (1 - alpha / 2), "%", sep = ""))
-    rmatc <- rbind(rr.corr, or.corr)
+    rmatc <- rbind(rr_corr, or_corr)
     rownames(rmatc) <- c("Selection Bias Corrected Relative Risk:",
                          "   Selection Bias Corrected Odds Ratio:")
     colnames(rmatc) <- " "
@@ -132,12 +142,12 @@ selection <- function(case,
         selbias <- bias_parms
     }
     res <- list(model = "selection",
-                obs.data = tab,
-                corr.data = tab.corr,
-                obs.measures = rmat,
-                adj.measures = rmatc,
-                bias.parms = bias_parms,
-                selbias.or = selbias)
+                obs_data = tab,
+                corr_data = tab_corr,
+                obs_measures = rmat,
+                adj_measures = rmatc,
+                bias_parms = bias_parms,
+                selbias_or = selbias)
     class(res) <- c("episensr", "episensr.boot", "list")
     res
 }

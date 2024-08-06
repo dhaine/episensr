@@ -2,7 +2,7 @@
 % Please edit documentation in R/selection.R
 \name{selection}
 \alias{selection}
-\title{Sensitivity analysis to correct for selection bias.}
+\title{Selection bias.}
 \usage{
 selection(case, exposed, bias_parms = NULL, alpha = 0.05)
 }
@@ -30,17 +30,23 @@ from above].}
 \value{
 A list with elements:
 \item{model}{Bias analysis performed.}
-\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
-\item{corr.data}{The same table corrected for  selection proportions.}
-\item{obs.measures}{A table of odds ratios and relative risk with confidence intervals.}
-\item{adj.measures}{Selection bias corrected measures of outcome-exposure relationship.}
-\item{bias.parms}{Input bias parameters: selection probabilities.}
-\item{selbias.or}{Selection bias odds ratio based on the bias parameters chosen.}
+\item{obs_data}{The analyzed 2 x 2 table from the observed data.}
+\item{corr_data}{The same table corrected for  selection proportions.}
+\item{obs_measures}{A table of odds ratios and relative risk with confidence intervals.}
+\item{adj_measures}{Selection bias corrected measures of outcome-exposure relationship.}
+\item{bias_parms}{Input bias parameters: selection probabilities.}
+\item{selbias_or}{Selection bias odds ratio based on the bias parameters chosen.}
 }
 \description{
-Simple sensitivity analysis to correct for selection bias using estimates of
-the selection proportions.
+`selection()` and `probsens.sel()` allow to provide adjusted measures of
+association corrected for selection bias.
 }
+\section{Simple bias analysis with `selection()`}{
+
+`selection()` allows you to run a simple sensitivity analysis to correct for
+selection bias using estimates of the selection proportions.
+}
+
 \examples{
 # The data for this example come from:
 # Stang A., Schmidt-Pokrzywniak A., Lehnert M., Parkin D.M., Ferlay J., Bornfeld N.
@@ -59,3 +65,8 @@ dimnames = list(c("UM+", "UM-"), c("Mobile+", "Mobile-")),
 nrow = 2, byrow = TRUE),
 bias_parms = 0.43)
 }
+\references{
+Fox, M.P, MacLehose, R.F., Lash, T.L., 2021 \emph{Applying Quantitative
+Bias Analysis to Epidemiologic Data}, pp.90--91, Springer.
+}
+\concept{selection}
