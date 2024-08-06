@@ -21,8 +21,8 @@ vector has 4 elements, in the following order:
 \value{
 A list with elements:
 \item{model}{Bias analysis performed.}
-\item{bias.parms}{Input bias parameters.}
-\item{adj.measures}{Output results, with bias as a percentage: (crude.RR - RR)/RR * 100.}
+\item{bias_parms}{Input bias parameters.}
+\item{adj_measures}{Output results, with bias as a percentage: (crude_RR - RR)/RR * 100.}
 }
 \description{
 Sensitivity analysis to explore effect of residual confounding using simple
@@ -41,3 +41,10 @@ Schneeweiss, S., 2006. Sensitivity analysis and external adjustment for
 unmeasured confounders in epidemiologic database studies of therapeutics.
 \emph{Pharmacoepidemiol Drug Safety} 15: 291-303.
 }
+\seealso{
+Other confounding: 
+\code{\link{confounders}()},
+\code{\link{confounders.array}()},
+\code{\link{probsens.irr.conf}()}
+}
+\concept{confounding}

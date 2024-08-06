@@ -17,8 +17,10 @@
 #'
 #' @return A list with elements:
 #' \item{model}{Bias analysis performed.}
-#' \item{bias.parms}{Input bias parameters.}
-#' \item{adj.measures}{Output results, with bias as a percentage: (crude.RR - RR)/RR * 100.}
+#' \item{bias_parms}{Input bias parameters.}
+#' \item{adj_measures}{Output results, with bias as a percentage: (crude_RR - RR)/RR * 100.}
+#'
+#' @family confounding
 #'
 #' @references Schneeweiss, S., 2006. Sensitivity analysis and external adjustment for
 #' unmeasured confounders in epidemiologic database studies of therapeutics.
@@ -36,15 +38,16 @@ confounders.ext <- function(RR,
         bias_parms <- c(1, 1, 1, 1)
     else bias_parms <- bias_parms
     if (length(bias_parms) != 4)
-        stop("The argument bias_parms should be made of the following components: (1) Association between the confounder and the outcome, (2) Association between exposure category and confounder, (3) Prevalence of the confounder, and (4) Prevalence of the exposure.")
+        stop(cli::format_error(c("i" = "The argument bias_parms should be made of the following components: (1) Association between the confounder and the outcome, (2) Association between exposure category and confounder, (3) Prevalence of the confounder, and (4) Prevalence of the exposure.")))
     if (!all(bias_parms[-c(1, 2)] >= 0 & bias_parms[-c(1, 2)] <= 1))
-        stop("Prevalences should be between 0 and 1.")
+        stop(cli::format_error(c("x" = "Prevalences should be between 0 and 1.")))
     if (bias_parms[1] < 0)
-        stop("Association between the confounder and the outcome should be >= 0.")
+        stop(cli::format_error(c("x" = "Association between the confounder and the
+outcome should be >= 0.")))
     if (bias_parms[2] < 0)
-        stop("Association between exposure category and confounder should be >= 0.")
+        stop(cli::format_error(c("x" = "Association between exposure category and confounder should be >= 0.")))
     if (RR < 0)
-        stop("True relative risk should be greater than 0.")
+        stop(cli::format_error(c("x" = "True relative risk should be greater than 0.")))
 
     a <- bias_parms[2] - 1
     b <- (-bias_parms[3] * bias_parms[2]) - (bias_parms[4] * bias_parms[2]) + bias_parms[4] + bias_parms[3] - 1
@@ -60,16 +63,16 @@ confounders.ext <- function(RR,
     rownames(rmatc) <- c("Crude RR", "Percent bias")
     colnames(rmatc) <- " "
 
-    bias.parms <- matrix(bias_parms)
-    colnames(bias.parms) <- " "
-    rownames(bias.parms) <- c("RR(Confounder-Disease):",
+    bias_parms <- matrix(bias_parms)
+    colnames(bias_parms) <- " "
+    rownames(bias_parms) <- c("RR(Confounder-Disease):",
                               "OR(Exposure category-Confounder):",
                               "p(Confounder):",
                               "p(Exposure):")
 
     res <- list(model = "confounder",
-                bias.parms = bias.parms,
-                adj.measures = rmatc)
+                bias_parms = bias_parms,
+                adj_measures = rmatc)
     class(res) <- c("episensr.confounder", "episensr", "list")
     res
 }
