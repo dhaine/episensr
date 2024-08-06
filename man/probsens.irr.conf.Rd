@@ -118,6 +118,7 @@ IEEE Trans Syst Man Cybern 5:557-561.
 Other confounding: 
 \code{\link{confounders}()},
 \code{\link{confounders.array}()},
-\code{\link{confounders.ext}()}
+\code{\link{confounders.ext}()},
+\code{\link{confounders.limit}()}
 }
 \concept{confounding}

@@ -4,7 +4,7 @@
 \alias{confounders.limit}
 \title{Bounding the bias limits of unmeasured confounding.}
 \usage{
-confounders.limit(p = NA, RR = NA, OR = NA, crude.RR = NULL)
+confounders.limit(p = NA, RR = NA, OR = NA, crude_RR = NULL)
 }
 \arguments{
 \item{p}{Proportion with the confounder among the unexposed group.}
@@ -13,13 +13,13 @@ confounders.limit(p = NA, RR = NA, OR = NA, crude.RR = NULL)
 
 \item{OR}{Odds ratio between the confounder and the outcome.}
 
-\item{crude.RR}{Crude relative risk between the exposure and the outcome.}
+\item{crude_RR}{Crude relative risk between the exposure and the outcome.}
 }
 \value{
 A list with elements:
 \item{model}{Bias analysis performed.}
-\item{bias.parms}{Input bias parameters.}
-\item{adj.measures}{Output results.}
+\item{bias_parms}{Input bias parameters.}
+\item{adj_measures}{Output results.}
 }
 \description{
 Function to elicit the limits on measures of effect corrected for an unmeasured
@@ -28,13 +28,21 @@ risk between exposure and outcome has minimally to be provided. Up to 3 other
 parameters can be entered.
 }
 \examples{
-confounders.limit(OR = 1.65, crude.RR = 1.5)
+confounders.limit(OR = 1.65, crude_RR = 1.5)
 }
 \references{
-Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
-Bias Analysis to Epidemiologic Data}, pp.59--78, Springer.
+Fox, M.P, MacLehose, R.F., Lash, T.L., 2021 \emph{Applying Quantitative
+Bias Analysis to Epidemiologic Data}, pp.129--131, Springer.
 
 Flanders, W. Dana, Khoury, Muin J., 1990. Indirect Assessment of
 Confounding: Graphic Description and Limits on Effect of Adjusting for
 Covariates. \emph{Epidemiology} 1(3): 239--246.
 }
+\seealso{
+Other confounding: 
+\code{\link{confounders}()},
+\code{\link{confounders.array}()},
+\code{\link{confounders.ext}()},
+\code{\link{probsens.irr.conf}()}
+}
+\concept{confounding}

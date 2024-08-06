@@ -68,6 +68,7 @@ for unmeasured confounders in epidemiologic database studies of therapeutics.
 Other confounding: 
 \code{\link{confounders}()},
 \code{\link{confounders.ext}()},
+\code{\link{confounders.limit}()},
 \code{\link{probsens.irr.conf}()}
 }
 \concept{confounding}
