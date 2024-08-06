@@ -8,14 +8,13 @@ probsens.irr.conf(
   counts,
   pt = NULL,
   reps = 1000,
-  prev.exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+  prev_exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
     "beta"), parms = NULL),
-  prev.nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+  prev_nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
     "beta"), parms = NULL),
   risk = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
     "log-logistic", "log-normal"), parms = NULL),
-  corr.p = NULL,
-  discard = TRUE,
+  corr_p = NULL,
   alpha = 0.05
 )
 }
@@ -34,7 +33,7 @@ must be a numeric vector of disease counts.}
 
 \item{reps}{Number of replications to run.}
 
-\item{prev.exp}{List defining the prevalence of exposure among the exposed.
+\item{prev_exp}{List defining the prevalence of exposure among the exposed.
 The first argument provides the probability distribution function (constant,
 uniform, triangular, trapezoidal, truncated normal, or beta) and the second
 its parameters as a vector. Lower and upper bounds for truncated normal distribution
@@ -48,7 +47,7 @@ cannot be les than zero.
 \item beta: alpha, beta.
 }}
 
-\item{prev.nexp}{List defining the prevalence of exposure among the unexposed.}
+\item{prev_nexp}{List defining the prevalence of exposure among the unexposed.}
 
 \item{risk}{List defining the confounder-disease relative risk or the
 confounder-exposure odds ratio. The first argument provides the probability
@@ -63,18 +62,16 @@ or log-normal) and the second its parameters as a vector:
 \item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
 }}
 
-\item{corr.p}{Correlation between the exposure-specific confounder prevalences.}
-
-\item{discard}{A logical scalar. In case of negative adjusted count, should the draws be discarded? If set to FALSE, negative counts are set to zero.}
+\item{corr_p}{Correlation between the exposure-specific confounder prevalences.}
 
 \item{alpha}{Significance level.}
 }
 \value{
 A list with elements:
-\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
-\item{obs.measures}{A table of observed incidence rate ratio with exact confidence interval.}
-\item{adj.measures}{A table of corrected incidence rate ratios.}
-\item{sim.df}{Data frame of random parameters and computed values.}
+\item{obs_data}{The analyzed 2 x 2 table from the observed data.}
+\item{obs_measures}{A table of observed incidence rate ratio with exact confidence interval.}
+\item{adj_measures}{A table of corrected incidence rate ratios.}
+\item{sim_df}{Data frame of random parameters and computed values.}
 }
 \description{
 Probabilistic sensitivity analysis to correct for unmeasured confounding when
@@ -107,16 +104,18 @@ set.seed(123)
 probsens.irr.conf(matrix(c(77, 10000, 87, 10000),
 dimnames = list(c("D+", "Person-time"), c("E+", "E-")), ncol = 2),
 reps = 20000,
-prev.exp = list("trapezoidal", c(.01, .2, .3, .51)),
-prev.nexp = list("trapezoidal", c(.09, .27, .35, .59)),
+prev_exp = list("trapezoidal", c(.01, .2, .3, .51)),
+prev_nexp = list("trapezoidal", c(.09, .27, .35, .59)),
 risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
-corr.p = .8)
+corr_p = .8)
 }
 \references{
-Lash, T.L., Fox, M.P, Fink, A.K., 2009 \emph{Applying Quantitative
-Bias Analysis to Epidemiologic Data}, pp.117--150, Springer.
-
 Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
 with Specified Univariate Distributions and Correlation Coefficients}.
 IEEE Trans Syst Man Cybern 5:557-561.
 }
+\seealso{
+Other confounding: 
+\code{\link{confounders}()}
+}
+\concept{confounding}

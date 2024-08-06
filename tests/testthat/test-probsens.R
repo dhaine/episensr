@@ -790,31 +790,31 @@ test_that("correct arguments --- list", {
                 throws_error())
 })
 
-#test_that("IRR confounding bias: observed measures are correct", {
-#    set.seed(123)
-#    model <- probsens.irr.conf(matrix(c(77, 10000, 87, 10000), nrow = 2, byrow = TRUE),
-#                      reps = 20000,
-#                      prev.exp = list("trapezoidal", c(.01, .2, .3, .51)),
-#                      prev.nexp = list("trapezoidal", c(.09, .27, .35, .59)),
-#                      risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
-#                      corr.p = .8)
-#    expect_equal(model$obs_measures[1, 1], 0.8851, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$obs_measures[1, 2], 0.6979, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$obs_measures[1, 3], 1.1072, tolerance = 1e-4, scale = 1)
-#})
+test_that("IRR confounding bias: observed measures are correct", {
+    set.seed(123)
+    model <- probsens.irr.conf(matrix(c(77, 10000, 87, 10000), nrow = 2, byrow = TRUE),
+                      reps = 20000,
+                      prev_exp = list("trapezoidal", c(.01, .2, .3, .51)),
+                      prev_nexp = list("trapezoidal", c(.09, .27, .35, .59)),
+                      risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
+                      corr_p = .8)
+    expect_equal(model$obs_measures[1, 1], 0.8851, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 2], 0.6979, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 3], 1.1072, tolerance = 1e-4, scale = 1)
+})
 
-#test_that("IRR Confounding bias: adjusted measures are correct", {
-#    set.seed(123)
-#    model <- probsens.irr.conf(matrix(c(77, 10000, 87, 10000), nrow = 2, byrow = TRUE),
-#                      reps = 20000,
-#                      prev.exp = list("trapezoidal", c(.01, .2, .3, .51)),
-#                      prev.nexp = list("trapezoidal", c(.09, .27, .35, .59)),
-#                      risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
-#                      corr.p = .8)
-#    expect_equal(model$adj_measures[1, 1], 0.9701, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 2], 0.8199, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 3], 1.1804, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 1], 0.9718, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 2], 0.7270, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 3], 1.3065, tolerance = 1e-4, scale = 1)
-#})
+test_that("IRR Confounding bias: adjusted measures are correct", {
+    set.seed(123)
+    model <- probsens.irr.conf(matrix(c(77, 10000, 87, 10000), nrow = 2, byrow = TRUE),
+                      reps = 20000,
+                      prev_exp = list("trapezoidal", c(.01, .2, .3, .51)),
+                      prev_nexp = list("trapezoidal", c(.09, .27, .35, .59)),
+                      risk = list("trapezoidal", c(2, 2.5, 3.5, 4.5)),
+                      corr_p = .8)
+    expect_equal(model$adj_measures[1, 1], 0.9701, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 0.8199, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 1.1804, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 0.9718, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 0.7270, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 1.3065, tolerance = 1e-4, scale = 1)
+})
