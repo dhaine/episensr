@@ -547,21 +547,40 @@ test_that("Selection bias: adjusted measures are correct (logit)", {
     expect_equal(model$adj_measures[2, 3], 20.9828, tolerance = 1e-4, scale = 1)
 })
 
-#test_that("Selection bias: adjusted measures are correct (beta)", {
-#    set.seed(123)
-#    model <- probsens.sel(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
-#                      reps = 20000,
-#                      case_exp = list("beta", c(200, 56)),
-#                      case_nexp = list("beta", c(100, 16)),
-#                      ncase_exp = list("beta", c(200, 16)),
-#                      ncase_nexp = list("beta", c(100, 56)))
-#    expect_equal(model$adj_measures[1, 1], 1.1266, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 2], 0.9649, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[1, 3], 1.3281, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 1], 1.1275, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 2], 0.7966, tolerance = 1e-4, scale = 1)
-#    expect_equal(model$adj_measures[2, 3], 1.6115, tolerance = 1e-4, scale = 1)
-#})
+test_that("Selection bias: adjusted measures are correct (beta)", {
+    set.seed(123)
+    model <- probsens.sel(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
+                      reps = 20000,
+                      case_exp = list("beta", c(200, 56)),
+                      case_nexp = list("beta", c(100, 16)),
+                      ncase_exp = list("beta", c(200, 16)),
+                      ncase_nexp = list("beta", c(100, 56)))
+    expect_equal(model$adj_measures[1, 1], 1.1266, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 0.9649, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 1.3281, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 1.1275, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 0.7966, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 1.6115, tolerance = 1e-4, scale = 1)
+})
+
+test_that("Selection bias: adjusted measures are correct (beta)", {
+    set.seed(123)
+    model <- probsens.sel(matrix(c(139, 114, 369, 377), nrow = 2, byrow = TRUE),
+                      reps = 50000,
+                      case_exp = list("beta", c(139, 5.1)),
+                      case_nexp = list("beta", c(114, 11.9)),
+                      ncase_exp = list("beta", c(369, 96.1)),
+                      ncase_nexp = list("beta", c(377, 282.9)))
+    expect_equal(model$obs_measures[1, 1], 1.2457, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 2], 0.9357, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 3], 1.6586, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 1], 1.6246, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 1.4604, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 1.7990, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 1.6252, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 1.1966, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 2.1995, tolerance = 1e-4, scale = 1)
+})
 
 test_that("correct arguments --- list", {
     expect_that(probsens_conf(matrix(c(105, 85, 527, 93), nrow = 2, byrow = TRUE),

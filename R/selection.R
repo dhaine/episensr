@@ -7,6 +7,10 @@
 #' `selection()` allows you to run a simple sensitivity analysis to correct for
 #' selection bias using estimates of the selection proportions.
 #'
+#' @section Probabilistic sensitivity analysis with `probsens.sel()`:
+#' `probsens.sel()` performs a summary-level probabilistic sensitivity analysis to
+#' correct for selection bias.
+#'
 #' @param case Outcome variable. If a variable, this variable is tabulated
 #' against.
 #' @param exposed Exposure variable.
@@ -37,7 +41,7 @@
 #'
 #' @references
 #' Fox, M.P, MacLehose, R.F., Lash, T.L., 2021 \emph{Applying Quantitative
-#' Bias Analysis to Epidemiologic Data}, pp.90--91, Springer.
+#' Bias Analysis to Epidemiologic Data}, pp.90--91, 274--279, Springer.
 #'
 #' @examples
 #' # The data for this example come from:
@@ -149,5 +153,462 @@ selection <- function(case,
                 bias_parms = bias_parms,
                 selbias_or = selbias)
     class(res) <- c("episensr", "episensr.boot", "list")
+    res
+}
+
+
+#' @rdname selection
+#' @param reps Number of replications to run.
+#' @param or_parms List defining the selection bias odds. The first argument
+#' provides the probability distribution function (constant, uniform, triangular,
+#' trapezoidal, log-logistic or log-normal) and the second its parameters as a vector:
+#'   \enumerate{
+#'   \item constant: constant value,
+#'   \item uniform: min, max,
+#'   \item triangular: lower limit, upper limit, mode,
+#'   \item trapezoidal: min, lower mode, upper mode, max.
+#'   \item log-logistic: shape, rate. Must be strictly positive,
+#'   \item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
+#'   }
+#' @param case_exp If or_parms not provided, defines the selection probability
+#' among case exposed. The first argument provides the probability distribution
+#' function and the second its parameters as a vector:
+#'   \enumerate{
+#'   \item constant: constant value,
+#'   \item uniform: min, max,
+#'   \item triangular: lower limit, upper limit, mode,
+#'   \item trapezoidal: min, lower mode, upper mode, max.
+#'   \item normal: truncated normal with lower bound, upper bound, mean, sd,
+#'   \item beta: alpha, beta.
+#'   }
+#' @param case_nexp Same among cases non-exposed.
+#' @param ncase_exp Same among non-cases exposed.
+#' @param ncase_nexp Same among non-cases non-exposed.
+#' @param alpha Significance level.
+#'
+#' @return A list with elements (for `probsens.sel()`):
+#' \item{obs_data}{The analyzed 2 x 2 table from the observed data.}
+#' \item{obs_measures}{A table of observed odds ratio with confidence intervals.}
+#' \item{adj_measures}{A table of corrected odds ratios.}
+#' \item{sim_df}{Data frame of random parameters and computed values.}
+#' \item{reps}{Number of replications.}
+#'
+#' @examples
+#' # The data for this example come from:
+#' # Stang A., Schmidt-Pokrzywniak A., Lehnert M., Parkin D.M., Ferlay J., Bornfeld N. et al.
+#' # Population-based incidence estimates of uveal melanoma in Germany.
+#' # Supplementing cancer registry data by case-control data.
+#' # Eur J Cancer Prev 2006;15:165-70.
+#' set.seed(123)
+#' probsens.sel(matrix(c(136, 107, 297, 165),
+#' dimnames = list(c("Melanoma+", "Melanoma-"), c("Mobile+", "Mobile-")), nrow = 2, byrow = TRUE),
+#' reps = 20000,
+#' or_parms = list("triangular", c(.35, 1.1, .43)))
+#'
+#' set.seed(1234)
+#' probsens.sel(matrix(c(139, 114, 369, 377),
+#' dimnames = list(c("Melanoma+", "Melanoma-"), c("Mobile+", "Mobile-")), nrow = 2, byrow = TRUE),
+#' reps = 5000,
+#' case_exp = list("beta", c(139, 5.1)),
+#' case_nexp = list("beta", c(114, 11.9)),
+#' ncase_exp = list("beta", c(369, 96.1)),
+#' ncase_nexp = list("beta", c(377, 282.9)))
+#' @export
+#' @importFrom stats median qnorm quantile runif rlnorm rbeta
+probsens.sel <- function(case,
+                         exposed,
+                         reps = 1000,
+                         or_parms = list(dist = c("constant", "uniform",
+                                                  "triangular", "trapezoidal",
+                                                  "log-logistic", "log-normal"),
+                                         parms = NULL),
+                         case_exp = list(dist = c("constant", "uniform",
+                                                  "triangular", "trapezoidal",
+                                                  "normal", "beta"),
+                                         parms = NULL),
+                         case_nexp = list(dist = c("constant", "uniform",
+                                                   "triangular", "trapezoidal",
+                                                   "normal", "beta"),
+                                          parms = NULL),
+                         ncase_exp = list(dist = c("constant", "uniform",
+                                                   "triangular", "trapezoidal",
+                                                   "normal", "beta"),
+                                          parms = NULL),
+                         ncase_nexp = list(dist = c("constant", "uniform",
+                                                    "triangular", "trapezoidal",
+                                                    "normal", "beta"),
+                                           parms = NULL),
+                         alpha = 0.05) {
+    if (reps < 1)
+        stop(cli::format_error(c("x" = "Wrong number of replications: reps = {reps}",
+                                 "i" = "reps must be >= 1")))
+
+    if (is.null(or_parms) & (is.null(case_exp) | is.null(case_nexp) | is.null(ncase_exp) | is.null(ncase_nexp)))
+        stop(cli::format_error(c("x" = "Please provide selection probabilities.")))
+    if (!is.null(or_parms[[2]]) & (!is.null(case_exp[[2]]) |
+                                   !is.null(case_nexp[[2]]) | !is.null(ncase_exp[[2]]) |
+                                   !is.null(ncase_nexp[[2]])))
+        stop(cli::format_error(c("x" = "Please use either odds ratio of being selected or selection probabilities.")))
+    if (!is.list(or_parms))
+        stop(cli::format_error(c("i" = "Odds ratio for the probability of being selected should be a list.")))
+    else or_parms <- or_parms
+    if (!is.null(or_parms[[2]])) {
+        if (!(or_parms[[1]] %in% c("constant", "uniform", "triangular", "trapezoidal",
+                                   "log-logistic", "log-normal")))
+            stop(cli::format_error(c("x" = "Wrong distribution for selection odds ratio.")))
+        if (or_parms[[1]] == "constant" & length(or_parms[[2]]) != 1)
+            stop(cli::format_error(c("i" = "For constant value, please provide a single value.")))
+        if (or_parms[[1]] == "uniform" & length(or_parms[[2]]) != 2)
+            stop(cli::format_error(c("i" = "For uniform distribution, please provide vector of lower and upper limits.")))
+        if (or_parms[[1]] == "uniform" & or_parms[[2]][1] >= or_parms[[2]][2])
+            stop(cli::format_error(c("x" = "Lower limit of your uniform distribution is greater than upper limit.")))
+        if (or_parms[[1]] == "triangular" & length(or_parms[[2]]) != 3)
+            stop(cli::format_error(c("x" = "For triangular distribution, please provide vector of lower, upper limits, and mode.")))
+        if (or_parms[[1]] == "triangular" & ((or_parms[[2]][1] > or_parms[[2]][3]) |
+                                             (or_parms[[2]][2] < or_parms[[2]][3])))
+            stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
+        if (or_parms[[1]] == "trapezoidal" & length(or_parms[[2]]) != 4)
+            stop(cli::format_error(c("i" = "For trapezoidal distribution, please provide
+vector of lower limit, lower mode, upper mode, and upper limit.")))
+        if (or_parms[[1]] == "trapezoidal" & ((or_parms[[2]][1] > or_parms[[2]][2]) |
+                                              (or_parms[[2]][2] > or_parms[[2]][3]) |
+                                              (or_parms[[2]][3] > or_parms[[2]][4])))
+            stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
+        if (or_parms[[1]] == "logit-logistic" & length(or_parms[[2]]) != 2)
+            stop(cli::format_error(c("i" = "For log-logistic distribution, please provide vector of location and scale_")))
+        if (or_parms[[1]] == "log-normal" & length(or_parms[[2]]) != 2)
+            stop(cli::format_error(c("i" = "For log-normal distribution, please provide vector of meanlog and sdlog_")))
+    }
+
+    if (!is.null(case_exp[[1]]) & !is.list(case_exp))
+        stop(cli::format_error(c("x" = "Please provide a list for case exposed parameters.")))
+    if (!is.null(case_exp[[2]])) {
+        if (case_exp[[1]] == "constant" & length(case_exp[[2]]) != 1)
+            stop(cli::format_error(c("i" = "For constant value, please provide a single value.")))
+        if (case_exp[[1]] == "uniform" & length(case_exp[[2]]) != 2)
+            stop(cli::format_error(c("i" = "For uniform distribution, please provide vector of lower and upper limits.")))
+        if (case_exp[[1]] == "uniform" & case_exp[[2]][1] >= case_exp[[2]][2])
+            stop(cli::format_error(c("x" = "Lower limit of your uniform distribution is greater than upper limit.")))
+        if (case_exp[[1]] == "triangular" & length(case_exp[[2]]) != 3)
+            stop(cli::format_error(c("x" = "For triangular distribution, please provide vector of lower, upper limits, and mode.")))
+        if (case_exp[[1]] == "triangular" & ((case_exp[[2]][1] > case_exp[[2]][3]) |
+                                             (case_exp[[2]][2] < case_exp[[2]][3])))
+            stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
+        if (case_exp[[1]] == "trapezoidal" & length(case_exp[[2]]) != 4)
+            stop(cli::format_error(c("i" = "For trapezoidal distribution, please provide
+vector of lower limit, lower mode, upper mode, and upper limit.")))
+        if (case_exp[[1]] == "trapezoidal" & ((case_exp[[2]][1] > case_exp[[2]][2]) |
+                                              (case_exp[[2]][2] > case_exp[[2]][3]) |
+                                              (case_exp[[2]][3] > case_exp[[2]][4])))
+            stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
+        if (case_exp[[1]] == "normal" & (length(case_exp[[2]]) != 4))
+            stop(cli::format_error(c("i" = "For truncated normal distribution, please provide vector of lower and upper bounds, mean and sd.")))
+        if (case_exp[[1]] == "normal" & length(case_exp[[2]]) == 4 &
+            ((case_exp[[2]][1] >= case_exp[[2]][2]) | (case_exp[[2]][1] < 0)))
+            stop(cli::format_error(c("i" = "For truncated normal distribution, please provide sensible values for lower and upper bounds (lower bound >= 0; lower limit < upper limit).")))
+        if ((case_exp[[1]] == "constant" | case_exp[[1]] == "uniform" |
+             case_exp[[1]] == "triangular" | case_exp[[1]] == "trapezoidal") &
+            !all(case_exp[[2]] >= 0 & case_exp[[2]] <= 1))
+            stop(cli::format_error(c("x" = "Selection probability should be between 0 and 1.")))
+        if (case_exp[[1]] == "beta" & (case_exp[[2]][1] < 0 | case_exp[[2]][1] < 0))
+            stop(cli::format_error(c("x" = "Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")))
+        if (case_exp[[1]] == "beta" & length(case_exp[[2]]) != 2)
+            stop(cli::format_error(c("x" = "Wrong arguments for your beta distribution.")))
+    }
+
+    if (!is.null(case_nexp[[2]])) {
+        if (case_nexp[[1]] == "constant" & length(case_nexp[[2]]) != 1)
+            stop(cli::format_error(c("x" = "For constant value, please provide a single value.")))
+        if (case_nexp[[1]] == "uniform" & length(case_nexp[[2]]) != 2)
+            stop(cli::format_error(c("i" = "For uniform distribution, please provide vector of lower and upper limits.")))
+        if (case_nexp[[1]] == "uniform" & case_nexp[[2]][1] >= case_nexp[[2]][2])
+            stop(cli::format_error(c("x" = "Lower limit of your uniform distribution is greater than upper limit.")))
+        if (case_nexp[[1]] == "triangular" & length(case_nexp[[2]]) != 3)
+            stop(cli::format_error(c("i" = "For triangular distribution, please provide vector of lower, upper limits, and mode.")))
+        if (case_nexp[[1]] == "triangular" & ((case_nexp[[2]][1] > case_nexp[[2]][3]) |
+                                              (case_nexp[[2]][2] < case_nexp[[2]][3])))
+            stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
+        if (case_nexp[[1]] == "trapezoidal" & length(case_nexp[[2]]) != 4)
+            stop(cli::format_error(c("i" = "For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")))
+        if (case_nexp[[1]] == "trapezoidal" & ((case_nexp[[2]][1] > case_nexp[[2]][2]) |
+                                               (case_nexp[[2]][2] > case_nexp[[2]][3]) |
+                                               (case_nexp[[2]][3] > case_nexp[[2]][4])))
+            stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
+        if (case_nexp[[1]] == "normal" & (length(case_nexp[[2]]) != 4))
+            stop(cli::format_error(c("i" = "For truncated normal distribution, please provide vector of lower and upper bounds, mean and sd.")))
+        if (case_nexp[[1]] == "normal" & length(case_nexp[[2]]) == 4 &
+            ((case_nexp[[2]][1] >= case_nexp[[2]][2]) | (case_nexp[[2]][1] < 0)))
+            stop(cli::format_error(c("i" = "For truncated normal distribution, please provide sensible values for lower and upper bounds (lower bound >=0; lower limit < upper limit).")))
+        if ((case_nexp[[1]] == "constant" | case_nexp[[1]] == "uniform" |
+             case_nexp[[1]] == "triangular" | case_nexp[[1]] == "trapezoidal") &
+            !all(case_nexp[[2]] >= 0 & case_nexp[[2]] <= 1))
+            stop(cli::format_error(c("x" = "Selection probability should be between 0 and 1.")))
+        if (case_nexp[[1]] == "beta" & (case_nexp[[2]][1] < 0 | case_nexp[[2]][1] < 0))
+            stop(cli::format_error(c("x" = "Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")))
+        if (case_nexp[[1]] == "beta" & length(case_nexp[[2]]) != 2)
+            stop(cli::format_error(c("x" = "Wrong arguments for your beta distribution.")))
+    }
+
+    if (!is.null(ncase_exp[[2]])) {
+        if (ncase_exp[[1]] == "constant" & length(ncase_exp[[2]]) != 1)
+            stop(cli::format_error(c("x" = "For constant value, please provide a single value.")))
+        if (ncase_exp[[1]] == "uniform" & length(ncase_exp[[2]]) != 2)
+            stop(cli::format_error(c("i" = "For uniform distribution, please provide vector of lower and upper limits.")))
+        if (ncase_exp[[1]] == "uniform" & ncase_exp[[2]][1] >= ncase_exp[[2]][2])
+            stop(cli::format_error(c("x" = "Lower limit of your uniform distribution is greater than upper limit.")))
+        if (ncase_exp[[1]] == "triangular" & length(ncase_exp[[2]]) != 3)
+            stop(cli::format_error(c("i" = "For triangular distribution, please provide vector of lower, upper limits, and mode.")))
+        if (ncase_exp[[1]] == "triangular" & ((ncase_exp[[2]][1] > ncase_exp[[2]][3]) |
+                                              (ncase_exp[[2]][2] < ncase_exp[[2]][3])))
+            stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
+        if (ncase_exp[[1]] == "trapezoidal" & length(ncase_exp[[2]]) != 4)
+            stop(cli::format_error(c("i" = "For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")))
+        if (ncase_exp[[1]] == "trapezoidal" & ((ncase_exp[[2]][1] > ncase_exp[[2]][2]) |
+                                               (ncase_exp[[2]][2] > ncase_exp[[2]][3]) |
+                                               (ncase_exp[[2]][3] > ncase_exp[[2]][4])))
+            stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
+        if (ncase_exp[[1]] == "normal" & (length(ncase_exp[[2]]) != 4))
+            stop(cli::format_error(c("i" = "For truncated normal distribution, please provide vector of lower and upper bounds, mean and sd.")))
+        if (ncase_exp[[1]] == "normal" & length(ncase_exp[[2]]) == 4 &
+            ((ncase_exp[[2]][1] >= ncase_exp[[2]][2]) | (ncase_exp[[2]][1] < 0)))
+            stop(cli::format_error(c("i" = "For truncated normal distribution, please provide sensible values for lower and upper bounds (lower bound >=0; lower limit < upper limit).")))
+        if ((ncase_exp[[1]] == "constant" | ncase_exp[[1]] == "uniform" |
+             ncase_exp[[1]] == "triangular" | ncase_exp[[1]] == "trapezoidal") &
+            !all(ncase_exp[[2]] >= 0 & ncase_exp[[2]] <= 1))
+            stop(cli::format_error(c("x" = "Selection probability should be between 0 and 1.")))
+        if (ncase_exp[[1]] == "beta" & (ncase_exp[[2]][1] < 0 | ncase_exp[[2]][1] < 0))
+            stop(cli::format_error(c("x" = "Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")))
+        if (ncase_exp[[1]] == "beta" & length(ncase_exp[[2]]) != 2)
+            stop(cli::format_error(c("x" = "Wrong arguments for your beta distribution.")))
+    }
+
+    if (!is.null(ncase_nexp[[2]])) {
+        if (ncase_nexp[[1]] == "constant" & length(ncase_nexp[[2]]) != 1)
+            stop(cli::format_error(c("x" = "For constant value, please provide a single value.")))
+        if (ncase_nexp[[1]] == "uniform" & length(ncase_nexp[[2]]) != 2)
+            stop(cli::format_error(c("i" = "For uniform distribution, please provide vector of lower and upper limits.")))
+        if (ncase_nexp[[1]] == "uniform" & ncase_nexp[[2]][1] >= ncase_nexp[[2]][2])
+            stop(cli::format_error(c("x" = "Lower limit of your uniform distribution is greater than upper limit.")))
+        if (ncase_nexp[[1]] == "triangular" & length(ncase_nexp[[2]]) != 3)
+            stop(cli::format_error(c("i" = "For triangular distribution, please provide vector of lower, upper limits, and mode.")))
+        if (ncase_nexp[[1]] == "triangular" & ((ncase_nexp[[2]][1] > ncase_nexp[[2]][3]) |
+                                               (ncase_nexp[[2]][2] < ncase_nexp[[2]][3])))
+            stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
+        if (ncase_nexp[[1]] == "trapezoidal" & length(ncase_nexp[[2]]) != 4)
+            stop(cli::format_error(c("i" = "For trapezoidal distribution, please provide vector of lower limit, lower mode, upper mode, and upper limit.")))
+        if (ncase_nexp[[1]] == "trapezoidal" & ((ncase_nexp[[2]][1] > ncase_nexp[[2]][2]) |
+                                                (ncase_nexp[[2]][2] > ncase_nexp[[2]][3]) |
+                                                (ncase_nexp[[2]][3] > ncase_nexp[[2]][4])))
+            stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
+        if (ncase_nexp[[1]] == "normal" & (length(ncase_nexp[[2]]) != 4))
+            stop(cli::format_error(c("i" = "For truncated normal distribution, please provide vector of lower and upper bounds, mean and sd.")))
+        if (ncase_nexp[[1]] == "normal" & length(ncase_nexp[[2]]) == 4 &
+            ((ncase_nexp[[2]][1] >= ncase_nexp[[2]][2]) | (ncase_nexp[[2]][1] < 0)))
+            stop(cli::format_error(c("i" = "For truncated normal distribution, please provide sensible values for lower and upper bounds (lower bound >=0; lower limit < upper limit).")))
+        if ((ncase_nexp[[1]] == "constant" | ncase_nexp[[1]] == "uniform" |
+             ncase_nexp[[1]] == "triangular" | ncase_nexp[[1]] == "trapezoidal") &
+            !all(ncase_nexp[[2]] >= 0 & ncase_nexp[[2]] <= 1))
+            stop(cli::format_error(c("x" = "Selection probability should be between 0 and 1.")))
+        if (ncase_nexp[[1]] == "beta" & (ncase_nexp[[2]][1] < 0 | ncase_nexp[[2]][1] < 0))
+            stop(cli::format_error(c("x" = "Wrong arguments for your beta distribution. Alpha and Beta should be > 0.")))
+        if (ncase_nexp[[1]] == "beta" & length(ncase_nexp[[2]]) != 2)
+            stop(cli::format_error(c("x" = "Wrong arguments for your beta distribution.")))
+    }
+
+
+    cli::cli_alert_info("Calculating observed measures")
+    if (!inherits(case, "episensr.probsens")) {
+        if (inherits(case, c("table", "matrix")))
+            tab <- case
+        else {
+            tab_df <- table(case, exposed)
+            tab <- tab_df[2:1, 2:1]
+        }
+
+        a <- as.numeric(tab[1, 1])
+        b <- as.numeric(tab[1, 2])
+        c <- as.numeric(tab[2, 1])
+        d <- as.numeric(tab[2, 2])
+
+        obs_or <- (a / b) / (c / d)
+        se_log_obs_or <- sqrt(1 / a + 1 / b + 1 / c + 1 / d)
+        lci_obs_or <- exp(log(obs_or) - qnorm(1 - alpha / 2) * se_log_obs_or)
+        uci_obs_or <- exp(log(obs_or) + qnorm(1 - alpha / 2) * se_log_obs_or)
+    } else {
+        a <- as.numeric(case[[3]][, 1])
+        b <- as.numeric(case[[3]][, 2])
+        c <- as.numeric(case[[3]][, 3])
+        d <- as.numeric(case[[3]][, 4])
+
+        obs_or <- (a / b) / (c / d)
+        se_log_obs_or <- sqrt(1/a + 1/b + 1/c + 1/d)
+        lci_obs_or <- exp(log(obs_or) - qnorm(1 - alpha/2) * se_log_obs_or)
+        uci_obs_or <- exp(log(obs_or) + qnorm(1 - alpha/2) * se_log_obs_or)
+
+        reps <- case[[4]]
+    }
+
+    draws <- matrix(NA, nrow = reps, ncol = 8)
+    colnames(draws) <- c("or_sel", "corr_OR", "reps", "tot_OR",
+                         "A1", "B1", "C1", "D1")
+
+    cli::cli_progress_step("Assign probability distributions", spinner = TRUE)
+    if (!is.null(or_parms[[2]])) {
+        or_sel <- c(reps, or_parms[[2]])
+
+        if (or_parms[[1]] == "constant") {
+            draws[, 1] <- or_parms[[2]]
+        }
+        if (or_parms[[1]] == "uniform") {
+            draws[, 1] <- do.call(runif, as.list(or_sel))
+        }
+        if (or_parms[[1]] == "triangular") {
+            draws[, 1] <- do.call(triangle::rtriangle, as.list(or_sel))
+        }
+        if (or_parms[[1]] == "trapezoidal") {
+            draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(or_sel))
+        }
+        if (or_parms[[1]] == "log-logistic") {
+            draws[, 1] <- do.call(actuar::rllogis, as.list(or_sel))
+        }
+        if (or_parms[[1]] == "log-normal") {
+            draws[, 1] <- do.call(rlnorm, as.list(or_sel))
+        }
+    } else {
+        bias_factor <- matrix(NA, nrow = reps, ncol = 4)
+
+        case1 <- c(reps, case_exp[[2]])
+        case0 <- c(reps, case_nexp[[2]])
+        ctrl1 <- c(reps, ncase_exp[[2]])
+        ctrl0 <- c(reps, ncase_nexp[[2]])
+
+        if (case_exp[[1]] == "constant") {
+            bias_factor[, 1] <- case_exp[[2]]
+        }
+        if (case_exp[[1]] == "uniform") {
+            bias_factor[, 1] <- do.call(runif, as.list(case1))
+        }
+        if (case_exp[[1]] == "triangular") {
+            bias_factor[, 1] <- do.call(triangle::rtriangle, as.list(case1))
+        }
+        if (case_exp[[1]] == "trapezoidal") {
+            bias_factor[, 1] <- do.call(trapezoid::rtrapezoid, as.list(case1))
+        }
+        if (case_exp[[1]] == "normal") {
+            bias_factor[, 1] <- do.call(truncnorm::rtruncnorm, as.list(case1))
+        }
+        if (case_exp[[1]] == "beta") {
+            bias_factor[, 1] <- do.call(rbeta, as.list(case1))
+        }
+
+        if (case_nexp[[1]] == "constant") {
+            bias_factor[, 2] <- case_nexp[[2]]
+        }
+        if (case_nexp[[1]] == "uniform") {
+            bias_factor[, 2] <- do.call(runif, as.list(case0))
+        }
+        if (case_nexp[[1]] == "triangular") {
+            bias_factor[, 2] <- do.call(triangle::rtriangle, as.list(case0))
+        }
+        if (case_nexp[[1]] == "trapezoidal") {
+            bias_factor[, 2] <- do.call(trapezoid::rtrapezoid, as.list(case0))
+        }
+        if (case_nexp[[1]] == "normal") {
+            bias_factor[, 2] <- do.call(truncnorm::rtruncnorm, as.list(case0))
+        }
+        if (case_nexp[[1]] == "beta") {
+            bias_factor[, 2] <- do.call(rbeta, as.list(case0))
+        }
+
+        if (ncase_exp[[1]] == "constant") {
+            bias_factor[, 3] <- ncase_exp[[2]]
+        }
+        if (ncase_exp[[1]] == "uniform") {
+            bias_factor[, 3] <- do.call(runif, as.list(ctrl1))
+        }
+        if (ncase_exp[[1]] == "triangular") {
+            bias_factor[, 3] <- do.call(triangle::rtriangle, as.list(ctrl1))
+        }
+        if (ncase_exp[[1]] == "trapezoidal") {
+            bias_factor[, 3] <- do.call(trapezoid::rtrapezoid, as.list(ctrl1))
+        }
+        if (ncase_exp[[1]] == "normal") {
+            bias_factor[, 3] <- do.call(truncnorm::rtruncnorm, as.list(ctrl1))
+        }
+        if (ncase_exp[[1]] == "beta") {
+            bias_factor[, 3] <- do.call(rbeta, as.list(ctrl1))
+        }
+
+        if (ncase_nexp[[1]] == "constant") {
+            bias_factor[, 4] <- ncase_nexp[[2]]
+        }
+        if (ncase_nexp[[1]] == "uniform") {
+            bias_factor[, 4] <- do.call(runif, as.list(ctrl0))
+        }
+        if (ncase_nexp[[1]] == "triangular") {
+            bias_factor[, 4] <- do.call(triangle::rtriangle, as.list(ctrl0))
+        }
+        if (ncase_nexp[[1]] == "trapezoidal") {
+            bias_factor[, 4] <- do.call(trapezoid::rtrapezoid, as.list(ctrl0))
+        }
+        if (ncase_nexp[[1]] == "normal") {
+            bias_factor[, 4] <- do.call(truncnorm::rtruncnorm, as.list(ctrl0))
+        }
+        if (ncase_nexp[[1]] == "beta") {
+            bias_factor[, 4] <- do.call(rbeta, as.list(ctrl0))
+        }
+
+        draws[, 1] <- (bias_factor[, 1] * bias_factor[, 4]) / (bias_factor[, 2] * bias_factor[, 3])
+    }
+
+    cli::cli_progress_step("Simple bias analysis", spinner = TRUE)
+    draws[, 3] <- runif(reps)
+
+    draws[, 2] <- obs_or / draws[, 1]
+
+    cli::cli_progress_step("Incorporating random error", spinner = TRUE)
+    draws[, 4] <- exp(log(draws[, 2]) -
+                      qnorm(draws[, 3]) *
+                      ((log(uci_obs_or) - log(lci_obs_or)) /
+                       (qnorm(.975) * 2)))
+
+    draws[, 5] <- a / draws[, 1]
+    draws[, 6] <- b / draws[, 1]
+    draws[, 7] <- c / draws[, 1]
+    draws[, 8] <- d / draws[, 1]
+
+    corr_OR <- c(median(draws[, 2], na.rm = TRUE),
+                 quantile(draws[, 2], probs = .025, na.rm = TRUE),
+                 quantile(draws[, 2], probs = .975, na.rm = TRUE))
+    tot_OR <- c(median(draws[, 4], na.rm = TRUE),
+                quantile(draws[, 4], probs = .025, na.rm = TRUE),
+                quantile(draws[, 4], probs = .975, na.rm = TRUE))
+
+    if (!inherits(case, "episensr.probsens")) {
+        tab <- tab
+        rmat <- matrix(c(obs_or, lci_obs_or, uci_obs_or), nrow = 1)
+        rownames(rmat) <- c("Observed Odds Ratio:")
+        colnames(rmat) <- c(" ",
+                            paste(100 * (alpha / 2), "%", sep = ""),
+                            paste(100 * (1 - alpha / 2), "%", sep = ""))
+    } else {
+        tab <- case[[1]]
+        rmat <- case[[2]]
+    }
+    if (is.null(rownames(tab)))
+        rownames(tab) <- paste("Row", 1:2)
+    if (is.null(colnames(tab)))
+        colnames(tab) <- paste("Col", 1:2)
+    rmatc <- rbind(corr_OR, tot_OR)
+    rownames(rmatc) <- c("           Odds Ratio -- systematic error:",
+                         "Odds Ratio -- systematic and random error:")
+    colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
+    res <- list(obs_data = tab,
+                obs_measures = rmat,
+                adj_measures = rmatc,
+                sim_df = as.data.frame(draws[, -3]),
+                reps = reps,
+                fun = "probsens.sel")
+    class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }
