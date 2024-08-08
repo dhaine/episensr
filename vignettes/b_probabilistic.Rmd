@@ -15,13 +15,13 @@ Bias parameters are not always known.
 A probabilistic sensitivity analysis allows to specify a probability
 distribution for the bias parameters and then, through Monte Carlo sampling, to
 generate a frequency distribution of the corrected estimates of effect.
-`episensr` has a set of `probsens` functions for this:
+`episensr` has a set of `probsens()` functions for this:
 
-* `probsens.sel`: Probabilistic analysis for selection bias
-* `probsens_conf`: Probabilistic analysis for unmeasured confounding
-* `probsens`: Probabilistic analysis for misclassification
-* `probsens.irr.conf`: Probabilistic analysis for unmeasured confounding of person-time data
-* `probsens.irr`: Probabilistic analysis for exposure misclassification of person-time data
+* `probsens.sel()`: Probabilistic analysis for selection bias
+* `probsens_conf()`: Probabilistic analysis for unmeasured confounding
+* `probsens()`: Probabilistic analysis for misclassification
+* `probsens.irr.conf()`: Probabilistic analysis for unmeasured confounding of person-time data
+* `probsens.irr()`: Probabilistic analysis for exposure misclassification of person-time data
 
 The available distributions for the various bias parameters throughout these
 functions are:
@@ -30,6 +30,7 @@ functions are:
 * Uniform,
 * Triangular,
 * Trapezoidal,
+* Normal
 * Logit-logistic,
 * Logit-normal, and
 * Beta.
@@ -71,7 +72,7 @@ smoke.nd
 The output gives the 2X2 table, the observed measures of association, and the
 corrected measures of association.
 
-We saved the `probsens` analysis in a new object `smoke.nd`.
+We saved the `probsens()` analysis in a new object `smoke.nd`.
 We can see its elements with the function `str()`:
 
 ```{r str}
@@ -105,9 +106,6 @@ classification (i.e. Se ~50% and Sp ~50%), you can obtain negative cell values.
 
 Note that a message is provided if the chosen distribution(s) lead to negative
 cell values, with the number of iterations affected.
-By default, these iterations are deleted from the simulation.
-However, user can keep these iterations which will be set to zero by setting
-`discard` to `FALSE`.
 It is recommended to shift distributions upwards if more than 10% of the
 iterations are deleted ([Fox et al., 2005](https://doi.org/10.1093/ije/dyi184)).
 
@@ -149,7 +147,7 @@ quantile(x, c(0.025, 0.975))
 plot(density(x))
 ```
 
-Now, let's run `probsens.conf` with 50,000 iterations:
+Now, let's run `probsens_conf()` with 50,000 iterations:
 
 ```{r probsens-conf}
 set.seed(123)
@@ -163,14 +161,17 @@ greenland <- probsens_conf(matrix(c(45, 94, 257, 945),
 greenland
 ```
 
-The median adjusted OR is 1.84 [1.21,2.82].
-The ratio of the two 95% CI bounds is 2.82/1.21 = `r round(2.82/1.21, 2)`.
+The median adjusted OR is 1.87 [1.09,3.25].
+The ratio of the two 95% CI bounds is 3.25/1.09 = `r round(3.25/1.09, 2)`.
 The ratio from the conventional 95% confidence limits was 2.57/1.20 = `r round(2.57/1.20, 2)`.
-These 2 ratios are pretty close, and therefore our uncertainty about confounding is
-similar to our uncertainty about random error.
+While the adjusted ratio is 50% larger, it's still does not include 1.
 
-You can plot the bias-adjusted OR including both systematic and random error:
+You can plot the bias-adjusted OR including both systematic and random error, and even get a forest plot:
 
 ```{r probsens_conf_plot, fig.cap='Distribution of the 50,000 confounder-adjusted odds ratios.',fig.width=6,fig.height=4, eval=FALSE}
-#plot(greenland, "rr_tot")
+plot(greenland, "rr_tot")
+```
+
+```{r probsens_forest_plot, fig.cap='Forest plot of odds ratios.',fig.width=6,fig.height=4, eval=FALSE}
+plot(greenland, "forest_or") + theme_classic()
 ```
