@@ -30,6 +30,8 @@
 #' \item{bias.parms}{Input bias parameters.}
 #' \item{labels}{Variables' labels.}
 #'
+#' @family selection
+#'
 #' @references Greenland S. Quantifying biases in causal models: classical
 #' confounding vs. collider-stratification bias. Epidemiology 2003;14:300-6.
 #' @examples
@@ -39,46 +41,46 @@
 mbias <- function(or,
                   var = c("y", "x", "a", "b", "m")) {
     if (is.null(or))
-        stop("Missing input bias parameters.")
+        stop(cli::format_error(c("x" = "Missing input bias parameters.")))
     else or <- or
     if (!is.vector(or))
-        stop("The argument or should be a vector of length 5")
+        stop(cli::format_error(c("i" = "The argument or should be a vector of length 5.")))
     if (length(or) != 5)
-        stop("The argument or should be made of 5 components in the following order: (1) Odds ratio between A and the exposure E, (2) Odds ratio between A and the collider M, (3) Odds ratio between B and the collider M, (4) Odds ratio between B and the outcome Y, and (5) Odds ratio observed between the exposure E and the outcome Y.")
+        stop(cli::format_error(c("i" = "The argument or should be made of 5 components in the following order: (1) Odds ratio between A and the exposure E, (2) Odds ratio between A and the collider M, (3) Odds ratio between B and the collider M, (4) Odds ratio between B and the outcome Y, and (5) Odds ratio observed between the exposure E and the outcome Y.")))
     if (!all(or >= 0))
-        stop("Odds ratios should be greater than 0.")
+        stop(cli::format_error(c("x" = "Odds ratios should be greater than 0.")))
 
-    or.ae <- or[1]
-    or.am <- or[2]
-    or.bm <- or[3]
-    or.by <- or[4]
-    or.ey <- or[5]
+    or_ae <- or[1]
+    or_am <- or[2]
+    or_bm <- or[3]
+    or_by <- or[4]
+    or_ey <- or[5]
 
-    mbias.me <- (or.ae * or.am * (1 / (1 + sqrt(or.ae * or.am))) +
-                     1 - (1 / (1 + sqrt(or.ae * or.am)))) /
-        ((or.ae * (1 / (1 + sqrt(or.ae * or.am))) +
-              1 - (1 / (1 + sqrt(or.ae * or.am)))) *
-             (or.am * (1 / (1 + sqrt(or.ae * or.am))) +
-                  1 - (1 / (1 + sqrt(or.ae * or.am)))))
-    mbias.my <- (or.bm * or.by * (1 / (1 + sqrt(or.bm * or.by))) +
-                 1 - (1 / (1 + sqrt(or.bm * or.by)))) /
-        ((or.bm * (1 / (1 + sqrt(or.bm * or.by))) +
-          1 - (1 / (1 + sqrt(or.bm * or.by)))) *
-         (or.by * (1 / (1 + sqrt(or.bm * or.by))) +
-          1 - (1 / (1 + sqrt(or.bm * or.by)))))
-    mbias.ey <- (mbias.me * mbias.my * (1 / (1 + sqrt(mbias.me * mbias.my))) +
-                 1 - (1 / (1 + sqrt(mbias.me * mbias.my)))) /
-        ((mbias.me * (1 / (1 + sqrt(mbias.me * mbias.my))) +
-          1 - (1 / (1 + sqrt(mbias.me * mbias.my)))) *
-         (mbias.my * (1 / (1 + sqrt(mbias.me * mbias.my))) +
-          1 - (1 / (1 + sqrt(mbias.me * mbias.my)))))
+    mbias_me <- (or_ae * or_am * (1 / (1 + sqrt(or_ae * or_am))) +
+                     1 - (1 / (1 + sqrt(or_ae * or_am)))) /
+        ((or_ae * (1 / (1 + sqrt(or_ae * or_am))) +
+              1 - (1 / (1 + sqrt(or_ae * or_am)))) *
+             (or_am * (1 / (1 + sqrt(or_ae * or_am))) +
+                  1 - (1 / (1 + sqrt(or_ae * or_am)))))
+    mbias_my <- (or_bm * or_by * (1 / (1 + sqrt(or_bm * or_by))) +
+                 1 - (1 / (1 + sqrt(or_bm * or_by)))) /
+        ((or_bm * (1 / (1 + sqrt(or_bm * or_by))) +
+          1 - (1 / (1 + sqrt(or_bm * or_by)))) *
+         (or_by * (1 / (1 + sqrt(or_bm * or_by))) +
+          1 - (1 / (1 + sqrt(or_bm * or_by)))))
+    mbias_ey <- (mbias_me * mbias_my * (1 / (1 + sqrt(mbias_me * mbias_my))) +
+                 1 - (1 / (1 + sqrt(mbias_me * mbias_my)))) /
+        ((mbias_me * (1 / (1 + sqrt(mbias_me * mbias_my))) +
+          1 - (1 / (1 + sqrt(mbias_me * mbias_my)))) *
+         (mbias_my * (1 / (1 + sqrt(mbias_me * mbias_my))) +
+          1 - (1 / (1 + sqrt(mbias_me * mbias_my)))))
 
-    or.corr <- or.ey / mbias.ey
+    or_corr <- or_ey / mbias_ey
 
     res <- list(model = "mbias",
-                mbias.parms = c(mbias.me, mbias.my, mbias.ey),
-                adj.measures = or.corr,
-                bias.parms = or,
+                mbias_parms = c(mbias_me, mbias_my, mbias_ey),
+                adj_measures = or_corr,
+                bias_parms = or,
                 labels = var)
     class(res) <- c("mbias", "list")
     res

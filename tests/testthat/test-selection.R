@@ -74,8 +74,8 @@ test_that("M-bias OR positive", {
 
 test_that("M-bias OR is correct", {
     model <- mbias(or = c(2, 5.4, 2.5, 1.5, 1))
-    expect_equal(model$adj.measures, 0.9938, tolerance = 1e-4, scale = 1)
-    expect_equal(model$mbias.parms[1], 1.3149, tolerance = 1e-4, scale = 1)
-    expect_equal(model$mbias.parms[2], 1.0952, tolerance = 1e-4, scale = 1)
-    expect_equal(model$mbias.parms[3], 1.0062, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures, 0.9938, tolerance = 1e-4, scale = 1)
+    expect_equal(model$mbias_parms[1], 1.3149, tolerance = 1e-4, scale = 1)
+    expect_equal(model$mbias_parms[2], 1.0952, tolerance = 1e-4, scale = 1)
+    expect_equal(model$mbias_parms[3], 1.0062, tolerance = 1e-4, scale = 1)
 })

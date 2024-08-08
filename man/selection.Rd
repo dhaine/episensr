@@ -131,4 +131,8 @@ ncase_nexp = list("beta", c(377, 282.9)))
 Fox, M.P, MacLehose, R.F., Lash, T.L., 2021 \emph{Applying Quantitative
 Bias Analysis to Epidemiologic Data}, pp.90--91, 274--279, Springer.
 }
+\seealso{
+Other selection: 
+\code{\link{mbias}()}
+}
 \concept{selection}

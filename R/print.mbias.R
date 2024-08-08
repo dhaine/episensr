@@ -12,11 +12,11 @@ print.mbias <- function(x, ...) {
     cat("Correction for selection bias:",
         "\n----------------------------------------",
         "\nOR observed between the exposure and the outcome:",
-        x$bias.parms[5],
+        x$bias_parms[5],
         "\n             Maximum bias from conditioning on M:",
-        x$mbias.parms[3],
+        x$mbias_parms[3],
         "\n                 OR corrected for selection bias:",
-        x$adj.measures,
+        x$adj_measures,
         "\n")
     invisible(NULL)
 }
