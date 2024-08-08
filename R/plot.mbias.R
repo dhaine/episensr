@@ -10,6 +10,8 @@
 #'
 #' @return A DAG for selection bias caused by M bias.
 #'
+#' @family visualization
+#'
 #' @seealso \code{\link{mbias}}
 #'
 #' @examples

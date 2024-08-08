@@ -29,4 +29,9 @@ var = c("HIV", "Circumcision", "Muslim", "Low CD4", "Participation")))
 }
 \seealso{
 \code{\link{mbias}}
+
+Other visualization: 
+\code{\link{plot.episensr.booted}()},
+\code{\link{plot.episensr.probsens}()}
 }
+\concept{visualization}
