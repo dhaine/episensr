@@ -75,3 +75,12 @@ confounders.evalue(est = -0.42, sd = 0.14, type = "diff_RR")
 VanderWeele T.J and Ding P. Sensitivity analysis in observational research:
 Introducing the E-value. Annals of Internal Medicine 2017;167:268-274.
 }
+\seealso{
+Other confounding: 
+\code{\link{confounders}()},
+\code{\link{confounders.array}()},
+\code{\link{confounders.ext}()},
+\code{\link{confounders.limit}()},
+\code{\link{probsens.irr.conf}()}
+}
+\concept{confounding}

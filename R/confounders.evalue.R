@@ -27,6 +27,8 @@
 #' @return A matrix with the observed point estimate and closest confidence interval to
 #' the null hypothesis, expressed as a relative risk, and their corresponding E-value.
 #'
+#' @family confounding
+#'
 #' @references VanderWeele T.J and Ding P. Sensitivity analysis in observational research:
 #' Introducing the E-value. Annals of Internal Medicine 2017;167:268-274.
 #'
@@ -61,35 +63,35 @@ confounders.evalue <- function(est,
                                type = c("RR", "ORc", "HRc", "diff_RR", "diff_OR"),
                                true_est = 1) {
     if (length(type) > 1)
-        stop("Choose between RR, ORc, HRc, diff_RR, or diff_OR implementation.")
+        stop(cli::format_error(c("x" = "Choose between RR, ORc, HRc, diff_RR, or diff_OR implementation.")))
 
     if (!(type %in% c("diff_RR", "diff_OR")) & est < 0)
-        stop("Association cannot be negative.")
+        stop(cli::format_error(c("x" = "Association cannot be negative.")))
 
     if ((type != "diff_RR" | type != "diff_OR") & est == 1)
-        stop("Association = 1! No E-value.")
+        stop(cli::format_error(c("x" = "Association = 1! No E-value.")))
 
     if (!is.null(lower_ci) & !is.null(upper_ci)) {
         if (!is.na(lower_ci) & !is.na(upper_ci) & lower_ci > upper_ci)
-            stop("Lower confidence interval should be less than the upper limit.")
+            stop(cli::format_error(c("i" = "Lower confidence interval should be less than the upper limit.")))
         if ((type != "diff") & (!is.na(lower_ci) & est < lower_ci) | (!is.na(upper_ci) & est > upper_ci))
-            stop("Provided association is not within provided confidence interval.")
+            stop(cli::format_error(c("i" = "Provided association is not within provided confidence interval.")))
         if ((type != "diff_RR" | type != "diff_OR") & true_est == 1 &
             (!is.na(lower_ci) & lower_ci < 1) & (!is.na(upper_ci) & 1 < upper_ci))
-            stop("True association within provided confidence interval: E-value = 1.")
+            stop(cli::format_error(c("i" = "True association within provided confidence interval: E-value = 1.")))
     }
 
     if ((type != "diff_RR" | type != "diff_OR") & true_est < 0)
-        stop("True association should not be negative.")
+        stop(cli::format_error(c("x" = "True association should not be negative.")))
 
     if (!inherits(est, "numeric"))
-        stop("Please provide a valid value for association measure.")
+        stop(cli::format_error(c("x" = "Please provide a valid value for association measure.")))
 
     if ((type == "diff_RR" | type == "diff_OR") & is.na(sd))
-        stop("Please provide sd.")
+        stop(cli::format_error(c("i" = "Please provide sd.")))
 
     if (((type == "diff_RR" | type == "diff_OR") & !is.na(sd)) & sd < 0)
-        stop("Standardized SE cannot be negative.")
+        stop(cli::format_error(c("x" = "Standardized SE cannot be negative.")))
 
     if ((type != "diff_RR" | type != "diff_OR") & (!is.null(lower_ci) | !is.null(upper_ci))) {
         closest_ci <- closest(c(lower_ci, upper_ci), true_est)

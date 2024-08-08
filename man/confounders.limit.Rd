@@ -42,6 +42,7 @@ Covariates. \emph{Epidemiology} 1(3): 239--246.
 Other confounding: 
 \code{\link{confounders}()},
 \code{\link{confounders.array}()},
+\code{\link{confounders.evalue}()},
 \code{\link{confounders.ext}()},
 \code{\link{probsens.irr.conf}()}
 }
