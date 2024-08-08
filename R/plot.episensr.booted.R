@@ -1,15 +1,19 @@
 #' Plot of bootstrap simulation output for selection and misclassification bias
 #'
-#' This takes an episensr bootstrap object and produces the plot of bootstrap replicates for selection or misclassification bias of the variable of interest, either relative risk or odds ratio. It also draws the confidence interval.
+#' This takes an episensr bootstrap object and produces the plot of bootstrap
+#' replicates for selection or misclassification bias of the variable of interest,
+#' either relative risk or odds ratio. It also draws the confidence interval.
 #'
 #' @param x An object of class "episensr.booted" returned from the episensr bootstrap generation function.
 #' @param association Choice between bias adjusted relative risk (rr) and odds ratio (or).
 #' @param ... Other unused arguments.
 #'
-#' @seealso \code{\link{boot.bias}, \link{boot}, \link{selection}, \link{misclassification}}
+#' @family visualization
+#'
+#' @seealso \code{\link{boot.bias}, \link{boot}, \link{selection}, \link{misclass}}
 #'
 #' @examples
-#' misclass_eval <- misclassification(matrix(c(215, 1449, 668, 4296),
+#' misclass_eval <- misclass(matrix(c(215, 1449, 668, 4296),
 #' dimnames = list(c("Breast cancer+", "Breast cancer-"),
 #' c("Smoker+", "Smoker-")),
 #' nrow = 2, byrow = TRUE),
