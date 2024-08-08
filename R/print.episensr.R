@@ -28,7 +28,7 @@ print.episensr <- function(x, digits = getOption("digits"), ...) {
     } else if (class(x)[1] == "episensr.multiple") {
         cat("\nMultiple bias analysis\n")
         cat("---\n")
-        print.table(x$adj.measures, digits = digits, ...)
+        print.table(x$adj_measures, digits = digits, ...)
         invisible(NULL)
     } else if (class(x)[1] == "episensr.evalue") {
         cat("\n--E-value--\n")
@@ -36,9 +36,9 @@ print.episensr <- function(x, digits = getOption("digits"), ...) {
         invisible(NULL)
     } else if (class(x)[1] == "episensr.confounder") {
         cat("--Input bias parameters--\n")
-        print.table(x$bias.parms, digits = digits, ...)
+        print.table(x$bias_parms, digits = digits, ...)
         cat("---\n\n")
-        print.table(x$adj.measures, digits = digits, ...)
+        print.table(x$adj_measures, digits = digits, ...)
         invisible(NULL)
     }
 }
