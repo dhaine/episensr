@@ -6,8 +6,8 @@
 \usage{
 multiple.bias(
   x,
-  bias_function = c("selection", "misclassification", "confounders", "probsens.sel",
-    "probsens.conf", "probsens"),
+  bias_function = c("selection", "misclass", "confounders", "probsens.sel",
+    "probsens_conf", "probsens"),
   ...
 )
 }
@@ -15,7 +15,7 @@ multiple.bias(
 \item{x}{An object of class 'episensr' or 'episensr.probsens'.}
 
 \item{bias_function}{Bias function to be called. Choices between 'selection',
-'misclassification', 'confounders', 'probsens', 'probsens.sel', 'probsens.conf'.}
+'misclass', 'confounders', 'probsens', 'probsens.sel', 'probsens_conf'.}
 
 \item{...}{Additional arguments passed on to methods.}
 }
@@ -25,9 +25,9 @@ A list with the elements corresponding to the bias function called.
 \description{
 Extract the adjusted 2-by-2 table from an \code{episensr} function, so that it can
 be re-used into an other \code{episensr} function when performing multiple (combined)
-bias analysis.
-Allowed functions are: \code{selection}, \code{misclassification}, \code{confounders},
-\code{probsens}, \code{probsens.sel}, and \code{probsens.conf}.
+bias analyses.
+Allowed functions are: \code{selection}, \code{misclass}, \code{confounders},
+\code{probsens}, \code{probsens.sel}, and \code{probsens_conf}.
 }
 \details{
 For probabilistic bias analyses, median of cells are passed to the next function as
@@ -38,11 +38,11 @@ dat <- matrix(c(118, 832, 103, 884),
 dimnames = list(c("BC+", "BC-"), c("AD+", "AD-")), nrow = 2, byrow = TRUE)
 
 dat \%>\%
-misclassification(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) \%>\%
+misclass(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) \%>\%
 multiple.bias(., bias_function = "selection", bias_parms = c(.73, .61, .82, .76))
 }
 \seealso{
-\code{\link{selection}}, \code{\link{misclassification}},
+\code{\link{selection}}, \code{\link{misclass}},
 \code{\link{confounders}}, \code{\link{probsens}}, \code{\link{probsens.sel}},
-\code{\link{probsens.conf}}
+\code{\link{probsens_conf}}
 }
