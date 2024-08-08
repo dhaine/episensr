@@ -26,8 +26,7 @@ print.episensr <- function(x, digits = getOption("digits"), ...) {
         print.table(x$adj_measures, digits = digits, ...)
         invisible(NULL)
     } else if (class(x)[1] == "episensr.multiple") {
-        cat("\nMultiple bias analysis\n")
-        cat("---\n")
+        cli::cli_h1("Multiple bias analysis")
         print.table(x$adj_measures, digits = digits, ...)
         invisible(NULL)
     } else if (class(x)[1] == "episensr.evalue") {

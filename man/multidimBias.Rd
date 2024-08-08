@@ -50,12 +50,12 @@ is made of 3 vectors of the same length:
 }
 \value{
 A list with elements:
-\item{obs.data}{The analyzed 2 x 2 table from the observed data.}
-\item{obs.measures}{A table of odds ratios and relative risk with confidence
+\item{obs_data}{The analyzed 2 x 2 table from the observed data.}
+\item{obs_measures}{A table of odds ratios and relative risk with confidence
 intervals.}
-\item{adj.measures}{Multidimensional corrected relative risk and/or odds ratio
+\item{adj_measures}{Multidimensional corrected relative risk and/or odds ratio
 data.}
-\item{bias.parms}{Bias parameters.}
+\item{bias_parms}{Bias parameters.}
 }
 \description{
 Multidimensional sensitivity analysis for different sources of bias,
@@ -69,18 +69,21 @@ nrow = 2, byrow = TRUE),
 type = "exposure",
 se = c(1, 1, 1, .9, .9, .9, .8, .8, .8),
 sp = c(1, .9, .8, 1, .9, .8, 1, .9, .8))
+
 multidimBias(matrix(c(45, 94, 257, 945),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "outcome",
 se = c(1, 1, 1, .9, .9, .9, .8, .8, .8),
 sp = c(1, .9, .8, 1, .9, .8, 1, .9, .8))
+
 multidimBias(matrix(c(105, 85, 527, 93),
 dimnames = list(c("HIV+", "HIV-"), c("Circ+", "Circ-")),
 nrow = 2, byrow = TRUE),
 type = "confounder",
 bias_parms = list(seq(.72, .92, by = .02),
 seq(.01, .11, by = .01), seq(.13, 1.13, by = .1)))
+
 multidimBias(matrix(c(136, 107, 297, 165),
 dimnames = list(c("Uveal Melanoma+", "Uveal Melanoma-"),
 c("Mobile Use+", "Mobile Use -")),
