@@ -172,7 +172,7 @@ test_that("probsens.sel has correct arguments", {
                           multiple.bias(., bias_function = "probsens.sel"))
          })
 
-test_that("probsens.conf has correct arguments", {
+test_that("probsens_conf has correct arguments", {
              set.seed(123)
              expect_error(chien %>%
                           probsens(., type = "exposure", reps = 1000,
