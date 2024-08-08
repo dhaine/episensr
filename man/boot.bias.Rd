@@ -31,7 +31,7 @@ It then generates a confidence interval of the parameter, by first order normal 
 Replicates giving negative cell(s) in the adjusted 2-by-2 table are silently ignored.
 }
 \examples{
-misclass_eval <- misclassification(matrix(c(215, 1449, 668, 4296),
+misclass_eval <- misclass(matrix(c(215, 1449, 668, 4296),
 dimnames = list(c("Breast cancer+", "Breast cancer-"),
 c("Smoker+", "Smoker-")),
 nrow = 2, byrow = TRUE),
@@ -42,5 +42,5 @@ set.seed(123)
 boot.bias(misclass_eval)
 }
 \seealso{
-\code{\link{boot}, \link{selection}, \link{misclassification}}
+\code{\link{boot}, \link{selection}, \link{misclass}}
 }

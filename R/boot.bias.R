@@ -18,10 +18,10 @@
 #' \item{ci}{Confidence intervals for the bias adjusted association measures.}
 #' \item{conf}{Confidence interval.}
 #'
-#' @seealso \code{\link{boot}, \link{selection}, \link{misclassification}}
+#' @seealso \code{\link{boot}, \link{selection}, \link{misclass}}
 #'
 #' @examples
-#' misclass_eval <- misclassification(matrix(c(215, 1449, 668, 4296),
+#' misclass_eval <- misclass(matrix(c(215, 1449, 668, 4296),
 #' dimnames = list(c("Breast cancer+", "Breast cancer-"),
 #' c("Smoker+", "Smoker-")),
 #' nrow = 2, byrow = TRUE),
@@ -37,27 +37,26 @@ boot.bias <- function(bias_model,
                       ci_type = c("norm", "perc")
                       ) {
     if (!inherits(bias_model, "episensr.boot"))
-        stop('Not an episensr.boot class object.')
+        stop(cli::format_error(c("x" = 'Not an episensr.boot class object.')))
     if (R < 1)
-        stop('Please provide a sensible number of replicates to run.')
+        stop(cli::format_error(c("i" = 'Please provide a sensible number of replicates to run.')))
 
     model <- bias_model$model
     if (model == "misclassification") type <- bias_model$type
-    obs_table <- bias_model$obs.data
+    obs_table <- bias_model$obs_data
     obs_df <- callback_df(data.frame(x = gl(2, 1), y = gl(2, 2)),
                           c(obs_table[2, 2], obs_table[2, 1],
                             obs_table[1, 2], obs_table[1, 1]))
-    bias <- bias_model$bias.parms
+    bias <- bias_model$bias_parms
     ci_type <- match.arg(ci_type)
 
     if (model == "misclassification") {
         boot_fun <- function(data, indices) {
             d <- data[indices, ]
-            bias_boot <- tryCatch(
-                                  {
-                                      misclassification(d$y, d$x,
-                                                        type = type,
-                                                        bias_parms = bias)$adj.measures
+            bias_boot <- tryCatch({
+                                      misclass(d$y, d$x,
+                                               type = type,
+                                               bias_parms = bias)$adj_measures
                                   },
                 error = function(err) {
                     return(c(NA, NA))
@@ -70,10 +69,9 @@ boot.bias <- function(bias_model,
     if (model == "selection") {
         boot_fun <- function(data, indices) {
             d <- data[indices, ]
-            bias_boot <- tryCatch(
-                                  {
+            bias_boot <- tryCatch({
                                       selection(d$y, d$x,
-                                                bias_parms = bias)$adj.measures
+                                                bias_parms = bias)$adj_measures
                                   },
                 error = function(err) {
                     return(c(NA, NA))
@@ -112,6 +110,8 @@ boot.bias <- function(bias_model,
                                   conf = conf,
                                   type = "perc")
         rci <- rbind(c(bias_ci1[[4]][4:5]), c(bias_ci2[[4]][4:5]))
+        rownames(rci) <- c("RR:", "OR:")
+        colnames(rci) <- NULL
     }
 
     res <- list(model = model,

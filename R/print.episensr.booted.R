@@ -10,10 +10,12 @@
 #'
 #' @export
 print.episensr.booted <- function(x, digits = getOption("digits"), ...) {
-    cat(100*x$conf, "% confidence interval of the bias adjusted measures:",
-        "\n   RR:", x$ci[1, ],
-        "\n   OR:", x$ci[2, ],
-        "\n---\n",
-        "Based on", x$nrep, "bootstrap replicates\n")
+    cli::cli_h1("{100*x$conf}% confidence interval of the bias adjusted measures:")
+    cli::cli_par()
+    cat("\n   RR:", x$ci[1, ],
+        "\n   OR:", x$ci[2, ])
+    cli::cli_end()
+    cli::cli_rule()
+    cli::cli_text("Based on {x$nrep} bootstrap replicates")
     invisible(NULL)
 }
