@@ -28,25 +28,25 @@ This vignette provides some examples on how to use the package.
 
 Functions available in `episensr` are:
 
-* `selection`: Selection bias
-* `mbias`: Selection bias caused by M bias
-* `confounders`: Unmeasured or unknown confounders
-* `confounders.poly`: Polytomous confounders
-* `confounders.emm`: Unmeasured or unknown confounders in the presence of effect modification
-* `confounders.limit`: Bounding the bias limits of unmeasured confounding
-* `confounders.array`: Bias due to unmeasured confounders based on confounding imbalance among exposed and unexposed
-* `confounders.ext`: Unmeasured confounders based on external measurement
-* `confounders.evalue`: E-value due to unmeasured confounder
-* `misclass`: Disease or exposure misclassification
-* `misclassification_cov`: Covariate misclassification
-* `bootstrap`: Bootstrap resampling for selection and misclassification bias
-* `multidimBias`: Multidimensional bias analysis
-* `probsens.sel`: Probabilistic analysis for selection bias
-* `probsens_conf`: Probabilistic analysis for unmeasured confounding
-* `probsens`: Probabilistic analysis for misclassification
-* `probsens.irr.conf`: Probabilistic analysis for unmeasured confounding of person-time data
-* `probsens.irr`: Probabilistic analysis for exposure misclassification of person-time data
-* `multiple bias`: Multiple bias modeling
+* `selection()`: Selection bias
+* `mbias()`: Selection bias caused by M bias
+* `confounders()`: Unmeasured or unknown confounders
+* `confounders.poly()`: Polytomous confounders
+* `confounders.emm()`: Unmeasured or unknown confounders in the presence of effect modification
+* `confounders.limit()`: Bounding the bias limits of unmeasured confounding
+* `confounders.array()`: Bias due to unmeasured confounders based on confounding imbalance among exposed and unexposed
+* `confounders.ext()`: Unmeasured confounders based on external measurement
+* `confounders.evalue()`: E-value due to unmeasured confounder
+* `misclass()`: Disease or exposure misclassification
+* `misclass_cov()`: Covariate misclassification
+* `bootstrap()`: Bootstrap resampling for selection and misclassification bias
+* `multidimBias()`: Multidimensional bias analysis
+* `probsens.sel()`: Probabilistic analysis for selection bias
+* `probsens_conf()`: Probabilistic analysis for unmeasured confounding
+* `probsens()`: Probabilistic analysis for misclassification
+* `probsens.irr.conf()`: Probabilistic analysis for unmeasured confounding of person-time data
+* `probsens.irr()`: Probabilistic analysis for exposure misclassification of person-time data
+* `multiple.bias()`: Multiple bias modeling
 
 ## Selection Bias
 
@@ -65,7 +65,7 @@ The 2X2 table for this study is the following:
 | Cases    | 136         | 107    |
 | Controls | 297         | 165    |
 
-We use the function `selection` as shown below.
+We use the function `selection()` as shown below.
 
 ```{r selection}
 library(episensr)
@@ -82,7 +82,7 @@ input and output variables.
 You can check it out with `str()`.
 
 The 2X2 table is provided as a matrix and selection probabilities given with the
-argument `bias_parms`, a vector with the 4 probabilities (guided by the
+argument `bias_parms()`, a vector with the 4 probabilities (guided by the
 participation rates in cases and controls) in the following order: among cases
 exposed, among cases unexposed, among noncases exposed, and among noncases
 unexposed.
@@ -91,11 +91,11 @@ risk), followed by the corrected ones.
 
 ## Misclassification Bias
 
-Misclassification bias can be assessed with the function `misclass`.
+Misclassification bias can be assessed with the function `misclass()`.
 Confidence intervals for corrected association due to exposure misclassification
 are also directly available, or the estimates can also be bootstrapped (see below).
 The confidence intervals from the variance of the corrected odds ratio estimator in the
-`misclass` function are computed as in [Greenland et al.]( https://doi.org/10.1002/sim.4780070704)
+`misclass()` function are computed as in [Greenland et al.]( https://doi.org/10.1002/sim.4780070704)
 and [Chu et al.](https://doi.org/10.1016/j.annepidem.2006.04.001), when adjusting for
 exposure misclassification using sensitivity and specificity.
 Using the example in Chu et al. of a case-control study of cigarette smoking and
@@ -194,7 +194,7 @@ misclass(matrix(c(599, 4978, 31175, 391851),
 Note that using predictive values relates to the prevalence of the true exposure status, which might
 not be the same in every populations.
 
-Covariate misclassification is available via the function `misclassification.cov`.
+Covariate misclassification is available via the function `misclassification.cov()`.
 For example, the paper by [Berry et
 al.](https://www.bmj.com/content/330/7495/815/) looked if misclassification of
 the confounding variable _in vitro fertilization_ (IVF), a confounder, resulted
