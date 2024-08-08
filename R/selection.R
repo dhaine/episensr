@@ -396,7 +396,7 @@ vector of lower limit, lower mode, upper mode, and upper limit.")))
     colnames(draws) <- c("S1_1", "S0_1", "S1_0", "S0_0",
                          "A1", "B1", "C1", "D1",
                          "A0", "B0", "C0", "D0",
-                         "flag", "corr_RR", "cor_OR", "tot_RR", "tot_OR", "reps")
+                         "flag", "corr_RR", "corr_OR", "tot_RR", "tot_OR", "reps")
 
     case1 <- c(reps, case_exp[[2]])
     case0 <- c(reps, case_nexp[[2]])
