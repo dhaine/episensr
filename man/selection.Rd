@@ -11,8 +11,6 @@ probsens.sel(
   case,
   exposed,
   reps = 1000,
-  or_parms = list(dist = c("constant", "uniform", "triangular", "trapezoidal",
-    "log-logistic", "log-normal"), parms = NULL),
   case_exp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
     "beta"), parms = NULL),
   case_nexp = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
@@ -46,18 +44,6 @@ from above].}
 \item{alpha}{Significance level.}
 
 \item{reps}{Number of replications to run.}
-
-\item{or_parms}{List defining the selection bias odds. The first argument
-provides the probability distribution function (constant, uniform, triangular,
-trapezoidal, log-logistic or log-normal) and the second its parameters as a vector:
-  \enumerate{
-  \item constant: constant value,
-  \item uniform: min, max,
-  \item triangular: lower limit, upper limit, mode,
-  \item trapezoidal: min, lower mode, upper mode, max.
-  \item log-logistic: shape, rate. Must be strictly positive,
-  \item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
-  }}
 
 \item{case_exp}{If or_parms not provided, defines the selection probability
 among case exposed. The first argument provides the probability distribution
@@ -132,12 +118,6 @@ bias_parms = 0.43)
 # Population-based incidence estimates of uveal melanoma in Germany.
 # Supplementing cancer registry data by case-control data.
 # Eur J Cancer Prev 2006;15:165-70.
-set.seed(123)
-probsens.sel(matrix(c(136, 107, 297, 165),
-dimnames = list(c("Melanoma+", "Melanoma-"), c("Mobile+", "Mobile-")), nrow = 2, byrow = TRUE),
-reps = 20000,
-or_parms = list("triangular", c(.35, 1.1, .43)))
-
 set.seed(1234)
 probsens.sel(matrix(c(139, 114, 369, 377),
 dimnames = list(c("Melanoma+", "Melanoma-"), c("Mobile+", "Mobile-")), nrow = 2, byrow = TRUE),

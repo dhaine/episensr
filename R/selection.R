@@ -159,17 +159,6 @@ selection <- function(case,
 
 #' @rdname selection
 #' @param reps Number of replications to run.
-#' @param or_parms List defining the selection bias odds. The first argument
-#' provides the probability distribution function (constant, uniform, triangular,
-#' trapezoidal, log-logistic or log-normal) and the second its parameters as a vector:
-#'   \enumerate{
-#'   \item constant: constant value,
-#'   \item uniform: min, max,
-#'   \item triangular: lower limit, upper limit, mode,
-#'   \item trapezoidal: min, lower mode, upper mode, max.
-#'   \item log-logistic: shape, rate. Must be strictly positive,
-#'   \item log-normal: meanlog, sdlog. This is the mean and standard deviation on the log scale.
-#'   }
 #' @param case_exp If or_parms not provided, defines the selection probability
 #' among case exposed. The first argument provides the probability distribution
 #' function and the second its parameters as a vector:
@@ -199,12 +188,6 @@ selection <- function(case,
 #' # Population-based incidence estimates of uveal melanoma in Germany.
 #' # Supplementing cancer registry data by case-control data.
 #' # Eur J Cancer Prev 2006;15:165-70.
-#' set.seed(123)
-#' probsens.sel(matrix(c(136, 107, 297, 165),
-#' dimnames = list(c("Melanoma+", "Melanoma-"), c("Mobile+", "Mobile-")), nrow = 2, byrow = TRUE),
-#' reps = 20000,
-#' or_parms = list("triangular", c(.35, 1.1, .43)))
-#'
 #' set.seed(1234)
 #' probsens.sel(matrix(c(139, 114, 369, 377),
 #' dimnames = list(c("Melanoma+", "Melanoma-"), c("Mobile+", "Mobile-")), nrow = 2, byrow = TRUE),
@@ -218,10 +201,6 @@ selection <- function(case,
 probsens.sel <- function(case,
                          exposed,
                          reps = 1000,
-                         or_parms = list(dist = c("constant", "uniform",
-                                                  "triangular", "trapezoidal",
-                                                  "log-logistic", "log-normal"),
-                                         parms = NULL),
                          case_exp = list(dist = c("constant", "uniform",
                                                   "triangular", "trapezoidal",
                                                   "normal", "beta"),
@@ -243,43 +222,8 @@ probsens.sel <- function(case,
         stop(cli::format_error(c("x" = "Wrong number of replications: reps = {reps}",
                                  "i" = "reps must be >= 1")))
 
-    if (is.null(or_parms) & (is.null(case_exp) | is.null(case_nexp) | is.null(ncase_exp) | is.null(ncase_nexp)))
+    if (is.null(case_exp) | is.null(case_nexp) | is.null(ncase_exp) | is.null(ncase_nexp))
         stop(cli::format_error(c("x" = "Please provide selection probabilities.")))
-    if (!is.null(or_parms[[2]]) & (!is.null(case_exp[[2]]) |
-                                   !is.null(case_nexp[[2]]) | !is.null(ncase_exp[[2]]) |
-                                   !is.null(ncase_nexp[[2]])))
-        stop(cli::format_error(c("x" = "Please use either odds ratio of being selected or selection probabilities.")))
-    if (!is.list(or_parms))
-        stop(cli::format_error(c("i" = "Odds ratio for the probability of being selected should be a list.")))
-    else or_parms <- or_parms
-    if (!is.null(or_parms[[2]])) {
-        if (!(or_parms[[1]] %in% c("constant", "uniform", "triangular", "trapezoidal",
-                                   "log-logistic", "log-normal")))
-            stop(cli::format_error(c("x" = "Wrong distribution for selection odds ratio.")))
-        if (or_parms[[1]] == "constant" & length(or_parms[[2]]) != 1)
-            stop(cli::format_error(c("i" = "For constant value, please provide a single value.")))
-        if (or_parms[[1]] == "uniform" & length(or_parms[[2]]) != 2)
-            stop(cli::format_error(c("i" = "For uniform distribution, please provide vector of lower and upper limits.")))
-        if (or_parms[[1]] == "uniform" & or_parms[[2]][1] >= or_parms[[2]][2])
-            stop(cli::format_error(c("x" = "Lower limit of your uniform distribution is greater than upper limit.")))
-        if (or_parms[[1]] == "triangular" & length(or_parms[[2]]) != 3)
-            stop(cli::format_error(c("x" = "For triangular distribution, please provide vector of lower, upper limits, and mode.")))
-        if (or_parms[[1]] == "triangular" & ((or_parms[[2]][1] > or_parms[[2]][3]) |
-                                             (or_parms[[2]][2] < or_parms[[2]][3])))
-            stop(cli::format_error(c("x" = "Wrong arguments for your triangular distribution.")))
-        if (or_parms[[1]] == "trapezoidal" & length(or_parms[[2]]) != 4)
-            stop(cli::format_error(c("i" = "For trapezoidal distribution, please provide
-vector of lower limit, lower mode, upper mode, and upper limit.")))
-        if (or_parms[[1]] == "trapezoidal" & ((or_parms[[2]][1] > or_parms[[2]][2]) |
-                                              (or_parms[[2]][2] > or_parms[[2]][3]) |
-                                              (or_parms[[2]][3] > or_parms[[2]][4])))
-            stop(cli::format_error(c("x" = "Wrong arguments for your trapezoidal distribution.")))
-        if (or_parms[[1]] == "logit-logistic" & length(or_parms[[2]]) != 2)
-            stop(cli::format_error(c("i" = "For log-logistic distribution, please provide vector of location and scale_")))
-        if (or_parms[[1]] == "log-normal" & length(or_parms[[2]]) != 2)
-            stop(cli::format_error(c("i" = "For log-normal distribution, please provide vector of meanlog and sdlog_")))
-    }
-
     if (!is.null(case_exp[[1]]) & !is.list(case_exp))
         stop(cli::format_error(c("x" = "Please provide a list for case exposed parameters.")))
     if (!is.null(case_exp[[2]])) {
@@ -416,7 +360,6 @@ vector of lower limit, lower mode, upper mode, and upper limit.")))
     }
 
 
-    cli::cli_alert_info("Calculating observed measures")
     if (!inherits(case, "episensr.probsens")) {
         if (inherits(case, c("table", "matrix")))
             tab <- case
@@ -429,165 +372,165 @@ vector of lower limit, lower mode, upper mode, and upper limit.")))
         b <- as.numeric(tab[1, 2])
         c <- as.numeric(tab[2, 1])
         d <- as.numeric(tab[2, 2])
-
-        obs_or <- (a / b) / (c / d)
-        se_log_obs_or <- sqrt(1 / a + 1 / b + 1 / c + 1 / d)
-        lci_obs_or <- exp(log(obs_or) - qnorm(1 - alpha / 2) * se_log_obs_or)
-        uci_obs_or <- exp(log(obs_or) + qnorm(1 - alpha / 2) * se_log_obs_or)
     } else {
         a <- as.numeric(case[[3]][, 1])
         b <- as.numeric(case[[3]][, 2])
         c <- as.numeric(case[[3]][, 3])
         d <- as.numeric(case[[3]][, 4])
 
-        obs_or <- (a / b) / (c / d)
-        se_log_obs_or <- sqrt(1/a + 1/b + 1/c + 1/d)
-        lci_obs_or <- exp(log(obs_or) - qnorm(1 - alpha/2) * se_log_obs_or)
-        uci_obs_or <- exp(log(obs_or) + qnorm(1 - alpha/2) * se_log_obs_or)
-
         reps <- case[[4]]
     }
 
-    draws <- matrix(NA, nrow = reps, ncol = 8)
-    colnames(draws) <- c("or_sel", "corr_OR", "reps", "tot_OR",
-                         "A1", "B1", "C1", "D1")
+    cli::cli_alert_info("Calculating observed measures")
+    obs_rr <- (a / (a + c)) / (b / (b + d))
+    se_log_obs_rr <- sqrt(1/a + 1/b - 1/(a+c) - 1/(b+d))
+    lci_obs_rr <- exp(log(obs_rr) - qnorm(1 - alpha / 2) * se_log_obs_rr)
+    uci_obs_rr <- exp(log(obs_rr) + qnorm(1 - alpha / 2) * se_log_obs_rr)
+
+    obs_or <- (a / b) / (c / d)
+    se_log_obs_or <- sqrt(1/a + 1/b + 1/c + 1/d)
+    lci_obs_or <- exp(log(obs_or) - qnorm(1 - alpha / 2) * se_log_obs_or)
+    uci_obs_or <- exp(log(obs_or) + qnorm(1 - alpha / 2) * se_log_obs_or)
+
+    draws <- matrix(NA, nrow = reps, ncol = 18)
+    colnames(draws) <- c("S1_1", "S0_1", "S1_0", "S0_0",
+                         "A1", "B1", "C1", "D1",
+                         "A0", "B0", "C0", "D0",
+                         "flag", "corr_RR", "cor_OR", "tot_RR", "tot_OR", "reps")
+
+    case1 <- c(reps, case_exp[[2]])
+    case0 <- c(reps, case_nexp[[2]])
+    ctrl1 <- c(reps, ncase_exp[[2]])
+    ctrl0 <- c(reps, ncase_nexp[[2]])
 
     cli::cli_progress_step("Assign probability distributions", spinner = TRUE)
-    if (!is.null(or_parms[[2]])) {
-        or_sel <- c(reps, or_parms[[2]])
+    if (case_exp[[1]] == "constant") {
+        draws[, 1] <- case_exp[[2]]
+    }
+    if (case_exp[[1]] == "uniform") {
+        draws[, 1] <- do.call(runif, as.list(case1))
+    }
+    if (case_exp[[1]] == "triangular") {
+        draws[, 1] <- do.call(triangle::rtriangle, as.list(case1))
+    }
+    if (case_exp[[1]] == "trapezoidal") {
+        draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(case1))
+    }
+    if (case_exp[[1]] == "normal") {
+        draws[, 1] <- do.call(truncnorm::rtruncnorm, as.list(case1))
+    }
+    if (case_exp[[1]] == "beta") {
+        draws[, 1] <- do.call(rbeta, as.list(case1))
+    }
 
-        if (or_parms[[1]] == "constant") {
-            draws[, 1] <- or_parms[[2]]
-        }
-        if (or_parms[[1]] == "uniform") {
-            draws[, 1] <- do.call(runif, as.list(or_sel))
-        }
-        if (or_parms[[1]] == "triangular") {
-            draws[, 1] <- do.call(triangle::rtriangle, as.list(or_sel))
-        }
-        if (or_parms[[1]] == "trapezoidal") {
-            draws[, 1] <- do.call(trapezoid::rtrapezoid, as.list(or_sel))
-        }
-        if (or_parms[[1]] == "log-logistic") {
-            draws[, 1] <- do.call(actuar::rllogis, as.list(or_sel))
-        }
-        if (or_parms[[1]] == "log-normal") {
-            draws[, 1] <- do.call(rlnorm, as.list(or_sel))
-        }
-    } else {
-        bias_factor <- matrix(NA, nrow = reps, ncol = 4)
+    if (case_nexp[[1]] == "constant") {
+        draws[, 2] <- case_nexp[[2]]
+    }
+    if (case_nexp[[1]] == "uniform") {
+        draws[, 2] <- do.call(runif, as.list(case0))
+    }
+    if (case_nexp[[1]] == "triangular") {
+        draws[, 2] <- do.call(triangle::rtriangle, as.list(case0))
+    }
+    if (case_nexp[[1]] == "trapezoidal") {
+        draws[, 2] <- do.call(trapezoid::rtrapezoid, as.list(case0))
+    }
+    if (case_nexp[[1]] == "normal") {
+        draws[, 2] <- do.call(truncnorm::rtruncnorm, as.list(case0))
+    }
+    if (case_nexp[[1]] == "beta") {
+        draws[, 2] <- do.call(rbeta, as.list(case0))
+    }
 
-        case1 <- c(reps, case_exp[[2]])
-        case0 <- c(reps, case_nexp[[2]])
-        ctrl1 <- c(reps, ncase_exp[[2]])
-        ctrl0 <- c(reps, ncase_nexp[[2]])
+    if (ncase_exp[[1]] == "constant") {
+        draws[, 3] <- ncase_exp[[2]]
+    }
+    if (ncase_exp[[1]] == "uniform") {
+        draws[, 3] <- do.call(runif, as.list(ctrl1))
+    }
+    if (ncase_exp[[1]] == "triangular") {
+        draws[, 3] <- do.call(triangle::rtriangle, as.list(ctrl1))
+    }
+    if (ncase_exp[[1]] == "trapezoidal") {
+        draws[, 3] <- do.call(trapezoid::rtrapezoid, as.list(ctrl1))
+    }
+    if (ncase_exp[[1]] == "normal") {
+        draws[, 3] <- do.call(truncnorm::rtruncnorm, as.list(ctrl1))
+    }
+    if (ncase_exp[[1]] == "beta") {
+        draws[, 3] <- do.call(rbeta, as.list(ctrl1))
+    }
 
-        if (case_exp[[1]] == "constant") {
-            bias_factor[, 1] <- case_exp[[2]]
-        }
-        if (case_exp[[1]] == "uniform") {
-            bias_factor[, 1] <- do.call(runif, as.list(case1))
-        }
-        if (case_exp[[1]] == "triangular") {
-            bias_factor[, 1] <- do.call(triangle::rtriangle, as.list(case1))
-        }
-        if (case_exp[[1]] == "trapezoidal") {
-            bias_factor[, 1] <- do.call(trapezoid::rtrapezoid, as.list(case1))
-        }
-        if (case_exp[[1]] == "normal") {
-            bias_factor[, 1] <- do.call(truncnorm::rtruncnorm, as.list(case1))
-        }
-        if (case_exp[[1]] == "beta") {
-            bias_factor[, 1] <- do.call(rbeta, as.list(case1))
-        }
-
-        if (case_nexp[[1]] == "constant") {
-            bias_factor[, 2] <- case_nexp[[2]]
-        }
-        if (case_nexp[[1]] == "uniform") {
-            bias_factor[, 2] <- do.call(runif, as.list(case0))
-        }
-        if (case_nexp[[1]] == "triangular") {
-            bias_factor[, 2] <- do.call(triangle::rtriangle, as.list(case0))
-        }
-        if (case_nexp[[1]] == "trapezoidal") {
-            bias_factor[, 2] <- do.call(trapezoid::rtrapezoid, as.list(case0))
-        }
-        if (case_nexp[[1]] == "normal") {
-            bias_factor[, 2] <- do.call(truncnorm::rtruncnorm, as.list(case0))
-        }
-        if (case_nexp[[1]] == "beta") {
-            bias_factor[, 2] <- do.call(rbeta, as.list(case0))
-        }
-
-        if (ncase_exp[[1]] == "constant") {
-            bias_factor[, 3] <- ncase_exp[[2]]
-        }
-        if (ncase_exp[[1]] == "uniform") {
-            bias_factor[, 3] <- do.call(runif, as.list(ctrl1))
-        }
-        if (ncase_exp[[1]] == "triangular") {
-            bias_factor[, 3] <- do.call(triangle::rtriangle, as.list(ctrl1))
-        }
-        if (ncase_exp[[1]] == "trapezoidal") {
-            bias_factor[, 3] <- do.call(trapezoid::rtrapezoid, as.list(ctrl1))
-        }
-        if (ncase_exp[[1]] == "normal") {
-            bias_factor[, 3] <- do.call(truncnorm::rtruncnorm, as.list(ctrl1))
-        }
-        if (ncase_exp[[1]] == "beta") {
-            bias_factor[, 3] <- do.call(rbeta, as.list(ctrl1))
-        }
-
-        if (ncase_nexp[[1]] == "constant") {
-            bias_factor[, 4] <- ncase_nexp[[2]]
-        }
-        if (ncase_nexp[[1]] == "uniform") {
-            bias_factor[, 4] <- do.call(runif, as.list(ctrl0))
-        }
-        if (ncase_nexp[[1]] == "triangular") {
-            bias_factor[, 4] <- do.call(triangle::rtriangle, as.list(ctrl0))
-        }
-        if (ncase_nexp[[1]] == "trapezoidal") {
-            bias_factor[, 4] <- do.call(trapezoid::rtrapezoid, as.list(ctrl0))
-        }
-        if (ncase_nexp[[1]] == "normal") {
-            bias_factor[, 4] <- do.call(truncnorm::rtruncnorm, as.list(ctrl0))
-        }
-        if (ncase_nexp[[1]] == "beta") {
-            bias_factor[, 4] <- do.call(rbeta, as.list(ctrl0))
-        }
-
-        draws[, 1] <- (bias_factor[, 1] * bias_factor[, 4]) / (bias_factor[, 2] * bias_factor[, 3])
+    if (ncase_nexp[[1]] == "constant") {
+        draws[, 4] <- ncase_nexp[[2]]
+    }
+    if (ncase_nexp[[1]] == "uniform") {
+        draws[, 4] <- do.call(runif, as.list(ctrl0))
+    }
+    if (ncase_nexp[[1]] == "triangular") {
+        draws[, 4] <- do.call(triangle::rtriangle, as.list(ctrl0))
+    }
+    if (ncase_nexp[[1]] == "trapezoidal") {
+        draws[, 4] <- do.call(trapezoid::rtrapezoid, as.list(ctrl0))
+    }
+    if (ncase_nexp[[1]] == "normal") {
+        draws[, 4] <- do.call(truncnorm::rtruncnorm, as.list(ctrl0))
+    }
+    if (ncase_nexp[[1]] == "beta") {
+        draws[, 4] <- do.call(rbeta, as.list(ctrl0))
     }
 
     cli::cli_progress_step("Simple bias analysis", spinner = TRUE)
-    draws[, 3] <- runif(reps)
+    draws[, 9] <- a / draws[, 1]
+    draws[, 10] <- b / draws[, 2]
+    draws[, 11] <- c / draws[, 3]
+    draws[, 12] <- d / draws[, 4]
 
-    draws[, 2] <- obs_or / draws[, 1]
+    draws[, 5] <- draws[, 9] - a
+    draws[, 6] <- draws[, 10] - b
+    draws[, 7] <- draws[, 11] - c
+    draws[, 8] <- draws[, 12] - d
+
+    draws[, 14] <- (draws[, 9] / (draws[, 9] + draws[, 11])) /
+        (draws[, 10] / (draws[, 10] + draws[, 12]))
+    draws[, 15] <- (draws[, 9] / draws[, 11]) / (draws[, 10] / draws[, 12])
+
+    draws[, 18] <- runif(reps)
 
     cli::cli_progress_step("Incorporating random error", spinner = TRUE)
-    draws[, 4] <- exp(log(draws[, 2]) -
-                      qnorm(draws[, 3]) *
-                      ((log(uci_obs_or) - log(lci_obs_or)) /
-                       (qnorm(.975) * 2)))
+    draws[, 16] <- exp(log(draws[, 14]) - draws[, 18] * se_log_obs_rr)
+    draws[, 17] <- exp(log(draws[, 15]) - draws[, 18] * se_log_obs_or)
 
-    draws[, 5] <- a / draws[, 1]
-    draws[, 6] <- b / draws[, 1]
-    draws[, 7] <- c / draws[, 1]
-    draws[, 8] <- d / draws[, 1]
+    ## Clean up
+    draws[, 13] <- apply(draws[, 5:8], MARGIN = 1, function(x) sum(x > 0))
+    draws[, 13] <- ifelse(draws[, 13] != 4 | is.na(draws[, 13]), NA, 1)
+    discard <- sum(is.na(draws[, 13]))
+    if (sum(is.na(draws[, 13])) > 0) {
+        cli::cli_alert_warning("Chosen distributions lead to {discard} impossible value{?s} which w{?as/ere} discarded.")
+        neg_warn <- paste("Prior distributions lead to",  discard, "impossible value(s).")
+    } else neg_warn <- NULL
 
-    corr_OR <- c(median(draws[, 2], na.rm = TRUE),
-                 quantile(draws[, 2], probs = .025, na.rm = TRUE),
-                 quantile(draws[, 2], probs = .975, na.rm = TRUE))
-    tot_OR <- c(median(draws[, 4], na.rm = TRUE),
-                quantile(draws[, 4], probs = .025, na.rm = TRUE),
-                quantile(draws[, 4], probs = .975, na.rm = TRUE))
+    draws <- draws[draws[, 13] == 1 & !is.na(draws[, 13]), ]
+
+    corr_RR <- c(median(draws[, 14], na.rm = TRUE),
+                 quantile(draws[, 14], probs = .025, na.rm = TRUE),
+                 quantile(draws[, 14], probs = .975, na.rm = TRUE))
+    tot_RR <- c(median(draws[, 16], na.rm = TRUE),
+                quantile(draws[, 16], probs = .025, na.rm = TRUE),
+                quantile(draws[, 16], probs = .975, na.rm = TRUE))
+    corr_OR <- c(median(draws[, 15], na.rm = TRUE),
+                 quantile(draws[, 15], probs = .025, na.rm = TRUE),
+                 quantile(draws[, 15], probs = .975, na.rm = TRUE))
+    tot_OR <- c(median(draws[, 17], na.rm = TRUE),
+                quantile(draws[, 17], probs = .025, na.rm = TRUE),
+                quantile(draws[, 17], probs = .975, na.rm = TRUE))
 
     if (!inherits(case, "episensr.probsens")) {
         tab <- tab
-        rmat <- matrix(c(obs_or, lci_obs_or, uci_obs_or), nrow = 1)
-        rownames(rmat) <- c("Observed Odds Ratio:")
+        rmat <- rbind(c(obs_rr, lci_obs_rr, uci_obs_rr),
+                      c(obs_or, lci_obs_or, uci_obs_or))
+        rownames(rmat) <- c("Observed Relative Risk:",
+                            "   Observed Odds Ratio:")
         colnames(rmat) <- c(" ",
                             paste(100 * (alpha / 2), "%", sep = ""),
                             paste(100 * (1 - alpha / 2), "%", sep = ""))
@@ -599,14 +542,19 @@ vector of lower limit, lower mode, upper mode, and upper limit.")))
         rownames(tab) <- paste("Row", 1:2)
     if (is.null(colnames(tab)))
         colnames(tab) <- paste("Col", 1:2)
-    rmatc <- rbind(corr_OR, tot_OR)
-    rownames(rmatc) <- c("           Odds Ratio -- systematic error:",
-                         "Odds Ratio -- systematic and random error:")
+    rmatc <- rbind(corr_RR, tot_RR, corr_OR, tot_OR)
+    rownames(rmatc) <- c("Relative Risk -- systematic error:",
+                         "                      total error:",
+                         "   Odds Ratio -- systematic error:",
+                         "                      total error:")
     colnames(rmatc) <- c("Median", "2.5th percentile", "97.5th percentile")
+
+    cli::cli_progress_update()
+
     res <- list(obs_data = tab,
                 obs_measures = rmat,
                 adj_measures = rmatc,
-                sim_df = as.data.frame(draws[, -3]),
+                sim_df = as.data.frame(draws[, -c(13, 18)]),
                 reps = reps,
                 fun = "probsens.sel")
     class(res) <- c("episensr", "episensr.probsens", "list")

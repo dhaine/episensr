@@ -506,80 +506,36 @@ test_that("exposure misclassification (D---normal): adjusted measures are correc
 test_that("correct arguments --- list", {
     expect_that(probsens.sel(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
                          reps = 1000,
-                         or_parms = list("beta", c(900, 10))),
+                         case_exp = list("beta", c(900, 10))),
                 throws_error())
 })
 
-test_that("Selection bias: observed measures are correct", {
-    set.seed(123)
-    model <- probsens.sel(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
-                      reps = 50000,
-                      or_parms = list("triangular", c(.35, 1.1, .43)))
-    expect_equal(model$obs_measures[1, 1], 0.7061, tolerance = 1e-4, scale = 1)
-    expect_equal(model$obs_measures[1, 2], 0.5144, tolerance = 1e-4, scale = 1)
-    expect_equal(model$obs_measures[1, 3], 0.9693, tolerance = 1e-4, scale = 1)
-})
-
-test_that("Selection bias: adjusted measures are correct", {
-    set.seed(123)
-    model <- probsens.sel(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
-                      reps = 50000,
-                      or_parms = list("triangular", c(.35, 1.1, .43)))
-    expect_equal(model$adj_measures[1, 1], 1.1850, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 2], 0.7160, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 3], 1.8153, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 1], 1.1793, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 2], 0.6456, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 3], 2.0608, tolerance = 1e-4, scale = 1)
-})
-
-test_that("Selection bias: adjusted measures are correct (logit)", {
-    set.seed(123)
-    model <- probsens.sel(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
-                      reps = 50000,
-                      or_parms = list("log-logistic", c(15, 20)))
-    expect_equal(model$adj_measures[1, 1], 14.1010, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 2], 11.0719, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 3], 17.9912, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 1], 14.0991, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 2], 9.5216, tolerance = 1e-4, scale = 1)
-
-    expect_equal(model$adj_measures[2, 3], 20.9828, tolerance = 1e-4, scale = 1)
-})
-
 test_that("Selection bias: adjusted measures are correct (beta)", {
-    set.seed(123)
-    model <- probsens.sel(matrix(c(136, 107, 297, 165), nrow = 2, byrow = TRUE),
-                      reps = 20000,
-                      case_exp = list("beta", c(200, 56)),
-                      case_nexp = list("beta", c(100, 16)),
-                      ncase_exp = list("beta", c(200, 16)),
-                      ncase_nexp = list("beta", c(100, 56)))
-    expect_equal(model$adj_measures[1, 1], 1.1266, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 2], 0.9649, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 3], 1.3281, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 1], 1.1275, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 2], 0.7966, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 3], 1.6115, tolerance = 1e-4, scale = 1)
-})
-
-test_that("Selection bias: adjusted measures are correct (beta)", {
-    set.seed(123)
+    set.seed(1234)
     model <- probsens.sel(matrix(c(139, 114, 369, 377), nrow = 2, byrow = TRUE),
                       reps = 50000,
                       case_exp = list("beta", c(139, 5.1)),
                       case_nexp = list("beta", c(114, 11.9)),
                       ncase_exp = list("beta", c(369, 96.1)),
                       ncase_nexp = list("beta", c(377, 282.9)))
-    expect_equal(model$obs_measures[1, 1], 1.2457, tolerance = 1e-4, scale = 1)
-    expect_equal(model$obs_measures[1, 2], 0.9357, tolerance = 1e-4, scale = 1)
-    expect_equal(model$obs_measures[1, 3], 1.6586, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 1], 1.6246, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 2], 1.4604, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[1, 3], 1.7990, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 1], 1.6252, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 2], 1.1966, tolerance = 1e-4, scale = 1)
-    expect_equal(model$adj_measures[2, 3], 2.1995, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 1], 1.1785, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 2], 0.9511, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[1, 3], 1.4602, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[2, 1], 1.2457, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[2, 2], 0.9357, tolerance = 1e-4, scale = 1)
+    expect_equal(model$obs_measures[2, 3], 1.6586, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 1], 1.4770, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 2], 1.3543, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[1, 3], 1.6062, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 1], 1.3981, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 2], 1.2575, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[2, 3], 1.5507, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[3, 1], 1.6247, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[3, 2], 1.4614, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[3, 3], 1.8007, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[4, 1], 1.5100, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[4, 2], 1.3212, tolerance = 1e-4, scale = 1)
+    expect_equal(model$adj_measures[4, 3], 1.7204, tolerance = 1e-4, scale = 1)
 })
 
 test_that("correct arguments --- list", {
