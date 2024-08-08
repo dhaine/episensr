@@ -23,6 +23,7 @@ Imports:
     boot,
     cli,
     dagitty,
+    forcats,
     ggdag,
     magrittr,
     trapezoid,

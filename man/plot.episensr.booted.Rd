@@ -33,5 +33,8 @@ plot(misclass_boot, association = "rr")
 }
 \seealso{
 \code{\link{boot.bias}, \link{boot}, \link{selection}, \link{misclass}}
+
+Other visualization: 
+\code{\link{plot.episensr.probsens}()}
 }
 \concept{visualization}
