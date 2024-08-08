@@ -35,9 +35,9 @@ print.episensr <- function(x, digits = getOption("digits"), ...) {
         print.table(x, digits = digits, ...)
         invisible(NULL)
     } else if (class(x)[1] == "episensr.confounder") {
-        cat("--Input bias parameters--\n")
+        cli::cli_h2("Input bias parameters")
         print.table(x$bias_parms, digits = digits, ...)
-        cat("---\n\n")
+        cli::cli_rule()
         print.table(x$adj_measures, digits = digits, ...)
         invisible(NULL)
     }
