@@ -13,7 +13,7 @@
 }
 \arguments{
 \item{x}{An object of class "episensr.probsens" returned from the
-\code{episensr probsens}, \code{probsens.sel}, \code{probsens.conf}, \code{probsens.irr},
+\code{episensr probsens}, \code{probsens.sel}, \code{probsens_conf}, \code{probsens.irr},
 \code{probsens.irr.conf} functions.}
 
 \item{parms}{Choice between adjusted relative risk (\code{rr}) and odds ratio (\code{or}),
@@ -28,7 +28,7 @@ plots (\code{forest_rr} and \code{forest_or}), \code{seca}, \code{seexp},
 This takes a \code{probsens}-family object and produces the distribution plot of
 chosen bias parameters, as well as distribution of adjusted measures (with confidence
 interval). It can also produce a forest plot of relative risks or odds ratios (with
-`probsens()`, `probsens.conf()`, or `probsens.sel()`)
+`probsens()`, `probsens_conf()`, or `probsens.sel()`)
 }
 \examples{
 set.seed(123)
@@ -88,7 +88,7 @@ corr_p = .8)
 plot(inc2, "risk")
 }
 \seealso{
-\code{\link{probsens}, \link{probsens.sel}, \link{probsens.conf},
+\code{\link{probsens}, \link{probsens.sel}, \link{probsens_conf},
 \link{probsens.irr}, \link{probsens.irr.conf}}
 
 Other visualization: 

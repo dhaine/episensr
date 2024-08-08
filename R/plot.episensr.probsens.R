@@ -3,10 +3,10 @@
 #' This takes a \code{probsens}-family object and produces the distribution plot of
 #' chosen bias parameters, as well as distribution of adjusted measures (with confidence
 #' interval). It can also produce a forest plot of relative risks or odds ratios (with
-#' `probsens()`, `probsens.conf()`, or `probsens.sel()`)
+#' `probsens()`, `probsens_conf()`, or `probsens.sel()`)
 #'
 #' @param x An object of class "episensr.probsens" returned from the
-#' \code{episensr probsens}, \code{probsens.sel}, \code{probsens.conf}, \code{probsens.irr},
+#' \code{episensr probsens}, \code{probsens.sel}, \code{probsens_conf}, \code{probsens.irr},
 #' \code{probsens.irr.conf} functions.
 #' @param parms Choice between adjusted relative risk (\code{rr}) and odds ratio (\code{or}),
 #' total error relative risk and odds ratio (\code{rr_tot} and \code{or_tot}), forest
@@ -17,7 +17,7 @@
 #'
 #' @family visualization
 #'
-#' @seealso \code{\link{probsens}, \link{probsens.sel}, \link{probsens.conf},
+#' @seealso \code{\link{probsens}, \link{probsens.sel}, \link{probsens_conf},
 #' \link{probsens.irr}, \link{probsens.irr.conf}}
 #'
 #' @examples
@@ -123,7 +123,7 @@ irr_tot, prev_exp, prev_nexp, risk.")))
     bins <- ifelse(bins < 10, 10,
             ifelse(bins > 100, 100, bins))
 
-    if (prob.fun %in% c("probsens", "probsens.conf", "probsens.sel")) {
+    if (prob.fun %in% c("probsens", "probsens_conf", "probsens.sel")) {
         .rr_estimates <- rbind(x$obs_measures[1, ], x$adj_measures[1:2, ])
         .rr_estimates <- as.data.frame(.rr_estimates)
         .rr_estimates <- cbind(.rr_estimates, c("Random error", "Systematic error", "Total error"))
@@ -183,17 +183,17 @@ irr_tot, prev_exp, prev_nexp, risk.")))
             xlab("Odds ratio")
     } else if (parms == "forest_rr" &
                (prob.fun %in% c("probsens", "probsens_conf", "probsens.sel"))) {
-        ggplot(.rr_estimates, aes(y = forcats::fct_rev(.rr_estimates$txt))) +
-            geom_point(aes(x = .rr_estimates$est), shape = 15, size = 3) +
-            geom_linerange(aes(xmin = .rr_estimates$lo, xmax = .rr_estimates$hi)) +
+        ggplot(.rr_estimates, aes(y = forcats::fct_rev(.rr_estimates[, 4]))) +
+            geom_point(aes(x = .rr_estimates[, 1]), shape = 15, size = 3) +
+            geom_linerange(aes(xmin = .rr_estimates[, 2], xmax = .rr_estimates[, 3])) +
             geom_vline(xintercept = 1, linetype = "dashed") +
             xlab("Risk ratio (95% CI)") +
             ylab("")
     } else if (parms == "forest_or" &
                (prob.fun %in% c("probsens", "probsens_conf", "probsens.sel"))) {
-        ggplot(.or_estimates, aes(y = forcats::fct_rev(.or_estimates$txt))) +
-            geom_point(aes(x = .or_estimates$est), shape = 15, size = 3) +
-            geom_linerange(aes(xmin = .or_estimates$lo, xmax = .or_estimates$hi)) +
+        ggplot(.or_estimates, aes(y = forcats::fct_rev(.or_estimates[, 4]))) +
+            geom_point(aes(x = .or_estimates[, 1]), shape = 15, size = 3) +
+            geom_linerange(aes(xmin = .or_estimates[, 2], xmax = .or_estimates[, 3])) +
             geom_vline(xintercept = 1, linetype = "dashed") +
             xlab("Odds ratio (95% CI)") +
             ylab("")
