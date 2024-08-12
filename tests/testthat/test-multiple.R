@@ -50,28 +50,41 @@ test_that("Correct table passed on", {
               expect_equal(model$obs_data[2, 2], 853.6, tolerance = 1e-4, scale = 1)
 })
 
-#test_that("Correct table passed on (probabilistic)", {
-#              dat <- matrix(c(118, 832, 103, 884),
-#                            dimnames = list(c("BC+", "BC-"), c("AD+", "AD-")),
-#                            nrow = 2, byrow = TRUE)
-#              set.seed(123)
-#              model2 <- dat %>%
-#                  probsens(., type = "exposure", reps = 5000,
-#                           seca = list("trapezoidal", c(.45, .5, .6, .65)),
-#                           seexp = list("trapezoidal", c(.4, .48, .58, .63)),
-#                           spca = list("trapezoidal", c(.95, .97, .99, 1)),
-#                           spexp = list("trapezoidal", c(.96, .98, .99, 1)),
-#                           corr_se = .8, corr_sp = .8) %>%
-#                  multiple.bias(., bias_function = "probsens.sel",
-#                                case_exp = list("beta", c(114, 12)),
-#                                case_nexp = list("trapezoidal", c(.75, .85, .95, 1)),
-#                                ncase_exp = list("beta", c(370, 100)),
-#                                ncase_nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1)))
-#              expect_equal(model$obs_data[1, 1], 182.9, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$obs_data[1, 2], 767.1, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$obs_data[2, 1], 168.9, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$obs_data[2, 2], 818.1, tolerance = 1e-4, scale = 1)
-#})
+test_that("Correct table passed on (probabilistic)", {
+              dat <- matrix(c(118, 832, 103, 884),
+                            dimnames = list(c("BC+", "BC-"), c("AD+", "AD-")),
+                            nrow = 2, byrow = TRUE)
+              set.seed(123)
+              model <- dat %>%
+                  probsens(., type = "exposure", reps = 5000,
+                           seca = list("trapezoidal", c(.45, .5, .6, .65)),
+                           seexp = list("trapezoidal", c(.4, .48, .58, .63)),
+                           spca = list("trapezoidal", c(.95, .97, .99, 1)),
+                           spexp = list("trapezoidal", c(.96, .98, .99, 1)),
+                           corr_se = .8, corr_sp = .8) %>%
+                  multiple.bias(., bias_function = "probsens.sel",
+                                case_exp = list("beta", c(8.08, 24.25)),
+                                case_nexp = list("trapezoidal", c(.75, .85, .95, 1)),
+                                ncase_exp = list("beta", c(12.6, 50.4)),
+                                ncase_nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1)))
+              expect_equal(model$obs_data[1, 1], 182.9, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_data[1, 2], 767.1, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_data[2, 1], 168.9, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_data[2, 2], 818.1, tolerance = 1e-4, scale = 1)
+              expect_equal(model$reps, 5000)
+              expect_equal(model$adj_measures[1, 1], 0.9848, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 2], 0.6127, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 3], 1.4285, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 1], 0.9565, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 2], 0.5956, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 3], 1.3900, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[3, 1], 0.9712, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[3, 2], 0.4498, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[3, 3], 2.2866, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[4, 1], 0.9160, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[4, 2], 0.4246, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[4, 3], 2.1597, tolerance = 1e-4, scale = 1)
+})
 
 test_that("selection bias has correct arguments", {
              expect_error(chien %>%
