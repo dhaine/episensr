@@ -16,9 +16,9 @@ Other functions could be useful and are not part of the book
 Data"](https://link.springer.com/book/10.1007/978-3-030-82673-4).
 These functions are:
 
-* `confounders.array`: Bias due to unmeasured confounders based on confounding imbalance among exposed and unexposed
-* `confounders.ext`: Unmeasured confounders based on external measurement
-* `confounders.evalue`: E-value due to unmeasured confounder
+* `confounders.array()`: Bias due to unmeasured confounders based on confounding imbalance among exposed and unexposed
+* `confounders.ext()`: Unmeasured confounders based on external measurement
+* `confounders.evalue()`: E-value due to unmeasured confounder
 
 ## Array Approach for Unmeasured Confounders
 
@@ -52,7 +52,7 @@ likely to lead to NH lymphoma:
 
 ```{r conf_array}
 library(episensr)
-confounders.array(crude.risk = 2,
+confounders.array(crude_risk = 2,
                   type = "binary",
                   bias_parms = c(2.5, 0.1, 0.5))
 ```

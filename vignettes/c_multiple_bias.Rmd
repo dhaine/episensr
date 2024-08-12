@@ -36,18 +36,32 @@ and self-reported use, leading to misclassification:
 
 ```{r misclass_chien}
 library(episensr)
-chien %>%
-    misclass(., type = "exposure", bias_parms = c(.56, .58, .99, .97))
+seq_bias1 <- chien %>%
+    misclass(., type = "exposure",
+             bias_parms = c(24/(24+19), 18/(18+13), 144/(144+2), 130/(130+4)))
+seq_bias1
 ```
 
 Controls and cases also enrolled into the study at different rates.
-We can combine the misclassification bias with a selection bias thanks to the
-function `multiple.bias()`:
+By storing the result of `misclass()` in an object named here `seq_bias1`, we have access to the various elements returned by the function (see the `help()` for a given function to know what is returned).
+The bias-adjusted cell frequencies can be accessed as `corr_data`.
+
+```{r chien-tab-misclass}
+seq_bias1$corr_data
+```
+
+This 2-by-2 table will be used as starting values for the next sequential bias adjustment, `selection()`.
+The adjusted OR is now `r round(seq_bias2$adj_measures[2, 1], 2)`
 
 ```{r misclass_sel}
-chien %>%
-    misclass(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) %>%
-    multiple.bias(., bias_function = "selection", bias_parms = c(.73, .61, .82, .76))
+seq_bias2 <- seq_bias1$corr_data %>% selection(., bias_parms = c(.734, .605, .816, .756))
+seq_bias2
+```
+
+Again, the bias-adjusted cell frequencies can be used in the next bias analysis, `confounders()`.
+
+```{r chien-tab-selection}
+seq_bias2$corr_data
 ```
 
 The association between antidepressant use and breast cancer was adjusted for
@@ -57,118 +71,45 @@ However, for illustration, we can add the effect of a potential confounder (e.g.
 physical activity):
 
 ```{r misclass_sel_conf}
-chien %>%
-    misclass(., type = "exposure", bias_parms = c(.56, .58, .99, .97)) %>%
-    multiple.bias(., bias_function = "selection",
-                  bias_parms = c(.73, .61, .82, .76)) %>%
-    multiple.bias(., bias_function = "confounders",
-                  type = "OR", bias_parms = c(.92, .3, .44))
+seq_bias3 <- seq_bias2$corr_data %>%
+    confounders(., type = "OR", bias_parms = c(.8, .299, .436))
+seq_bias3
 ```
 
-We can do the same in a probabilistic framework:
+The serially bias-adjusted OR is `r round(seq_bias3$adj_measures[2, 1], 3)`.
+And the adjusted cells by confounders, for regular exercise:
 
-* Misclassification bias
+```{r chien-tab-conf1}
+seq_bias3$cfder_data
+```
+
+And for no regular exercise:
+
+```{r chien-tab-conf2}
+seq_bias3$nocfder_data
+```
+
+The same process can be realized in a probabilistic framework, as each `probsens()`, `probsens.sel()` and `probsens_conf()` provides the adjusted cell frequencies as A1, B1, C1, D1 in `sim_df`.
+
+|          | Exposed | Not exposed |
+|---------:|:-------:|:-----------:|
+|    Cases | A1      | B1          |
+| Controls | C1      | D1          |
 
 ```{r multi_prob}
-set.seed(123)
 mod1 <- chien %>%
-    probsens(., type = "exposure", reps = 100000,
+    probsens(., type = "exposure",
              seca = list("trapezoidal", c(.45, .5, .6, .65)),
              seexp = list("trapezoidal", c(.4, .48, .58, .63)),
              spca = list("trapezoidal", c(.95, .97, .99, 1)),
              spexp = list("trapezoidal", c(.96, .98, .99, 1)),
              corr_se = .8, corr_sp = .8)
-mod1
-```
-```{r plot2, warning=FALSE,message=FALSE,fig.width=6,fig.height=4}
-plot(mod1, "or_tot")
+str(mod1)
 ```
 
-```{r plot2_forest, warning=FALSE,message=FALSE,fig.width=6,fig.height=4}
-plot(mod1, "forest_or")
-```
+Each of the lines from `mod1$sim_df[, 5:8]` can then be tabulated and fed to the next bias function.
+Be careful, as the number of observations can quickly become unmanageable.
 
-* Selection bias
-
-```{r multi_prob2}
-set.seed(123)
-mod2 <- chien %>%
-    probsens.sel(., reps = 100000,
-                 case_exp = list("beta", c(8.08, 24.25)),
-                 case_nexp = list("trapezoidal", c(.75, .85, .95, 1)),
-                 ncase_exp = list("beta", c(12.6, 50.4)),
-                 ncase_nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1)))
-mod2
-```
-
-```{r plot3, warning=FALSE,message=FALSE,fig.width=6,fig.height=4}
-plot(mod2, "forest_or")
-```
-
-* Confounding
-
-```{r multi_prob3}
-set.seed(123)
-mod3 <- chien %>%
-    probsens_conf(., reps = 100000,
-                  prev_exp = list("beta", c(24.9, 58.1)),
-                  prev_nexp = list("beta", c(42.9, 54.6)),
-                  risk = list("trapezoidal", c(.2, .58, 1.01, 1.24)))
-mod3
-```
-
-```{r plot4, message=FALSE, warning=FALSE,fig.width=6,fig.height=4}
-plot(mod3, "forest_or")
-```
-
-* Misclassification then selection
-
-```{r multi_ms}
-set.seed(123)
-test <- chien %>%
-    probsens(., type = "exposure", reps = 100000,
-             seca = list("trapezoidal", c(.45, .5, .6, .65)),
-             seexp = list("trapezoidal", c(.4, .48, .58, .63)),
-             spca = list("trapezoidal", c(.95, .97, .99, 1)),
-             spexp = list("trapezoidal", c(.96, .98, .99, 1)),
-             corr_se = .8, corr_sp = .8) %>%
-    multiple.bias(., bias_function = "probsens.sel",
-                  case_exp = list("beta", c(8.08, 24.25)),
-                  case_nexp = list("trapezoidal", c(.75, .85, .95, 1)),
-                  ncase_exp = list("beta", c(12.6, 50.4)),
-                  ncase_nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1)))
-test
-probsens.sel(round(a, 0), reps = 1000, case_exp = list("beta", c(8.08, 24.25)),
-                  case_nexp = list("trapezoidal", c(.75, .85, .95, 1)),
-                  ncase_exp = list("beta", c(12.6, 50.4)),
-                  ncase_nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1)))
-```
-
-* Misclassification, selection, and confounding
-
-```{r multi_msc}
-set.seed(123)
-mod6 <- chien %>%
-    probsens(., type = "exposure", reps = 100000,
-             seca = list("trapezoidal", c(.45, .5, .6, .65)),
-             seexp = list("trapezoidal", c(.4, .48, .58, .63)),
-             spca = list("trapezoidal", c(.95, .97, .99, 1)),
-             spexp = list("trapezoidal", c(.96, .98, .99, 1)),
-             corr_se = .8, corr_sp = .8) %>%
-    multiple.bias(., bias_function = "probsens.sel",
-                  case_exp = list("beta", c(8.08, 24.25)),
-                  case_nexp = list("trapezoidal", c(.75, .85, .95, 1)),
-                  ncase_exp = list("beta", c(12.6, 50.4)),
-                  ncase_nexp = list("trapezoidal", c(0.7, 0.8, 0.9, 1))) %>%
-    multiple.bias(., bias_function = "probsens_conf",
-                  prev_exp = list("beta", c(24.9, 58.1)),
-                  prev_nexp = list("beta", c(42.9, 54.6)),
-                  risk = list("trapezoidal", c(.2, .58, 1.01, 1.24)))
-mod6
-```
-
-```{r plot5, message=FALSE, warning=FALSE,fig.width=6,fig.height=4}
-#plot(mod6, "or")
-
-#plot(mod6, "or_tot")
+```{r head_cells}
+head(mod1$sim_df[, 5:8])
 ```
