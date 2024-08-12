@@ -51,13 +51,13 @@ seq_bias1$corr_data
 ```
 
 This 2-by-2 table will be used as starting values for the next sequential bias adjustment, `selection()`.
-The adjusted OR is now `r round(seq_bias2$adj_measures[2, 1], 2)`
 
 ```{r misclass_sel}
 seq_bias2 <- seq_bias1$corr_data %>% selection(., bias_parms = c(.734, .605, .816, .756))
 seq_bias2
 ```
 
+The adjusted OR is now `r round(seq_bias2$adj_measures[2, 1], 2)`
 Again, the bias-adjusted cell frequencies can be used in the next bias analysis, `confounders()`.
 
 ```{r chien-tab-selection}
