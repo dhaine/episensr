@@ -39,10 +39,9 @@
 #' \code{seexp} and \code{spexp} (i.e. providing the 4 bias parameters) evaluates
 #' a differential misclassification.
 #'
-#' Bias-adjusted ORs are estimated with a logistic regression. Bias-adjusted RRs
-#' are estimated with a Poisson regression (Barros & Hirakata, 2003; McNutt et
-#' al., 2003) with "robust" standard errors using the sandwich estimator (Greenland,
-#' 2004; Zhou, 2004).
+#' ORs are estimated with a logistic regression. RRs are estimated with a Poisson
+#' regression (Barros & Hirakata, 2003; McNutt et al., 2003) with "robust"
+#' standard errors using the sandwich estimator (Greenland, 2004; Zhou, 2004).
 #'
 #' Note that the exposure and the outcome have to be numeric variables coded 0
 #' (absence of the event) or 1 (presence of the event).
@@ -1316,7 +1315,7 @@ Se and Sp correlations.")))
 #' corr_se = .8, corr_sp = .8)
 #' }
 #' @export
-#' @importFrom stats median pnorm qnorm quantile qunif runif rnorm rbinom qbeta rbeta reformulate glm binomial poisson coef
+#' @importFrom stats median pnorm qnorm quantile qunif runif rnorm rbinom qbeta rbeta reformulate glm binomial poisson coef confint
 #' @importFrom sandwich sandwich
 #' @importFrom lmtest coeftest
 probcase <- function(df,
@@ -1570,6 +1569,8 @@ Se and Sp correlations.")))
         stop(cli::format_error(c("x" = "Correlations should be > 0 and < 1.")))
 
     obs_data <- df[, c(x, y, c(argList))]
+    outcome <- colnames(obs_data[1])
+    disease <- colnames(obs_data[2])
     confounder_names <- colnames(obs_data[-c(1:2)])
     tab_df <- table(obs_data[[x]], obs_data[[y]],
                     dnn = list(colnames(obs_data[1]), colnames(obs_data[2])))
@@ -1579,16 +1580,15 @@ Se and Sp correlations.")))
     c <- as.numeric(tab[2, 1])
     d <- as.numeric(tab[2, 2])
 
-    cli::cli_alert_info("Calculating observed measures")
-    obs_rr <- (a / (a + c)) / (b / (b + d))
-    se_log_obs_rr <- sqrt((c / a) / (a + c) + (d / b) / (b + d))
-    lci_obs_rr <- exp(log(obs_rr) - qnorm(1 - alpha / 2) * se_log_obs_rr)
-    uci_obs_rr <- exp(log(obs_rr) + qnorm(1 - alpha / 2) * se_log_obs_rr)
+    cli::cli_alert_info("Conventional analysis assuming no bias")
+    formula_conv <- reformulate(c(outcome, confounder_names), response = disease)
+    convrr_mod <- glm(formula_conv, data = obs_data, family = poisson(link = "log"))
+    obs_rr <- exp(coef(convrr_mod))[2]
+    obsci_rr <- exp(confint(convrr_mod, level = 1 - alpha))[2, ]
 
-    obs_or <- (a / b) / (c / d)
-    se_log_obs_or <- sqrt(1 / a + 1 / b + 1 / c + 1 / d)
-    lci_obs_or <- exp(log(obs_or) - qnorm(1 - alpha / 2) * se_log_obs_or)
-    uci_obs_or <- exp(log(obs_or) + qnorm(1 - alpha / 2) * se_log_obs_or)
+    convor_mod <- glm(formula_conv, data = obs_data, family = binomial)
+    obs_or <- exp(coef(convor_mod))[2]
+    obsci_or <- exp(confint(convor_mod, level = 1 - alpha))[2, ]
 
     draws <- matrix(NA, nrow = reps, ncol = 15)
     colnames(draws) <- c("seca", "seexp", "spca", "spexp",
@@ -1834,8 +1834,8 @@ Se and Sp correlations.")))
                     quantile(res_mat[, 5], probs = .025, na.rm = TRUE),
                     quantile(res_mat[, 5], probs = .975, na.rm = TRUE))
 
-        rmat <- rbind(c(obs_rr, lci_obs_rr, uci_obs_rr),
-                      c(obs_or, lci_obs_or, uci_obs_or))
+        rmat <- rbind(c(obs_rr, obsci_rr[1], obsci_rr[2]),
+                      c(obs_or, obsci_or[1], obsci_or[2]))
         rownames(rmat) <- c(" Observed Relative Risk:",
                             "    Observed Odds Ratio:")
         colnames(rmat) <- c(" ",
@@ -1959,8 +1959,8 @@ Se and Sp correlations.")))
                     quantile(res_mat[, 5], probs = .025, na.rm = TRUE),
                     quantile(res_mat[, 5], probs = .975, na.rm = TRUE))
 
-        rmat <- rbind(c(obs_rr, lci_obs_rr, uci_obs_rr),
-                      c(obs_or, lci_obs_or, uci_obs_or))
+        rmat <- rbind(c(obs_rr, obsci_rr[1], obsci_rr[2]),
+                      c(obs_or, obsci_or[1], obsci_or[2]))
         rownames(rmat) <- c(" Observed Relative Risk:",
                             "    Observed Odds Ratio:")
         colnames(rmat) <- c(" ",

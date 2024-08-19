@@ -202,10 +202,9 @@ parameters \code{seca} and \code{spca} are provided. Adding the 2 parameters
 \code{seexp} and \code{spexp} (i.e. providing the 4 bias parameters) evaluates
 a differential misclassification.
 
-Bias-adjusted ORs are estimated with a logistic regression. Bias-adjusted RRs
-are estimated with a Poisson regression (Barros & Hirakata, 2003; McNutt et
-al., 2003) with "robust" standard errors using the sandwich estimator (Greenland,
-2004; Zhou, 2004).
+ORs are estimated with a logistic regression. RRs are estimated with a Poisson
+regression (Barros & Hirakata, 2003; McNutt et al., 2003) with "robust"
+standard errors using the sandwich estimator (Greenland, 2004; Zhou, 2004).
 
 Note that the exposure and the outcome have to be numeric variables coded 0
 (absence of the event) or 1 (presence of the event).
