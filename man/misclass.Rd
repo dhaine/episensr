@@ -3,6 +3,7 @@
 \name{misclass}
 \alias{misclass}
 \alias{probsens}
+\alias{probcase}
 \title{Misclassification of exposure or outcome}
 \usage{
 misclass(
@@ -28,6 +29,24 @@ probsens(
   corr_sp = NULL,
   alpha = 0.05
 )
+
+probcase(
+  df,
+  x,
+  y,
+  ...,
+  type = c("exposure", "outcome"),
+  reps = 100,
+  seca = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
+  seexp = NULL,
+  spca = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
+    "beta"), parms = NULL),
+  spexp = NULL,
+  corr_se = NULL,
+  corr_sp = NULL,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{case}{Outcome variable. If a variable, this variable is tabulated against.}
@@ -38,8 +57,6 @@ probsens(
 \enumerate{
 \item exposure: bias analysis for exposure misclassification; corrections
 using sensitivity and specificity: nondifferential and independent errors,
-\item exposure_pv: bias analysis for exposure misclassification; corrections
-using PPV/NPV: nondifferential and independent errors,
 \item outcome: bias analysis for outcome misclassification.
 }}
 
@@ -87,16 +104,6 @@ have to be between 0 and 1.
 \item trapezoidal: min, lower mode, upper mode, max,
 \item normal: lower bound, upper bound, mean, sd.
 \item beta: alpha, beta.
-}
-If PPV/NPV is chosen in case of exposure misclassification, the same four (4)
-parameters `seca`, `seexp`, `spca`, `spexp` as for Se/Sp have to be used but
-with the following meaning, and only for a beta distributions and no
-correlation between distributions:
-\enumerate{
-\item Positive predictive value among those with the outcome,
-\item Positive predictive value among those without the outcome,
-\item Negative predictive value among those with the outcome,
-\item Negative predictive value among those without the outcome.
 }}
 
 \item{seexp}{List defining sensitivity among controls:
@@ -115,6 +122,15 @@ exposure (when \code{type = "outcome"}).
 chosen in case of exposure misclassification, correlations are set to NULL.}
 
 \item{corr_sp}{Correlation between case and non-case specificities.}
+
+\item{df}{Default dataset, a data frame, to use for analysis.}
+
+\item{x, y, ...}{<[`data-masking`][rlang::topic-data-mask]> List of name-value
+pairs describing which variables in the data should be used. The expression
+`variable` is evaluated within `df`, so there is no need to refer to the
+original dataset (i.e., use `probcase(df, variable)` instead of
+`probcase(df, df$variable)`). Note that `x` and `y` should be numeric
+dichotomous 0,1 variables.}
 }
 \value{
 A list with elements (for `misclass()`):
@@ -132,10 +148,18 @@ A list with elements (for `probsens()`):
   \item{adj_measures}{A table of corrected relative risks and odds ratios.}
   \item{sim_df}{Data frame of random parameters and computed values.}
   \item{reps}{Number of replications.}
+
+A list with elements (for `probcase()`):
+  \item{obs_data}{The analyzed 2 x 2 table from the observed data.}
+  \item{obs_measures}{A table of observed relative risk and odds ratio with
+  confidence intervals.}
+  \item{adj_measures}{A table of corrected relative risks and odds ratios.}
+  \item{sim_df}{Data frame of random parameters and computed values at each run.}
+  \item{reps}{Number of replications.}
 }
 \description{
-`misclass()` and `probsens()` allow to provide adjusted measures of
-association corrected for misclassification of the exposure or the outcome.
+`misclass()`, `probsens()` and `probcase()` allow to provide adjusted measures
+of association corrected for misclassification of the exposure or the outcome.
 }
 \section{Simple bias analysis with `misclass()`}{
 
@@ -160,6 +184,31 @@ a differential misclassification.
 For exposure misclassification, bias-adjusted measures are available using
 sensitivity and specificity, or using predictive values. However, only a beta
 distribution is available for predictive values.
+
+Correlations between sensitivity (or specificity) of exposure classification
+among cases and controls can be specified and use the NORmal To Anything
+(NORTA) transformation (Li & Hammond, 1975).
+
+In case of negative (<=0) adjusted count in the 2-by-2 table following given
+prior Se/Sp distribution(s), draws are discarded.
+}
+
+\section{Probabilistic sensitivity analysis with `probcase()`}{
+
+`probcase()` performs a record-level probabilistic sensitivity analysis to
+correct for exposure misclassification or outcome misclassification and random
+error. Non-differential misclassification is assumed when only the two bias
+parameters \code{seca} and \code{spca} are provided. Adding the 2 parameters
+\code{seexp} and \code{spexp} (i.e. providing the 4 bias parameters) evaluates
+a differential misclassification.
+
+Bias-adjusted ORs are estimated with a logistic regression. Bias-adjusted RRs
+are estimated with a Poisson regression (Barros & Hirakata, 2003; McNutt et
+al., 2003) with "robust" standard errors using the sandwich estimator (Greenland,
+2004; Zhou, 2004).
+
+Note that the exposure and the outcome have to be numeric variables coded 0
+(absence of the event) or 1 (presence of the event).
 
 Correlations between sensitivity (or specificity) of exposure classification
 among cases and controls can be specified and use the NORmal To Anything
@@ -314,10 +363,43 @@ seca = list("beta", c(50, 27)),  ## PPV_case
 spca = list("beta", c(120, .5)),  ## NPV_case
 seexp = list("beta", c(132, 47)),  ## PPV_ctrl
 spexp = list("beta", c(115, 2)))  ## NPV_ctrl
+# Fox M.P., MacLehose R.F., Lash T.L.
+# SAS and R code for probabilistic quantitative bias analysis for
+# misclassified binary variables and binary unmeasured confounders
+# Int J Epidemiol 2023:1624-1633.
+\dontrun{
+set.seed(1234)
+probcase(D, x = e_obs, y = d, reps = 10^3,
+type = "exposure",
+seca = list("beta", c(25, 3)),
+spca = list("trapezoidal", c(.9, .93, .97, 1)),
+seexp = list("beta", c(45, 7)),
+spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+corr_se = .8,
+corr_sp = .8)
+
+set.seed(1234)
+probcase(D, x = e, y = d_obs, reps = 10^3,
+type = "outcome",
+seca = list("beta", c(254, 24)),
+spca = list("trapezoidal", c(.94, .96, .98, 1)),
+seexp = list("beta", c(450, 67)),
+spexp = list("trapezoidal", c(.9, .92, .93, .95)),
+corr_se = .8, corr_sp = .8)
+
+library(aplore3)  # to get ICU data
+data(icu)
+icu$sta2 <- as.numeric(icu$sta) - 1
+icu$inf2 <- as.numeric(icu$inf) - 1
+probcase(icu, x = inf2, y = sta2, reps = 1000,
+seca = list("beta", c(20, 3)), spca = list("trapezoidal", c(.8, .83, .87, .9)),
+seexp = list("beta", c(60, 9)), spexp = list("trapezoidal", c(.88, .93, .97, 1)),
+corr_se = .8, corr_sp = .8)
+}
 }
 \references{
 Fox, M.P, MacLehose, R.F., Lash, T.L., 2021 \emph{Applying Quantitative
-Bias Analysis to Epidemiologic Data}, pp.141--176, 233--256, Springer.
+Bias Analysis to Epidemiologic Data}, pp.141--176, 233--256, 293--308, Springer.
 
 Li, S.T., Hammond, J.L., 1975. \emph{Generation of Pseudorandom Numbers
 with Specified Univariate Distributions and Correlation Coefficients}.
@@ -326,6 +408,21 @@ IEEE Trans Syst Man Cybern 5:557-561.
 Chu, H., Zhaojie, W., Cole, S.R., Greenland, S., \emph{Sensitivity analysis of
 misclassification: A graphical and a Bayesian approach},
 Annals of Epidemiology 2006;16:834-841.
+
+Barros, A. & Hirakata, V.N., 2003. Alternatives for Logistic Regression in
+Cross-sectional Studies: An Empirical Comparison of Models that Directly
+Estimate the Prevalence Ratio. BMC Medical Research Methodology 3:21.
+
+McNutt, L-A, Wu, C., Xue, X., Hafner J.P., 2003. \emph{Estimating the Relative
+Risk in Cohort Studies and Clinical Trials of Common Outcomes}. American
+Journal of Epidemiology 157(10):940-943.
+
+Greenland, S. (2004). Model-based Estimation of Relative Risks and Other
+Epidemiologic Measures in Studies of Common Outcomes and in Case-Control
+Studies. American Journal of Epidemiology 160(4):301-305.
+
+Zhou, G. (2004). A Modified Poisson Regression Approach to Prospective Studies
+with Binary Data. American Journal of Epidemiology 159(7):702-706.
 }
 \seealso{
 Other misclassification: 
