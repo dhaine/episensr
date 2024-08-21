@@ -1793,6 +1793,10 @@ Se and Sp correlations.")))
         obs_data[, "p"] <- NA
         obs_data[, "e_syst"] <- NA
         obs_data[, "e"] <- NA
+        obs_data[, "ed"] <- obs_data[, "e_obs"] * obs_data[, "d"]
+        obs_data[, "e1d"] <- obs_data[, "e_obs"] * (1 - obs_data[, "d"])
+        obs_data[, "1ed"] <- (1 - obs_data[, "e_obs"]) * obs_data[, "d"]
+        obs_data[, "1e1d"] <- (1 - obs_data[, "e_obs"]) * (1 - obs_data[, "d"])
         res_mat <- matrix(NA, nrow = reps2, ncol = 7)
         colnames(res_mat) <- c("rr_tot", "or_syst", "or_tot",
                                "se_D1", "se_D0", "sp_D1", "sp_D0")
@@ -1807,17 +1811,17 @@ Se and Sp correlations.")))
             obs_data[, "PPV_d0"] <- draws[i, 19]
             obs_data[, "NPV_d1"] <- draws[i, 20]
             obs_data[, "NPV_d0"] <- draws[i, 21]
-            obs_data[, "p"] <- obs_data[, "e_obs"] * obs_data[, "d"] * obs_data[, "ppvca"] +
-                obs_data[, "e_obs"] * (1 - obs_data[, "d"]) * obs_data[, "ppvexp"] +
-                (1 - obs_data[, "e_obs"]) * obs_data[, "d"] * (1 - obs_data[, "npvca"]) +
-                (1 - obs_data[, "e_obs"]) * (1 - obs_data[, "d"]) * (1 - obs_data[, "npvexp"])
+            obs_data[, "p"] <- obs_data[, "ed"] * obs_data[, "ppvca"] +
+                obs_data[, "e1d"] * obs_data[, "ppvexp"] +
+                obs_data[, "1ed"] * (1 - obs_data[, "npvca"]) +
+                obs_data[, "1e1d"] * (1 - obs_data[, "npvexp"])
             obs_data[, "e"] <- suppressWarnings({
                                                     rbinom(nrow(obs_data), 1, obs_data[, "p"])
                                                 })
-            obs_data[, "e_syst"] <- obs_data[, "e_obs"] * obs_data[, "d"] * obs_data[, "PPV_d1"] +
-                obs_data[, "e_obs"] * (1 - obs_data[, "d"]) * obs_data[, "PPV_d0"] +
-                (1 - obs_data[, "e_obs"]) * obs_data[, "d"] * (1 - obs_data[, "NPV_d1"]) +
-                (1 - obs_data[, "e_obs"]) * (1 - obs_data[, "d"]) * (1 - obs_data[, "NPV_d0"])
+            obs_data[, "e_syst"] <- obs_data[, "ed"] * obs_data[, "PPV_d1"] +
+                obs_data[, "e1d"] * obs_data[, "PPV_d0"] +
+                obs_data[, "1ed"] * (1 - obs_data[, "NPV_d1"]) +
+                obs_data[, "1e1d"] * (1 - obs_data[, "NPV_d0"])
             ## Logistic regression, systematic and random error
             if (all(is.na(obs_data[, "e"]))) {
                 modrr_coef <- NA
