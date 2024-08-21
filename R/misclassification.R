@@ -1793,10 +1793,8 @@ Se and Sp correlations.")))
         obs_data[, "p"] <- NA
         obs_data[, "e_syst"] <- NA
         obs_data[, "e"] <- NA
-        res_mat <- matrix(NA, nrow = reps2, ncol = 11)
-        colnames(res_mat) <- c("rr_adj", "rr_tot", "rr_se",
-                               "or_adj", "or_tot", "or_se",
-                               "or_adj_syst",
+        res_mat <- matrix(NA, nrow = reps2, ncol = 7)
+        colnames(res_mat) <- c("rr_tot", "or_syst", "or_tot",
                                "se_D1", "se_D0", "sp_D1", "sp_D0")
         formula <- reformulate(c("e", confounder_names), response = "d")
         cli::cli_progress_bar("Processing...", total = reps2)
@@ -1850,35 +1848,28 @@ Se and Sp correlations.")))
                 or_coef <- log(at * dt / bt / ct)
             }
 
-            res_mat[i, 1] <- exp(modrr_coef)
-            res_mat[i, 2] <- exp(modrr_coef + z * modrr_se)
-            res_mat[i, 3] <- modrr_se
-            res_mat[i, 4] <- exp(modor_coef)
-            res_mat[i, 5] <- exp(modor_coef + z * modor_se)
-            res_mat[i, 6] <- modor_se
-            res_mat[i, 7] <- exp(or_coef)
-            res_mat[i, 8] <- draws[i, 1]
-            res_mat[i, 9] <- draws[i, 2]
-            res_mat[i, 10] <- draws[i, 3]
-            res_mat[i, 11] <- draws[i, 4]
+            res_mat[i, 1] <- exp(modrr_coef + z * modrr_se)
+            res_mat[i, 2] <- exp(or_coef)
+            res_mat[i, 3] <- exp(modor_coef + z * modor_se)
+            res_mat[i, 4] <- draws[i, 1]
+            res_mat[i, 5] <- draws[i, 2]
+            res_mat[i, 6] <- draws[i, 3]
+            res_mat[i, 6] <- draws[i, 4]
             cli::cli_progress_update()
         }
 
-        rr_syst <- c(median(res_mat[, 1], na.rm = TRUE),
-                     quantile(res_mat[, 1], probs = .025, na.rm = TRUE),
-                     quantile(res_mat[, 1], probs = .975, na.rm = TRUE))
-        rr_tot <- c(median(res_mat[, 2], na.rm = TRUE),
-                    quantile(res_mat[, 2], probs = .025, na.rm = TRUE),
-                    quantile(res_mat[, 2], probs = .975, na.rm = TRUE))
-        or_syst <- c(median(res_mat[, 4], na.rm = TRUE),
-                     quantile(res_mat[, 4], probs = .025, na.rm = TRUE),
-                     quantile(res_mat[, 4], probs = .975, na.rm = TRUE))
-        or_tot <- c(median(res_mat[, 5], na.rm = TRUE),
-                    quantile(res_mat[, 5], probs = .025, na.rm = TRUE),
-                    quantile(res_mat[, 5], probs = .975, na.rm = TRUE))
-        or_syst2 <- c(median(res_mat[, 7], na.rm = TRUE),
-                    quantile(res_mat[, 7], probs = .025, na.rm = TRUE),
-                    quantile(res_mat[, 7], probs = .975, na.rm = TRUE))
+#        rr_syst <- c(median(res_mat[, 1], na.rm = TRUE),
+#                     quantile(res_mat[, 1], probs = .025, na.rm = TRUE),
+#                     quantile(res_mat[, 1], probs = .975, na.rm = TRUE))
+        rr_tot <- c(median(res_mat[, 1], na.rm = TRUE),
+                    quantile(res_mat[, 1], probs = .025, na.rm = TRUE),
+                    quantile(res_mat[, 1], probs = .975, na.rm = TRUE))
+        or_syst <- c(median(res_mat[, 2], na.rm = TRUE),
+                     quantile(res_mat[, 2], probs = .025, na.rm = TRUE),
+                     quantile(res_mat[, 2], probs = .975, na.rm = TRUE))
+        or_tot <- c(median(res_mat[, 3], na.rm = TRUE),
+                    quantile(res_mat[, 3], probs = .025, na.rm = TRUE),
+                    quantile(res_mat[, 3], probs = .975, na.rm = TRUE))
 
         rmat <- rbind(c(obs_rr, obsci_rr[1], obsci_rr[2]),
                       c(obs_or, obsci_or[1], obsci_or[2]))
@@ -1891,12 +1882,11 @@ Se and Sp correlations.")))
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
-        rmatc <- rbind(rr_syst, rr_tot, or_syst, or_tot, or_syst2)
-        rownames(rmatc) <- c("Relative Risk -- systematic error:",
-                             "                      total error:",
+        rmatc <- rbind(rr_tot, or_syst, or_tot)
+        rownames(rmatc) <- c(#"Relative Risk -- systematic error:",
+                             "Relative Risk --       total error:",
                              "   Odds Ratio -- systematic error:",
-                             "                      total error:",
-                             "   Odds Ratio -- systematic err.2:")
+                             "                      total error:")
         colnames(rmatc) <- c("Median", "p2.5", "p97.5")
     }
 
