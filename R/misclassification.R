@@ -1233,6 +1233,7 @@ Se and Sp correlations.")))
 #' original dataset (i.e., use `probcase(df, variable)` instead of
 #' `probcase(df, df$variable)`). Note that `x` and `y` should be numeric
 #' dichotomous 0,1 variables.
+#' @param measure Risk ratio or odds ratio.
 #' @param type Choice of misclassification:
 #'   \enumerate{
 #'   \item exposure: bias analysis for exposure misclassification; corrections
@@ -1286,9 +1287,12 @@ Se and Sp correlations.")))
 #' # misclassified binary variables and binary unmeasured confounders
 #' # Int J Epidemiol 2023:1624-1633.
 #' \dontrun{
+#' a <- 40; b <- 20; c <- 60; d <- 80
+#' D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
+#' d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
 #' set.seed(1234)
 #' probcase(D, x = e_obs, y = d, reps = 10^3,
-#' type = "exposure",
+#' measure = "RR", type = "exposure",
 #' seca = list("beta", c(25, 3)),
 #' spca = list("trapezoidal", c(.9, .93, .97, 1)),
 #' seexp = list("beta", c(45, 7)),
@@ -1298,7 +1302,7 @@ Se and Sp correlations.")))
 #'
 #' set.seed(1234)
 #' probcase(D, x = e, y = d_obs, reps = 10^3,
-#' type = "outcome",
+#' meausre = "RR", type = "outcome",
 #' seca = list("beta", c(254, 24)),
 #' spca = list("trapezoidal", c(.94, .96, .98, 1)),
 #' seexp = list("beta", c(450, 67)),
@@ -1310,6 +1314,7 @@ Se and Sp correlations.")))
 #' icu$sta2 <- as.numeric(icu$sta) - 1
 #' icu$inf2 <- as.numeric(icu$inf) - 1
 #' probcase(icu, x = inf2, y = sta2, reps = 1000,
+#' measure = "OR", type = "exposure",
 #' seca = list("beta", c(20, 3)), spca = list("trapezoidal", c(.8, .83, .87, .9)),
 #' seexp = list("beta", c(60, 9)), spexp = list("trapezoidal", c(.88, .93, .97, 1)),
 #' corr_se = .8, corr_sp = .8)
@@ -1322,6 +1327,7 @@ probcase <- function(df,
                      x,
                      y,
                      ...,
+                     measure = c("RR", "OR"),
                      type = c("exposure", "outcome"),
                      reps = 100,
                      seca = list(dist = c("constant", "uniform",
@@ -1362,6 +1368,8 @@ probcase <- function(df,
     if (!(all(df[[x]] %in% c(0, 1))) | !(all(df[[y]] %in% c(0, 1)))) {
         stop(cli::format_error(c("x" = "Exposure and outcome should be dichotmous 0,1 variables.")))
     }
+    if (!(measure %in% c("RR", "OR")))
+        stop(cli::format_error(c("x" = "Please choose between RR and OR for measure of association.")))
 
     if (is.null(seca[[2]]) | is.null(spca[[2]]))
         stop(cli::format_error(c("x" = "Missing argument(s) for seca or spca",
@@ -1595,7 +1603,6 @@ Se and Sp correlations.")))
     convor_se <- sqrt(diag(convor_cov))[2]
     obsci_or <- c(exp(coef(convor_mod)[2] - qnorm(1 - alpha / 2) * convor_se),
                   exp(coef(convor_mod)[2] + qnorm(1 - alpha / 2) * convor_se))
-#    obsci_or <- exp(confint(convor_mod, level = 1 - alpha))[2, ]
 
     draws <- matrix(NA, nrow = reps, ncol = 15)
     colnames(draws) <- c("seca", "seexp", "spca", "spexp",
@@ -1734,6 +1741,7 @@ Se and Sp correlations.")))
         }
     }
 
+    measure <- match.arg(measure)
     type <- match.arg(type)
     if (type == "exposure") {
         ## Step 4b: Using simple bias analysis (A0, B0, C0, D0)
@@ -1782,11 +1790,10 @@ Se and Sp correlations.")))
         obs_data[, "e1d"] <- obs_data[, "e_obs"] * (1 - obs_data[, "d"])
         obs_data[, "1ed"] <- (1 - obs_data[, "e_obs"]) * obs_data[, "d"]
         obs_data[, "1e1d"] <- (1 - obs_data[, "e_obs"]) * (1 - obs_data[, "d"])
-        res_mat <- matrix(NA, nrow = reps2, ncol = 13)
-        colnames(res_mat) <- c("rr_coef", "rr_se", "or_coef", "or_se",
-                               "z",
+        res_mat <- matrix(NA, nrow = reps2, ncol = 9)
+        colnames(res_mat) <- c("coef", "se", "z",
                                "se_D1", "se_D0", "sp_D1", "sp_D0",
-                               "rr_adj", "rr_tot", "or_adj", "or_tot")
+                               "meas_adj", "meas_tot")
         formula <- reformulate(c("e", confounder_names), response = "d")
         cli::cli_progress_bar("Processing bias analysis at record level", total = reps2)
         for (i in 1:reps2) {
@@ -1808,46 +1815,40 @@ Se and Sp correlations.")))
                 modor_coef <- NA
                 modor_se <- NA
             } else {
-                modrr_pois <- glm(formula, data = obs_data,
-                                  family = poisson(link = "log"))
-                modrr_coef <- coef(summary(modrr_pois))[2, 1]
-                modrr_se <- lmtest::coeftest(modrr_pois,
-                                             vcov = sandwich::sandwich)[2, 2]
-                modor_log <- glm(formula, data = obs_data,
-                                 family = binomial(link = "log"))
-                modor_coef <- coef(summary(modor_log))[2, 1]
-                modor_se <- coef(summary(modor_log))[2, 2]
+                if (measure == "RR") {
+                    mod_pois <- glm(formula, data = obs_data,
+                                      family = poisson(link = "log"))
+                    mod_coef <- coef(summary(mod_pois))[2, 1]
+                    mod_se <- lmtest::coeftest(mod_pois,
+                                                 vcov = sandwich::sandwich)[2, 2]
+                }
+                if (measure == "OR") {
+                    mod_log <- glm(formula, data = obs_data,
+                                     family = binomial(link = "log"))
+                    mod_coef <- coef(summary(mod_log))[2, 1]
+                    mod_se <- coef(summary(mod_log))[2, 2]
+                }
             }
 
-            res_mat[i, 1] <- modrr_coef
-            res_mat[i, 2] <- modrr_se
-            res_mat[i, 3] <- modor_coef
-            res_mat[i, 4] <- modor_se
-            res_mat[i, 5] <- rnorm(1)
-            res_mat[i, 6] <- draws[i, 1]
-            res_mat[i, 7] <- draws[i, 2]
-            res_mat[i, 8] <- draws[i, 3]
-            res_mat[i, 9] <- draws[i, 4]
+            res_mat[i, 1] <- mod_coef
+            res_mat[i, 2] <- mod_se
+            res_mat[i, 3] <- rnorm(1)
+            res_mat[i, 4] <- draws[i, 1]
+            res_mat[i, 5] <- draws[i, 2]
+            res_mat[i, 6] <- draws[i, 3]
+            res_mat[i, 7] <- draws[i, 4]
             cli::cli_progress_update()
         }
 
-        res_mat[, 10] <- exp(res_mat[, 1])
-        res_mat[, 11] <- exp(res_mat[, 1] + res_mat[, 5] * res_mat[, 2])
-        res_mat[, 12] <- exp(res_mat[, 3])
-        res_mat[, 13] <- exp(res_mat[, 3] + res_mat[, 5] * res_mat[, 4])
+        res_mat[, 8] <- exp(res_mat[, 1])
+        res_mat[, 9] <- exp(res_mat[, 1] + res_mat[, 3] * res_mat[, 2])
 
-        rr_syst <- c(median(res_mat[, 10], na.rm = TRUE),
-                     quantile(res_mat[, 10], probs = .025, na.rm = TRUE),
-                     quantile(res_mat[, 10], probs = .975, na.rm = TRUE))
-        rr_tot <- c(median(res_mat[, 11], na.rm = TRUE),
-                    quantile(res_mat[, 11], probs = .025, na.rm = TRUE),
-                    quantile(res_mat[, 11], probs = .975, na.rm = TRUE))
-        or_syst <- c(median(res_mat[, 12], na.rm = TRUE),
-                     quantile(res_mat[, 12], probs = .025, na.rm = TRUE),
-                     quantile(res_mat[, 12], probs = .975, na.rm = TRUE))
-        or_tot <- c(median(res_mat[, 13], na.rm = TRUE),
-                    quantile(res_mat[, 13], probs = .025, na.rm = TRUE),
-                    quantile(res_mat[, 13], probs = .975, na.rm = TRUE))
+        meas_syst <- c(median(res_mat[, 8], na.rm = TRUE),
+                     quantile(res_mat[, 8], probs = .025, na.rm = TRUE),
+                     quantile(res_mat[, 8], probs = .975, na.rm = TRUE))
+        meas_tot <- c(median(res_mat[, 9], na.rm = TRUE),
+                    quantile(res_mat[, 9], probs = .025, na.rm = TRUE),
+                    quantile(res_mat[, 9], probs = .975, na.rm = TRUE))
 
         rmat <- rbind(c(obs_rr, obsci_rr[1], obsci_rr[2]),
                       c(obs_or, obsci_or[1], obsci_or[2]))
@@ -1860,11 +1861,15 @@ Se and Sp correlations.")))
             rownames(tab) <- paste("Row", 1:2)
         if (is.null(colnames(tab)))
             colnames(tab) <- paste("Col", 1:2)
-        rmatc <- rbind(rr_syst, rr_tot, or_syst, or_tot)
-        rownames(rmatc) <- c("Relative Risk -- systematic error:",
-                             "                      total error:",
-                             "   Odds Ratio -- systematic error:",
-                             "                      total error:")
+        rmatc <- rbind(meas_syst, meas_tot)
+        if (measure == "RR") {
+            rownames(rmatc) <- c("Relative Risk -- systematic error:",
+                                 "                      total error:")
+        }
+        if (measure == "OR") {
+            rownames(rmatc) <- c("Odds Ratio -- systematic error:",
+                                 "                   total error:")
+        }
         colnames(rmatc) <- c("Median", "p2.5", "p97.5")
     }
 
