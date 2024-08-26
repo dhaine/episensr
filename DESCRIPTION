@@ -25,7 +25,6 @@ Imports:
     dagitty,
     forcats,
     ggdag,
-    lmtest,
     magrittr,
     sandwich,
     trapezoid,

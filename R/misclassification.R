@@ -1322,7 +1322,6 @@ Se and Sp correlations.")))
 #' @export
 #' @importFrom stats median pnorm qnorm quantile qunif runif rnorm rbinom qbeta rbeta reformulate glm binomial poisson coef confint
 #' @importFrom sandwich sandwich
-#' @importFrom lmtest coeftest
 probcase <- function(df,
                      x,
                      y,
@@ -1604,12 +1603,14 @@ Se and Sp correlations.")))
     obsci_or <- c(exp(coef(convor_mod)[2] - qnorm(1 - alpha / 2) * convor_se),
                   exp(coef(convor_mod)[2] + qnorm(1 - alpha / 2) * convor_se))
 
-    draws <- matrix(NA, nrow = reps, ncol = 15)
+    draws <- matrix(NA, nrow = reps, ncol = 21)
     colnames(draws) <- c("seca", "seexp", "spca", "spexp",
                          "A0", "B0", "C0", "D0",
                          "flag",
                          "prevca", "prevexp",
-                         "ppvca", "ppvexp", "npvca", "npvexp")
+                         "ppvca", "ppvexp", "npvca", "npvexp",
+                         "ped1", "ped0",
+                         "PPV_d1", "PPV_d0", "NPV_d1", "NPV_d0")
     corr_draws <- matrix(NA, nrow = reps, ncol = 4)
 
     se1 <- c(reps, seca[[2]])
@@ -1746,10 +1747,10 @@ Se and Sp correlations.")))
     if (type == "exposure") {
         ## Step 4b: Using simple bias analysis (A0, B0, C0, D0)
         cli::cli_progress_step("Simple bias analysis", spinner = TRUE)
-        draws[, 5] <- (a - (1 - draws[, 3]) * (a + b)) / (draws[, 1] - (1 - draws[, 3]))
-        draws[, 6] <- (a + b) - draws[, 5]
-        draws[, 7] <- (c - (1 - draws[, 4]) * (c + d)) / (draws[, 2] - (1 - draws[, 4]))
-        draws[, 8] <- (c + d) - draws[, 7]
+        draws[, 5] <- (a - (1 - draws[, 3]) * (a + b)) / (draws[, 1] - (1 - draws[, 3]))  # A0
+        draws[, 6] <- (a + b) - draws[, 5]  # B0
+        draws[, 7] <- (c - (1 - draws[, 4]) * (c + d)) / (draws[, 2] - (1 - draws[, 4]))  #C0
+        draws[, 8] <- (c + d) - draws[, 7]  # D0
 
         ## Clean up
         draws[, 9] <- apply(draws[, 5:8], MARGIN = 1, function(x) sum(x > 0))
@@ -1762,38 +1763,59 @@ Se and Sp correlations.")))
         reps2 <- nrow(draws)
 
         ## Prevalence of exposure in cases and controls, accounting for sampling error
-        suppressWarnings({
-                             draws[, 10] <- rbeta(reps2, draws[, 5], draws[, 6])
-                             draws[, 11] <- rbeta(reps2, draws[, 7], draws[, 8])
-                         })
+        ## For systematic error only
+        draws[, 16] <- draws[, 5] / (draws[, 5] + draws[, 6])  # ped1 syst. err
+        draws[, 17] <- draws[, 7] / (draws[, 7] + draws[, 8])  # ped0 syst. err.
         ## Computing predictive values for imputation (PPV_d1, PPV_d0, NPV_d1, NPV_d0)
+        ## For systematic error only
+        draws[, 18] <- draws[, 1] * draws[, 16] /
+            (draws[, 1] * draws[, 16] + (1 - draws[, 16]) * (1 - draws[, 3]))  # PPV_d1
+        draws[, 19] <- draws[, 2] * draws[, 17] /
+            (draws[, 2] * draws[, 17] + (1 - draws[, 17]) * (1 - draws[, 4]))  # PPV_d0
+        draws[, 20] <- (draws[, 3] * (1 - draws[, 16])) /
+            ((draws[, 3] * (1 - draws[, 16])) + (1 - draws[, 1]) * (draws[, 16]))  # NPV_d1
+        draws[, 21] <- (draws[, 4] * (1 - draws[, 17])) /
+            ((draws[, 4] * (1 - draws[, 17])) + (1 - draws[, 2]) * (draws[, 17]))  # NPV_d0
+        ## For systematic and random error
+        suppressWarnings({
+                             draws[, 10] <- rbeta(reps2, draws[, 5], draws[, 6])  # ped1 syst. + rdm err.
+                             draws[, 11] <- rbeta(reps2, draws[, 7], draws[, 8])  # ped0 syst. + rdm err.
+                         })
+        ## Computing predictive values based on sampled prevalences (PPV_d1, PPV_d0, NPV_d1, NPV_d0)
+        ## For systematic and random error
         draws[, 12] <- (draws[, 1] * draws[, 10]) /
-            ((draws[, 1] * draws[, 10]) + (1 - draws[, 3]) * (1 - draws[, 10]))
+            ((draws[, 1] * draws[, 10]) + (1 - draws[, 3]) * (1 - draws[, 10]))  # ppvca
         draws[, 13] <- (draws[, 2] * draws[, 11]) /
-            ((draws[, 2] * draws[, 11]) + (1 - draws[, 4]) * (1 - draws[, 11]))
+            ((draws[, 2] * draws[, 11]) + (1 - draws[, 4]) * (1 - draws[, 11]))  # ppvexp
         draws[, 14] <- (draws[, 3] * (1 - draws[, 10])) /
-            ((1 - draws[, 1]) * draws[, 10] + draws[, 3] * (1 - draws[, 10]))
+            ((1 - draws[, 1]) * draws[, 10] + draws[, 3] * (1 - draws[, 10]))  # npvca
         draws[, 15] <- (draws[, 4] * (1 - draws[, 11])) /
-            ((1 - draws[, 2]) * draws[, 11] + draws[, 4] * (1 - draws[, 11]))
+            ((1 - draws[, 2]) * draws[, 11] + draws[, 4] * (1 - draws[, 11]))  #npvexp
 
         ## Loop through draws and impute new exposures at each step
         cli::cli_progress_step("Assigned probability of exposure for the record", spinner = TRUE)
+        nrow_obs <- nrow(obs_data)
         names(obs_data)[1] <- "e_obs"
         names(obs_data)[2] <- "d"
         obs_data[, "ppvca"] <- NA
         obs_data[, "ppvexp"] <- NA
         obs_data[, "npvca"] <- NA
         obs_data[, "npvexp"] <- NA
+        obs_data[, "PPV_d1"] <- NA
+        obs_data[, "PPV_d0"] <- NA
+        obs_data[, "NPV_d1"] <- NA
+        obs_data[, "NPV_d0"] <- NA
         obs_data[, "p"] <- NA
+        obs_data[, "e_syst"] <- NA
         obs_data[, "e"] <- NA
         obs_data[, "ed"] <- obs_data[, "e_obs"] * obs_data[, "d"]
         obs_data[, "e1d"] <- obs_data[, "e_obs"] * (1 - obs_data[, "d"])
         obs_data[, "1ed"] <- (1 - obs_data[, "e_obs"]) * obs_data[, "d"]
         obs_data[, "1e1d"] <- (1 - obs_data[, "e_obs"]) * (1 - obs_data[, "d"])
-        res_mat <- matrix(NA, nrow = reps2, ncol = 9)
-        colnames(res_mat) <- c("coef", "se", "z",
+        res_mat <- matrix(NA, nrow = reps2, ncol = 11)
+        colnames(res_mat) <- c("coef", "se", "z", "coef_syst",
                                "se_D1", "se_D0", "sp_D1", "sp_D0",
-                               "meas_adj", "meas_tot")
+                               "meas_syst", "meas_adj", "meas_tot")
         formula <- reformulate(c("e", confounder_names), response = "d")
         cli::cli_progress_bar("Processing bias analysis at record level", total = reps2)
         for (i in 1:reps2) {
@@ -1801,14 +1823,22 @@ Se and Sp correlations.")))
             obs_data[, "ppvexp"] <- draws[i, 13]
             obs_data[, "npvca"] <- draws[i, 14]
             obs_data[, "npvexp"] <- draws[i, 15]
+            obs_data[, "PPV_d1"] <- draws[i, 18]
+            obs_data[, "PPV_d0"] <- draws[i, 19]
+            obs_data[, "NPV_d1"] <- draws[i, 20]
+            obs_data[, "NPV_d0"] <- draws[i, 21]
             obs_data[, "p"] <- obs_data[, "ed"] * obs_data[, "ppvca"] +
                 obs_data[, "e1d"] * obs_data[, "ppvexp"] +
                 obs_data[, "1ed"] * (1 - obs_data[, "npvca"]) +
                 obs_data[, "1e1d"] * (1 - obs_data[, "npvexp"])
             obs_data[, "e"] <- suppressWarnings({
-                                                    rbinom(nrow(obs_data), 1, obs_data[, "p"])
+                                                    rbinom(nrow_obs, 1, obs_data[, "p"])
                                                 })
-            ## Logistic regression
+            obs_data[, "e_syst"] <- obs_data[, "ed"] * obs_data[, "PPV_d1"] +
+                obs_data[, "e1d"] * obs_data[, "PPV_d0"] +
+                obs_data[, "1ed"] * (1 - obs_data[, "NPV_d1"]) +
+                obs_data[, "1e1d"] * (1 - obs_data[, "NPV_d0"])
+            ## Logistic regression, systematic and random error
             if (all(is.na(obs_data[, "e"]))) {
                 modrr_coef <- NA
                 modrr_se <- NA
@@ -1819,36 +1849,54 @@ Se and Sp correlations.")))
                     mod_pois <- glm(formula, data = obs_data,
                                       family = poisson(link = "log"))
                     mod_coef <- coef(summary(mod_pois))[2, 1]
-                    mod_se <- lmtest::coeftest(mod_pois,
-                                                 vcov = sandwich::sandwich)[2, 2]
+                    mod_cov <- sandwich::vcovHC(mod_pois, type = "HC0")
+                    mod_se <- sqrt(diag(mod_cov))[2]
                 }
                 if (measure == "OR") {
                     mod_log <- glm(formula, data = obs_data,
-                                     family = binomial(link = "log"))
+                                     family = binomial(link = "logit"))
                     mod_coef <- coef(summary(mod_log))[2, 1]
-                    mod_se <- coef(summary(mod_log))[2, 2]
+                    mod_cov <- sandwich::vcovHC(mod_log, type = "HC0")
+                    mod_se <- sqrt(diag(mod_cov))[2]
                 }
+            }
+            ## For systematic error only:
+            if (all(is.na(obs_data[, "e_syst"]))) {
+                coef_syst <- NA
+            } else {
+                    at <- sum(obs_data$e_syst[obs_data$d == 1])
+                    ct <- sum(obs_data$e_syst[obs_data$d == 0])
+                    dt <- ct - sum(obs_data$d == 0)
+                    bt <- at - sum(obs_data$d == 1)
+                    if (measure == "RR") {
+                        coef_syst <- log((at * (bt + dt)) / (bt * (at + ct)))
+                    }
+                    if (measure == "OR") {
+                        coef_syst <- log(at * dt / bt / ct)
+                    }
             }
 
             res_mat[i, 1] <- mod_coef
             res_mat[i, 2] <- mod_se
             res_mat[i, 3] <- rnorm(1)
-            res_mat[i, 4] <- draws[i, 1]
-            res_mat[i, 5] <- draws[i, 2]
-            res_mat[i, 6] <- draws[i, 3]
-            res_mat[i, 7] <- draws[i, 4]
+            res_mat[i, 4] <- coef_syst
+            res_mat[i, 5] <- draws[i, 1]
+            res_mat[i, 6] <- draws[i, 2]
+            res_mat[i, 7] <- draws[i, 3]
+            res_mat[i, 8] <- draws[i, 4]
             cli::cli_progress_update()
         }
 
-        res_mat[, 8] <- exp(res_mat[, 1])
-        res_mat[, 9] <- exp(res_mat[, 1] + res_mat[, 3] * res_mat[, 2])
+        res_mat[, 9] <- exp(res_mat[, 4])
+        res_mat[, 10] <- exp(res_mat[, 1])
+        res_mat[, 11] <- exp(res_mat[, 1] + res_mat[, 3] * res_mat[, 2])
 
-        meas_syst <- c(median(res_mat[, 8], na.rm = TRUE),
-                     quantile(res_mat[, 8], probs = .025, na.rm = TRUE),
-                     quantile(res_mat[, 8], probs = .975, na.rm = TRUE))
-        meas_tot <- c(median(res_mat[, 9], na.rm = TRUE),
-                    quantile(res_mat[, 9], probs = .025, na.rm = TRUE),
-                    quantile(res_mat[, 9], probs = .975, na.rm = TRUE))
+        meas_syst <- c(median(res_mat[, 9], na.rm = TRUE),
+                       quantile(res_mat[, 9], probs = .025, na.rm = TRUE),
+                       quantile(res_mat[, 9], probs = .975, na.rm = TRUE))
+        meas_tot <- c(median(res_mat[, 11], na.rm = TRUE),
+                    quantile(res_mat[, 11], probs = .025, na.rm = TRUE),
+                    quantile(res_mat[, 11], probs = .975, na.rm = TRUE))
 
         rmat <- rbind(c(obs_rr, obsci_rr[1], obsci_rr[2]),
                       c(obs_or, obsci_or[1], obsci_or[2]))
