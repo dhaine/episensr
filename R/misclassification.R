@@ -1847,14 +1847,14 @@ Se and Sp correlations.")))
             } else {
                 if (measure == "RR") {
                     mod_pois <- glm(formula, data = obs_data,
-                                      family = poisson(link = "log"))
+                                    family = poisson(link = "log"))
                     mod_coef <- coef(summary(mod_pois))[2, 1]
                     mod_cov <- sandwich::vcovHC(mod_pois, type = "HC0")
                     mod_se <- sqrt(diag(mod_cov))[2]
                 }
                 if (measure == "OR") {
                     mod_log <- glm(formula, data = obs_data,
-                                     family = binomial(link = "logit"))
+                                   family = binomial(link = "logit"))
                     mod_coef <- coef(summary(mod_log))[2, 1]
                     mod_cov <- sandwich::vcovHC(mod_log, type = "HC0")
                     mod_se <- sqrt(diag(mod_cov))[2]
@@ -1868,11 +1868,16 @@ Se and Sp correlations.")))
                     ct <- sum(obs_data$e_syst[obs_data$d == 0])
                     dt <- ct - sum(obs_data$d == 0)
                     bt <- at - sum(obs_data$d == 1)
+
                     if (measure == "RR") {
-                        coef_syst <- log((at * (bt + dt)) / (bt * (at + ct)))
+                        coef_syst <- ifelse((at * bt * ct * dt) <= 0,
+                                            NA,
+                                            log((at * (bt + dt)) / (bt * (at + ct))))
                     }
                     if (measure == "OR") {
-                        coef_syst <- log(at * dt / bt / ct)
+                        coef_syst <- ifelse((at * bt * ct * dt) <= 0,
+                                            NA,
+                                            log(at * dt / bt / ct))
                     }
             }
 
