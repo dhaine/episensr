@@ -1797,21 +1797,15 @@ Se and Sp correlations.")))
         nrow_obs <- nrow(obs_data)
         names(obs_data)[1] <- "e_obs"
         names(obs_data)[2] <- "d"
-        obs_data[, "ppvca"] <- NA
-        obs_data[, "ppvexp"] <- NA
-        obs_data[, "npvca"] <- NA
-        obs_data[, "npvexp"] <- NA
-        obs_data[, "PPV_d1"] <- NA
-        obs_data[, "PPV_d0"] <- NA
-        obs_data[, "NPV_d1"] <- NA
-        obs_data[, "NPV_d0"] <- NA
-        obs_data[, "p"] <- NA
-        obs_data[, "e_syst"] <- NA
-        obs_data[, "e"] <- NA
-        obs_data[, "ed"] <- obs_data[, "e_obs"] * obs_data[, "d"]
-        obs_data[, "e1d"] <- obs_data[, "e_obs"] * (1 - obs_data[, "d"])
-        obs_data[, "1ed"] <- (1 - obs_data[, "e_obs"]) * obs_data[, "d"]
-        obs_data[, "1e1d"] <- (1 - obs_data[, "e_obs"]) * (1 - obs_data[, "d"])
+        obs_mat <- as.matrix(obs_data[, c("e_obs", "d")])
+        obs_mat <- cbind(obs_mat, obs_mat[, "e_obs"] * obs_mat[, "d"],  ## e_obs * d
+                         obs_mat[, "e_obs"] * (1 - obs_mat[, "d"]),  ## e * (1 - d)
+                         (1 - obs_mat[, "e_obs"]) * obs_mat[, "d"],  ## (1 - e_obs) * d
+                         (1 - obs_mat[, "e_obs"]) * (1 - obs_mat[, "d"]),  ## (1 - e_obs) * (1 - d)
+                         rep(NA, nrow_obs),  ## p
+                         rep(NA, nrow_obs),  ## e
+                         rep(NA, nrow_obs))  ## e_syst
+        colnames(obs_mat) <- c("e_obs", "d", "e_d", "e_1d", "e1_d", "e1_1d", "p", "e", "e_syst")
         res_mat <- matrix(NA, nrow = reps2, ncol = 11)
         colnames(res_mat) <- c("coef", "se", "z", "coef_syst",
                                "se_D1", "se_D0", "sp_D1", "sp_D0",
@@ -1819,41 +1813,33 @@ Se and Sp correlations.")))
         formula <- reformulate(c("e", confounder_names), response = "d")
         cli::cli_progress_bar("Processing bias analysis at record level", total = reps2)
         for (i in 1:reps2) {
-            obs_data[, "ppvca"] <- draws[i, 12]
-            obs_data[, "ppvexp"] <- draws[i, 13]
-            obs_data[, "npvca"] <- draws[i, 14]
-            obs_data[, "npvexp"] <- draws[i, 15]
-            obs_data[, "PPV_d1"] <- draws[i, 18]
-            obs_data[, "PPV_d0"] <- draws[i, 19]
-            obs_data[, "NPV_d1"] <- draws[i, 20]
-            obs_data[, "NPV_d0"] <- draws[i, 21]
-            obs_data[, "p"] <- obs_data[, "ed"] * obs_data[, "ppvca"] +
-                obs_data[, "e1d"] * obs_data[, "ppvexp"] +
-                obs_data[, "1ed"] * (1 - obs_data[, "npvca"]) +
-                obs_data[, "1e1d"] * (1 - obs_data[, "npvexp"])
-            obs_data[, "e"] <- suppressWarnings({
-                                                    rbinom(nrow_obs, 1, obs_data[, "p"])
+            obs_mat[, "p"] <- obs_mat[, "e_d"] * draws[i, 12] +
+                obs_mat[, "e_1d"] * draws[i, 13] +
+                obs_mat[, "e1_d"] * (1 - draws[i, 14]) +
+                obs_mat[, "e1_1d"] * (1 - draws[i, 15])
+            obs_mat[, "e"] <- suppressWarnings({
+                                                   rbinom(nrow_obs, 1, obs_mat[, "p"])
                                                 })
-            obs_data[, "e_syst"] <- obs_data[, "ed"] * obs_data[, "PPV_d1"] +
-                obs_data[, "e1d"] * obs_data[, "PPV_d0"] +
-                obs_data[, "1ed"] * (1 - obs_data[, "NPV_d1"]) +
-                obs_data[, "1e1d"] * (1 - obs_data[, "NPV_d0"])
+            obs_mat[, "e_syst"] <- obs_mat[, "e_d"] * draws[i, 18] +
+                obs_mat[, "e_1d"] * draws[i, 19] +
+                obs_mat[, "e1_d"] * (1 - draws[i, 20]) +
+                obs_mat[, "e1_1d"] * (1 - draws[i, 21])
             ## Logistic regression, systematic and random error
-            if (all(is.na(obs_data[, "e"]))) {
+            if (all(is.na(obs_mat[, "e"]))) {
                 modrr_coef <- NA
                 modrr_se <- NA
                 modor_coef <- NA
                 modor_se <- NA
             } else {
                 if (measure == "RR") {
-                    mod_pois <- glm(formula, data = obs_data,
+                    mod_pois <- glm(obs_mat[, "d"] ~ obs_mat[, "e"],
                                     family = poisson(link = "log"))
                     mod_coef <- coef(summary(mod_pois))[2, 1]
                     mod_cov <- sandwich::vcovHC(mod_pois, type = "HC0")
                     mod_se <- sqrt(diag(mod_cov))[2]
                 }
                 if (measure == "OR") {
-                    mod_log <- glm(formula, data = obs_data,
+                    mod_log <- glm(obs_mat[, "d"] ~ obs_mat[, "e"],
                                    family = binomial(link = "logit"))
                     mod_coef <- coef(summary(mod_log))[2, 1]
                     mod_cov <- sandwich::vcovHC(mod_log, type = "HC0")
@@ -1861,13 +1847,13 @@ Se and Sp correlations.")))
                 }
             }
             ## For systematic error only:
-            if (all(is.na(obs_data[, "e_syst"]))) {
+            if (all(is.na(obs_mat[, "e_syst"]))) {
                 coef_syst <- NA
             } else {
-                    at <- sum(obs_data$e_syst[obs_data$d == 1])
-                    ct <- sum(obs_data$e_syst[obs_data$d == 0])
-                    dt <- ct - sum(obs_data$d == 0)
-                    bt <- at - sum(obs_data$d == 1)
+                    at <- sum(obs_mat[, "e_syst"][obs_mat[, "d"] == 1])
+                    ct <- sum(obs_mat[, "e_syst"][obs_mat[, "d"] == 0])
+                    dt <- ct - sum(obs_mat[, "d"] == 0)
+                    bt <- at - sum(obs_mat[, "d"] == 1)
 
                     if (measure == "RR") {
                         coef_syst <- ifelse((at * bt * ct * dt) <= 0,
