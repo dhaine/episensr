@@ -30,7 +30,9 @@ Imports:
     trapezoid,
     triangle,
     truncnorm,
-    MASS
+    MASS,
+    Rcpp,
+    RcppProgress
 Suggests:
     aplore3,
     covr,
@@ -44,3 +46,6 @@ VignetteBuilder:
     knitr
 Encoding: UTF-8
 RoxygenNote: 7.3.2
+LinkingTo:
+    Rcpp,
+    RcppProgress

@@ -1811,6 +1811,14 @@ Se and Sp correlations.")))
                                "se_D1", "se_D0", "sp_D1", "sp_D0",
                                "meas_syst", "meas_adj", "meas_tot")
         formula <- reformulate(c("e", confounder_names), response = "d")
+        prev <- loop_misclass(reps2, nrow_obs, measure,
+                              obs_mat[, "e_d"], draws[, 12],
+                              obs_mat[, "e_1d"], draws[, 13],
+                              obs_mat[, "e1_d"], draws[, 14],
+                              obs_mat[, "e1_1d"], draws[, 15],
+                              draws[, 18], draws[, 19],
+                              draws[, 20], draws[, 21],
+                              obs_mat[, "d"])
         cli::cli_progress_bar("Processing bias analysis at record level", total = reps2)
         for (i in 1:reps2) {
             obs_mat[, "p"] <- obs_mat[, "e_d"] * draws[i, 12] +
@@ -1826,10 +1834,8 @@ Se and Sp correlations.")))
                 obs_mat[, "e1_1d"] * (1 - draws[i, 21])
             ## Logistic regression, systematic and random error
             if (all(is.na(obs_mat[, "e"]))) {
-                modrr_coef <- NA
-                modrr_se <- NA
-                modor_coef <- NA
-                modor_se <- NA
+                mod_coef <- NA
+                mod_se <- NA
             } else {
                 if (measure == "RR") {
                     mod_pois <- glm(obs_mat[, "d"] ~ obs_mat[, "e"],
@@ -2038,6 +2044,8 @@ Se and Sp correlations.")))
     }
 
     res <- list(obs_data = tab,
+                obs_mat = obs_mat,
+                prev = prev,
                 obs_measures = rmat,
                 adj_measures = rmatc,
                 sim_df = as.data.frame(res_mat),

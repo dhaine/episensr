@@ -35,6 +35,7 @@ probcase(
   x,
   y,
   ...,
+  measure = c("RR", "OR"),
   type = c("exposure", "outcome"),
   reps = 100,
   seca = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
@@ -131,6 +132,8 @@ pairs describing which variables in the data should be used. The expression
 original dataset (i.e., use `probcase(df, variable)` instead of
 `probcase(df, df$variable)`). Note that `x` and `y` should be numeric
 dichotomous 0,1 variables.}
+
+\item{measure}{Risk ratio or odds ratio.}
 }
 \value{
 A list with elements (for `misclass()`):
@@ -367,9 +370,12 @@ spexp = list("beta", c(115, 2)))  ## NPV_ctrl
 # misclassified binary variables and binary unmeasured confounders
 # Int J Epidemiol 2023:1624-1633.
 \dontrun{
+a <- 40; b <- 20; c <- 60; d <- 80
+D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
+d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
 set.seed(1234)
 probcase(D, x = e_obs, y = d, reps = 10^3,
-type = "exposure",
+measure = "RR", type = "exposure",
 seca = list("beta", c(25, 3)),
 spca = list("trapezoidal", c(.9, .93, .97, 1)),
 seexp = list("beta", c(45, 7)),
@@ -379,7 +385,7 @@ corr_sp = .8)
 
 set.seed(1234)
 probcase(D, x = e, y = d_obs, reps = 10^3,
-type = "outcome",
+meausre = "RR", type = "outcome",
 seca = list("beta", c(254, 24)),
 spca = list("trapezoidal", c(.94, .96, .98, 1)),
 seexp = list("beta", c(450, 67)),
@@ -391,6 +397,7 @@ data(icu)
 icu$sta2 <- as.numeric(icu$sta) - 1
 icu$inf2 <- as.numeric(icu$inf) - 1
 probcase(icu, x = inf2, y = sta2, reps = 1000,
+measure = "OR", type = "exposure",
 seca = list("beta", c(20, 3)), spca = list("trapezoidal", c(.8, .83, .87, .9)),
 seexp = list("beta", c(60, 9)), spexp = list("trapezoidal", c(.88, .93, .97, 1)),
 corr_se = .8, corr_sp = .8)
