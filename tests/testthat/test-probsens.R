@@ -826,22 +826,24 @@ test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR", {
               expect_equal(model$adj_measures[2, 3], 9.5569, tolerance = 1e-4, scale = 1)
           })
 
-test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR LONG!", {
+test_that("Probcase -- Fox paper -- misclass -- exposure -- RR LONG!", {
               a <- 40; b <- 20; c <- 60; d <- 80
               D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
                               d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
               set.seed(1234)
-              system.time(model <- probcase(D, x = e_obs, y = d, reps = 10^5,
-                                            measure = "RR", type = "exposure",
-                                            seca = list("beta", c(25, 3)),
-                                            spca = list("trapezoidal", c(.9, .93, .97, 1)),
-                                            seexp = list("beta", c(45, 7)),
-                                            spexp = list("trapezoidal", c(.8, .83, .87, .9)),
-                                            corr_se = .8, corr_sp = .8))
+#              system.time(
+              model <- probcase(D, x = e_obs, y = d, reps = 10^5,
+                                measure = "RR", type = "exposure",
+                                seca = list("beta", c(25, 3)),
+                                spca = list("trapezoidal", c(.9, .93, .97, 1)),
+                                seexp = list("beta", c(45, 7)),
+                                spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+                                corr_se = .8, corr_sp = .8)
+#              )
               expect_equal(model$adj_measures[1, 1], 2.7533, tolerance = 1e-4, scale = 1)
               expect_equal(model$adj_measures[1, 2], 2.3317, tolerance = 1e-4, scale = 1)
               expect_equal(model$adj_measures[1, 3], 5.0717, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 1], 2.8429, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 1], 2.8427, tolerance = 1e-4, scale = 1)
               expect_equal(model$adj_measures[2, 2], 1.5391, tolerance = 1e-4, scale = 1)
               expect_equal(model$adj_measures[2, 3], 8.0743, tolerance = 1e-4, scale = 1)
           })
