@@ -23,6 +23,7 @@ Imports:
     boot,
     cli,
     dagitty,
+    fastglm,
     forcats,
     ggdag,
     magrittr,
@@ -48,4 +49,5 @@ Encoding: UTF-8
 RoxygenNote: 7.3.2
 LinkingTo:
     Rcpp,
+    fastglm,
     RcppProgress
