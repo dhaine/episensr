@@ -1322,6 +1322,7 @@ Se and Sp correlations.")))
 #' @export
 #' @importFrom stats median pnorm qnorm quantile qunif runif rnorm rbinom qbeta rbeta reformulate glm binomial poisson coef confint
 #' @importFrom sandwich sandwich
+#' @import progress
 probcase <- function(df,
                      x,
                      y,
@@ -1801,92 +1802,26 @@ Se and Sp correlations.")))
         obs_mat <- cbind(obs_mat, obs_mat[, "e_obs"] * obs_mat[, "d"],  ## e_obs * d
                          obs_mat[, "e_obs"] * (1 - obs_mat[, "d"]),  ## e * (1 - d)
                          (1 - obs_mat[, "e_obs"]) * obs_mat[, "d"],  ## (1 - e_obs) * d
-                         (1 - obs_mat[, "e_obs"]) * (1 - obs_mat[, "d"]),  ## (1 - e_obs) * (1 - d)
-                         rep(NA, nrow_obs),  ## p
-                         rep(NA, nrow_obs),  ## e
-                         rep(NA, nrow_obs))  ## e_syst
-        colnames(obs_mat) <- c("e_obs", "d", "e_d", "e_1d", "e1_d", "e1_1d", "p", "e", "e_syst")
-        res_mat <- matrix(NA, nrow = reps2, ncol = 11)
-        colnames(res_mat) <- c("coef", "se", "z", "coef_syst",
-                               "se_D1", "se_D0", "sp_D1", "sp_D0",
-                               "meas_syst", "meas_adj", "meas_tot")
+                         (1 - obs_mat[, "e_obs"]) * (1 - obs_mat[, "d"]))  ## (1 - e_obs) * (1 - d)
+        colnames(obs_mat) <- c("e_obs", "d", "e_d", "e_1d", "e1_d", "e1_1d")
+
         formula <- reformulate(c("e", confounder_names), response = "d")
-        prev <- loop_misclass(reps2, nrow_obs, measure, obs_mat, draws, d~e)
-        cli::cli_progress_bar("Processing bias analysis at record level", total = reps2)
-        for (i in 1:reps2) {
-            obs_mat[, "p"] <- obs_mat[, "e_d"] * draws[i, 12] +
-                obs_mat[, "e_1d"] * draws[i, 13] +
-                obs_mat[, "e1_d"] * (1 - draws[i, 14]) +
-                obs_mat[, "e1_1d"] * (1 - draws[i, 15])
-            obs_mat[, "e"] <- suppressWarnings({
-                                                   rbinom(nrow_obs, 1, obs_mat[, "p"])
-                                                })
-            obs_mat[, "e_syst"] <- obs_mat[, "e_d"] * draws[i, 18] +
-                obs_mat[, "e_1d"] * draws[i, 19] +
-                obs_mat[, "e1_d"] * (1 - draws[i, 20]) +
-                obs_mat[, "e1_1d"] * (1 - draws[i, 21])
-            ## Logistic regression, systematic and random error
-            if (all(is.na(obs_mat[, "e"]))) {
-                mod_coef <- NA
-                mod_se <- NA
-            } else {
-                if (measure == "RR") {
-                    mod_pois <- glm(obs_mat[, "d"] ~ obs_mat[, "e"],
-                                    family = poisson(link = "log"))
-                    mod_coef <- coef(summary(mod_pois))[2, 1]
-                    mod_cov <- sandwich::vcovHC(mod_pois, type = "HC0")
-                    mod_se <- sqrt(diag(mod_cov))[2]
-                }
-                if (measure == "OR") {
-                    mod_log <- glm(obs_mat[, "d"] ~ obs_mat[, "e"],
-                                   family = binomial(link = "logit"))
-                    mod_coef <- coef(summary(mod_log))[2, 1]
-                    mod_cov <- sandwich::vcovHC(mod_log, type = "HC0")
-                    mod_se <- sqrt(diag(mod_cov))[2]
-                }
-            }
-            ## For systematic error only:
-            if (all(is.na(obs_mat[, "e_syst"]))) {
-                coef_syst <- NA
-            } else {
-                    at <- sum(obs_mat[, "e_syst"][obs_mat[, "d"] == 1])
-                    ct <- sum(obs_mat[, "e_syst"][obs_mat[, "d"] == 0])
-                    dt <- ct - sum(obs_mat[, "d"] == 0)
-                    bt <- at - sum(obs_mat[, "d"] == 1)
 
-                    if (measure == "RR") {
-                        coef_syst <- ifelse((at * bt * ct * dt) <= 0,
-                                            NA,
-                                            log((at * (bt + dt)) / (bt * (at + ct))))
-                    }
-                    if (measure == "OR") {
-                        coef_syst <- ifelse((at * bt * ct * dt) <= 0,
-                                            NA,
-                                            log(at * dt / bt / ct))
-                    }
-            }
+        get_expo <- define_e(reps2, measure, obs_mat, draws, format = "[:bar] :percent ")
+        res_mat <- get_expo$ze_syst
+        tot_err <- calc_toterr(reps2, measure, obs_mat, get_expo$e, format = "[:bar] :percent ")
 
-            res_mat[i, 1] <- mod_coef
-            res_mat[i, 2] <- mod_se
-            res_mat[i, 3] <- rnorm(1)
-            res_mat[i, 4] <- coef_syst
-            res_mat[i, 5] <- draws[i, 1]
-            res_mat[i, 6] <- draws[i, 2]
-            res_mat[i, 7] <- draws[i, 3]
-            res_mat[i, 8] <- draws[i, 4]
-            cli::cli_progress_update()
-        }
+        res_mat <- cbind(res_mat,
+                         exp(res_mat[, 2]),
+                         exp(tot_err[, 1]),
+                         exp(tot_err[, 1] + res_mat[, 1] * tot_err[, 2]))
 
-        res_mat[, 9] <- exp(res_mat[, 4])
-        res_mat[, 10] <- exp(res_mat[, 1])
-        res_mat[, 11] <- exp(res_mat[, 1] + res_mat[, 3] * res_mat[, 2])
-
-        meas_syst <- c(median(res_mat[, 9], na.rm = TRUE),
-                       quantile(res_mat[, 9], probs = .025, na.rm = TRUE),
-                       quantile(res_mat[, 9], probs = .975, na.rm = TRUE))
-        meas_tot <- c(median(res_mat[, 11], na.rm = TRUE),
-                    quantile(res_mat[, 11], probs = .025, na.rm = TRUE),
-                    quantile(res_mat[, 11], probs = .975, na.rm = TRUE))
+        meas_syst <- c(median(res_mat[, 3], na.rm = TRUE),
+                       quantile(res_mat[, 3], probs = .025, na.rm = TRUE),
+                       quantile(res_mat[, 3], probs = .975, na.rm = TRUE))
+        meas_tot <- c(median(res_mat[, 5], na.rm = TRUE),
+                    quantile(res_mat[, 5], probs = .025, na.rm = TRUE),
+                    quantile(res_mat[, 5], probs = .975, na.rm = TRUE))
 
         rmat <- rbind(c(obs_rr, obsci_rr[1], obsci_rr[2]),
                       c(obs_or, obsci_or[1], obsci_or[2]))
@@ -1911,134 +1846,7 @@ Se and Sp correlations.")))
         colnames(rmatc) <- c("Median", "p2.5", "p97.5")
     }
 
-    if (type == "outcome") {
-        ## Step 4b: Using simple bias analysis (A0, B0, C0, D0)
-        cli::cli_progress_step("Simple bias analysis", spinner = TRUE)
-        draws[, 5] <- (a - (1 - draws[, 3]) * (a + c)) / (draws[, 1] - (1 - draws[, 3]))
-        draws[, 6] <- (b - (1 - draws[, 4]) * (b + d)) / (draws[, 2] - (1 - draws[, 4]))
-        draws[, 7] <- (a + c) - draws[, 5]
-        draws[, 8] <- (b + d) - draws[, 6]
-
-        ## Clean up
-        draws[, 9] <- apply(draws[, 5:8], MARGIN = 1, function(x) sum(x > 0))
-        draws[, 9] <- ifelse(draws[, 9] != 4 | is.na(draws[, 9]), NA, 1)
-        discard <- sum(is.na(draws[, 9]))
-        if (sum(is.na(draws[, 9])) > 0) {
-            cli::cli_alert_warning("Chosen Se/Sp distributions lead to {discard} impossible value{?s} which w{?as/ere} discarded.")
-            neg_warn <- paste("Prior Se/Sp distributions lead to",  discard, "impossible value(s).")
-        } else neg_warn <- NULL
-        reps2 <- nrow(draws)
-
-        ## Prevalence of exposure in cases and controls, accounting for sampling error
-        suppressWarnings({
-                             draws[, 10] <- rbeta(reps2, draws[, 5], draws[, 7])
-                             draws[, 11] <- rbeta(reps2, draws[, 6], draws[, 8])
-                         })
-        ## Computing predictive values for imputation (PPV_d1, PPV_d0, NPV_d1, NPV_d0)
-        draws[, 12] <- (draws[, 1] * draws[, 10]) /
-            ((draws[, 1] * draws[, 10]) + (1 - draws[, 3]) * (1 - draws[, 10]))
-        draws[, 13] <- (draws[, 2] * draws[, 11]) /
-            ((draws[, 2] * draws[, 11]) + (1 - draws[, 4]) * (1 - draws[, 11]))
-        draws[, 14] <- (draws[, 3] * (1 - draws[, 10])) /
-            ((1 - draws[, 1]) * draws[, 10] + draws[, 3] * (1 - draws[, 10]))
-        draws[, 15] <- (draws[, 4] * (1 - draws[, 11])) /
-            ((1 - draws[, 2]) * draws[, 11] + draws[, 4] * (1 - draws[, 11]))
-
-        ## Loop through draws and impute new exposures at each step
-        cli::cli_progress_step("Assign probability of outcome for the record", spinner = TRUE)
-        names(obs_data)[1] <- "e"
-        names(obs_data)[2] <- "d_obs"
-        obs_data[, "ppvca"] <- NA
-        obs_data[, "ppvexp"] <- NA
-        obs_data[, "npvca"] <- NA
-        obs_data[, "npvexp"] <- NA
-        obs_data[, "p"] <- NA
-        obs_data[, "d"] <- NA
-        res_mat <- matrix(NA, nrow = reps2, ncol = 10)
-        colnames(res_mat) <- c("rr_adj", "rr_tot", "rr_se",
-                               "or_adj", "or_tot", "or_se",
-                               "se_D1", "se_D0", "sp_D1", "sp_D0")
-        formula <- reformulate(c("e", confounder_names), response = "d")
-        cli::cli_progress_bar("Processing...", total = reps)
-        for (i in 1:reps2) {
-            obs_data[, "ppvca"] <- draws[i, 12]
-            obs_data[, "ppvexp"] <- draws[i, 13]
-            obs_data[, "npvca"] <- draws[i, 14]
-            obs_data[, "npvexp"] <- draws[i, 15]
-            obs_data[, "p"] <- obs_data[, "e"] * obs_data[, "d_obs"] * obs_data[, "ppvca"] +
-                obs_data[, "e"] * (1 - obs_data[, "d_obs"]) * (1 - obs_data[, "npvca"]) +
-                (1 - obs_data[, "e"]) * obs_data[, "d_obs"] * obs_data[, "ppvexp"] +
-                (1 - obs_data[, "e"]) * (1 - obs_data[, "d_obs"]) * (1 - obs_data[, "npvexp"])
-            obs_data[, "d"] <- suppressWarnings({
-                                                    rbinom(nrow(obs_data), 1, obs_data[, "p"])
-                                                })
-            ## Logistic regression
-            if (all(is.na(obs_data[, "d"]))) {
-                modrr_coef <- NA
-                modrr_se <- NA
-                modor_coef <- NA
-                modor_se <- NA
-            } else {
-                modrr_pois <- glm(formula, data = obs_data,
-                                  family = poisson(link = "log"))
-                modrr_coef <- coef(summary(modrr_pois))[2, 1]
-                modrr_se <- lmtest::coeftest(modrr_pois,
-                                             vcov = sandwich::sandwich)[2, 2]
-                modor_log <- glm(formula, data = obs_data,
-                                 family = binomial(link = "log"))
-                modor_coef <- coef(summary(modor_log))[2, 1]
-                modor_se <- coef(summary(modor_log))[2, 2]
-            }
-            z <- rnorm(1)
-
-            res_mat[i, 1] <- exp(modrr_coef)
-            res_mat[i, 2] <- exp(modrr_coef + z * modrr_se)
-            res_mat[i, 3] <- modrr_se
-            res_mat[i, 4] <- exp(modor_coef)
-            res_mat[i, 5] <- exp(modor_coef + z * modor_se)
-            res_mat[i, 6] <- modor_se
-            res_mat[i, 7] <- draws[i, 1]
-            res_mat[i, 8] <- draws[i, 2]
-            res_mat[i, 9] <- draws[i, 3]
-            res_mat[i, 10] <- draws[i, 4]
-            cli::cli_progress_update()
-        }
-
-        rr_syst <- c(median(res_mat[, 1], na.rm = TRUE),
-                     quantile(res_mat[, 1], probs = .025, na.rm = TRUE),
-                     quantile(res_mat[, 1], probs = .975, na.rm = TRUE))
-        rr_tot <- c(median(res_mat[, 2], na.rm = TRUE),
-                    quantile(res_mat[, 2], probs = .025, na.rm = TRUE),
-                    quantile(res_mat[, 2], probs = .975, na.rm = TRUE))
-        or_syst <- c(median(res_mat[, 4], na.rm = TRUE),
-                     quantile(res_mat[, 4], probs = .025, na.rm = TRUE),
-                     quantile(res_mat[, 4], probs = .975, na.rm = TRUE))
-        or_tot <- c(median(res_mat[, 5], na.rm = TRUE),
-                    quantile(res_mat[, 5], probs = .025, na.rm = TRUE),
-                    quantile(res_mat[, 5], probs = .975, na.rm = TRUE))
-
-        rmat <- rbind(c(obs_rr, obsci_rr[1], obsci_rr[2]),
-                      c(obs_or, obsci_or[1], obsci_or[2]))
-        rownames(rmat) <- c(" Observed Relative Risk:",
-                            "    Observed Odds Ratio:")
-        colnames(rmat) <- c(" ",
-                            paste(100 * (alpha / 2), "%", sep = ""),
-                            paste(100 * (1 - alpha / 2), "%", sep = ""))
-        if (is.null(rownames(tab)))
-            rownames(tab) <- paste("Row", 1:2)
-        if (is.null(colnames(tab)))
-            colnames(tab) <- paste("Col", 1:2)
-        rmatc <- rbind(rr_syst, rr_tot, or_syst, or_tot)
-        rownames(rmatc) <- c("Relative Risk -- systematic error:",
-                             "                      total error:",
-                             "   Odds Ratio -- systematic error:",
-                             "                      total error:")
-        colnames(rmatc) <- c("Median", "p2.5", "p97.5")
-    }
-
     res <- list(obs_data = tab,
-                obs_mat = obs_mat,
-                prev = prev,
                 obs_measures = rmat,
                 adj_measures = rmatc,
                 sim_df = as.data.frame(res_mat),

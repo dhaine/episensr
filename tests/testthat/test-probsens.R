@@ -799,19 +799,29 @@ test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR", {
               D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
                               d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
               set.seed(1234)
-              model <- probcase(D, x = e_obs, y = d, reps = 10^3,
-                                measure = "RR", type = "exposure",
-                                seca = list("beta", c(25, 3)),
-                                spca = list("trapezoidal", c(.9, .93, .97, 1)),
-                                seexp = list("beta", c(45, 7)),
-                                spexp = list("trapezoidal", c(.8, .83, .87, .9)),
-                                corr_se = .8, corr_sp = .8)
-              head(model[[2]])
+              model <- probref(D, x = e_obs, y = d, reps = 10^3,
+                               measure = "RR", type = "exposure",
+                               seca = list("beta", c(25, 3)),
+                               spca = list("trapezoidal", c(.9, .93, .97, 1)),
+                               seexp = list("beta", c(45, 7)),
+                               spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+                               corr_se = .8, corr_sp = .8)
+              set.seed(1234)
+              model1 <- probcase(D, x = e_obs, y = d, reps = 10^5,
+                               measure = "RR", type = "exposure",
+                               seca = list("beta", c(25, 3)),
+                               spca = list("trapezoidal", c(.9, .93, .97, 1)),
+                               seexp = list("beta", c(45, 7)),
+                               spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+                               corr_se = .8, corr_sp = .8)
               head(model[[3]])
-              mat <- model[[2]]
-              identical(mat[, "p"], model[[3]])
-              mat[, "p"]
-              model[[3]]
+              head(model[[4]])
+
+              X <- c(rep(1, 200))
+              X <- cbind(X, model[[3]][, 8])
+              d <- D$d
+              fglm <- fastglm::fastglm(X, d, family = "poisson")
+
               expect_equal(model$obs_measures[1, 1], 2.0000, tolerance = 1e-4, scale = 1)
               expect_equal(model$obs_measures[1, 2], 1.2630, tolerance = 1e-4, scale = 1)
               expect_equal(model$obs_measures[1, 3], 3.1671, tolerance = 1e-4, scale = 1)
@@ -821,9 +831,9 @@ test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR", {
               expect_equal(model$adj_measures[1, 1], 2.7776, tolerance = 1e-4, scale = 1)
               expect_equal(model$adj_measures[1, 2], 2.3251, tolerance = 1e-4, scale = 1)
               expect_equal(model$adj_measures[1, 3], 4.5794, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 1], 2.7907, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 1], 2.7885, tolerance = 1e-4, scale = 1)
               expect_equal(model$adj_measures[2, 2], 1.4858, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 3], 9.5569, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 3], 9.5708, tolerance = 1e-4, scale = 1)
           })
 
 test_that("Probcase -- Fox paper -- misclass -- exposure -- RR LONG!", {

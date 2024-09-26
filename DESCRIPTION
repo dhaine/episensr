@@ -32,8 +32,8 @@ Imports:
     triangle,
     truncnorm,
     MASS,
-    Rcpp,
-    RcppProgress
+    Rcpp (>= 1.0.13),
+    progress
 Suggests:
     aplore3,
     covr,
@@ -49,5 +49,6 @@ Encoding: UTF-8
 RoxygenNote: 7.3.2
 LinkingTo:
     Rcpp,
+    RcppArmadillo,
     fastglm,
-    RcppProgress
+    progress
