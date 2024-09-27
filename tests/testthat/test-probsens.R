@@ -798,6 +798,7 @@ test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR", {
               a <- 40; b <- 20; c <- 60; d <- 80
               D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
                               d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
+              set.seed(1234)
               model <- probcase(D, x = e_obs, y = d, reps = 10^3,
                                 measure = "RR", type = "exposure",
                                 seca = list("beta", c(25, 3)),
@@ -811,12 +812,12 @@ test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR", {
               expect_equal(model$obs_measures[2, 1], 2.6667, tolerance = 1e-4, scale = 1)
               expect_equal(model$obs_measures[2, 2], 1.4166, tolerance = 1e-4, scale = 1)
               expect_equal(model$obs_measures[2, 3], 5.0199, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 1], 2.7700, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 2], 2.3106, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 3], 5.1653, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 1], 2.8291, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 2], 1.5056, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 3], 8.7702, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 1], 2.7776, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 2], 2.3251, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 3], 4.5794, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 1], 2.7853, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 2], 1.4233, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 3], 9.5569, tolerance = 1e-4, scale = 1)
           })
 
 #test_that("Probcase -- Fox paper -- misclass -- exposure -- RR LONG!", {

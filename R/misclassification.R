@@ -1322,9 +1322,10 @@ Se and Sp correlations.")))
 #' corr_se = .8, corr_sp = .8)
 #' }
 #' @export
-#' @importFrom stats median pnorm qnorm quantile qunif runif rnorm rbinom qbeta rbeta glm binomial poisson coef
+#' @importFrom stats median pnorm qnorm quantile qunif runif rnorm rbinom qbeta rbeta glm binomial poisson coef reformulate
 #' @importFrom sandwich sandwich
-#' @import progress
+#' @import fastglm
+#' @import RcppProgress
 probcase <- function(df,
                      x,
                      y,

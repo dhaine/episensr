@@ -37,7 +37,7 @@ probcase(
   ...,
   measure = c("RR", "OR"),
   type = c("exposure", "outcome"),
-  reps = 100,
+  reps = 1000,
   seca = list(dist = c("constant", "uniform", "triangular", "trapezoidal", "normal",
     "beta"), parms = NULL),
   seexp = NULL,
@@ -131,9 +131,11 @@ pairs describing which variables in the data should be used. The expression
 `variable` is evaluated within `df`, so there is no need to refer to the
 original dataset (i.e., use `probcase(df, variable)` instead of
 `probcase(df, df$variable)`). Note that `x` and `y` should be numeric
-dichotomous 0,1 variables.}
+dichotomous 0,1 variables. For now, only `x` and `y` are evaluated, no
+additional variables are considered.}
 
-\item{measure}{Risk ratio or odds ratio.}
+\item{measure}{Risk ratio or odds ratio. If `type()` is `outcome`, default to
+a risk ratio.}
 }
 \value{
 A list with elements (for `misclass()`):

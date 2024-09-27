@@ -183,21 +183,11 @@ a <- 215
 b <- 1449
 c <- 668
 d <- 4296
-n <- a + b + c + d
-e_obs <- c(rep(1, a), rep(0, b), rep(1, c), rep(0, d))
-d <- c(rep(1, a), rep(1, b), rep(0, c), rep(0, d))
-
-set.seed(24)
-u <- runif(n)
-D <- data.frame(u, e_obs, d)
-D <- D[order(u), ]
-D$id <- 1:n
-D <- subset(D, select = -u)
-D <- D[, c(3, 1, 2)]
-D[1:10, ]
+D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
+                d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
 
 set.seed(1234)
-model <- probcase(D, x = e_obs, y = d, reps = 10^2, type = "exposure",
+model <- probcase(D, x = e_obs, y = d, reps = 10^3, measure = "OR", type = "exposure",
                   seca = list("beta", c(50.6, 14.3)),
                   spca = list("beta", c(70, 1)))
 ```
