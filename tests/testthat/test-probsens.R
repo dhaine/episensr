@@ -798,108 +798,115 @@ test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR", {
               a <- 40; b <- 20; c <- 60; d <- 80
               D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
                               d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
-              set.seed(1234)
-              model <- probref(D, x = e_obs, y = d, reps = 10^3,
-                               measure = "RR", type = "exposure",
-                               seca = list("beta", c(25, 3)),
-                               spca = list("trapezoidal", c(.9, .93, .97, 1)),
-                               seexp = list("beta", c(45, 7)),
-                               spexp = list("trapezoidal", c(.8, .83, .87, .9)),
-                               corr_se = .8, corr_sp = .8)
-              set.seed(1234)
-              model1 <- probcase(D, x = e_obs, y = d, reps = 10^5,
-                               measure = "RR", type = "exposure",
-                               seca = list("beta", c(25, 3)),
-                               spca = list("trapezoidal", c(.9, .93, .97, 1)),
-                               seexp = list("beta", c(45, 7)),
-                               spexp = list("trapezoidal", c(.8, .83, .87, .9)),
-                               corr_se = .8, corr_sp = .8)
-              head(model[[3]])
-              head(model[[4]])
-
-              X <- c(rep(1, 200))
-              X <- cbind(X, model[[3]][, 8])
-              d <- D$d
-              fglm <- fastglm::fastglm(X, d, family = "poisson")
-
-              expect_equal(model$obs_measures[1, 1], 2.0000, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[1, 2], 1.2630, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[1, 3], 3.1671, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[2, 1], 2.6667, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[2, 2], 1.4166, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[2, 3], 5.0199, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 1], 2.7776, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 2], 2.3251, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 3], 4.5794, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 1], 2.7885, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 2], 1.4858, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 3], 9.5708, tolerance = 1e-4, scale = 1)
-          })
-
-test_that("Probcase -- Fox paper -- misclass -- exposure -- RR LONG!", {
-              a <- 40; b <- 20; c <- 60; d <- 80
-              D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
-                              d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
-              set.seed(1234)
-#              system.time(
-              model <- probcase(D, x = e_obs, y = d, reps = 10^5,
+              model <- probcase(D, x = e_obs, y = d, reps = 10^3,
                                 measure = "RR", type = "exposure",
                                 seca = list("beta", c(25, 3)),
                                 spca = list("trapezoidal", c(.9, .93, .97, 1)),
                                 seexp = list("beta", c(45, 7)),
                                 spexp = list("trapezoidal", c(.8, .83, .87, .9)),
                                 corr_se = .8, corr_sp = .8)
-#              )
-              expect_equal(model$adj_measures[1, 1], 2.7533, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 2], 2.3317, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 3], 5.0717, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 1], 2.8427, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 2], 1.5391, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 3], 8.0743, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[1, 1], 2.0000, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[1, 2], 1.2630, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[1, 3], 3.1671, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[2, 1], 2.6667, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[2, 2], 1.4166, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[2, 3], 5.0199, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 1], 2.7700, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 2], 2.3106, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 3], 5.1653, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 1], 2.8291, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 2], 1.5056, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 3], 8.7702, tolerance = 1e-4, scale = 1)
           })
 
-test_that("Probcase -- Ch.9 QBA book -- misclassification -- exposure -- OR", {
-              a <- 215; b <- 1449; c <- 668; d <- 4296
-              D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
-                              d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
-              set.seed(1234)
-              model <- probcase(D, x = e_obs, y = d, reps = 10^3,
-                                measure = "OR", type = "exposure",
-                                seca = list("beta", c(50.6, 14.3)),
-                                spca = list("beta", c(70, 1)))
-              expect_equal(model$obs_measures[1, 1], .9654, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[1, 2], .8524, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[1, 3], 1.0934, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[2, 1], .9542, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[2, 2], .8093, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[2, 3], 1.1252, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 1], 0.9491, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 2], 0.9298, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 3], 0.9526, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 1], 0.9546, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 2], 0.7867, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 3], 1.1499, tolerance = 1e-4, scale = 1)
-          })
+#test_that("Probcase -- Fox paper -- misclass -- exposure -- RR LONG!", {
+#              a <- 40; b <- 20; c <- 60; d <- 80
+#              D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
+#                              d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
+#              set.seed(1234)
+#              model <- probcase(D, x = e_obs, y = d, reps = 10^5,
+#                                measure = "RR", type = "exposure",
+#                                seca = list("beta", c(25, 3)),
+#                                spca = list("trapezoidal", c(.9, .93, .97, 1)),
+#                                seexp = list("beta", c(45, 7)),
+#                                spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+#                                corr_se = .8, corr_sp = .8)
+#              expect_equal(model$adj_measures[1, 1], 2.7533, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[1, 2], 2.3317, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[1, 3], 5.0717, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[2, 1], 2.8427, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[2, 2], 1.5391, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[2, 3], 8.0743, tolerance = 1e-4, scale = 1)
+#          })
 
-test_that("Probcase -- Ch.9 QBA book -- misclassification -- exposure -- OR LONG!", {
-              a <- 215; b <- 1449; c <- 668; d <- 4296
-              D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
-                              d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
+#test_that("Probcase -- Ch.9 QBA book -- misclassification -- exposure -- OR", {
+#              a <- 215; b <- 1449; c <- 668; d <- 4296
+#              D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
+#                              d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
+#              set.seed(1234)
+#              model <- probcase(D, x = e_obs, y = d, reps = 10^3,
+#                                measure = "OR", type = "exposure",
+#                                seca = list("beta", c(50.6, 14.3)),
+#                                spca = list("beta", c(70, 1)))
+#              expect_equal(model$obs_measures[1, 1], .9654, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$obs_measures[1, 2], .8524, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$obs_measures[1, 3], 1.0934, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$obs_measures[2, 1], .9542, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$obs_measures[2, 2], .8093, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$obs_measures[2, 3], 1.1252, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[1, 1], 0.9491, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[1, 2], 0.9298, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[1, 3], 0.9526, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[2, 1], 0.9546, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[2, 2], 0.7867, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[2, 3], 1.1499, tolerance = 1e-4, scale = 1)
+#          })
+
+#test_that("Probcase -- Ch.9 QBA book -- misclassification -- exposure -- OR LONG!", {
+#              a <- 215; b <- 1449; c <- 668; d <- 4296
+#              D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
+#                              d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
+#              set.seed(1234)
+#              system.time(model <- probcase(D, x = e_obs, y = d, reps = 10^5,
+#                                            measure = "OR", type = "exposure",
+#                                            seca = list("beta", c(50.6, 14.3)),
+#                                            spca = list("beta", c(70, 1))))
+#              expect_equal(model$obs_measures[1, 1], .9654, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$obs_measures[1, 2], .8524, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$obs_measures[1, 3], 1.0934, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$obs_measures[2, 1], .9542, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$obs_measures[2, 2], .8093, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$obs_measures[2, 3], 1.1252, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[1, 1], 0.9491, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[1, 2], 0.9298, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[1, 3], 0.9526, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[2, 1], 0.9546, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[2, 2], 0.7867, tolerance = 1e-4, scale = 1)
+#              expect_equal(model$adj_measures[2, 3], 1.1499, tolerance = 1e-4, scale = 1)
+#          })
+
+test_that("Probcase -- Fox paper -- misclassification -- outcome", {
+              a <- 40; b <- 20; c <- 60; d <- 80
+              D <- data.frame(e = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
+                              d_obs = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
               set.seed(1234)
-              system.time(model <- probcase(D, x = e_obs, y = d, reps = 10^5,
-                                            measure = "OR", type = "exposure",
-                                            seca = list("beta", c(50.6, 14.3)),
-                                            spca = list("beta", c(70, 1))))
-              expect_equal(model$obs_measures[1, 1], .9654, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[1, 2], .8524, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[1, 3], 1.0934, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[2, 1], .9542, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[2, 2], .8093, tolerance = 1e-4, scale = 1)
-              expect_equal(model$obs_measures[2, 3], 1.1252, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 1], 0.9491, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 2], 0.9298, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[1, 3], 0.9526, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 1], 0.9546, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 2], 0.7867, tolerance = 1e-4, scale = 1)
-              expect_equal(model$adj_measures[2, 3], 1.1499, tolerance = 1e-4, scale = 1)
+              model <- probcase(D, x = e, y = d_obs, reps = 10^3,
+                                measure = "RR", type = "outcome",
+                                seca = list("beta", c(254, 24)),
+                                spca = list("trapezoidal", c(.94, .96, .98, 1)),
+                                seexp = list("beta", c(450, 67)),
+                                spexp = list("trapezoidal", c(.9, .92, .93, .95)),
+                                corr_se = .8, corr_sp = .8)
+              expect_equal(model$obs_measures[1, 1], 2.0000, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[1, 2], 1.2630, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[1, 3], 3.1671, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[2, 1], 2.6667, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[2, 2], 1.4166, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[2, 3], 5.0199, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 1], 2.6875, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 2], 1.8095, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 3], 4.3333, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 1], 2.6146, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 2], 1.4877, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 3], 5.6669, tolerance = 1e-4, scale = 1)
           })

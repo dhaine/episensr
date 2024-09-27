@@ -1232,8 +1232,10 @@ Se and Sp correlations.")))
 #' `variable` is evaluated within `df`, so there is no need to refer to the
 #' original dataset (i.e., use `probcase(df, variable)` instead of
 #' `probcase(df, df$variable)`). Note that `x` and `y` should be numeric
-#' dichotomous 0,1 variables.
-#' @param measure Risk ratio or odds ratio.
+#' dichotomous 0,1 variables. For now, only `x` and `y` are evaluated, no
+#' additional variables are considered.
+#' @param measure Risk ratio or odds ratio. If `type()` is `outcome`, default to
+#' a risk ratio.
 #' @param type Choice of misclassification:
 #'   \enumerate{
 #'   \item exposure: bias analysis for exposure misclassification; corrections
@@ -1320,7 +1322,7 @@ Se and Sp correlations.")))
 #' corr_se = .8, corr_sp = .8)
 #' }
 #' @export
-#' @importFrom stats median pnorm qnorm quantile qunif runif rnorm rbinom qbeta rbeta reformulate glm binomial poisson coef confint
+#' @importFrom stats median pnorm qnorm quantile qunif runif rnorm rbinom qbeta rbeta glm binomial poisson coef
 #' @importFrom sandwich sandwich
 #' @import progress
 probcase <- function(df,
@@ -1329,7 +1331,7 @@ probcase <- function(df,
                      ...,
                      measure = c("RR", "OR"),
                      type = c("exposure", "outcome"),
-                     reps = 100,
+                     reps = 1000,
                      seca = list(dist = c("constant", "uniform",
                                           "triangular", "trapezoidal",
                                           "normal", "beta"),
@@ -1370,6 +1372,8 @@ probcase <- function(df,
     }
     if (!(measure %in% c("RR", "OR")))
         stop(cli::format_error(c("x" = "Please choose between RR and OR for measure of association.")))
+
+    if (type == "outcome") measure <- "RR"
 
     if (is.null(seca[[2]]) | is.null(spca[[2]]))
         stop(cli::format_error(c("x" = "Missing argument(s) for seca or spca",
@@ -1794,7 +1798,7 @@ Se and Sp correlations.")))
             ((1 - draws[, 2]) * draws[, 11] + draws[, 4] * (1 - draws[, 11]))  #npvexp
 
         ## Loop through draws and impute new exposures at each step
-        cli::cli_progress_step("Assigned probability of exposure for the record", spinner = TRUE)
+        cli::cli_progress_step("Done")
         nrow_obs <- nrow(obs_data)
         names(obs_data)[1] <- "e_obs"
         names(obs_data)[2] <- "d"
@@ -1805,11 +1809,10 @@ Se and Sp correlations.")))
                          (1 - obs_mat[, "e_obs"]) * (1 - obs_mat[, "d"]))  ## (1 - e_obs) * (1 - d)
         colnames(obs_mat) <- c("e_obs", "d", "e_d", "e_1d", "e1_d", "e1_1d")
 
-        formula <- reformulate(c("e", confounder_names), response = "d")
-
-        get_expo <- define_e(reps2, measure, obs_mat, draws, format = "[:bar] :percent ")
+        cli::cli_alert_info("Compute systematic and total error")
+        get_expo <- define_e(reps2, measure, obs_mat, draws)
         res_mat <- get_expo$ze_syst
-        tot_err <- calc_toterr(reps2, measure, obs_mat, get_expo$e, format = "[:bar] :percent ")
+        tot_err <- calc_toterr(reps2, measure, obs_mat, get_expo$e)
 
         res_mat <- cbind(res_mat,
                          exp(res_mat[, 2]),
@@ -1846,14 +1849,94 @@ Se and Sp correlations.")))
         colnames(rmatc) <- c("Median", "p2.5", "p97.5")
     }
 
-    res <- list(obs_data = tab,
-                obs_measures = rmat,
-                adj_measures = rmatc,
-                sim_df = as.data.frame(res_mat),
-                reps = reps,
-                fun = "probsens",
-                warnings = neg_warn
-                )
+    if (type == "outcome") {
+        ## Step 4b: Using simple bias analysis (A0, B0, C0, D0)
+        cli::cli_progress_step("Simple bias analysis", spinner = TRUE)
+        draws[, 5] <- (a - (1 - draws[, 3]) * (a + c)) / (draws[, 1] - (1 - draws[, 3]))
+        draws[, 6] <- (b - (1 - draws[, 4]) * (b + d)) / (draws[, 2] - (1 - draws[, 4]))
+        draws[, 7] <- (a + c) - draws[, 5]
+        draws[, 8] <- (b + d) - draws[, 6]
+
+        ## Clean up
+        draws[, 9] <- apply(draws[, 5:8], MARGIN = 1, function(x) sum(x > 0))
+        draws[, 9] <- ifelse(draws[, 9] != 4 | is.na(draws[, 9]), NA, 1)
+        discard <- sum(is.na(draws[, 9]))
+        if (sum(is.na(draws[, 9])) > 0) {
+            cli::cli_alert_warning("Chosen Se/Sp distributions lead to {discard} impossible value{?s} which w{?as/ere} discarded.")
+            neg_warn <- paste("Prior Se/Sp distributions lead to",  discard, "impossible value(s).")
+        } else neg_warn <- NULL
+        reps2 <- nrow(draws)
+
+        ## Prevalence of exposure in cases and controls, accounting for sampling error
+        suppressWarnings({
+                             draws[, 10] <- rbeta(reps2, draws[, 5], draws[, 7])
+                             draws[, 11] <- rbeta(reps2, draws[, 6], draws[, 8])
+                         })
+        ## Computing predictive values for imputation (PPV_d1, PPV_d0, NPV_d1, NPV_d0)
+        draws[, 12] <- (draws[, 1] * draws[, 10]) /
+            ((draws[, 1] * draws[, 10]) + (1 - draws[, 3]) * (1 - draws[, 10]))
+        draws[, 13] <- (draws[, 2] * draws[, 11]) /
+            ((draws[, 2] * draws[, 11]) + (1 - draws[, 4]) * (1 - draws[, 11]))
+        draws[, 14] <- (draws[, 3] * (1 - draws[, 10])) /
+            ((1 - draws[, 1]) * draws[, 10] + draws[, 3] * (1 - draws[, 10]))
+        draws[, 15] <- (draws[, 4] * (1 - draws[, 11])) /
+            ((1 - draws[, 2]) * draws[, 11] + draws[, 4] * (1 - draws[, 11]))
+
+        ## Loop through draws and impute new exposures at each step
+        cli::cli_progress_step("Done")
+        nrow_obs <- nrow(obs_data)
+        names(obs_data)[1] <- "e"
+        names(obs_data)[2] <- "d_obs"
+        obs_mat <- as.matrix(obs_data)
+        colnames(obs_mat) <- c("e", "d_obs")
+
+        cli::cli_alert_info("Compute systematic and total error")
+        get_outcome <- define_d(reps2, obs_mat, draws)
+        res_mat <- calc_toterr2(reps2, obs_mat, get_outcome$d)
+
+        res_mat <- cbind(res_mat,
+                         get_outcome$zd_syst,
+                         exp(res_mat[, 1]),
+                         exp(res_mat[, 1] + get_outcome$zd_syst * res_mat[, 2]))
+
+        meas_syst <- c(median(res_mat[, 4], na.rm = TRUE),
+                       quantile(res_mat[, 4], probs = .025, na.rm = TRUE),
+                       quantile(res_mat[, 4], probs = .975, na.rm = TRUE))
+        meas_tot <- c(median(res_mat[, 5], na.rm = TRUE),
+                      quantile(res_mat[, 5], probs = .025, na.rm = TRUE),
+                      quantile(res_mat[, 5], probs = .975, na.rm = TRUE))
+
+        rmat <- rbind(c(obs_rr, obsci_rr[1], obsci_rr[2]),
+                      c(obs_or, obsci_or[1], obsci_or[2]))
+        rownames(rmat) <- c(" Observed Relative Risk:",
+                            "    Observed Odds Ratio:")
+        colnames(rmat) <- c(" ",
+                            paste(100 * (alpha / 2), "%", sep = ""),
+                            paste(100 * (1 - alpha / 2), "%", sep = ""))
+        if (is.null(rownames(tab)))
+            rownames(tab) <- paste("Row", 1:2)
+        if (is.null(colnames(tab)))
+            colnames(tab) <- paste("Col", 1:2)
+        rmatc <- rbind(meas_syst, meas_tot)
+        if (measure == "RR") {
+            rownames(rmatc) <- c("Relative Risk -- systematic error:",
+                                 "                      total error:")
+        }
+        if (measure == "OR") {
+            rownames(rmatc) <- c("Odds Ratio -- systematic error:",
+                                 "                   total error:")
+        }
+        colnames(rmatc) <- c("Median", "p2.5", "p97.5")
+    }
+
+        res <- list(obs_data = tab,
+                    obs_measures = rmat,
+                    adj_measures = rmatc,
+                    sim_df = as.data.frame(res_mat),
+                    reps = reps,
+                    fun = "probsens",
+                    warnings = neg_warn
+                    )
     class(res) <- c("episensr", "episensr.probsens", "list")
     res
 }

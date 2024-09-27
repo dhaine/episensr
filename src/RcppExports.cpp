@@ -25,8 +25,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // define_e
-List define_e(int iter, String measure, NumericMatrix obs_mat, NumericMatrix draws, Rcpp::CharacterVector formatSEXP);
-RcppExport SEXP _episensr_define_e(SEXP iterSEXP, SEXP measureSEXP, SEXP obs_matSEXP, SEXP drawsSEXP, SEXP formatSEXPSEXP) {
+List define_e(int iter, String measure, NumericMatrix obs_mat, NumericMatrix draws, bool display_progress);
+RcppExport SEXP _episensr_define_e(SEXP iterSEXP, SEXP measureSEXP, SEXP obs_matSEXP, SEXP drawsSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -34,14 +34,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< String >::type measure(measureSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type obs_mat(obs_matSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type draws(drawsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type formatSEXP(formatSEXPSEXP);
-    rcpp_result_gen = Rcpp::wrap(define_e(iter, measure, obs_mat, draws, formatSEXP));
+    Rcpp::traits::input_parameter< bool >::type display_progress(display_progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(define_e(iter, measure, obs_mat, draws, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
 // calc_toterr
-NumericMatrix calc_toterr(int iter, String measure, NumericMatrix obs_mat, IntegerMatrix e, Rcpp::CharacterVector formatSEXP);
-RcppExport SEXP _episensr_calc_toterr(SEXP iterSEXP, SEXP measureSEXP, SEXP obs_matSEXP, SEXP eSEXP, SEXP formatSEXPSEXP) {
+NumericMatrix calc_toterr(int iter, String measure, NumericMatrix obs_mat, IntegerMatrix e, bool display_progress);
+RcppExport SEXP _episensr_calc_toterr(SEXP iterSEXP, SEXP measureSEXP, SEXP obs_matSEXP, SEXP eSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -49,8 +49,36 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< String >::type measure(measureSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type obs_mat(obs_matSEXP);
     Rcpp::traits::input_parameter< IntegerMatrix >::type e(eSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type formatSEXP(formatSEXPSEXP);
-    rcpp_result_gen = Rcpp::wrap(calc_toterr(iter, measure, obs_mat, e, formatSEXP));
+    Rcpp::traits::input_parameter< bool >::type display_progress(display_progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(calc_toterr(iter, measure, obs_mat, e, display_progress));
+    return rcpp_result_gen;
+END_RCPP
+}
+// define_d
+List define_d(int iter, NumericMatrix obs_mat, NumericMatrix draws, bool display_progress);
+RcppExport SEXP _episensr_define_d(SEXP iterSEXP, SEXP obs_matSEXP, SEXP drawsSEXP, SEXP display_progressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type iter(iterSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type obs_mat(obs_matSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type draws(drawsSEXP);
+    Rcpp::traits::input_parameter< bool >::type display_progress(display_progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(define_d(iter, obs_mat, draws, display_progress));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calc_toterr2
+NumericMatrix calc_toterr2(int iter, NumericMatrix obs_mat, IntegerMatrix d, bool display_progress);
+RcppExport SEXP _episensr_calc_toterr2(SEXP iterSEXP, SEXP obs_matSEXP, SEXP dSEXP, SEXP display_progressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type iter(iterSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type obs_mat(obs_matSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type d(dSEXP);
+    Rcpp::traits::input_parameter< bool >::type display_progress(display_progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(calc_toterr2(iter, obs_mat, d, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -59,6 +87,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_episensr_cpprbinom", (DL_FUNC) &_episensr_cpprbinom, 3},
     {"_episensr_define_e", (DL_FUNC) &_episensr_define_e, 5},
     {"_episensr_calc_toterr", (DL_FUNC) &_episensr_calc_toterr, 5},
+    {"_episensr_define_d", (DL_FUNC) &_episensr_define_d, 4},
+    {"_episensr_calc_toterr2", (DL_FUNC) &_episensr_calc_toterr2, 4},
     {NULL, NULL, 0}
 };
 

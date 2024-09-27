@@ -2,9 +2,11 @@
 #include <RcppArmadillo.h>
 using namespace Rcpp;
 
-#include <RProgress.h>
-
 // [[Rcpp::depends(RcppArmadillo)]]
+
+// [[Rcpp::depends(RcppProgress)]]
+#include <progress.hpp>
+#include <progress_bar.hpp>
 
 // [[Rcpp::export]]
 NumericVector cpprbinom(int n, double size, NumericVector prob) {
@@ -13,11 +15,9 @@ NumericVector cpprbinom(int n, double size, NumericVector prob) {
   return(v);
 }
 
-
 // [[Rcpp::export]]
 List define_e(int iter, String measure, NumericMatrix obs_mat, NumericMatrix draws,
-	      Rcpp::CharacterVector formatSEXP = "[:bar] :percent ") {
-
+	      bool display_progress=true) {
   Rcpp::NumericVector d = obs_mat(_, 1);
   arma::vec darma = obs_mat(_, 1);
   arma::mat de_obs = arma::mat(d.length(), 2);
@@ -33,10 +33,9 @@ List define_e(int iter, String measure, NumericMatrix obs_mat, NumericMatrix dra
   Rcpp::NumericVector e_syst = no_init(d.length());
   Rcpp::NumericMatrix ze_syst(iter, 2);
   double coef_syst;
-  const char *format = formatSEXP[0];
-  RProgress::RProgress pb(format);
-  pb.tick(0);
+  Progress p(iter*iter, display_progress);
   for (int i = 0; i < iter; i++) {
+    p.increment(); // update progress
     pr = obs_mat(_, 2) * draws(i, 11) +
       obs_mat(_, 3) * draws(i, 12) +
       obs_mat(_, 4) * (1 - draws(i, 13)) +
@@ -77,7 +76,6 @@ List define_e(int iter, String measure, NumericMatrix obs_mat, NumericMatrix dra
 
     ze_syst(i, 0) = R::rnorm(0, 1);
     ze_syst(i, 1) = coef_syst;
-    pb.tick();
   }
   return Rcpp::List::create(Rcpp::Named("e") = e,
 			    Rcpp::Named("ze_syst") = ze_syst);
@@ -87,7 +85,7 @@ List define_e(int iter, String measure, NumericMatrix obs_mat, NumericMatrix dra
 // [[Rcpp::export]]
 NumericMatrix calc_toterr(int iter, String measure,
 			  NumericMatrix obs_mat, IntegerMatrix e,
-			  Rcpp::CharacterVector formatSEXP = "[:bar] :percent ") {
+			  bool display_progress=true) {
   // Obtain environment containing function
   //Rcpp::Environment base("package:stats");
   // Obtaining namespace of fastglm package
@@ -126,10 +124,9 @@ NumericMatrix calc_toterr(int iter, String measure,
   inv_nrow.fill(1.0/d.length());
   arma::vec se(2);
   double mod_se;
-  const char *format = formatSEXP[0];
-  RProgress::RProgress pb(format);
-  pb.tick(0);
+  Progress p(iter*iter, display_progress);
   for (int i = 0; i < iter; i++) {
+    p.increment(); // update progress
     ematrix(_, 1) = expo(_, i);
     X = as<arma::mat>(ematrix);
     // Systematic and random error
@@ -203,7 +200,128 @@ NumericMatrix calc_toterr(int iter, String measure,
 
     res_mat(i, 0) = coef;
     res_mat(i, 1) = mod_se;
-    pb.tick();
+  }
+  return res_mat;
+}
+
+
+// [[Rcpp::export]]
+List define_d(int iter, NumericMatrix obs_mat, NumericMatrix draws,
+	      bool display_progress=true) {
+  Rcpp::NumericVector e = obs_mat(_, 0);
+  double ppvca;
+  double ppvexp;
+  double npvca;
+  double npvexp;
+  Rcpp::NumericVector pr = no_init(e.length());
+  Rcpp::NumericMatrix d(e.length(), iter);
+  Rcpp::NumericVector zd_syst = no_init(iter);
+  Progress p(iter*iter, display_progress);
+  for (int i = 0; i < iter; i++) {
+    p.increment(); // update progress
+    ppvca = draws(i, 11);
+    ppvexp = draws(i, 12);
+    npvca = draws(i, 13);
+    npvexp = draws(i, 14);
+    pr = obs_mat(_, 0) * obs_mat(_, 1) * ppvca +
+      obs_mat(_, 0) * (1 - obs_mat(_, 1)) * (1 - npvca) +
+      (1 - obs_mat(_, 0)) * obs_mat(_, 1) * ppvexp +
+      (1 - obs_mat(_, 0)) * (1 - obs_mat(_, 1)) * (1 - npvexp);
+    d(_, i) = cpprbinom(e.length(), 1, pr);
+
+    zd_syst(i) = R::rnorm(0, 1);
+  }
+  return Rcpp::List::create(Rcpp::Named("d") = d,
+			    Rcpp::Named("zd_syst") = zd_syst);
+}
+
+
+// [[Rcpp::export]]
+NumericMatrix calc_toterr2(int iter, NumericMatrix obs_mat, IntegerMatrix d,
+			  bool display_progress=true) {
+  // Obtain environment containing function
+  //  Rcpp::Environment base("package:stats");
+  // Obtaining namespace of fastglm package
+  Environment pkg = Environment::namespace_env("fastglm");
+  Function f = pkg["fastglm"];
+  Function s = pkg["summary.fastglm"];
+
+  Rcpp::NumericVector e = obs_mat(_, 0);
+  Rcpp::IntegerMatrix outcome = d;
+  Rcpp::NumericVector dis = no_init(e.length());
+  Rcpp::NumericMatrix res_mat(iter, 2);
+  Rcpp::NumericMatrix ematrix(e.length(), 2);
+  Rcpp::NumericVector v(e.length(), 1);
+  ematrix(_, 0) = v;
+  ematrix(_, 1) = e;
+  arma::mat X(e.length(), 2);  // model matrix
+  X = as<arma::mat>(ematrix);
+  Rcpp::List mod_pois;
+  Rcpp::List mod_log;
+  Rcpp::NumericVector mod_coef = no_init(e.length());
+  double coef;
+  Rcpp::List mod_sum;
+  Rcpp::NumericVector mod_df = no_init(e.length());
+  Rcpp::NumericVector mod_res = no_init(e.length());
+  Rcpp::NumericVector mod_wght = no_init(e.length());
+  Rcpp::NumericVector mod_fit = no_init(e.length());
+  Rcpp::NumericVector mod_fit2 = no_init(e.length());
+  arma::mat W(e.length(), e.length());
+  arma::mat I;
+  I.eye(2, 2);
+  arma::mat unsccov;
+  arma::mat bread;
+  Rcpp::NumericVector wres = no_init(e.length());
+  arma::mat res(e.length(), 2);
+  arma::mat rval(e.length(), 2);
+  arma::mat meat;
+  arma::mat sandwich;
+  arma::vec inv_nrow(2);
+  inv_nrow.fill(1.0/e.length());
+  arma::vec se(2);
+  double mod_se;
+  Progress p(iter*iter, display_progress);
+  for (int i = 0; i < iter; i++) {
+    p.increment(); // update progress
+    dis = d(_, i);
+    // Systematic and random error
+    if (all(is_na(d)).is_true()) {
+      coef = NA_REAL;
+      mod_se = NA_REAL;
+      } else {
+      mod_pois = f(Named("x", ematrix), Named("y", dis), Named("family", "poisson"));
+      mod_sum = s(Named("object", mod_pois));
+      mod_df = mod_sum["df"];
+      mod_df = {mod_df[0], mod_df[1]};
+      mod_coef = mod_pois["coefficients"];
+      coef = {mod_coef[1]};
+      mod_res = mod_pois["residuals"];
+      mod_wght = mod_pois["weights"];
+      // Bread
+      // Get unscaled covariance matrix
+      mod_fit = mod_pois["fitted.values"];
+      mod_fit2 = 1 - mod_fit;
+      W = arma::diagmat(as<arma::vec>(mod_fit));
+      unsccov = arma::solve(arma::trans(X) * W * X, I,
+			    arma::solve_opts::allow_ugly);
+      // bread as unscaled cov matrix * (ncol + nrow) * dispersion (but dispersion = 1)
+      bread = unsccov * arma::accu(as<arma::vec>(mod_df));
+      // Meat
+      wres = mod_res * mod_wght;
+      res = X.each_col() % as<arma::vec>(wres);
+      res = res.col(0);
+      // omega is res^2, but then we have to squared it for rval so no need to compute it
+      rval = X.each_col() % res;
+      meat = (rval.t() * rval) / e.length();
+      sandwich = bread * meat * bread;
+      sandwich = sandwich.each_col() % inv_nrow;
+      se = sqrt(sandwich.diag());
+      se = se(1);
+      mod_se = as<double>(wrap(se));
+    }
+
+    res_mat(i, 0) = coef;
+    res_mat(i, 1) = mod_se;
   }
   return res_mat;
 }

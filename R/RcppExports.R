@@ -5,11 +5,19 @@ cpprbinom <- function(n, size, prob) {
     .Call(`_episensr_cpprbinom`, n, size, prob)
 }
 
-define_e <- function(iter, measure, obs_mat, draws, formatSEXP = "[:bar] :percent ") {
-    .Call(`_episensr_define_e`, iter, measure, obs_mat, draws, formatSEXP)
+define_e <- function(iter, measure, obs_mat, draws, display_progress = TRUE) {
+    .Call(`_episensr_define_e`, iter, measure, obs_mat, draws, display_progress)
 }
 
-calc_toterr <- function(iter, measure, obs_mat, e, formatSEXP = "[:bar] :percent ") {
-    .Call(`_episensr_calc_toterr`, iter, measure, obs_mat, e, formatSEXP)
+calc_toterr <- function(iter, measure, obs_mat, e, display_progress = TRUE) {
+    .Call(`_episensr_calc_toterr`, iter, measure, obs_mat, e, display_progress)
+}
+
+define_d <- function(iter, obs_mat, draws, display_progress = TRUE) {
+    .Call(`_episensr_define_d`, iter, obs_mat, draws, display_progress)
+}
+
+calc_toterr2 <- function(iter, obs_mat, d, display_progress = TRUE) {
+    .Call(`_episensr_calc_toterr2`, iter, obs_mat, d, display_progress)
 }
 

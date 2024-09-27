@@ -33,7 +33,7 @@ Imports:
     truncnorm,
     MASS,
     Rcpp (>= 1.0.13),
-    progress
+    RcppProgress (>= 0.1)
 Suggests:
     aplore3,
     covr,
@@ -51,4 +51,4 @@ LinkingTo:
     Rcpp,
     RcppArmadillo,
     fastglm,
-    progress
+    RcppProgress
