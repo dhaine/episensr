@@ -798,6 +798,7 @@ test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR", {
               a <- 40; b <- 20; c <- 60; d <- 80
               D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
                               d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
+              tic()
               set.seed(1234)
               model <- probcase(D, x = e_obs, y = d, reps = 10^3,
                                 measure = "RR", type = "exposure",
@@ -806,6 +807,140 @@ test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR", {
                                 seexp = list("beta", c(45, 7)),
                                 spexp = list("trapezoidal", c(.8, .83, .87, .9)),
                                 corr_se = .8, corr_sp = .8)
+              toc()
+
+              set.seed(1234)
+              model_ref <- probref(D, x = e_obs, y = d, reps = 10^3,
+                                   measure = "RR", type = "exposure",
+                                   seca = list("beta", c(25, 3)),
+                                   spca = list("trapezoidal", c(.9, .93, .97, 1)),
+                                   seexp = list("beta", c(45, 7)),
+                                   spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+                                   corr_se = .8, corr_sp = .8)
+
+              g <- glm(d ~ e_obs, data = D, family = poisson(link = "log"))
+              X <- cbind(c(rep(1, 200)), D$e_obs)
+              d <- D$d
+              e_obs <- D$e_obs
+              f <- fastglm::fastglm(X, d, family = poisson(link = "log"))
+              r1 <- Rfast::glm_poisson(e_obs, d, full = FALSE)
+              r2 <- Rfast::glm_poisson(e_obs, d, full = TRUE)
+              #r3 <- Rfast::poisson.cat1(d, e_obs)
+
+              devtools::load_all()
+              draws <- rbeta(200, 100, 60)
+              obs_mat <- cbind(c(rep(1, 40), rep(0, 60)), c(rep(1, 20), rep(0, 80)))
+              iter <- length(draws)
+              set.seed(1234)
+              t0 <- define_e(iter, obs_mat, draws)
+
+              #obs_mat2 <- cbind(obs_mat, rep(NA, nrow(obs_mat)), rep(NA, nrow(obs_mat)))
+              #colnames(obs_mat2) <- c("e_obs", "d", "p", "e")
+              e <- matrix(NA, nrow = nrow(obs_mat), ncol = iter)
+              e_obs <- obs_mat[, 1]
+              p <- rep(NA, nrow(obs_mat))
+              set.seed(1234)
+              for (i in 1:iter) {
+                  p <- e_obs * draws[i]
+                  e[, i] <- rbinom(nrow(obs_mat), 1, p)
+              }
+              all.equal(t0, e)
+
+              set.seed(1234)
+              tstar <- define_estar(iter, obs_mat, draws)
+
+              e <- matrix(NA, nrow = nrow(obs_mat), ncol = iter)
+              e_obs <- obs_mat[, 1]
+              p <- rep(NA, nrow(obs_mat))
+              c <- rep(NA, iter)
+              set.seed(1234)
+              for (i in 1:iter) {
+                  p <- e_obs * draws[i]
+                  e[, i] <- rbinom(nrow(obs_mat), 1, p)
+#                  X <- cbind(rep(1, nrow(obs_mat)), e[, i])
+                  d <- obs_mat[, 2]
+                  mod_pois <- glm(d ~ e[, i], family = poisson(link = "log"))
+                  c[i] <- coef(mod_pois)[2]
+              }
+              all.equal(tstar[[1]], e)
+              all.equal(tstar[[2]], c)
+
+              e1 <- matrix(NA, nrow = nrow(obs_mat), ncol = iter)
+              e_obs <- obs_mat[, 1]
+              p <- rep(NA, nrow(obs_mat))
+              set.seed(1234)
+              for (i in 1:iter) {
+                  p <- e_obs * draws[i]
+                  e1[, i] <- rbinom(nrow(obs_mat), 1, p)
+                  X <- cbind(rep(1, nrow(obs_mat)), e1[, i])
+                  d <- obs_mat[, 2]
+                  mod_pois <- glm(d ~ X, family = poisson(link = "log"))
+              }
+              all.equal(e, e1)
+              all.equal(e1, t0)
+
+              e2 <- matrix(NA, nrow = nrow(obs_mat), ncol = iter)
+              e_obs <- obs_mat[, 1]
+              p <- rep(NA, nrow(obs_mat))
+              set.seed(1234)
+              for (i in 1:iter) {
+                  p <- e_obs * draws[i]
+                  e2[, i] <- rbinom(nrow(obs_mat), 1, p)
+                  X <- cbind(rep(1, nrow(obs_mat)), e2[, i])
+                  d <- obs_mat[, 2]
+                  mod_pois <- fastglm::fastglm(X, d, family = poisson(link = "log"))
+              }
+              all.equal(e, e2)
+              all.equal(e2, t0)
+
+              set.seed(1234)
+              t1 <- define_ereg1(iter, obs_mat, draws)
+              all.equal(t1, e)
+
+              set.seed(1234)
+              t2 <- define_ereg2(iter, obs_mat, draws)
+              all.equal(t2, e)
+              all.equal(t2, t1)
+
+              set.seed(1234)
+              t3 <- define_ereg3(iter, obs_mat, draws)
+              all.equal(t3, e)
+              all.equal(t3, t1)
+              all.equal(t3, t2)
+
+              set.seed(1234)
+              t4 <- define_e1(iter, obs_mat, draws)
+              all.equal(t4, e)
+
+              set.seed(1234)
+              t5 <- define_e1reg1(iter, obs_mat, draws)
+              all.equal(t5, e)
+              all.equal(t5, t1)
+
+              set.seed(1234)
+              t6 <- define_e1reg2(iter, obs_mat, draws)
+              all.equal(t6, e)
+              all.equal(t6, t1)
+
+              set.seed(1234)
+              t7 <- define_e1reg3(iter, obs_mat, draws)
+              all.equal(t7, e)
+              all.equal(t7, t1)
+
+              e_mat <- matrix(NA, nrow = nrow(obs_mat), ncol = iter)
+              obs_mat <- cbind(obs_mat, rep(NA, nrow(obs_mat)), rep(NA, nrow(obs_mat)))
+              colnames(obs_mat) <- c("e_obs", "d", "p", "e")
+              for (i in 1:iter) {
+                  obs_mat[, "p"] <- obs_mat[, "e_obs"] * draws[i]
+                  obs_mat[, "e"] <- rbinom(nrow(obs_mat), 1, obs_mat[, "p"])
+                  e_mat[, i] <- obs_mat[, "e"]
+                  mod_pois <- glm(obs_mat[, "d"] ~ obs_mat[, "e"], family = poisson(link = "log"))
+                  return(e_mat)
+              }
+              all.equal(t1, e_mat)
+
+
+
               expect_equal(model$obs_measures[1, 1], 2.0000, tolerance = 1e-4, scale = 1)
               expect_equal(model$obs_measures[1, 2], 1.2630, tolerance = 1e-4, scale = 1)
               expect_equal(model$obs_measures[1, 3], 3.1671, tolerance = 1e-4, scale = 1)
@@ -821,34 +956,38 @@ test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR", {
           })
 
 #test_that("Probcase -- Fox paper -- misclass -- exposure -- RR LONG!", {
-#              a <- 40; b <- 20; c <- 60; d <- 80
-#              D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
-#                              d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
-#              set.seed(1234)
-#              model <- probcase(D, x = e_obs, y = d, reps = 10^5,
-#                                measure = "RR", type = "exposure",
-#                                seca = list("beta", c(25, 3)),
-#                                spca = list("trapezoidal", c(.9, .93, .97, 1)),
-#                                seexp = list("beta", c(45, 7)),
-#                                spexp = list("trapezoidal", c(.8, .83, .87, .9)),
-#                                corr_se = .8, corr_sp = .8)
-#              expect_equal(model$adj_measures[1, 1], 2.7533, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$adj_measures[1, 2], 2.3317, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$adj_measures[1, 3], 5.0717, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$adj_measures[2, 1], 2.8427, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$adj_measures[2, 2], 1.5391, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$adj_measures[2, 3], 8.0743, tolerance = 1e-4, scale = 1)
+              a <- 40; b <- 20; c <- 60; d <- 80
+              D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
+                              d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
+tic()
+              set.seed(1234)
+              model <- probcase(D, x = e_obs, y = d, reps = 10^5,
+                                measure = "RR", type = "exposure",
+                                seca = list("beta", c(25, 3)),
+                                spca = list("trapezoidal", c(.9, .93, .97, 1)),
+                                seexp = list("beta", c(45, 7)),
+                                spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+                                corr_se = .8, corr_sp = .8)
+toc()
+              expect_equal(model$adj_measures[1, 1], 2.7533, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 2], 2.3317, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 3], 5.0717, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 1], 2.8405, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 2], 1.5264, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 3], 8.0704, tolerance = 1e-4, scale = 1)
 #          })
 
 #test_that("Probcase -- Ch.9 QBA book -- misclassification -- exposure -- OR", {
-#              a <- 215; b <- 1449; c <- 668; d <- 4296
-#              D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
-#                              d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
-#              set.seed(1234)
-#              model <- probcase(D, x = e_obs, y = d, reps = 10^3,
-#                                measure = "OR", type = "exposure",
-#                                seca = list("beta", c(50.6, 14.3)),
-#                                spca = list("beta", c(70, 1)))
+              a <- 215; b <- 1449; c <- 668; d <- 4296
+              D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
+                              d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
+tic()
+              set.seed(1234)
+              model <- probcase(D, x = e_obs, y = d, reps = 10^3,
+                                measure = "OR", type = "exposure",
+                                seca = list("beta", c(50.6, 14.3)),
+                                spca = list("beta", c(70, 1)))
+toc()
 #              expect_equal(model$obs_measures[1, 1], .9654, tolerance = 1e-4, scale = 1)
 #              expect_equal(model$obs_measures[1, 2], .8524, tolerance = 1e-4, scale = 1)
 #              expect_equal(model$obs_measures[1, 3], 1.0934, tolerance = 1e-4, scale = 1)
@@ -864,32 +1003,35 @@ test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR", {
 #          })
 
 #test_that("Probcase -- Ch.9 QBA book -- misclassification -- exposure -- OR LONG!", {
-#              a <- 215; b <- 1449; c <- 668; d <- 4296
-#              D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
-#                              d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
-#              set.seed(1234)
-#              system.time(model <- probcase(D, x = e_obs, y = d, reps = 10^5,
-#                                            measure = "OR", type = "exposure",
-#                                            seca = list("beta", c(50.6, 14.3)),
-#                                            spca = list("beta", c(70, 1))))
-#              expect_equal(model$obs_measures[1, 1], .9654, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$obs_measures[1, 2], .8524, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$obs_measures[1, 3], 1.0934, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$obs_measures[2, 1], .9542, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$obs_measures[2, 2], .8093, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$obs_measures[2, 3], 1.1252, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$adj_measures[1, 1], 0.9491, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$adj_measures[1, 2], 0.9298, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$adj_measures[1, 3], 0.9526, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$adj_measures[2, 1], 0.9546, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$adj_measures[2, 2], 0.7867, tolerance = 1e-4, scale = 1)
-#              expect_equal(model$adj_measures[2, 3], 1.1499, tolerance = 1e-4, scale = 1)
+              a <- 215; b <- 1449; c <- 668; d <- 4296
+              D <- data.frame(e_obs = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
+                              d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
+tic()
+              set.seed(1234)
+              model <- probcase(D, x = e_obs, y = d, reps = 10^5,
+                                measure = "OR", type = "exposure",
+                                seca = list("beta", c(50.6, 14.3)),
+                                spca = list("beta", c(70, 1)))
+toc()
+              expect_equal(model$obs_measures[1, 1], .9654, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[1, 2], .8524, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[1, 3], 1.0934, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[2, 1], .9542, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[2, 2], .8093, tolerance = 1e-4, scale = 1)
+              expect_equal(model$obs_measures[2, 3], 1.1252, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 1], 0.9491, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 2], 0.9298, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[1, 3], 0.9526, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 1], 0.9546, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 2], 0.7867, tolerance = 1e-4, scale = 1)
+              expect_equal(model$adj_measures[2, 3], 1.1499, tolerance = 1e-4, scale = 1)
 #          })
 
 test_that("Probcase -- Fox paper -- misclassification -- outcome", {
               a <- 40; b <- 20; c <- 60; d <- 80
               D <- data.frame(e = c(rep(1, a), rep(0, b), rep(1, c), rep(0, d)),
                               d_obs = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
+              tic()
               set.seed(1234)
               model <- probcase(D, x = e, y = d_obs, reps = 10^3,
                                 measure = "RR", type = "outcome",
@@ -898,6 +1040,7 @@ test_that("Probcase -- Fox paper -- misclassification -- outcome", {
                                 seexp = list("beta", c(450, 67)),
                                 spexp = list("trapezoidal", c(.9, .92, .93, .95)),
                                 corr_se = .8, corr_sp = .8)
+              toc()
               expect_equal(model$obs_measures[1, 1], 2.0000, tolerance = 1e-4, scale = 1)
               expect_equal(model$obs_measures[1, 2], 1.2630, tolerance = 1e-4, scale = 1)
               expect_equal(model$obs_measures[1, 3], 3.1671, tolerance = 1e-4, scale = 1)

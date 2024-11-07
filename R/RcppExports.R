@@ -5,19 +5,15 @@ cpprbinom <- function(n, size, prob) {
     .Call(`_episensr_cpprbinom`, n, size, prob)
 }
 
-define_e <- function(iter, measure, obs_mat, draws, display_progress = TRUE) {
-    .Call(`_episensr_define_e`, iter, measure, obs_mat, draws, display_progress)
+define_estar <- function(iter, obs_mat, draws) {
+    .Call(`_episensr_define_estar`, iter, obs_mat, draws)
 }
 
-calc_toterr <- function(iter, measure, obs_mat, e, display_progress = TRUE) {
-    .Call(`_episensr_calc_toterr`, iter, measure, obs_mat, e, display_progress)
+expo_adjOR <- function(iter, obs_mat, draws, display_progress = TRUE) {
+    .Call(`_episensr_expo_adjOR`, iter, obs_mat, draws, display_progress)
 }
 
-define_d <- function(iter, obs_mat, draws, display_progress = TRUE) {
-    .Call(`_episensr_define_d`, iter, obs_mat, draws, display_progress)
-}
-
-calc_toterr2 <- function(iter, obs_mat, d, display_progress = TRUE) {
-    .Call(`_episensr_calc_toterr2`, iter, obs_mat, d, display_progress)
+expo_adjRR <- function(iter, obs_mat, draws, display_progress = TRUE) {
+    .Call(`_episensr_expo_adjRR`, iter, obs_mat, draws, display_progress)
 }
 
