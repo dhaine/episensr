@@ -32,6 +32,7 @@ Imports:
     triangle,
     truncnorm,
     MASS,
+    fastglm,
     Rcpp (>= 1.0.13),
     RcppProgress (>= 0.1)
 Suggests:

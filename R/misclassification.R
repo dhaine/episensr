@@ -1807,11 +1807,16 @@ Se and Sp correlations.")))
         obs_mat <- cbind(obs_mat, obs_mat[, "e_obs"] * obs_mat[, "d"],  ## e_obs * d
                          obs_mat[, "e_obs"] * (1 - obs_mat[, "d"]),  ## e * (1 - d)
                          (1 - obs_mat[, "e_obs"]) * obs_mat[, "d"],  ## (1 - e_obs) * d
-                         (1 - obs_mat[, "e_obs"]) * (1 - obs_mat[, "d"]))  ## (1 - e_obs) * (1 - d)
-        colnames(obs_mat) <- c("e_obs", "d", "e_d", "e_1d", "e1_d", "e1_1d")
+                         (1 - obs_mat[, "e_obs"]) * (1 - obs_mat[, "d"])#,  ## (1 - e_obs) * (1 - d)
+#                         rep(NA, nrow_obs),  ## p
+#                         rep(NA, nrow_obs),  ## e
+#                         rep(NA, nrow_obs)  ## e_syst
+                         )
+        colnames(obs_mat) <- c("e_obs", "d", "e_d", "e_1d", "e1_d", "e1_1d"#, "p", "e", "e_syst"
+                               )
 
         cli::cli_alert_info("Compute systematic and total error")
-        if (measure == "RR") adj_risk <- expo_adjRR(reps2, obs_mat, draws)
+        if (measure == "RR") adj_risk <- define_estar(reps2, obs_mat, draws)
         if (measure == "OR") adj_risk <- expo_adjOR(reps2, obs_mat, draws)
 
         res_mat2 <- cbind(exp(adj_risk[[2]][, 2]),

@@ -800,13 +800,20 @@ test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR", {
                               d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
               tic()
               set.seed(1234)
-              model <- probcase(D, x = e_obs, y = d, reps = 10^3,
-                                measure = "RR", type = "exposure",
-                                seca = list("beta", c(25, 3)),
-                                spca = list("trapezoidal", c(.9, .93, .97, 1)),
-                                seexp = list("beta", c(45, 7)),
-                                spexp = list("trapezoidal", c(.8, .83, .87, .9)),
-                                corr_se = .8, corr_sp = .8)
+#              model <- probcase(D, x = e_obs, y = d, reps = 10^3,
+#                                measure = "RR", type = "exposure",
+#                                seca = list("beta", c(25, 3)),
+#                                spca = list("trapezoidal", c(.9, .93, .97, 1)),
+#                                seexp = list("beta", c(45, 7)),
+#                                spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+#                                corr_se = .8, corr_sp = .8)
+              model <- probref(D, x = e_obs, y = d, reps = 10^3,
+                               measure = "RR", type = "exposure",
+                               seca = list("beta", c(25, 3)),
+                               spca = list("trapezoidal", c(.9, .93, .97, 1)),
+                               seexp = list("beta", c(45, 7)),
+                               spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+                               corr_se = .8, corr_sp = .8)
               toc()
 
               set.seed(1234)
@@ -961,7 +968,14 @@ test_that("Probcase -- Fox paper -- misclassification -- exposure -- RR", {
                               d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
 tic()
               set.seed(1234)
-              model <- probcase(D, x = e_obs, y = d, reps = 10^5,
+#              model <- probcase(D, x = e_obs, y = d, reps = 10^5,
+#                                measure = "RR", type = "exposure",
+#                                seca = list("beta", c(25, 3)),
+#                                spca = list("trapezoidal", c(.9, .93, .97, 1)),
+#                                seexp = list("beta", c(45, 7)),
+#                                spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+#                                corr_se = .8, corr_sp = .8)
+model <- probref(D, x = e_obs, y = d, reps = 10^5,
                                 measure = "RR", type = "exposure",
                                 seca = list("beta", c(25, 3)),
                                 spca = list("trapezoidal", c(.9, .93, .97, 1)),
@@ -983,10 +997,14 @@ toc()
                               d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
 tic()
               set.seed(1234)
-              model <- probcase(D, x = e_obs, y = d, reps = 10^3,
-                                measure = "OR", type = "exposure",
-                                seca = list("beta", c(50.6, 14.3)),
-                                spca = list("beta", c(70, 1)))
+#              model <- probcase(D, x = e_obs, y = d, reps = 10^3,
+#                                measure = "OR", type = "exposure",
+#                                seca = list("beta", c(50.6, 14.3)),
+#                                spca = list("beta", c(70, 1)))
+              model <- probref(D, x = e_obs, y = d, reps = 10^3,
+                               measure = "OR", type = "exposure",
+                               seca = list("beta", c(50.6, 14.3)),
+                               spca = list("beta", c(70, 1)))
 toc()
 #              expect_equal(model$obs_measures[1, 1], .9654, tolerance = 1e-4, scale = 1)
 #              expect_equal(model$obs_measures[1, 2], .8524, tolerance = 1e-4, scale = 1)
@@ -1008,10 +1026,14 @@ toc()
                               d = c(rep(1, a), rep(1, b), rep(0, c), rep(0, d)))
 tic()
               set.seed(1234)
-              model <- probcase(D, x = e_obs, y = d, reps = 10^5,
-                                measure = "OR", type = "exposure",
-                                seca = list("beta", c(50.6, 14.3)),
-                                spca = list("beta", c(70, 1)))
+#              model <- probcase(D, x = e_obs, y = d, reps = 10^5,
+#                                measure = "OR", type = "exposure",
+#                                seca = list("beta", c(50.6, 14.3)),
+#                                spca = list("beta", c(70, 1)))
+              model <- probref(D, x = e_obs, y = d, reps = 10^5,
+                               measure = "OR", type = "exposure",
+                               seca = list("beta", c(50.6, 14.3)),
+                               spca = list("beta", c(70, 1)))
 toc()
               expect_equal(model$obs_measures[1, 1], .9654, tolerance = 1e-4, scale = 1)
               expect_equal(model$obs_measures[1, 2], .8524, tolerance = 1e-4, scale = 1)
