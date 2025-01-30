@@ -164,7 +164,7 @@ ggplot(dat2, aes(x = RR_CD, y = bias_perc, group = COX2, colour = COX2)) +
     ggtitle(expression(paste("Bias as a function of misspecification of the ", RR[CD], " from the literature"))) +
     theme(legend.position = c(.85, .3),
           legend.title = element_blank()) +
-    annotate("text", label = expression(paste("Literature estimate ", RR[CD], " = 0.7")), x = 0.6, y = -3.75)
+    annotate("text", label = 'paste("Literature estimate ", RR[CD], " = 0.7")', x = 0.6, y = -3.75, parse = TRUE)
 ```
 
 ## Unmeasured Confounding and E-value
