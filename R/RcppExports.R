@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 cpprbinom <- function(n, size, prob) {
-    .Call('_episensr_cpprbinom', PACKAGE = 'episensr', n, size, prob)
+    .Call(`_episensr_cpprbinom`, n, size, prob)
 }
 
