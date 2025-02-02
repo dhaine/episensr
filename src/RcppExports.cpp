@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // cpprbinom
-NumericVector cpprbinom(int n, double size, arma::vec prob);
+arma::vec cpprbinom(int n, double size, arma::vec prob);
 RcppExport SEXP _episensr_cpprbinom(SEXP nSEXP, SEXP sizeSEXP, SEXP probSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
