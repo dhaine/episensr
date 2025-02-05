@@ -5,3 +5,7 @@ cpprbinom <- function(n, size, prob) {
     .Call(`_episensr_cpprbinom`, n, size, prob)
 }
 
+calc_RRexpo <- function(iter, obs_mat, draws) {
+    .Call(`_episensr_calc_RRexpo`, iter, obs_mat, draws)
+}
+
