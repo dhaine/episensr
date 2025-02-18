@@ -11,6 +11,16 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// set_seed
+void set_seed(unsigned int seed);
+RcppExport SEXP _episensr_set_seed(SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< unsigned int >::type seed(seedSEXP);
+    set_seed(seed);
+    return R_NilValue;
+END_RCPP
+}
 // cpprbinom
 arma::vec cpprbinom(int n, double size, arma::vec prob);
 RcppExport SEXP _episensr_cpprbinom(SEXP nSEXP, SEXP sizeSEXP, SEXP probSEXP) {
@@ -25,7 +35,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // calc_RRexpo
-NumericMatrix calc_RRexpo(int iter, arma::mat& obs_mat, arma::mat& draws);
+List calc_RRexpo(int iter, arma::mat& obs_mat, arma::mat& draws);
 RcppExport SEXP _episensr_calc_RRexpo(SEXP iterSEXP, SEXP obs_matSEXP, SEXP drawsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -39,6 +49,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_episensr_set_seed", (DL_FUNC) &_episensr_set_seed, 1},
     {"_episensr_cpprbinom", (DL_FUNC) &_episensr_cpprbinom, 3},
     {"_episensr_calc_RRexpo", (DL_FUNC) &_episensr_calc_RRexpo, 3},
     {NULL, NULL, 0}

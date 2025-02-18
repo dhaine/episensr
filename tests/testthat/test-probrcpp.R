@@ -34,8 +34,30 @@ test_that("matrix loop is correct", {
                                corr_se = .8, corr_sp = .8)
               draws <- mat1$draws
               obs_mat <- mat1$obs_mat
-              set.seed(1234)
-              mat2 <- calc_RRexpo(3, obs_mat, draws)
+              obs_mat2 <- mat1$obs_mat[, c(1:2, 14:17)]
 
-              expect_equal(mat1$test_mat, mat2)
+              set.seed(1234)
+              mat1b <- test_fun2(obs_mat, draws, reps = 3)
+
+              set.seed(1234)
+              mat2 <- calc_RRexpo(3, obs_mat2, draws)
+
+              set.seed(1234)
+              mat3 <- probrcpp(D, x = e_obs, y = d, reps = 3,
+                               measure = "RR", type = "exposure",
+                               seca = list("beta", c(25, 3)),
+                               spca = list("trapezoidal", c(.9, .93, .97, 1)),
+                               seexp = list("beta", c(45, 7)),
+                               spexp = list("trapezoidal", c(.8, .83, .87, .9)),
+                               corr_se = .8, corr_sp = .8)
+
+              expect_equal(mat1$ptest, mat2$ptest)
+              expect_equal(mat1b$ptest, mat2$ptest)
+              expect_equal(mat1$ptest, mat3$ptest)
+              expect_equal(mat1$etest, mat2$etest)
+              expect_equal(mat1$etest, mat1b$etest)
+              expect_equal(mat1b$etest, mat2$etest)
+              expect_equal(mat1$etest, mat3$etest)
+              expect_equal(mat1b$etest, mat3$etest)
+              expect_equal(mat2$etest, mat3$etest)
           })

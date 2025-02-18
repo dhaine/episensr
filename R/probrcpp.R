@@ -94,7 +94,7 @@
 #' @export
 #' @importFrom stats median pnorm qnorm quantile qunif runif rnorm rbinom qbeta rbeta reformulate glm binomial poisson coef confint
 #' @importFrom sandwich sandwich
-probcase <- function(df,
+probrcpp <- function(df,
                      x,
                      y,
                      ...,
@@ -352,47 +352,52 @@ probcase <- function(df,
         if (measure == "RR") adj_risk <- calc_RRexpo(reps2, obs_mat, draws)
         if (measure == "OR") adj_risk <- calc_ORexpo(reps2, obs_mat, draws)
 
-        res_mat2 <- cbind(exp(adj_risk[[2]][, 2]),
-                          exp(adj_risk[[1]][, 1]),
-                          exp(adj_risk[[1]][, 1] + adj_risk[[2]][, 1] * adj_risk[[1]][, 2]))
+        ptest <- adj_risk[[1]]
+        etest <- adj_risk[[2]]
 
-        meas_syst <- c(median(res_mat[, 1], na.rm = TRUE),
-                       quantile(res_mat[, 1], probs = .025, na.rm = TRUE),
-                       quantile(res_mat[, 1], probs = .975, na.rm = TRUE))
-        meas_tot <- c(median(res_mat[, 3], na.rm = TRUE),
-                    quantile(res_mat[, 3], probs = .025, na.rm = TRUE),
-                    quantile(res_mat[, 3], probs = .975, na.rm = TRUE))
+#        res_mat2 <- cbind(exp(adj_risk[[2]][, 2]),
+#                          exp(adj_risk[[1]][, 1]),
+#                          exp(adj_risk[[1]][, 1] + adj_risk[[2]][, 1] * adj_risk[[1]][, 2]))
 
-        rmat <- rbind(c(obs_rr, obsci_rr[1], obsci_rr[2]),
-                      c(obs_or, obsci_or[1], obsci_or[2]))
-        rownames(rmat) <- c(" Observed Relative Risk:",
-                            "    Observed Odds Ratio:")
-        colnames(rmat) <- c(" ",
-                            paste(100 * (alpha / 2), "%", sep = ""),
-                            paste(100 * (1 - alpha / 2), "%", sep = ""))
-        if (is.null(rownames(tab)))
-            rownames(tab) <- paste("Row", 1:2)
-        if (is.null(colnames(tab)))
-            colnames(tab) <- paste("Col", 1:2)
-        rmatc <- rbind(meas_syst, meas_tot)
-        if (measure == "RR") {
-            rownames(rmatc) <- c("Relative Risk -- systematic error:",
-                                 "                      total error:")
-        }
-        if (measure == "OR") {
-            rownames(rmatc) <- c("Odds Ratio -- systematic error:",
-                                 "                   total error:")
-        }
-        colnames(rmatc) <- c("Median", "p2.5", "p97.5")
+#        meas_syst <- c(median(res_mat[, 1], na.rm = TRUE),
+#                       quantile(res_mat[, 1], probs = .025, na.rm = TRUE),
+#                       quantile(res_mat[, 1], probs = .975, na.rm = TRUE))
+#        meas_tot <- c(median(res_mat[, 3], na.rm = TRUE),
+#                    quantile(res_mat[, 3], probs = .025, na.rm = TRUE),
+#                    quantile(res_mat[, 3], probs = .975, na.rm = TRUE))
+
+#        rmat <- rbind(c(obs_rr, obsci_rr[1], obsci_rr[2]),
+#                      c(obs_or, obsci_or[1], obsci_or[2]))
+#        rownames(rmat) <- c(" Observed Relative Risk:",
+#                            "    Observed Odds Ratio:")
+#        colnames(rmat) <- c(" ",
+#                            paste(100 * (alpha / 2), "%", sep = ""),
+#                            paste(100 * (1 - alpha / 2), "%", sep = ""))
+#        if (is.null(rownames(tab)))
+#            rownames(tab) <- paste("Row", 1:2)
+#        if (is.null(colnames(tab)))
+#            colnames(tab) <- paste("Col", 1:2)
+#        rmatc <- rbind(meas_syst, meas_tot)
+#        if (measure == "RR") {
+#            rownames(rmatc) <- c("Relative Risk -- systematic error:",
+#                                 "                      total error:")
+#        }
+#        if (measure == "OR") {
+#            rownames(rmatc) <- c("Odds Ratio -- systematic error:",
+#                                 "                   total error:")
+#        }
+#        colnames(rmatc) <- c("Median", "p2.5", "p97.5")
     }
 
-    res <- list(obs_data = tab,
-                obs_measures = rmat,
-                adj_measures = rmatc,
-                sim_df = as.data.frame(res_mat2),
-                reps = reps,
-                fun = "probsens",
-                warnings = neg_warn
+    res <- list(#obs_data = tab,
+                ptest = ptest,
+                etest = etest
+#                obs_measures = rmat,
+#                adj_measures = rmatc,
+#                sim_df = as.data.frame(res_mat2),
+#                reps = reps,
+#                fun = "probsens",
+#                warnings = neg_warn
                 )
     class(res) <- c("episensr", "episensr.probsens", "list")
     res
