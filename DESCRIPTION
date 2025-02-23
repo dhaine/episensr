@@ -31,6 +31,7 @@ Imports:
     triangle,
     truncnorm,
     MASS,
+    fastglm,
     Rcpp (>= 1.0.14)
 Suggests:
     aplore3,
@@ -47,4 +48,5 @@ Encoding: UTF-8
 RoxygenNote: 7.3.2
 LinkingTo:
    Rcpp,
-   RcppArmadillo
+   RcppArmadillo,
+   fastglm

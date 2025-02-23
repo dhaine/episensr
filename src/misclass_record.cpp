@@ -32,10 +32,18 @@ arma::vec cpprbinom(int n, double size, arma::vec prob) {
 
 // [[Rcpp::export]]
 List calc_RRexpo(int iter, arma::mat& obs_mat, arma::mat& draws) {
+  //Obtaining namespace of fastglm package
+  Environment pkg = Environment::namespace_env("fastglm");
+  Function f = pkg["fastglm"];
+
   arma::vec p(obs_mat.n_rows);
   arma::mat ptest_mat = arma::mat(obs_mat.n_rows, iter);  // TEMP: to check we've got the right p
   arma::vec e(obs_mat.n_rows);
+  arma::vec d = obs_mat.col(1);
   arma::mat etest_mat = arma::mat(obs_mat.n_rows, iter);  // TEMP: to check we've got the right e
+  arma::vec coef(iter);
+  arma::vec mod_se(iter);
+  Rcpp::List mod_pois;
   //  set_seed(seed);
   for (int i = 0; i < iter; i++) {
     p = obs_mat.col(2) * draws(i, 11) +
@@ -45,6 +53,12 @@ List calc_RRexpo(int iter, arma::mat& obs_mat, arma::mat& draws) {
     ptest_mat.col(i) = p;  // TEMP: to check we've got the right p
     e = cpprbinom(obs_mat.n_rows, 1, p);
     etest_mat.col(i) = e;  // TEMP: to check we've got the right e
+    //    if (all(is_na(wrap(e))).is_true()) {
+    //      coef = NA_REAL;
+    //      mod_se = NA_REAL;
+      //    } else {
+      mod_pois = f(Named("x", e), Named("y", d), Named("family", "poisson"));
+      //    }
   }
 
   return Rcpp::List::create(Rcpp::Named("ptest") = wrap(ptest_mat),
