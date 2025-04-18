@@ -10,9 +10,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8299430.svg)](https://doi.org/10.5281/zenodo.8299430)
 [![Codecov test
 coverage](https://codecov.io/gh/dhaine/episensr/branch/master/graph/badge.svg)](https://app.codecov.io/gh/dhaine/episensr/tree/master)
-[![Project Status: Active – The project has reached a stable, usable
-state and is being actively
-developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Project Status: Moved to http://codeberg.org/dhaine/episensr – The project has been moved to a new location, and the version at that location should be considered authoritative.](https://www.repostatus.org/badges/latest/moved.svg)](https://www.repostatus.org/#moved) to [http://codeberg.org/dhaine/episensr](http://codeberg.org/dhaine/episensr)
 [![Total CRAN
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/episensr)](https://cran.r-project.org/package=episensr)
 
