@@ -34,16 +34,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// calc_RRexpo
-List calc_RRexpo(int iter, arma::mat& obs_mat, arma::mat& draws);
-RcppExport SEXP _episensr_calc_RRexpo(SEXP iterSEXP, SEXP obs_matSEXP, SEXP drawsSEXP) {
+// RRexpo_e
+arma::mat RRexpo_e(int iter, arma::mat& obs_mat, arma::mat& draws);
+RcppExport SEXP _episensr_RRexpo_e(SEXP iterSEXP, SEXP obs_matSEXP, SEXP drawsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type iter(iterSEXP);
     Rcpp::traits::input_parameter< arma::mat& >::type obs_mat(obs_matSEXP);
     Rcpp::traits::input_parameter< arma::mat& >::type draws(drawsSEXP);
-    rcpp_result_gen = Rcpp::wrap(calc_RRexpo(iter, obs_mat, draws));
+    rcpp_result_gen = Rcpp::wrap(RRexpo_e(iter, obs_mat, draws));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -51,7 +51,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_episensr_set_seed", (DL_FUNC) &_episensr_set_seed, 1},
     {"_episensr_cpprbinom", (DL_FUNC) &_episensr_cpprbinom, 3},
-    {"_episensr_calc_RRexpo", (DL_FUNC) &_episensr_calc_RRexpo, 3},
+    {"_episensr_RRexpo_e", (DL_FUNC) &_episensr_RRexpo_e, 3},
     {NULL, NULL, 0}
 };
 
